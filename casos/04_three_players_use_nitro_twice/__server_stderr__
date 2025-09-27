@@ -1,0 +1,4 @@
+Unexpected exception: The queue is closed
+terminate called after throwing an instance of 'LibError'
+  what():  socket shutdown failedTransport endpoint is not connected
+timeout: la orden monitorizada ha volcado un 'core'
