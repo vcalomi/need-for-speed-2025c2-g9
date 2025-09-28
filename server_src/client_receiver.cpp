@@ -1,4 +1,5 @@
 #include "client_receiver.h"
+
 #include <sys/socket.h>
 
 #include "../common_src/common_codes.h"
@@ -7,8 +8,12 @@
     2. Encola el comando nitro en la queue del game loop
 */
 
-ClientReceiver::ClientReceiver(ServerProtocol& serverProtocol, Queue<ClientCommand>& gameLoopQueue, int clientId) :
-    gameLoopQueue(gameLoopQueue), protocol(serverProtocol), keep_running(true), clientId(clientId) {}
+ClientReceiver::ClientReceiver(ServerProtocol& serverProtocol, Queue<ClientCommand>& gameLoopQueue,
+                               int clientId):
+        gameLoopQueue(gameLoopQueue),
+        protocol(serverProtocol),
+        keep_running(true),
+        clientId(clientId) {}
 
 void ClientReceiver::run() {
     try {
@@ -17,7 +22,7 @@ void ClientReceiver::run() {
             ClientCommand command = {action, clientId};
             gameLoopQueue.push(command);
         }
-    } catch(const SocketClosed& e) {
+    } catch (const SocketClosed& e) {
         keep_running = false;
     } catch (const ClosedQueue& e) {
         keep_running = false;

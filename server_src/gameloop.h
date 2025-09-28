@@ -1,14 +1,17 @@
 #ifndef GAMELOOP_H
 #define GAMELOOP_H
 
-#include "../common_src/common_codes.h"
-#include "../common_src/thread.h"
-#include "../common_src/queue.h"
-#include "client_monitor.h"
-#include "nitro_state.h"
 #include <map>
+#include <vector>
+
 #include "../common_src/client_command.h"
-class GameLoop : public Thread {
+#include "../common_src/common_codes.h"
+#include "../common_src/nitro_state.h"
+#include "../common_src/queue.h"
+#include "../common_src/thread.h"
+
+#include "client_monitor.h"
+class GameLoop: public Thread {
 private:
     Queue<ClientCommand>& commandQueue;
     ClientMonitor& clientMonitor;

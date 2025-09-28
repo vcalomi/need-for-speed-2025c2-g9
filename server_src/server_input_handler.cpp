@@ -2,21 +2,19 @@
 
 #include <iostream>
 
-ServerInputHandler::ServerInputHandler() : line("") {}
+ServerInputHandler::ServerInputHandler(): line("") {}
 
 void ServerInputHandler::run() {
     try {
         while (should_keep_running()) {
             std::getline(std::cin, line);
             if (line == "q") {
-                this->stop(); // Signal itself to stop
+                this->stop();  // Signal itself to stop
             }
         }
-    } catch(const std::exception& e) {
+    } catch (const std::exception& e) {
         // Handle any exceptions during input
     }
 }
 
-bool ServerInputHandler::should_stop_server() const {
-    return line == "q";
-}
+bool ServerInputHandler::should_stop_server() const { return line == "q"; }

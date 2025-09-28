@@ -2,12 +2,13 @@
 #define SERVER_H
 #include <string>
 
+#include "../common_src/client_command.h"
+#include "../common_src/queue.h"
+
 #include "client_acceptor.h"
 #include "client_monitor.h"
 #include "gameloop.h"
-#include "../common_src/queue.h"
 #include "server_input_handler.h"
-#include "../common_src/client_command.h"
 
 class Server {
 private:
@@ -18,7 +19,7 @@ private:
     ServerInputHandler inputHandler;
 
 public:
-    Server(const std::string& port);
+    explicit Server(const std::string& port);
     int run();
     void stop();
     ~Server();

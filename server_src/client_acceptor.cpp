@@ -1,34 +1,32 @@
 #include "client_acceptor.h"
-#include <utility>
-#include <algorithm>
-#include <sys/socket.h>
-#include "client_handler.h"
-/*
-Cada vez que llega un cliente, crea un ClientHandler con su peer socket
-Administra la vida de los ClientHandler (limpieza con reap() y clear())
-*/
 
-ClientAcceptor::ClientAcceptor(const std::string& port, ClientMonitor& monitor, Queue<ClientCommand>& queue) :
-    clientMonitor(monitor), 
-    gameLoopQueue(queue),
-    acceptor(port.c_str()),
-    nextClientId(0) {}
+#include <algorithm>
+#include <utility>
+
+#include <sys/socket.h>
+
+#include "client_handler.h"
+
+ClientAcceptor::ClientAcceptor(const std::string& port, ClientMonitor& monitor,
+                               Queue<ClientCommand>& queue):
+        clientMonitor(monitor), gameLoopQueue(queue), acceptor(port.c_str()), nextClientId(0) {}
 
 void ClientAcceptor::run() {
     while (should_keep_running()) {
         try {
             Socket socket = acceptor.accept();
             if (!should_keep_running()) {
-                break;  
-            } 
+                break;
+            }
             int clientId = nextClientId++;
-            ClientHandler* client = new ClientHandler(std::move(socket), clientMonitor, gameLoopQueue, clientId);
+            ClientHandler* client =
+                    new ClientHandler(std::move(socket), clientMonitor, gameLoopQueue, clientId);
             reap();
             clients.push_back(client);
             client->start();
         } catch (const LibError& e) {
             this->stop();
-        } catch(const std::exception& e) {
+        } catch (const std::exception& e) {
             this->stop();
         }
     }
@@ -36,24 +34,22 @@ void ClientAcceptor::run() {
 }
 
 void ClientAcceptor::reap() {
-    auto new_end = std::remove_if(clients.begin(), clients.end(),
-        [] (ClientHandler* c) {
-            bool is_dead = !c->is_alive();
-            if (is_dead) {
-                c->join();
-                delete c;
-            }
-            return is_dead;
+    auto new_end = std::remove_if(clients.begin(), clients.end(), [](ClientHandler* c) {
+        bool is_dead = !c->is_alive();
+        if (is_dead) {
+            c->join();
+            delete c;
         }
-    );
+        return is_dead;
+    });
     clients.erase(new_end, clients.end());
 }
 
 void ClientAcceptor::clear() {
-    for (auto& client : clients) {
+    for (auto& client: clients) {
         client->stop();
     }
-    for (auto& client : clients) {
+    for (auto& client: clients) {
         client->join();
         delete client;
     }

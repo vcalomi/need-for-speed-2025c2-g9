@@ -36,7 +36,7 @@ ActionCode CommonProtocol::tryReceiveAction(Socket& socket) {
     if (received <= 0) {
         throw SocketClosed();
     }
-    
+
     return ActionCode(action);
 }
 

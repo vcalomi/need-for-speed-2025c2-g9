@@ -19,7 +19,7 @@ int main(int argc, char* argv[]) {
         Client client(hostname, port);
         client.run();
         return 0;
-    } catch(...) {
+    } catch (...) {
 
         return 1;
     }

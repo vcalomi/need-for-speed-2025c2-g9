@@ -1,12 +1,15 @@
 #include "server.h"
+
+#include <string>
+
 #include "../common_src/queue.h"
 
-Server::Server(const std::string& port) :
-     gameLoopQueue(100), 
-     clientMonitor(), 
-     clientAcceptor(port, clientMonitor, gameLoopQueue), 
-     gameLoop(gameLoopQueue, clientMonitor),
-     inputHandler() {}
+Server::Server(const std::string& port):
+        gameLoopQueue(100),
+        clientMonitor(),
+        clientAcceptor(port, clientMonitor, gameLoopQueue),
+        gameLoop(gameLoopQueue, clientMonitor),
+        inputHandler() {}
 
 int Server::run() {
     try {
@@ -16,7 +19,9 @@ int Server::run() {
 
         inputHandler.join();
         stop();
-    } catch (const std::exception& e) { stop(); }
+    } catch (const std::exception& e) {
+        stop();
+    }
     return 0;
 }
 

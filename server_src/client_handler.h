@@ -1,14 +1,17 @@
 #ifndef CLIENT_HANDLER_H
 #define CLIENT_HANDLER_H
 
-#include "../common_src/thread.h"
+#include <vector>
+
+#include "../common_src/client_command.h"
 #include "../common_src/socket.h"
+#include "../common_src/thread.h"
+
 #include "client_handler.h"
-#include "server_protocol.h"
+#include "client_monitor.h"
 #include "client_receiver.h"
 #include "client_sender.h"
-#include "client_monitor.h"
-#include "../common_src/client_command.h"
+#include "server_protocol.h"
 
 class ClientHandler {
 private:
