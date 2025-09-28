@@ -9,27 +9,24 @@
 #include "client_sender.h"
 #include "client_monitor.h"
 
-// es un thread para single-thread
-class ClientHandler : public Thread {
+class ClientHandler {
 private:
     Socket peer;
     Queue<ActionCode>& gameLoopQueue;
     ClientMonitor& clientMonitor;
-    // std::unique_ptr<ClientReceiver>receiver;
-    // std::unique_ptr<ClientSender> sender;
-    bool connected;
+    Queue<std::vector<uint8_t>> clientQueue;
     ServerProtocol protocol;
-    Queue<std::vector<uint8_t>> sendQueue;
+    ClientReceiver receiver;
+    ClientSender sender;
+    std::atomic_bool keep_running;
 
 public:
     ClientHandler(Socket socket, ClientMonitor& monitor, Queue<ActionCode>& queue);
-    // void run();
-    void run() override;
-    // void stop();
-    void handleInput();   // Leer del cliente
-    void handleOutput();  // Enviar al cliente
+    void start();
     bool isConnected();
-    void stop() override;
+    void join();
+    void stop();
+    bool is_alive() const;
     ~ClientHandler();
 };
 

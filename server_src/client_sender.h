@@ -5,17 +5,16 @@
 #include "../common_src/socket.h"
 #include "server_protocol.h"
 #include "../common_src/queue.h"
+#include "../common_src/socket_closed.h"
 
 class ClientSender : public Thread {
 private:
-    Socket &peer;
-    Queue<std::vector<uint8_t>> clientQueue;
-    ServerProtocol protocol;
+    Queue<std::vector<uint8_t>>& clientQueue;
+    ServerProtocol& protocol;
     std::atomic<bool> keep_running;
 public:
-    explicit ClientSender(Socket& socket);
+    explicit ClientSender(ServerProtocol& serverProtocol, Queue<std::vector<uint8_t>>& clientQueue);
     void run() override;
-    void stop() override;
     ~ClientSender();
 };
 

@@ -8,7 +8,7 @@ using Clock = std::chrono::steady_clock;
 using Milliseconds = std::chrono::milliseconds;
 
 GameLoop::GameLoop(Queue<ActionCode>& commandQueue, ClientMonitor& clientMonitor) :
-    commandQueue(commandQueue), clientMonitor(clientMonitor), carsWithActiveNitro(0), nitroActive(false), counterActive(0) {}
+    commandQueue(commandQueue), clientMonitor(clientMonitor), carsWithActiveNitro(0), nitroActive(false), counterActive(0), keep_running(true) {}
 
 // void GameLoop::run() {
 //     const Milliseconds targetFrameTime(250);
@@ -32,19 +32,23 @@ GameLoop::GameLoop(Queue<ActionCode>& commandQueue, ClientMonitor& clientMonitor
 // }
 
 void GameLoop::run() {
-    while (should_keep_running()) {
-        auto frameStart = Clock::now();
-        
-        processCommands();
-        simulateGame();
-        
-        auto frameEnd = Clock::now();
-        auto frameDuration = std::chrono::duration_cast<Milliseconds>(frameEnd - frameStart);
-        auto sleepTime = Milliseconds(250) - frameDuration;
-        
-        if (sleepTime.count() > 0) {
-            std::this_thread::sleep_for(sleepTime);
+    try {
+        while (keep_running) {
+            auto frameStart = Clock::now();
+            
+            processCommands();
+            simulateGame();
+            
+            auto frameEnd = Clock::now();
+            auto frameDuration = std::chrono::duration_cast<Milliseconds>(frameEnd - frameStart);
+            auto sleepTime = Milliseconds(250) - frameDuration;
+            
+            if (sleepTime.count() > 0) {
+                std::this_thread::sleep_for(sleepTime);
+            }
         }
+    } catch (const ClosedQueue& e) {
+        keep_running = false;
     }
 }
 
@@ -99,9 +103,9 @@ std::vector<uint8_t> GameLoop::createNitroMessage(uint16_t carsWithActiveNitro, 
     return msg;
 }
 
-void GameLoop::stop() {
-    // _keep_running = false;
-    commandQueue.close();
+void GameLoop::close() {
+    // commandQueue.close();
+    keep_running = false;
 }
 
 GameLoop::~GameLoop() {}

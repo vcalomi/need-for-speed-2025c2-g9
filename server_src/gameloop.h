@@ -12,19 +12,18 @@ private:
     Queue<ActionCode>& commandQueue;    // Queue compartida (de los Receivers)
     ClientMonitor& clientMonitor;      // Para hacer broadcast
     uint16_t carsWithActiveNitro;
-    // std::atomic<bool> nitroActive;
     bool nitroActive;
     int counterActive;
+    std::atomic<bool> keep_running;
 
 public:
     GameLoop(Queue<ActionCode>& commandQueue, ClientMonitor& clientMonitor);
     void run() override;
+    void close();
     void broadcastNitroEvent(bool activated);
     void processCommands();
     void simulateGame();
     std::vector<uint8_t> createNitroMessage(uint16_t carsWithActiveNitro, bool activated);
-    void stop() override;
-    // void join();
     ~GameLoop();
 };
 

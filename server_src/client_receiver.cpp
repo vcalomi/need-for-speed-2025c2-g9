@@ -7,13 +7,19 @@
     2. Encola el comando nitro en la queue del game loop
 */
 
-ClientReceiver::ClientReceiver(Socket& socket, Queue<ActionCode>& gameLoopQueue) :
-    peer(socket), gameLoopQueue(gameLoopQueue), protocol(socket), keep_running(true) { start(); }
+ClientReceiver::ClientReceiver(ServerProtocol& serverProtocol, Queue<ActionCode>& gameLoopQueue) :
+    gameLoopQueue(gameLoopQueue), protocol(serverProtocol), keep_running(true) {}
 
 void ClientReceiver::run() {
-    while (keep_running) {
-        ActionCode command = protocol.receiveActionCode();
-        gameLoopQueue.try_push(command);
+    try {
+        while (keep_running) {
+            ActionCode command = protocol.tryReceiveActionCode();
+            gameLoopQueue.push(command);
+        }
+    } catch(const SocketClosed& e) {
+        keep_running = false;
+    } catch (const ClosedQueue& e) {
+        keep_running = false;
     }
 }
 

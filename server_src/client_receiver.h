@@ -5,17 +5,17 @@
 #include "../common_src/socket.h"
 #include "server_protocol.h"
 #include "../common_src/queue.h"
+#include "../common_src/socket_closed.h"
 
 class ClientReceiver : public Thread {
 private:
-    Socket& peer;
     Queue<ActionCode>& gameLoopQueue;
-    ServerProtocol protocol;
-    std::atomic<bool> keep_running;
+    ServerProtocol& protocol;
+    std::atomic_bool keep_running;
 
 public:
-    ClientReceiver(Socket& socket, Queue<ActionCode>& gameLoopQueue);
-    void run();
+    ClientReceiver(ServerProtocol& serverProtocol, Queue<ActionCode>& gameLoopQueue);
+    void run() override;
     ~ClientReceiver();
 };
 

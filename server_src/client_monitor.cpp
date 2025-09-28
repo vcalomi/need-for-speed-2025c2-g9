@@ -25,7 +25,6 @@ void ClientMonitor::removeQueue(Queue<std::vector<uint8_t>>* queue) {
 void ClientMonitor::broadcast(const std::vector<uint8_t>& message) {
     std::lock_guard<std::mutex> lock(mtx);
     
-    // Enviar mensaje a todas las queues
     for (auto* queue : clientQueues) {
         try {
             queue->push(message);

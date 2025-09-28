@@ -7,63 +7,43 @@
 #include <sys/socket.h>
 
 ClientHandler::ClientHandler(Socket socket, ClientMonitor& monitor, Queue<ActionCode>& queue)
-    : peer(std::move(socket)), gameLoopQueue(queue), clientMonitor(monitor), connected(true), protocol(peer) {
-        clientMonitor.addQueue(&sendQueue);
+    : peer(std::move(socket)), 
+    gameLoopQueue(queue), 
+    clientMonitor(monitor),
+    clientQueue(),
+    protocol(peer),
+    receiver(protocol, queue),
+    sender(protocol, clientQueue),
+    keep_running(true) {
+        clientMonitor.addQueue(&clientQueue);
 }
 
-void ClientHandler::run() {
-    while (should_keep_running() && connected) {
-        try {
-            // sender = std::make_unique<Sender>(peer);
-            // receiver = std::make_unique<Receiver>(peer);
-            handleInput();
-            handleOutput();
-        } catch(std::exception& e) {
-            connected = false;
-        }
-    }
+void ClientHandler::start() {
+    sender.start();
+    receiver.start();
 }
 
-void ClientHandler::handleInput() {    
-    if (peer.is_stream_recv_closed()) {
-        connected = false;
-        return;
-    }
-    ActionCode command = protocol.tryReceiveActionCode();
-    gameLoopQueue.push(command);
+void ClientHandler::join() {
+    receiver.join();
+    sender.join();
+    std::cout << "receiver unido" << std::endl;
+    std::cout << "sender unido" << std::endl;
 }
-
-void ClientHandler::handleOutput() {
-    // Enviar mensajes pendientes al cliente
-    std::vector<uint8_t> message;
-    while (sendQueue.try_pop(message)) {
-        try {
-            protocol.sendMsg(message);
-        } catch (...) {
-            connected = false;
-            break;
-        }
-    }
-}
-
-// void ClientHandler::stop() {
-//     if (receiver) receiver->stop();
-//     if (sender) sender->stop();
-
-//     if (receiver) receiver->join();
-//     if (sender) sender->join();
-// }
-
-bool ClientHandler::isConnected() {
-    return connected && !peer.is_stream_recv_closed();
-}
-
 
 void ClientHandler::stop() {
-    Thread::stop();
-    connected = false;
+    keep_running = false;
+    peer.shutdown(SHUT_RDWR);
+    clientQueue.close();
+    receiver.stop();
+    sender.stop();
 }
 
-ClientHandler::~ClientHandler() {
-    clientMonitor.removeQueue(&sendQueue);
+bool ClientHandler::isConnected() {
+    return keep_running && !peer.is_stream_recv_closed();
 }
+
+bool ClientHandler::is_alive() const {
+    return keep_running && receiver.is_alive() && sender.is_alive();
+}
+
+ClientHandler::~ClientHandler() { clientMonitor.removeQueue(&clientQueue); }

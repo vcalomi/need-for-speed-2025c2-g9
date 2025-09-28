@@ -10,8 +10,10 @@ void Client::run() {
     while (connected) {
         try {
             std::string command;
-            std::cout << "> ";
-            std::getline(std::cin, command);
+            if (!std::getline(std::cin, command)) {
+                connected = false;
+                break;
+            }
             
             processCommand(command);
             

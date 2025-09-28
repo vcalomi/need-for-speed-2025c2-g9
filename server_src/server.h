@@ -6,6 +6,7 @@
 #include "client_monitor.h"
 #include "gameloop.h"
 #include "../common_src/queue.h"
+#include "server_input_handler.h"
 
 class Server {
 private:
@@ -13,12 +14,12 @@ private:
     ClientMonitor clientMonitor;
     ClientAcceptor clientAcceptor;
     GameLoop gameLoop;
-    bool running;
+    ServerInputHandler inputHandler;
 
 public:
     Server(const std::string& port);
-    void run();
-    void stopServer();
+    int run();
+    void stop();
     ~Server();
 };
 

@@ -7,6 +7,7 @@
 
 #include "common_codes.h"
 #include "socket.h"
+#include "socket_closed.h"
 
 class CommonProtocol {
 public:

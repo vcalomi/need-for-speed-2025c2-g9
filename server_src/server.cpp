@@ -5,39 +5,31 @@ Server::Server(const std::string& port) :
      gameLoopQueue(100), 
      clientMonitor(), 
      clientAcceptor(port, clientMonitor, gameLoopQueue), 
-     gameLoop(gameLoopQueue, clientMonitor),  
-     running(true) {}
+     gameLoop(gameLoopQueue, clientMonitor),
+     inputHandler() {}
 
-void Server::run() {
-    // running = true;
+int Server::run() {
+    try {
+        inputHandler.start();
+        clientAcceptor.start();
+        gameLoop.start();
 
-    clientAcceptor.start(); // inicio el thread
-    gameLoop.start();
-    while(running) {
-        try {
-            // clientAcceptor.start(); // inicio el thread
-            if (std::cin.get() == 'q') { 
-                running = false;
-                break; 
-            }
-            // clientAcceptor.join();
-        } catch(const std::exception& e) {
-            continue;
-        }
-    }
-    stopServer();
+        inputHandler.join();
+        stop();
+    } catch (const std::exception& e) { stop(); }
+    return 0;
 }
 
-void Server::stopServer() {
-    running = false;
-    
-    // Detener los threads
-    clientAcceptor.stop();
+void Server::stop() {
+    clientAcceptor.close();
+    gameLoopQueue.close();
     gameLoop.stop();
-    
-    // Esperar a que terminen
+    // clientAcceptor.stop();
     clientAcceptor.join();
+    std::cout << "ClientAcceptor unido" << std::endl;
     gameLoop.join();
+    std::cout << "GameLoop unido" << std::endl;
+    clientAcceptor.clear();
 }
 
 Server::~Server() {}
