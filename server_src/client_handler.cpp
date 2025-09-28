@@ -6,13 +6,13 @@
 #include "client_handler.h"
 #include <sys/socket.h>
 
-ClientHandler::ClientHandler(Socket socket, ClientMonitor& monitor, Queue<ActionCode>& queue)
+ClientHandler::ClientHandler(Socket socket, ClientMonitor& monitor, Queue<ClientCommand>& queue, int clientId)
     : peer(std::move(socket)), 
     gameLoopQueue(queue), 
     clientMonitor(monitor),
     clientQueue(),
     protocol(peer),
-    receiver(protocol, queue),
+    receiver(protocol, queue, clientId),
     sender(protocol, clientQueue),
     keep_running(true) {
         clientMonitor.addQueue(&clientQueue);
@@ -26,8 +26,6 @@ void ClientHandler::start() {
 void ClientHandler::join() {
     receiver.join();
     sender.join();
-    std::cout << "receiver unido" << std::endl;
-    std::cout << "sender unido" << std::endl;
 }
 
 void ClientHandler::stop() {

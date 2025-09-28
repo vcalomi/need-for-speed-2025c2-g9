@@ -24,12 +24,7 @@ void ClientMonitor::removeQueue(Queue<std::vector<uint8_t>>* queue) {
 
 void ClientMonitor::broadcast(const std::vector<uint8_t>& message) {
     std::lock_guard<std::mutex> lock(mtx);
-    
     for (auto* queue : clientQueues) {
-        try {
-            queue->push(message);
-        } catch (const std::exception& e) {
-            continue;
-        }
+        queue->try_push(message);
     }
 }

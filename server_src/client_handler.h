@@ -8,11 +8,12 @@
 #include "client_receiver.h"
 #include "client_sender.h"
 #include "client_monitor.h"
+#include "../common_src/client_command.h"
 
 class ClientHandler {
 private:
     Socket peer;
-    Queue<ActionCode>& gameLoopQueue;
+    Queue<ClientCommand>& gameLoopQueue;
     ClientMonitor& clientMonitor;
     Queue<std::vector<uint8_t>> clientQueue;
     ServerProtocol protocol;
@@ -21,7 +22,7 @@ private:
     std::atomic_bool keep_running;
 
 public:
-    ClientHandler(Socket socket, ClientMonitor& monitor, Queue<ActionCode>& queue);
+    ClientHandler(Socket socket, ClientMonitor& monitor, Queue<ClientCommand>& queue, int clientId);
     void start();
     bool isConnected();
     void join();

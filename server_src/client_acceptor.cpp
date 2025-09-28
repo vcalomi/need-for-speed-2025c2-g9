@@ -8,11 +8,11 @@ Cada vez que llega un cliente, crea un ClientHandler con su peer socket
 Administra la vida de los ClientHandler (limpieza con reap() y clear())
 */
 
-ClientAcceptor::ClientAcceptor(const std::string& port, ClientMonitor& monitor, Queue<ActionCode>& queue) :
+ClientAcceptor::ClientAcceptor(const std::string& port, ClientMonitor& monitor, Queue<ClientCommand>& queue) :
     clientMonitor(monitor), 
     gameLoopQueue(queue),
-    acceptor(port.c_str()) {}
-    // keep_running(true) {}
+    acceptor(port.c_str()),
+    nextClientId(0) {}
 
 void ClientAcceptor::run() {
     while (should_keep_running()) {
@@ -21,7 +21,8 @@ void ClientAcceptor::run() {
             if (!should_keep_running()) {
                 break;  
             } 
-            ClientHandler* client = new ClientHandler(std::move(socket), clientMonitor, gameLoopQueue);
+            int clientId = nextClientId++;
+            ClientHandler* client = new ClientHandler(std::move(socket), clientMonitor, gameLoopQueue, clientId);
             reap();
             clients.push_back(client);
             client->start();
@@ -60,7 +61,6 @@ void ClientAcceptor::clear() {
 }
 
 void ClientAcceptor::close() {
-    // keep_running = false;
     this->stop();
     acceptor.shutdown(SHUT_RDWR);
     acceptor.close();

@@ -18,7 +18,7 @@ void ServerProtocol::sendMsg(const std::vector<uint8_t>& message) {
 }
 
 ActionCode ServerProtocol::tryReceiveActionCode() {
-    return protocol.tryReceiveAction(socket);  // Non-blocking
+    return protocol.tryReceiveAction(socket);
 }
 
 ServerProtocol::~ServerProtocol() {}

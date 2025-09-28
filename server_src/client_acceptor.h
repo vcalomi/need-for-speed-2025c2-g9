@@ -7,17 +7,18 @@
 #include "client_handler.h"
 #include "client_monitor.h"
 #include "../common_src/liberror.h"
+#include "../common_src/client_command.h"
 
 class ClientAcceptor : public Thread {
 private:
     ClientMonitor& clientMonitor;
-    Queue<ActionCode>& gameLoopQueue;
+    Queue<ClientCommand>& gameLoopQueue;
     Socket acceptor;
-    // std::atomic<bool> keep_running;
+    std::atomic<int> nextClientId;
     std::vector<ClientHandler*> clients;
 
 public:
-    ClientAcceptor(const std::string& port,  ClientMonitor& monitor, Queue<ActionCode>& queue);
+    ClientAcceptor(const std::string& port,  ClientMonitor& monitor, Queue<ClientCommand>& queue);
     void run() override;
     void close();
     void reap();

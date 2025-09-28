@@ -24,11 +24,8 @@ void Server::stop() {
     clientAcceptor.close();
     gameLoopQueue.close();
     gameLoop.stop();
-    // clientAcceptor.stop();
     clientAcceptor.join();
-    std::cout << "ClientAcceptor unido" << std::endl;
     gameLoop.join();
-    std::cout << "GameLoop unido" << std::endl;
     clientAcceptor.clear();
 }
 

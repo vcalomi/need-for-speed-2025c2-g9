@@ -7,10 +7,11 @@
 #include "gameloop.h"
 #include "../common_src/queue.h"
 #include "server_input_handler.h"
+#include "../common_src/client_command.h"
 
 class Server {
 private:
-    Queue<ActionCode> gameLoopQueue;
+    Queue<ClientCommand> gameLoopQueue;
     ClientMonitor clientMonitor;
     ClientAcceptor clientAcceptor;
     GameLoop gameLoop;
