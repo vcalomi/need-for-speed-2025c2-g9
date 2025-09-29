@@ -27,7 +27,7 @@ void Client::processCommand(const std::string& command) {
         connected = false;
     } else if (command == "nitro") {
         clientProtocol.sendNitro();
-    } else if (command.compare(0, 5, "read ")) {
+    } else if (command.compare(0, 5, "read ") == 0) {
         std::stringstream ss(command);
         std::string cmd;
         int count = 0;
