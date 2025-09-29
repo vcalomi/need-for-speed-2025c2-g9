@@ -14,7 +14,6 @@ class ClientSender: public Thread {
 private:
     Queue<std::vector<uint8_t>>& clientQueue;
     ServerProtocol& protocol;
-    std::atomic<bool> keep_running;
 
 public:
     explicit ClientSender(ServerProtocol& serverProtocol, Queue<std::vector<uint8_t>>& clientQueue);

@@ -15,13 +15,11 @@ class GameLoop: public Thread {
 private:
     Queue<ClientCommand>& commandQueue;
     ClientMonitor& clientMonitor;
-    std::atomic<bool> keep_running;
     std::map<int, NitroState> nitroStates;
 
 public:
     GameLoop(Queue<ClientCommand>& commandQueue, ClientMonitor& clientMonitor);
     void run() override;
-    void close();
     void broadcastNitroEvent(uint16_t carsWithActiveNitro, bool activated);
     void processCommands();
     void simulateGame();

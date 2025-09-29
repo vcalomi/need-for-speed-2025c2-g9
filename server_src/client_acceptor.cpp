@@ -62,4 +62,4 @@ void ClientAcceptor::close() {
     acceptor.close();
 }
 
-ClientAcceptor::~ClientAcceptor() {}
+ClientAcceptor::~ClientAcceptor() { clear(); }

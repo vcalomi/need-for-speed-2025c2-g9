@@ -5,6 +5,7 @@
 
 #include "../common_src/client_command.h"
 #include "../common_src/socket.h"
+#include "../common_src/socket_closed.h"
 #include "../common_src/thread.h"
 
 #include "client_handler.h"
@@ -27,7 +28,6 @@ private:
 public:
     ClientHandler(Socket socket, ClientMonitor& monitor, Queue<ClientCommand>& queue, int clientId);
     void start();
-    bool isConnected();
     void join();
     void stop();
     bool is_alive() const;

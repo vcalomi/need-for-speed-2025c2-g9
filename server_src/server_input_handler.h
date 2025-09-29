@@ -12,7 +12,6 @@ private:
 public:
     ServerInputHandler();
     void run() override;
-    bool should_stop_server() const;
 };
 
 #endif

@@ -13,7 +13,6 @@ class ClientReceiver: public Thread {
 private:
     Queue<ClientCommand>& gameLoopQueue;
     ServerProtocol& protocol;
-    std::atomic_bool keep_running;
     int clientId;
 
 public:

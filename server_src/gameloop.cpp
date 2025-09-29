@@ -13,11 +13,11 @@ using Clock = std::chrono::steady_clock;
 using Milliseconds = std::chrono::milliseconds;
 
 GameLoop::GameLoop(Queue<ClientCommand>& commandQueue, ClientMonitor& clientMonitor):
-        commandQueue(commandQueue), clientMonitor(clientMonitor), keep_running(true) {}
+        commandQueue(commandQueue), clientMonitor(clientMonitor) {}
 
 void GameLoop::run() {
     try {
-        while (keep_running) {
+        while (should_keep_running()) {
             auto frameStart = Clock::now();
 
             processCommands();
@@ -31,9 +31,7 @@ void GameLoop::run() {
                 std::this_thread::sleep_for(sleepTime);
             }
         }
-    } catch (const ClosedQueue& e) {
-        keep_running = false;
-    }
+    } catch (const ClosedQueue& e) {}
 }
 
 void GameLoop::processCommands() {
@@ -109,7 +107,5 @@ std::vector<uint8_t> GameLoop::createNitroMessage(uint16_t carsWithActiveNitro, 
 
     return msg;
 }
-
-void GameLoop::close() { keep_running = false; }
 
 GameLoop::~GameLoop() {}

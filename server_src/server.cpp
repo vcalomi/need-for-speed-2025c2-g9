@@ -27,11 +27,10 @@ int Server::run() {
 
 void Server::stop() {
     clientAcceptor.close();
+    clientAcceptor.join();
     gameLoopQueue.close();
     gameLoop.stop();
-    clientAcceptor.join();
     gameLoop.join();
-    clientAcceptor.clear();
 }
 
 Server::~Server() {}

@@ -34,14 +34,13 @@ void ClientHandler::join() {
 }
 
 void ClientHandler::stop() {
-    keep_running = false;
-    peer.shutdown(SHUT_RDWR);
+    try {
+        peer.shutdown(SHUT_RDWR);
+    } catch (const SocketClosed& e) {}
     clientQueue.close();
     receiver.stop();
     sender.stop();
 }
-
-bool ClientHandler::isConnected() { return keep_running && !peer.is_stream_recv_closed(); }
 
 bool ClientHandler::is_alive() const {
     return keep_running && receiver.is_alive() && sender.is_alive();

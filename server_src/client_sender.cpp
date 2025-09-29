@@ -8,18 +8,18 @@
 
 ClientSender::ClientSender(ServerProtocol& serverProtocol,
                            Queue<std::vector<uint8_t>>& clientQueue):
-        clientQueue(clientQueue), protocol(serverProtocol), keep_running(true) {}
+        clientQueue(clientQueue), protocol(serverProtocol) {}
 
 void ClientSender::run() {
     try {
-        while (keep_running) {
+        while (should_keep_running()) {
             std::vector<uint8_t> message = clientQueue.pop();
             protocol.sendMsg(message);
         }
     } catch (const ClosedQueue& e) {
-        keep_running = false;
+        return;
     } catch (const SocketClosed& e) {
-        keep_running = false;
+        return;
     }
 }
 ClientSender::~ClientSender() {}
