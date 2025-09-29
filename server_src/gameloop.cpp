@@ -11,32 +11,27 @@
 
 using Clock = std::chrono::steady_clock;
 using Milliseconds = std::chrono::milliseconds;
+using Seconds = std::chrono::seconds;
 
-GameLoop::GameLoop(Queue<ClientCommand>& commandQueue, ClientMonitor& clientMonitor):
-        commandQueue(commandQueue), clientMonitor(clientMonitor) {}
+GameLoop::GameLoop(Queue<ClientCommand>& gameLoopQueue, ClientMonitor& clientMonitor):
+        gameLoopQueue(gameLoopQueue), clientMonitor(clientMonitor) {}
 
 void GameLoop::run() {
     try {
         while (should_keep_running()) {
-            auto frameStart = Clock::now();
-
             processCommands();
             simulateGame();
 
-            auto frameEnd = Clock::now();
-            auto frameDuration = std::chrono::duration_cast<Milliseconds>(frameEnd - frameStart);
-            auto sleepTime = Milliseconds(250) - frameDuration;
-
-            if (sleepTime.count() > 0) {
-                std::this_thread::sleep_for(sleepTime);
-            }
+            std::this_thread::sleep_for(Milliseconds(250));
         }
-    } catch (const ClosedQueue& e) {}
+    } catch (const ClosedQueue& e) {
+        return;
+    }
 }
 
 void GameLoop::processCommands() {
     ClientCommand command;
-    while (commandQueue.try_pop(command)) {
+    while (gameLoopQueue.try_pop(command)) {
         if (command.action == ActionCode::ACTIVATE_NITRO) {
             processNitroCommand(command.clientId);
         }
@@ -57,19 +52,21 @@ void GameLoop::processNitroCommand(int clientId) {
 }
 
 int GameLoop::countActiveNitro() {
-    return std::count_if(nitroStates.begin(), nitroStates.end(),
-                         [](const auto& pair) { return pair.second.isActive; });
+    return std::count_if(nitroStates.begin(), nitroStates.end(), [](const auto& pair) {
+        auto& [clientId, state] = pair;
+        return state.isActive;
+    });
 }
 
 void GameLoop::simulateGame() {
     auto now = Clock::now();
     std::vector<int> toDeactivate;
-    for (auto& pair: nitroStates) {
-        NitroState& state = pair.second;
-        if (state.isActive) {
-            auto duration = std::chrono::duration_cast<Milliseconds>(now - state.activationTime);
 
-            if (duration.count() >= 3000) {
+    for (auto& [clientId, state]: nitroStates) {
+        if (state.isActive) {
+            auto duration = now - state.activationTime;
+
+            if (duration >= Seconds(3)) {
                 toDeactivate.push_back(state.clientId);
             }
         }

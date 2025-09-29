@@ -12,10 +12,9 @@
 class CommonProtocol {
 public:
     void sendAction(Socket& Socket, ActionCode action);
-    ActionCode tryReceiveAction(Socket& socket);
     ActionCode receiveAction(Socket& socket);
-    void sendBuffer(Socket& socket, const std::vector<uint8_t>& buffer);
-    void receiveBuffer(Socket& socket, std::vector<uint8_t>& buffer);
+    void sendMessage(Socket& socket, const std::vector<uint8_t>& msg);
+    void receiveMessage(Socket& socket, std::vector<uint8_t>& msg);
     ~CommonProtocol();
 };
 

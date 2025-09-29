@@ -1,29 +1,29 @@
-==00:00:00:00.000 27875== Memcheck, a memory error detector
-==00:00:00:00.000 27875== Copyright (C) 2002-2022, and GNU GPL'd, by Julian Seward et al.
-==00:00:00:00.000 27875== Using Valgrind-3.22.0 and LibVEX; rerun with -h for copyright info
-==00:00:00:00.000 27875== Command: ./client 127.0.0.1 1509
-==00:00:00:00.000 27875== Parent PID: 27873
-==00:00:00:00.000 27875== 
-==00:00:00:08.160 27875== 
-==00:00:00:08.160 27875== FILE DESCRIPTORS: 7 open (3 std) at exit.
-==00:00:00:08.160 27875== Open file descriptor 103: /snap/code/207/usr/share/code/v8_context_snapshot.bin
-==00:00:00:08.160 27875==    <inherited from parent>
-==00:00:00:08.160 27875== 
-==00:00:00:08.160 27875== Open AF_UNIX socket 41: <unknown>
-==00:00:00:08.160 27875==    <inherited from parent>
-==00:00:00:08.160 27875== 
-==00:00:00:08.160 27875== Open file descriptor 40: /home/juana-pc/.config/Code/logs/20250929T112003/ptyhost.log
-==00:00:00:08.160 27875==    <inherited from parent>
-==00:00:00:08.160 27875== 
-==00:00:00:08.160 27875== Open file descriptor 3: /home/juana-pc/Documentos/taller/threads/casos/04_three_players_use_nitro_twice/__client_0_valgrind__
-==00:00:00:08.160 27875==    <inherited from parent>
-==00:00:00:08.160 27875== 
-==00:00:00:08.160 27875== 
-==00:00:00:08.160 27875== HEAP SUMMARY:
-==00:00:00:08.160 27875==     in use at exit: 0 bytes in 0 blocks
-==00:00:00:08.160 27875==   total heap usage: 12 allocs, 12 frees, 82,016 bytes allocated
-==00:00:00:08.160 27875== 
-==00:00:00:08.160 27875== All heap blocks were freed -- no leaks are possible
-==00:00:00:08.160 27875== 
-==00:00:00:08.160 27875== For lists of detected and suppressed errors, rerun with: -s
-==00:00:00:08.160 27875== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)
+==00:00:00:00.000 50248== Memcheck, a memory error detector
+==00:00:00:00.000 50248== Copyright (C) 2002-2022, and GNU GPL'd, by Julian Seward et al.
+==00:00:00:00.000 50248== Using Valgrind-3.22.0 and LibVEX; rerun with -h for copyright info
+==00:00:00:00.000 50248== Command: ./client 127.0.0.1 1509
+==00:00:00:00.000 50248== Parent PID: 50246
+==00:00:00:00.000 50248== 
+==00:00:00:08.232 50248== 
+==00:00:00:08.232 50248== FILE DESCRIPTORS: 7 open (3 std) at exit.
+==00:00:00:08.232 50248== Open file descriptor 103: /snap/code/207/usr/share/code/v8_context_snapshot.bin
+==00:00:00:08.232 50248==    <inherited from parent>
+==00:00:00:08.232 50248== 
+==00:00:00:08.232 50248== Open AF_UNIX socket 41: <unknown>
+==00:00:00:08.232 50248==    <inherited from parent>
+==00:00:00:08.232 50248== 
+==00:00:00:08.232 50248== Open file descriptor 40: /home/juana-pc/.config/Code/logs/20250929T112003/ptyhost.log
+==00:00:00:08.232 50248==    <inherited from parent>
+==00:00:00:08.232 50248== 
+==00:00:00:08.232 50248== Open file descriptor 3: /home/juana-pc/Documentos/taller/threads/casos/04_three_players_use_nitro_twice/__client_0_valgrind__
+==00:00:00:08.232 50248==    <inherited from parent>
+==00:00:00:08.232 50248== 
+==00:00:00:08.232 50248== 
+==00:00:00:08.232 50248== HEAP SUMMARY:
+==00:00:00:08.232 50248==     in use at exit: 0 bytes in 0 blocks
+==00:00:00:08.232 50248==   total heap usage: 12 allocs, 12 frees, 82,016 bytes allocated
+==00:00:00:08.232 50248== 
+==00:00:00:08.232 50248== All heap blocks were freed -- no leaks are possible
+==00:00:00:08.232 50248== 
+==00:00:00:08.232 50248== For lists of detected and suppressed errors, rerun with: -s
+==00:00:00:08.232 50248== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)

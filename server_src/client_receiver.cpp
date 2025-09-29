@@ -11,14 +11,14 @@ ClientReceiver::ClientReceiver(ServerProtocol& serverProtocol, Queue<ClientComma
 void ClientReceiver::run() {
     try {
         while (should_keep_running()) {
-            ActionCode action = protocol.tryReceiveActionCode();
+            ActionCode action = protocol.receiveActionCode();
             ClientCommand command = {action, clientId};
-            gameLoopQueue.push(command);
+            gameLoopQueue.try_push(command);
         }
     } catch (const SocketClosed& e) {
-        // keep_running = false;
+        return;
     } catch (const ClosedQueue& e) {
-        // keep_running = false;
+        return;
     }
 }
 

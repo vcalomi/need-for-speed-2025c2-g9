@@ -34,6 +34,7 @@ void ClientHandler::join() {
 }
 
 void ClientHandler::stop() {
+    keep_running = false;
     try {
         peer.shutdown(SHUT_RDWR);
     } catch (const SocketClosed& e) {}

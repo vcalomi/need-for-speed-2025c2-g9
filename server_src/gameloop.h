@@ -11,9 +11,15 @@
 #include "../common_src/thread.h"
 
 #include "client_monitor.h"
+
+/*
+    commandQueue debe ser non-blocking y bounded ya que no puede bloquearse y que ni crecer
+   indefinidamente
+*/
+
 class GameLoop: public Thread {
 private:
-    Queue<ClientCommand>& commandQueue;
+    Queue<ClientCommand>& gameLoopQueue;
     ClientMonitor& clientMonitor;
     std::map<int, NitroState> nitroStates;
 

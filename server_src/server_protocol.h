@@ -15,7 +15,6 @@ private:
 public:
     explicit ServerProtocol(Socket& socket);
     ActionCode receiveActionCode();
-    ActionCode tryReceiveActionCode();
     void sendMsg(const std::vector<uint8_t>& message);
     ~ServerProtocol();
 };

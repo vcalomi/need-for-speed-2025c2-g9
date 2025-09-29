@@ -13,24 +13,18 @@ void CommonProtocol::sendAction(Socket& socket, ActionCode action) {
     socket.sendall(&parsed, sizeof(parsed));
 }
 
-ActionCode CommonProtocol::receiveAction(Socket& socket) {
-    uint8_t action = 0;
-    socket.recvall(&action, 1);
-    return ActionCode(action);
-}
-
-void CommonProtocol::sendBuffer(Socket& socket, const std::vector<uint8_t>& message) {
+void CommonProtocol::sendMessage(Socket& socket, const std::vector<uint8_t>& message) {
     int sent_bytes = socket.sendall(message.data(), message.size());
     if (sent_bytes <= 0) {
         throw SocketClosed();
     }
 }
 
-void CommonProtocol::receiveBuffer(Socket& socket, std::vector<uint8_t>& buffer) {
-    socket.recvall(buffer.data(), buffer.size());
+void CommonProtocol::receiveMessage(Socket& socket, std::vector<uint8_t>& msg) {
+    socket.recvall(msg.data(), msg.size());
 }
 
-ActionCode CommonProtocol::tryReceiveAction(Socket& socket) {
+ActionCode CommonProtocol::receiveAction(Socket& socket) {
     uint8_t action = 0;
     int received = socket.recvsome(&action, 1);
     if (received <= 0) {

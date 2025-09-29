@@ -8,15 +8,10 @@
 
 ServerProtocol::ServerProtocol(Socket& socket): socket(socket), protocol() {}
 
-ActionCode ServerProtocol::receiveActionCode() {
-    ActionCode actionCode = protocol.receiveAction(socket);
-    return actionCode;
-}
-
 void ServerProtocol::sendMsg(const std::vector<uint8_t>& message) {
-    protocol.sendBuffer(socket, message);
+    protocol.sendMessage(socket, message);
 }
 
-ActionCode ServerProtocol::tryReceiveActionCode() { return protocol.tryReceiveAction(socket); }
+ActionCode ServerProtocol::receiveActionCode() { return protocol.receiveAction(socket); }
 
 ServerProtocol::~ServerProtocol() {}

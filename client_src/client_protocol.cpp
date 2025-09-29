@@ -9,7 +9,7 @@ void ClientProtocol::sendNitro() { protocol.sendAction(socket, ActionCode::ACTIV
 
 std::vector<uint8_t> ClientProtocol::receiveMessage() {
     std::vector<uint8_t> message(4);
-    protocol.receiveBuffer(socket, message);
+    protocol.receiveMessage(socket, message);
     return message;
 }
 
