@@ -13,15 +13,15 @@ void CommonProtocol::sendAction(Socket& socket, ActionCode action) {
     socket.sendall(&parsed, sizeof(parsed));
 }
 
-void CommonProtocol::sendMessage(Socket& socket, const std::vector<uint8_t>& message) {
-    int sent_bytes = socket.sendall(message.data(), message.size());
-    if (sent_bytes <= 0) {
-        throw SocketClosed();
-    }
+void CommonProtocol::sendUint16(Socket& socket, uint16_t number) {
+    uint16_t parsed = htons(number);
+    socket.sendall(&parsed, sizeof(parsed));
 }
 
-void CommonProtocol::receiveMessage(Socket& socket, std::vector<uint8_t>& msg) {
-    socket.recvall(msg.data(), msg.size());
+u_int16_t CommonProtocol::receiveUint16(Socket& socket) {
+    uint16_t num;
+    socket.recvall(&num, sizeof(num));
+    return ntohs(num);
 }
 
 ActionCode CommonProtocol::receiveAction(Socket& socket) {

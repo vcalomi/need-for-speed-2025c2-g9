@@ -3,6 +3,7 @@
 
 #include <vector>
 
+#include "../common_src/nitro_message.h"
 #include "../common_src/queue.h"
 #include "../common_src/socket.h"
 #include "../common_src/socket_closed.h"
@@ -18,11 +19,11 @@
 
 class ClientSender: public Thread {
 private:
-    Queue<std::vector<uint8_t>>& clientQueue;
+    Queue<NitroMessage>& clientQueue;
     ServerProtocol& protocol;
 
 public:
-    explicit ClientSender(ServerProtocol& serverProtocol, Queue<std::vector<uint8_t>>& clientQueue);
+    explicit ClientSender(ServerProtocol& serverProtocol, Queue<NitroMessage>& clientQueue);
     void run() override;
     ~ClientSender();
 };

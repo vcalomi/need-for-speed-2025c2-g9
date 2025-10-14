@@ -6,14 +6,13 @@
 
 #include "../common_src/common_codes.h"
 
-ClientSender::ClientSender(ServerProtocol& serverProtocol,
-                           Queue<std::vector<uint8_t>>& clientQueue):
+ClientSender::ClientSender(ServerProtocol& serverProtocol, Queue<NitroMessage>& clientQueue):
         clientQueue(clientQueue), protocol(serverProtocol) {}
 
 void ClientSender::run() {
     try {
         while (should_keep_running()) {
-            std::vector<uint8_t> message = clientQueue.pop();
+            NitroMessage message = clientQueue.pop();
             protocol.sendMsg(message);
         }
     } catch (const ClosedQueue& e) {

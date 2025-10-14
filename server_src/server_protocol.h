@@ -5,6 +5,7 @@
 #include <vector>
 
 #include "../common_src/common_protocol.h"
+#include "../common_src/nitro_message.h"
 #include "../common_src/socket.h"
 
 class ServerProtocol {
@@ -15,7 +16,7 @@ private:
 public:
     explicit ServerProtocol(Socket& socket);
     ActionCode receiveActionCode();
-    void sendMsg(const std::vector<uint8_t>& message);
+    void sendMsg(const NitroMessage& message);
     ~ServerProtocol();
 };
 

@@ -11,6 +11,7 @@
 #include "../common_src/thread.h"
 
 #include "client_monitor.h"
+#include "message_parser.h"
 
 /*
     commandQueue debe ser non-blocking y bounded ya que no puede bloquearse y que ni crecer
@@ -22,6 +23,7 @@ private:
     Queue<ClientCommand>& gameLoopQueue;
     ClientMonitor& clientMonitor;
     std::map<int, NitroState> nitroStates;
+    MessageParser messageParser;
 
 public:
     GameLoop(Queue<ClientCommand>& commandQueue, ClientMonitor& clientMonitor);
@@ -31,7 +33,6 @@ public:
     void simulateGame();
     int countActiveNitro();
     void processNitroCommand(int clientId);
-    std::vector<uint8_t> createNitroMessage(uint16_t carsWithActiveNitro, bool activated);
     ~GameLoop();
 };
 

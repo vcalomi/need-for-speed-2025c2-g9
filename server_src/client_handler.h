@@ -4,6 +4,7 @@
 #include <vector>
 
 #include "../common_src/client_command.h"
+#include "../common_src/nitro_message.h"
 #include "../common_src/socket.h"
 #include "../common_src/socket_closed.h"
 #include "../common_src/thread.h"
@@ -19,7 +20,7 @@ private:
     Socket peer;
     Queue<ClientCommand>& gameLoopQueue;
     ClientMonitor& clientMonitor;
-    Queue<std::vector<uint8_t>> clientQueue;
+    Queue<NitroMessage> clientQueue;
     ServerProtocol protocol;
     ClientReceiver receiver;
     ClientSender sender;

@@ -5,6 +5,7 @@
 #include <vector>
 
 #include "../common_src/common_protocol.h"
+#include "../common_src/nitro_message.h"
 #include "../common_src/socket.h"
 
 class ClientProtocol {
@@ -15,7 +16,7 @@ private:
 public:
     ClientProtocol(const std::string& hostname, const std::string& port);
     void sendNitro();
-    std::vector<uint8_t> receiveMessage();
+    NitroMessage receiveMessage();
     ~ClientProtocol();
 };
 

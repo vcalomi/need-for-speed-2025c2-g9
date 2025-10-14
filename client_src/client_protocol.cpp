@@ -7,10 +7,12 @@ ClientProtocol::ClientProtocol(const std::string& hostname, const std::string& p
 
 void ClientProtocol::sendNitro() { protocol.sendAction(socket, ActionCode::ACTIVATE_NITRO); }
 
-std::vector<uint8_t> ClientProtocol::receiveMessage() {
-    std::vector<uint8_t> message(4);
-    protocol.receiveMessage(socket, message);
-    return message;
+NitroMessage ClientProtocol::receiveMessage() {
+    NitroMessage msg;
+    msg.msgCode = protocol.receiveAction(socket);
+    msg.carsWithNitro = protocol.receiveUint16(socket);
+    msg.nitroState = protocol.receiveAction(socket);
+    return msg;
 }
 
 ClientProtocol::~ClientProtocol() {}

@@ -82,7 +82,7 @@ void GameLoop::simulateGame() {
 }
 
 void GameLoop::broadcastNitroEvent(uint16_t carsWithActiveNitro, bool activated) {
-    auto msg = createNitroMessage(carsWithActiveNitro, activated);
+    auto msg = messageParser.createNitroMessage(carsWithActiveNitro, activated);
     clientMonitor.broadcast(msg);
 
     if (activated) {
@@ -90,19 +90,6 @@ void GameLoop::broadcastNitroEvent(uint16_t carsWithActiveNitro, bool activated)
     } else {
         std::cout << "A car is out of juice." << std::endl;
     }
-}
-
-std::vector<uint8_t> GameLoop::createNitroMessage(uint16_t carsWithActiveNitro, bool activated) {
-    std::vector<uint8_t> msg;
-    msg.resize(4);
-    msg[0] = uint8_t(ActionCode::SERVER_MSG);
-    uint16_t parsed = htons(carsWithActiveNitro);
-    std::memcpy(&msg[1], &parsed, sizeof(parsed));
-
-    msg[3] = activated ? uint8_t(ActionCode::NITRO_ACTIVATED) :
-                         uint8_t(ActionCode::NITRO_DEACTIVATED);
-
-    return msg;
 }
 
 GameLoop::~GameLoop() {}

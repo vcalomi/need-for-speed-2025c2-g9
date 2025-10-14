@@ -36,7 +36,7 @@ void ClientHandler::join() {
 void ClientHandler::stop() {
     keep_running = false;
     try {
-        peer.shutdown(SHUT_RDWR);
+        peer.close();
     } catch (const SocketClosed& e) {}
     clientQueue.close();
     receiver.stop();

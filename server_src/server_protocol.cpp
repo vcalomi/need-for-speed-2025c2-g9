@@ -8,8 +8,10 @@
 
 ServerProtocol::ServerProtocol(Socket& socket): socket(socket), protocol() {}
 
-void ServerProtocol::sendMsg(const std::vector<uint8_t>& message) {
-    protocol.sendMessage(socket, message);
+void ServerProtocol::sendMsg(const NitroMessage& message) {
+    protocol.sendAction(socket, message.msgCode);
+    protocol.sendUint16(socket, message.carsWithNitro);
+    protocol.sendAction(socket, message.nitroState);
 }
 
 ActionCode ServerProtocol::receiveActionCode() { return protocol.receiveAction(socket); }

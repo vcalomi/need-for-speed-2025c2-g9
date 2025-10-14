@@ -3,18 +3,19 @@
 
 #include <vector>
 
+#include "../common_src/nitro_message.h"
 #include "../common_src/queue.h"
 
 class ClientMonitor {
 private:
     std::mutex mtx;
-    std::vector<Queue<std::vector<uint8_t>>*> clientQueues;
+    std::vector<Queue<NitroMessage>*> clientQueues;
 
 public:
     ClientMonitor();
-    void addQueue(Queue<std::vector<uint8_t>>* queue);
-    void removeQueue(const Queue<std::vector<uint8_t>>* queue);
-    void broadcast(const std::vector<uint8_t>& message);
+    void addQueue(Queue<NitroMessage>* queue);
+    void removeQueue(const Queue<NitroMessage>* queue);
+    void broadcast(const NitroMessage& message);
 };
 
 #endif

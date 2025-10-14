@@ -7,12 +7,12 @@
 
 ClientMonitor::ClientMonitor(): clientQueues() {}
 
-void ClientMonitor::addQueue(Queue<std::vector<uint8_t>>* queue) {
+void ClientMonitor::addQueue(Queue<NitroMessage>* queue) {
     std::lock_guard<std::mutex> lock(mtx);
     clientQueues.push_back(queue);
 }
 
-void ClientMonitor::removeQueue(const Queue<std::vector<uint8_t>>* queue) {
+void ClientMonitor::removeQueue(const Queue<NitroMessage>* queue) {
     std::lock_guard<std::mutex> lock(mtx);
 
     for (auto it = clientQueues.begin(); it != clientQueues.end();) {
@@ -24,7 +24,7 @@ void ClientMonitor::removeQueue(const Queue<std::vector<uint8_t>>* queue) {
     }
 }
 
-void ClientMonitor::broadcast(const std::vector<uint8_t>& message) {
+void ClientMonitor::broadcast(const NitroMessage& message) {
     std::lock_guard<std::mutex> lock(mtx);
     for (auto* queue: clientQueues) {
         queue->try_push(message);
