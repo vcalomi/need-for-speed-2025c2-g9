@@ -1,6 +1,9 @@
-#include "common/foo.h"
 #include <iostream>
-int main() { 
-    
+
+#include "common/foo.h"
+int main() {
+
     std::cout << "Hello, World!" << std::endl;
-    return foo(6); }
+    std::cout << "Hello, VALENNNN!" << std::endl;
+    return foo(6);
+}
