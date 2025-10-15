@@ -1,2 +1,39 @@
+# === CMake build folders ===
 build/
+build*/
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+Makefile
+compile_commands.json
+
+# === Binaries ===
+*.o
+*.obj
+*.so
+*.a
+*.exe
+*.out
+*.app
+
+# === Executables ===
+taller_client
+taller_server
+taller_editor
+taller_tests
+
+# === SDL, testing and generated deps ===
+_deps/
+lib/
+bin/
+*.log
+
+# === Tags, IDE and editor files ===
+tags
 tags.*
+*.swp
+*.swo
+*.user
+*.vscode/
+.idea/
+*.DS_Store
