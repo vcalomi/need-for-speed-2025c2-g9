@@ -12,4 +12,4 @@ public:
     explicit Acceptor(const char* port);
     ~Acceptor();
     void run() override;
-}
+};
