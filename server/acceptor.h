@@ -1,16 +1,15 @@
-#pragma once 
+#pragma once
 
-#include "../common/thread.h"
 #include "../common/socket.h"
+#include "../common/thread.h"
 
-class Acceptor : public Thread {
-    
-    private:
-        
-        Socket listen_socket_;
-    public:
-        Acceptor(const char* port);
-        ~Acceptor();
-        void run() override;
-        void stop() override;
+class Acceptor: public Thread {
+
+private:
+    Socket listen_socket_;
+
+public:
+    explicit Acceptor(const char* port);
+    ~Acceptor();
+    void run() override;
 }

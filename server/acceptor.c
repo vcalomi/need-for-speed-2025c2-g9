@@ -1,10 +1,12 @@
 #include "./acceptor.h"
+#include <iostream>
 
 Acceptor::Acceptor(const char* port): listen_socket_(port){}
 
 Acceptor::run() {
     while(should_keep_running()){
         Socket client = listen_socket_.accept() // en caso de error lanza excepcion
+        std::cout << "New client connection" << std::endl;
         // creo queue que va a usar el handler con el cliente
         // creo client hanlder que toma como parametro y socket, y la queue de conexion con el cliente
         // agrego la queue del cliente al monitor

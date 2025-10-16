@@ -1,4 +1,4 @@
-#include <exception>
+/*#include <exception>
 #include <iostream>
 
 #include <SDL2/SDL.h>
@@ -38,3 +38,4 @@ int main() try {
     std::cerr << e.what() << std::endl;
     return 1;
 }
+*/
