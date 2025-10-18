@@ -1,0 +1,8 @@
+<RCC>
+    <qresource prefix="/">
+        <file>loby_image.jpg</file>
+        <file>Tektur-SemiBold.ttf</file>
+        <file>Tektur_Condensed-Bold.ttf</file>
+    </qresource>
+</RCC>
+
