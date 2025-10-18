@@ -6,6 +6,9 @@ CMakeCache.txt
 cmake_install.cmake
 Makefile
 compile_commands.json
+# Ignorar carpetas de build locales
+/build/
+/cmake-build-debug/
 
 # === Binaries ===
 *.o
