@@ -6,6 +6,7 @@ target_sources(taller_common
     resolver.cpp
     resolvererror.cpp
     socket.cpp
+    protocol.cpp
     PUBLIC
     # .h files
     foo.h
@@ -15,4 +16,7 @@ target_sources(taller_common
     resolvererror.h
     socket.h
     thread.h
+    protocol.h
+    command.h
+    event.h
     )
