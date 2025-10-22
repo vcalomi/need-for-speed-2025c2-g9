@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>Loby</class>
- <widget class="QMainWindow" name="Loby">
+ <class>Lobby</class>
+ <widget class="QMainWindow" name="Lobby">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -11,62 +11,384 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>MainWindow</string>
+   <string>Need for Speed - Lobby</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <widget class="QLineEdit" name="portInput">
-    <property name="geometry">
-     <rect>
-      <x>710</x>
-      <y>210</y>
-      <width>271</width>
-      <height>41</height>
-     </rect>
-    </property>
-   </widget>
-   <widget class="QLineEdit" name="hostInput">
-    <property name="geometry">
-     <rect>
-      <x>220</x>
-      <y>210</y>
-      <width>271</width>
-      <height>41</height>
-     </rect>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="connectButton">
-    <property name="geometry">
-     <rect>
-      <x>520</x>
-      <y>390</y>
-      <width>171</width>
-      <height>51</height>
-     </rect>
-    </property>
-    <property name="styleSheet">
-     <string notr="true">QPushButton {
-    background-color: #ff6600;
-    color: white;
-    font-weight: bold;
-    font-size: 17px;
-    border: none;
-    border-radius: 10px;
-    padding: 8px 16px;
-}
-
-QPushButton:hover {
-    background-color: #ff8533;
-}
-
-QPushButton:pressed {
-    background-color: #cc5200;
-}
-</string>
-    </property>
-    <property name="text">
-     <string>Connect</string>
-    </property>
-   </widget>
+   <layout class="QVBoxLayout" name="verticalLayout">
+    <item>
+     <widget class="QStackedWidget" name="stackedWidget">
+      <widget class="QWidget" name="page_connection">
+       <widget class="QLineEdit" name="hostInput">
+        <property name="geometry">
+         <rect>
+          <x>220</x>
+          <y>210</y>
+          <width>271</width>
+          <height>41</height>
+         </rect>
+        </property>
+       </widget>
+       <widget class="QLineEdit" name="portInput">
+        <property name="geometry">
+         <rect>
+          <x>710</x>
+          <y>210</y>
+          <width>271</width>
+          <height>41</height>
+         </rect>
+        </property>
+       </widget>
+       <widget class="QPushButton" name="connectButton">
+        <property name="geometry">
+         <rect>
+          <x>520</x>
+          <y>390</y>
+          <width>171</width>
+          <height>51</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Connect</string>
+        </property>
+       </widget>
+      </widget>
+      <widget class="QWidget" name="page_menu">
+       <widget class="QPushButton" name="btnCreate">
+        <property name="geometry">
+         <rect>
+          <x>480</x>
+          <y>260</y>
+          <width>251</width>
+          <height>61</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Create Game</string>
+        </property>
+       </widget>
+       <widget class="QPushButton" name="btnJoin">
+        <property name="geometry">
+         <rect>
+          <x>480</x>
+          <y>360</y>
+          <width>251</width>
+          <height>61</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Join Game</string>
+        </property>
+       </widget>
+      </widget>
+      <widget class="QWidget" name="page_create">
+       <property name="styleSheet">
+        <string notr="true">
+         QWidget {
+            background-color: rgba(0, 0, 0, 0.5); /* Fondo negro translúcido */
+            border-radius: 10px;
+         }
+         QLabel {
+            color: white;
+            font-family: 'Tektur';
+            font-size: 18px;
+            font-weight: bold;
+         }
+         QPushButton {
+            background-color: #ff6600;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            padding: 10px 20px;
+            font-family: 'Tektur';
+            font-size: 16px;
+            font-weight: bold;
+         }
+         QPushButton:hover {
+            background-color: #ffa31a;
+         }
+         QPushButton:pressed {
+            background-color: #cc5200;
+         }
+        </string>
+       </property>
+       <widget class="QLabel" name="labelCode">
+        <property name="geometry">
+         <rect>
+          <x>500</x>
+          <y>200</y>
+          <width>250</width>
+          <height>41</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Room code:</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
+        </property>
+       </widget>
+       <widget class="QLabel" name="labelCreateInfo">
+        <property name="geometry">
+         <rect>
+          <x>369</x>
+          <y>250</y>
+          <width>511</width>
+          <height>60</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
+        </property>
+       </widget>
+       <widget class="QPushButton" name="btnConfirmCreate">
+        <property name="geometry">
+         <rect>
+          <x>530</x>
+          <y>330</y>
+          <width>180</width>
+          <height>45</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Create</string>
+        </property>
+       </widget>
+       <widget class="QPushButton" name="btnBackCreate">
+        <property name="geometry">
+         <rect>
+          <x>530</x>
+          <y>390</y>
+          <width>180</width>
+          <height>45</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Back</string>
+        </property>
+       </widget>
+      </widget>
+      <widget class="QWidget" name="page_join">
+       <widget class="QFrame" name="frameJoin">
+        <property name="geometry">
+         <rect>
+          <x>370</x>
+          <y>120</y>
+          <width>500</width>
+          <height>400</height>
+         </rect>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">
+    QFrame {
+        background-color: rgba(0, 0, 0, 0.5);
+        border: 2px solid #ff6600;
+        border-radius: 20px;
+    }
+    QLabel {
+        color: white;
+        font-family: 'Tektur';
+        font-size: 20px;
+        font-weight: bold;
+    }
+    QLineEdit {
+        background: rgba(255,255,255,0.1);
+        color: white;
+        border: 2px solid #ff6600;
+        border-radius: 10px;
+        padding: 8px;
+        font-family: 'Tektur';
+        font-size: 17px;
+    }
+    QLineEdit::placeholder {
+        color: rgba(255,255,255,180);
+        font-style: italic;
+    }
+    QPushButton {
+        background-color: #ff6600;
+        color: white;
+        border: none;
+        border-radius: 10px;
+        padding: 10px 20px;
+        font-family: 'Tektur';
+        font-size: 16px;
+        font-weight: bold;
+    }
+    QPushButton:hover {
+        background-color: #ffa31a;
+    }
+    QPushButton:pressed {
+        background-color: #cc5200;
+    }
+    </string>
+        </property>
+        <widget class="QLabel" name="labelJoinTitle">
+         <property name="geometry">
+          <rect>
+           <x>150</x>
+           <y>40</y>
+           <width>200</width>
+           <height>40</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>Join Game</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
+        </widget>
+        <widget class="QLineEdit" name="inputCode">
+         <property name="geometry">
+          <rect>
+           <x>125</x>
+           <y>120</y>
+           <width>250</width>
+           <height>41</height>
+          </rect>
+         </property>
+         <property name="placeholderText">
+          <string>Enter room code</string>
+         </property>
+        </widget>
+        <widget class="QPushButton" name="btnConfirmJoin">
+         <property name="geometry">
+          <rect>
+           <x>160</x>
+           <y>200</y>
+           <width>180</width>
+           <height>45</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>Join</string>
+         </property>
+        </widget>
+        <widget class="QPushButton" name="btnBackJoin">
+         <property name="geometry">
+          <rect>
+           <x>160</x>
+           <y>260</y>
+           <width>180</width>
+           <height>45</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>Back</string>
+         </property>
+        </widget>
+       </widget>
+      </widget>
+      <widget class="QWidget" name="page_wait">
+       <widget class="QFrame" name="frameWait">
+        <property name="geometry">
+         <rect>
+          <x>370</x>
+          <y>100</y>
+          <width>500</width>
+          <height>450</height>
+         </rect>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">
+         QFrame {
+             background-color: rgba(0, 0, 0, 0.5);
+             border: 2px solid #ff6600;
+             border-radius: 20px;
+         }
+         QLabel {
+             color: white;
+             font-family: 'Tektur';
+             font-size: 20px;
+             font-weight: bold;
+         }
+         QListWidget {
+             background-color: rgba(255,255,255,0.1);
+             border-radius: 10px;
+             color: white;
+             font-family: 'Tektur';
+             font-size: 16px;
+         }
+         QPushButton {
+             background-color: #ff6600;
+             color: white;
+             border: none;
+             border-radius: 10px;
+             padding: 10px 20px;
+             font-family: 'Tektur';
+             font-size: 16px;
+             font-weight: bold;
+         }
+         QPushButton:hover {
+             background-color: #ffa31a;
+         }
+         QPushButton:pressed {
+             background-color: #cc5200;
+         }
+         </string>
+        </property>
+        <widget class="QLabel" name="labelRoomCode">
+         <property name="geometry">
+          <rect>
+           <x>60</x>
+           <y>20</y>
+           <width>381</width>
+           <height>30</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>ROOM CODE: </string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
+        </widget>
+        <widget class="QLabel" name="labelWait">
+         <property name="geometry">
+          <rect>
+           <x>100</x>
+           <y>60</y>
+           <width>300</width>
+           <height>41</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>Waiting for players...</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
+        </widget>
+        <widget class="QListWidget" name="listPlayers">
+         <property name="geometry">
+          <rect>
+           <x>100</x>
+           <y>120</y>
+           <width>300</width>
+           <height>200</height>
+          </rect>
+         </property>
+        </widget>
+        <widget class="QPushButton" name="btnStartGame">
+         <property name="geometry">
+          <rect>
+           <x>160</x>
+           <y>350</y>
+           <width>180</width>
+           <height>45</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>Start Game</string>
+         </property>
+        </widget>
+       </widget>
+      </widget>
+     </widget>
+    </item>
+   </layout>
   </widget>
  </widget>
  <resources/>

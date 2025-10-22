@@ -5,7 +5,7 @@
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
-class Loby;
+class Lobby;
 }
 QT_END_NAMESPACE
 
@@ -16,10 +16,20 @@ public:
     MainWindow(QWidget* parent = nullptr);
     ~MainWindow();
 
-//  protected:
-    //void resizeEvent(QResizeEvent *event) override;
+private slots:
+    void handleJoinGame();
+    void handleCreateGame();
+    void handleConfirmJoin();
+    void handleBackToMenu();
+    void handleStartGame();
+    void handleCreateButton();
+    void handleContinueToWait();
 
 private:
-    Ui::Loby* ui;
+    Ui::Lobby* ui;
+    void nextPage(QWidget *page);
+    QString generateRoomCode();
+    QString currentRoomCode;
+    bool isHost = false;
 };
 #endif  // MAINWINDOW_H
