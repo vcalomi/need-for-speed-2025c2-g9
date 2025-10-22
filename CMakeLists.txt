@@ -102,6 +102,21 @@ if(TALLER_CLIENT OR TALLER_EDITOR)
     FetchContent_MakeAvailable(SDL2 SDL2_image SDL2_mixer SDL2_ttf libSDL2pp)
 endif()
 
+## --- Dependencias del SERVER (Box2D) -------------------------------
+if(TALLER_SERVER)
+    include(FetchContent)
+    FetchContent_Declare(
+        box2d
+        GIT_REPOSITORY https://github.com/erincatto/box2d.git
+        GIT_TAG v3.1.1
+        GIT_SHALLOW TRUE
+        GIT_PROGRESS TRUE
+    )
+    FetchContent_MakeAvailable(box2d)
+endif()
+
+
+
 # Program section
 # ---------------
 if(TALLER_CLIENT)
@@ -128,6 +143,9 @@ if(TALLER_SERVER)
     # HEY!! TODO XXX: Change the name of the executable to the one you like!
     add_executable(taller_server)
 
+    add_executable(physics_sandbox
+    server/physics/physics_sandbox.cpp
+    )
     # Make them depend on taller_common lib
     add_dependencies(taller_server taller_common)
 
@@ -138,7 +156,8 @@ if(TALLER_SERVER)
     set_project_warnings(taller_server ${TALLER_MAKE_WARNINGS_AS_ERRORS} FALSE)
 
     # Link the taller_common lib target
-    target_link_libraries(taller_server taller_common)
+    target_link_libraries(taller_server PRIVATE taller_common box2d)
+    target_link_libraries(physics_sandbox PRIVATE box2d SDL2::SDL2)
 endif()
 
 if(TALLER_EDITOR)
