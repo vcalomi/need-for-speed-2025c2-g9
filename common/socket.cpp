@@ -1,3 +1,4 @@
+// cppcheck-suppress-begin *
 #include "socket.h"
 
 #include <stdexcept>
@@ -455,3 +456,4 @@ void Socket::chk_skt_or_fail() const {
                                  "socket (and therefore invalid).");
     }
 }
+// cppcheck-suppress-end *

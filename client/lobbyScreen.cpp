@@ -4,15 +4,15 @@
 
 #include <SDL2/SDL_ttf.h>
 
-using namespace SDL2pp;
+using SDL2pp::NullOpt;
+using SDL2pp::Renderer;
 
 LobbyScreen::LobbyScreen(Renderer& renderer, SpriteSheet& cars):
         renderer_(renderer),
         cars_(cars),
         background_(renderer, "../editor/loby/assets/loby_image.jpg"),
-        font_("../editor/loby/assets/Tektur_Condensed-Bold.ttf", 36) {
-    selectedCar_ = "";
-}
+        font_("../editor/loby/assets/Tektur_Condensed-Bold.ttf", 36),
+        selectedCar_("") {}
 
 void LobbyScreen::AddPlayer(const std::string& name) {
     players_.push_back(name);
