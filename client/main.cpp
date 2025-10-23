@@ -8,6 +8,7 @@
 #include <SDL2pp/SDLImage.hh>
 #include <SDL2pp/Texture.hh>
 
+#include "./lobbyScreen.h"
 #include "./spritesheet.h"
 
 using SDL2pp::Rect;
@@ -19,38 +20,36 @@ using SDL2pp::Window;
 
 
 int main() try {
-    // Initialize SDL library
-    SDL sdl(SDL_INIT_VIDEO);
-
-
-    // Create main window: 640x480 dimensions, resizable, "SDL2pp demo" title
-    Window window("Need for speed", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 640, 480,
-                  SDL_WINDOW_RESIZABLE);
-
-    // Create accelerated video renderer with default driver
-    Renderer renderer(window, -1, SDL_RENDERER_ACCELERATED);
+    SDL2pp::SDL sdl(SDL_INIT_VIDEO);
+    SDL2pp::SDLTTF ttf;
+    SDL2pp::Window window("Lobby", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 800, 600,
+                          SDL_WINDOW_RESIZABLE);
+    SDL2pp::Renderer renderer(window, -1, SDL_RENDERER_ACCELERATED);
 
     SpriteSheet cars(renderer, "../client/assets/need-for-speed/cars/cars.png");
+    cars.AddSprite("red", {0, 0, 128, 64});
+    cars.AddSprite("blue", {128, 0, 128, 64});
+    cars.AddSprite("green", {256, 0, 128, 64});
 
-    cars.AddSprite("red", Rect(0, 0, 128, 64));
-    cars.AddSprite("blue", Rect(128, 0, 128, 64));
-    cars.AddSprite("green", Rect(256, 0, 128, 64));
+    LobbyScreen lobby(renderer, cars);
+    lobby.AddPlayer("Player1");
+    lobby.AddPlayer("Player2");
 
-    SDL2pp::Rect srcRect(3 * 64, 2 * 64, 64, 64);
-    SDL2pp::Rect destRect(100, 100, 64, 64);
+    bool running = true;
+    SDL_Event e;
+    while (running) {
+        while (SDL_PollEvent(&e)) {
+            if (e.type == SDL_QUIT)
+                running = false;
+            lobby.HandleInput(e);
+        }
 
-    renderer.Clear();
-    renderer.Copy(cars.GetTexture(), cars.GetSprite("red"), Rect(100, 100, 128, 64));
-    renderer.Copy(cars.GetTexture(), cars.GetSprite("blue"), Rect(250, 100, 128, 64));
-    renderer.Copy(cars.GetTexture(), cars.GetSprite("green"), Rect(400, 100, 128, 64));
-    renderer.Present();
-    SDL_Delay(5000);
+        lobby.Render();
+        SDL_Delay(16);  // ~60 FPS
+    }
 
-
-    // Here all resources are automatically released and library deinitialized
     return 0;
 } catch (std::exception& e) {
-    // If case of error, print it and exit with error
     std::cerr << e.what() << std::endl;
     return 1;
 }

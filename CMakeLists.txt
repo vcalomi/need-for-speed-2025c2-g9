@@ -101,6 +101,8 @@ if(TALLER_CLIENT OR TALLER_EDITOR)
 
     # Activa el soporte de SDL_image dentro de SDL2pp
     set(SDL2PP_WITH_IMAGE ON CACHE BOOL "Enable SDL2_image support in SDL2pp" FORCE)
+    set(SDL2PP_WITH_TTF ON CACHE BOOL "" FORCE)
+
 
     # Carga y compila SDL2pp normalmente
     FetchContent_MakeAvailable(SDL2 SDL2_image SDL2_mixer SDL2_ttf libSDL2pp)
