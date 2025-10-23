@@ -8,7 +8,7 @@
 #include <SDL2pp/SDLImage.hh>
 #include <SDL2pp/Texture.hh>
 
-#include "common/foo.h"
+#include "./spritesheet.h"
 
 using SDL2pp::Rect;
 using SDL2pp::Renderer;
@@ -30,19 +30,19 @@ int main() try {
     // Create accelerated video renderer with default driver
     Renderer renderer(window, -1, SDL_RENDERER_ACCELERATED);
 
-    Texture texture(renderer, "../client/assets/need-for-speed/cars/cars.png");
+    SpriteSheet cars(renderer, "../client/assets/need-for-speed/cars/cars.png");
 
-    std::map<std::string, Rect> cars = {{"red", Rect(0, 64, 64, 64)},
-                                        {"blue", Rect(64, 128, 64, 64)},
-                                        {"green", Rect(128, 0, 64, 64)}};
+    cars.AddSprite("red", Rect(0, 0, 128, 64));
+    cars.AddSprite("blue", Rect(128, 0, 128, 64));
+    cars.AddSprite("green", Rect(256, 0, 128, 64));
 
     SDL2pp::Rect srcRect(3 * 64, 2 * 64, 64, 64);
     SDL2pp::Rect destRect(100, 100, 64, 64);
 
     renderer.Clear();
-    renderer.Copy(texture, cars["red"], Rect(100, 100, 64, 64));
-    renderer.Copy(texture, cars["blue"], Rect(200, 100, 64, 64));
-    renderer.Copy(texture, cars["green"], Rect(300, 100, 64, 64));
+    renderer.Copy(cars.GetTexture(), cars.GetSprite("red"), Rect(100, 100, 128, 64));
+    renderer.Copy(cars.GetTexture(), cars.GetSprite("blue"), Rect(250, 100, 128, 64));
+    renderer.Copy(cars.GetTexture(), cars.GetSprite("green"), Rect(400, 100, 128, 64));
     renderer.Present();
     SDL_Delay(5000);
 
