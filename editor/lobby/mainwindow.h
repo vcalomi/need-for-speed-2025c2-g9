@@ -24,12 +24,21 @@ private slots:
     void handleStartGame();
     void handleCreateButton();
     void handleContinueToWait();
+    void showNextRoom();
+    void showPrevRoom();
 
 private:
     Ui::Lobby* ui;
-    void nextPage(QWidget *page);
-    QString generateRoomCode();
+    static constexpr int PAGE_SIZE = 10; // cantidad de salas por página
+    int currentPage = 0;
+    QStringList allRooms;
     QString currentRoomCode;
     bool isHost = false;
+
+    QString generateRoomCode();
+    void loadRooms();
+    void showPage(int page);
+    void goToPage(QWidget *page);
+
 };
 #endif  // MAINWINDOW_H

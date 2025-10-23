@@ -52,6 +52,122 @@
         </property>
        </widget>
       </widget>
+      <widget class="QWidget" name="page_rooms">
+       <property name="styleSheet">
+        <string notr="true">
+QWidget {
+    background-color: rgba(0, 0, 0, 0.5);
+    border-radius: 10px;
+}
+QLabel {
+    color: white;
+    font-family: 'Tektur';
+    font-size: 22px;
+    font-weight: bold;
+}
+QListWidget {
+    background-color: rgba(255,255,255,0.1);
+    border-radius: 10px;
+    color: white;
+    font-family: 'Tektur';
+    font-size: 16px;
+}
+QPushButton {
+    background-color: #ff6600;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    padding: 10px 20px;
+    font-family: 'Tektur';
+    font-size: 16px;
+    font-weight: bold;
+}
+QPushButton:hover { background-color: #ffa31a; }
+QPushButton:pressed { background-color: #cc5200; }
+  </string>
+       </property>
+       <widget class="QLabel" name="labelRoomsTitle">
+        <property name="geometry">
+         <rect>
+          <x>470</x>
+          <y>100</y>
+          <width>300</width>
+          <height>40</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Available Rooms</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
+        </property>
+       </widget>
+       <widget class="QListWidget" name="listRooms">
+        <property name="geometry">
+         <rect>
+          <x>370</x>
+          <y>160</y>
+          <width>500</width>
+          <height>320</height>
+         </rect>
+        </property>
+       </widget>
+       <widget class="QPushButton" name="btnPrevRooms">
+        <property name="geometry">
+         <rect>
+          <x>410</x>
+          <y>500</y>
+          <width>120</width>
+          <height>40</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>&lt; Prev</string>
+        </property>
+       </widget>
+       <widget class="QLabel" name="labelPageInfo">
+        <property name="geometry">
+         <rect>
+          <x>560</x>
+          <y>500</y>
+          <width>120</width>
+          <height>40</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Page 1 / 1</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
+        </property>
+       </widget>
+       <widget class="QPushButton" name="btnNextRooms">
+        <property name="geometry">
+         <rect>
+          <x>710</x>
+          <y>500</y>
+          <width>120</width>
+          <height>40</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Next &gt;</string>
+        </property>
+       </widget>
+       <widget class="QPushButton" name="btnContinueRooms">
+        <property name="geometry">
+         <rect>
+          <x>530</x>
+          <y>560</y>
+          <width>180</width>
+          <height>45</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Continue</string>
+        </property>
+       </widget>
+      </widget>
       <widget class="QWidget" name="page_menu">
        <widget class="QPushButton" name="btnCreate">
         <property name="geometry">
@@ -84,7 +200,7 @@
        <property name="styleSheet">
         <string notr="true">
          QWidget {
-            background-color: rgba(0, 0, 0, 0.5); /* Fondo negro translúcido */
+            background-color: rgba(0, 0, 0, 0.5);
             border-radius: 10px;
          }
          QLabel {
@@ -103,12 +219,8 @@
             font-size: 16px;
             font-weight: bold;
          }
-         QPushButton:hover {
-            background-color: #ffa31a;
-         }
-         QPushButton:pressed {
-            background-color: #cc5200;
-         }
+         QPushButton:hover { background-color: #ffa31a; }
+         QPushButton:pressed { background-color: #cc5200; }
         </string>
        </property>
        <widget class="QLabel" name="labelCode">
@@ -143,20 +255,7 @@
          <set>Qt::AlignCenter</set>
         </property>
        </widget>
-       <widget class="QPushButton" name="btnConfirmCreate">
-        <property name="geometry">
-         <rect>
-          <x>530</x>
-          <y>330</y>
-          <width>180</width>
-          <height>45</height>
-         </rect>
-        </property>
-        <property name="text">
-         <string>Create</string>
-        </property>
-       </widget>
-       <widget class="QPushButton" name="btnBackCreate">
+       <widget class="QPushButton" name="btnContinue">
         <property name="geometry">
          <rect>
           <x>530</x>
@@ -166,7 +265,7 @@
          </rect>
         </property>
         <property name="text">
-         <string>Back</string>
+         <string>Continue</string>
         </property>
        </widget>
       </widget>
@@ -216,13 +315,9 @@
         font-size: 16px;
         font-weight: bold;
     }
-    QPushButton:hover {
-        background-color: #ffa31a;
-    }
-    QPushButton:pressed {
-        background-color: #cc5200;
-    }
-    </string>
+    QPushButton:hover { background-color: #ffa31a; }
+    QPushButton:pressed { background-color: #cc5200; }
+         </string>
         </property>
         <widget class="QLabel" name="labelJoinTitle">
          <property name="geometry">
@@ -321,12 +416,8 @@
              font-size: 16px;
              font-weight: bold;
          }
-         QPushButton:hover {
-             background-color: #ffa31a;
-         }
-         QPushButton:pressed {
-             background-color: #cc5200;
-         }
+         QPushButton:hover { background-color: #ffa31a; }
+         QPushButton:pressed { background-color: #cc5200; }
          </string>
         </property>
         <widget class="QLabel" name="labelRoomCode">
