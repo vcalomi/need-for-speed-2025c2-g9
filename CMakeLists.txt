@@ -93,13 +93,18 @@ if(TALLER_CLIENT OR TALLER_EDITOR)
         OVERRIDE_FIND_PACKAGE
     )
 
-    FetchContent_Declare(
+        FetchContent_Declare(
         libSDL2pp
         OVERRIDE_FIND_PACKAGE
         URL https://github.com/libSDL2pp/libSDL2pp/archive/cc198c9a5657048bee67ece82de620b2d5661084.zip
     )
 
+    # Activa el soporte de SDL_image dentro de SDL2pp
+    set(SDL2PP_WITH_IMAGE ON CACHE BOOL "Enable SDL2_image support in SDL2pp" FORCE)
+
+    # Carga y compila SDL2pp normalmente
     FetchContent_MakeAvailable(SDL2 SDL2_image SDL2_mixer SDL2_ttf libSDL2pp)
+
 endif()
 
 # Program section
