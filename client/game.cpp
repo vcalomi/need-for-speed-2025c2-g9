@@ -5,7 +5,8 @@ Game::Game():
         resources_(engine_.GetRenderer()),
         world_(),
         inputSystem_(),
-        rendererSystem_(engine_.GetRenderer(), resources_.GetCarSprites()) {
+        rendererSystem_(engine_.GetRenderer(), resources_.GetCarSprites()),
+        map_(engine_.GetRenderer(), "../client/assets/need-for-speed/cities/san_andreas.png") {
 
     // Inicialización del estado inicial del mundo
     // En el futuro esto se hará con mensajes del servidor
@@ -26,7 +27,7 @@ void Game::Run() {
         inputSystem_.HandlePlayerInput(world_.GetLocalPlayer(), delta);
 
         world_.Update(delta);
-        rendererSystem_.Render(world_);
+        rendererSystem_.Render(world_, map_);
 
         SDL_Delay(16);
     }

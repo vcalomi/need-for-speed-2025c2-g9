@@ -20,4 +20,5 @@ target_sources(taller_client
     world.h
     engine.h
     resource_loader.h
+    map.h
     )

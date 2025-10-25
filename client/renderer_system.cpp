@@ -3,13 +3,10 @@
 RendererSystem::RendererSystem(SDL2pp::Renderer& renderer, SpriteSheet& cars):
         renderer_(renderer), cars_(cars) {}
 
-void RendererSystem::Render(const World& world) {
+void RendererSystem::Render(const World& world, Map& map) {
     renderer_.Clear();
-
-    for (const auto& [id, player]: world.GetPlayers()) {
-        DrawPlayer(player);
-    }
-
+    map.Render(renderer_);
+    for (const auto& [id, player]: world.GetPlayers()) DrawPlayer(player);
     renderer_.Present();
 }
 
