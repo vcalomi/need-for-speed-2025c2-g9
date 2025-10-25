@@ -1,6 +1,6 @@
-#include <cmath>
-
 #include "./physics_debug_system.h"
+
+#include <cmath>
 
 using namespace SDL2pp;
 
