@@ -15,8 +15,13 @@ private:
 
 public:
     ClientProtocol(const std::string& hostname, const std::string& port);
-    void sendNitro();
     NitroMessage receiveMessage();
+
+    void sendCreateRoom(const std::string& roomName);
+    void sendJoinRoom(const std::string& roomName);
+    void sendListRooms();
+    void sendStartGame();
+    void sendChooseCar(const std::string& carType);
     ~ClientProtocol();
 };
 

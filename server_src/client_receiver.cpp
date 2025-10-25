@@ -4,16 +4,20 @@
 
 #include "../common_src/common_codes.h"
 
-ClientReceiver::ClientReceiver(ServerProtocol& serverProtocol, Queue<ClientCommand>& gameLoopQueue,
-                               int clientId):
-        gameLoopQueue(gameLoopQueue), protocol(serverProtocol), clientId(clientId) {}
+ClientReceiver::ClientReceiver(ServerProtocol& serverProtocol,Queue<ClientCommand>& gameQueue,
+                               int clientId) :
+        gameQueue(gameQueue),
+        protocol(serverProtocol),
+        clientId(clientId) {}
 
 void ClientReceiver::run() {
     try {
         while (should_keep_running()) {
             ActionCode action = protocol.receiveActionCode();
-            ClientCommand command = {action, clientId};
-            gameLoopQueue.try_push(command);
+            ClientCommand command;
+            command.action = action;
+            command.clientId = clientId;
+            gameQueue.push(command);
         }
     } catch (const SocketClosed& e) {
         return;

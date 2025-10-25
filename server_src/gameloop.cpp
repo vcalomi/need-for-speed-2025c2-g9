@@ -13,8 +13,8 @@ using Clock = std::chrono::steady_clock;
 using Milliseconds = std::chrono::milliseconds;
 using Seconds = std::chrono::seconds;
 
-GameLoop::GameLoop(Queue<ClientCommand>& gameLoopQueue, ClientMonitor& clientMonitor):
-        gameLoopQueue(gameLoopQueue), clientMonitor(clientMonitor) {}
+GameLoop::GameLoop(Queue<ClientCommand>& gameLoopQueue) : 
+    gameLoopQueue(gameLoopQueue) {}
 
 void GameLoop::run() {
     try {
@@ -32,64 +32,10 @@ void GameLoop::run() {
 void GameLoop::processCommands() {
     ClientCommand command;
     while (gameLoopQueue.try_pop(command)) {
-        if (command.action == ActionCode::ACTIVATE_NITRO) {
-            processNitroCommand(command.clientId);
-        }
+        
     }
 }
 
-void GameLoop::processNitroCommand(int clientId) {
-    auto [it, inserted] = nitroStates.try_emplace(clientId, clientId);
-    NitroState& state = it->second;
-
-    if (!state.isActive) {
-        state.isActive = true;
-        state.activationTime = Clock::now();
-
-        uint16_t carsWithActiveNitro = countActiveNitro();
-        broadcastNitroEvent(carsWithActiveNitro, true);
-    }
-}
-
-int GameLoop::countActiveNitro() {
-    return std::count_if(nitroStates.begin(), nitroStates.end(), [](const auto& pair) {
-        auto& [clientId, state] = pair;
-        return state.isActive;
-    });
-}
-
-void GameLoop::simulateGame() {
-    auto now = Clock::now();
-    std::vector<int> toDeactivate;
-
-    for (auto& [clientId, state]: nitroStates) {
-        if (state.isActive) {
-            auto duration = now - state.activationTime;
-
-            if (duration >= Seconds(3)) {
-                toDeactivate.push_back(state.clientId);
-            }
-        }
-    }
-
-    if (!toDeactivate.empty()) {
-        for (int clientId: toDeactivate) {
-            nitroStates[clientId].isActive = false;
-            uint16_t carsWithActiveNitro = countActiveNitro();
-            broadcastNitroEvent(carsWithActiveNitro, false);
-        }
-    }
-}
-
-void GameLoop::broadcastNitroEvent(uint16_t carsWithActiveNitro, bool activated) {
-    auto msg = messageParser.createNitroMessage(carsWithActiveNitro, activated);
-    clientMonitor.broadcast(msg);
-
-    if (activated) {
-        std::cout << "A car hit the nitro!" << std::endl;
-    } else {
-        std::cout << "A car is out of juice." << std::endl;
-    }
-}
+void GameLoop::simulateGame() { }
 
 GameLoop::~GameLoop() {}

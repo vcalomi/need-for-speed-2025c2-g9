@@ -15,6 +15,8 @@ public:
     ActionCode receiveAction(Socket& socket);
     void sendUint16(Socket& socket, uint16_t number);
     u_int16_t receiveUint16(Socket& socket);
+    void sendString(Socket& socket, const std::string& str); 
+    std::string receiveString(Socket& socket);
     ~CommonProtocol();
 };
 

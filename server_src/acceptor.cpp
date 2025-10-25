@@ -1,4 +1,4 @@
-#include "client_acceptor.h"
+#include "acceptor.h"
 
 #include <algorithm>
 #include <utility>
@@ -7,20 +7,21 @@
 
 #include "client_handler.h"
 
-ClientAcceptor::ClientAcceptor(const std::string& port, ClientMonitor& monitor,
-                               Queue<ClientCommand>& queue):
-        clientMonitor(monitor), gameLoopQueue(queue), acceptor(port.c_str()), nextClientId(0) {}
+Acceptor::Acceptor(const std::string& port):
+        acceptor(port.c_str()), nextClientId(0) {}
 
-void ClientAcceptor::run() {
+void Acceptor::run() {
     while (should_keep_running()) {
         try {
+            std::cout << "Acceptor: Esperando nueva conexión..." << std::endl;
             Socket socket = acceptor.accept();
+            std::cout << "Acceptor: ¡Nueva conexión aceptada!" << std::endl;
             if (!should_keep_running()) {
                 break;
             }
             int clientId = nextClientId++;
             ClientHandler* client =
-                    new ClientHandler(std::move(socket), clientMonitor, gameLoopQueue, clientId);
+                    new ClientHandler(std::move(socket), clientId);
             reap();
             clients.push_back(client);
             client->start();
@@ -33,7 +34,7 @@ void ClientAcceptor::run() {
     clear();
 }
 
-void ClientAcceptor::reap() {
+void Acceptor::reap() {
     auto new_end = std::remove_if(clients.begin(), clients.end(), [](ClientHandler* c) {
         bool is_dead = !c->is_alive();
         if (is_dead) {
@@ -45,7 +46,7 @@ void ClientAcceptor::reap() {
     clients.erase(new_end, clients.end());
 }
 
-void ClientAcceptor::clear() {
+void Acceptor::clear() {
     for (auto& client: clients) {
         client->stop();
     }
@@ -56,10 +57,10 @@ void ClientAcceptor::clear() {
     clients.clear();
 }
 
-void ClientAcceptor::close() {
+void Acceptor::close() {
     this->stop();
     acceptor.shutdown(SHUT_RDWR);
     acceptor.close();
 }
 
-ClientAcceptor::~ClientAcceptor() { clear(); }
+Acceptor::~Acceptor() { clear(); }

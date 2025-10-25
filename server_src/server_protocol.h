@@ -5,9 +5,9 @@
 #include <vector>
 
 #include "../common_src/common_protocol.h"
-#include "../common_src/nitro_message.h"
 #include "../common_src/socket.h"
-
+#include "../common_src/car_config.h"
+#include "../common_src/nitro_message.h"
 class ServerProtocol {
 private:
     Socket& socket;
@@ -16,7 +16,11 @@ private:
 public:
     explicit ServerProtocol(Socket& socket);
     ActionCode receiveActionCode();
+    std::string receiveRoomName();
+    CarConfig receiveCarConfig();
     void sendMsg(const NitroMessage& message);
+    void sendRoomList(const std::vector<std::string>& rooms);
+    
     ~ServerProtocol();
 };
 

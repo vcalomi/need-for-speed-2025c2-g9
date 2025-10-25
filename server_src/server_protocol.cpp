@@ -14,6 +14,23 @@ void ServerProtocol::sendMsg(const NitroMessage& message) {
     protocol.sendAction(socket, message.nitroState);
 }
 
+CarConfig ServerProtocol::receiveCarConfig() {
+    CarConfig car;
+    // fata implementar
+    return car;
+}
+
+void ServerProtocol::sendRoomList(const std::vector<std::string>& rooms) {
+    protocol.sendUint16(socket, rooms.size());
+    for (const auto& room : rooms) {
+        protocol.sendString(socket, room);
+    }
+}
+
+std::string ServerProtocol::receiveRoomName() {
+    return protocol.receiveString(socket);
+}
+
 ActionCode ServerProtocol::receiveActionCode() { return protocol.receiveAction(socket); }
 
 ServerProtocol::~ServerProtocol() {}

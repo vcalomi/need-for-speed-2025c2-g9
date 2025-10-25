@@ -1,5 +1,5 @@
-#ifndef CLIENT_ACCEPTOR_H
-#define CLIENT_ACCEPTOR_H
+#ifndef ACCEPTOR_H
+#define ACCEPTOR_H
 
 #include <string>
 #include <vector>
@@ -10,23 +10,20 @@
 #include "../common_src/thread.h"
 
 #include "client_handler.h"
-#include "client_monitor.h"
 
-class ClientAcceptor: public Thread {
+class Acceptor: public Thread {
 private:
-    ClientMonitor& clientMonitor;
-    Queue<ClientCommand>& gameLoopQueue;
     Socket acceptor;
     std::atomic<int> nextClientId;
     std::vector<ClientHandler*> clients;
 
 public:
-    ClientAcceptor(const std::string& port, ClientMonitor& monitor, Queue<ClientCommand>& queue);
+    Acceptor(const std::string& port);
     void run() override;
     void close();
     void reap();
     void clear();
-    ~ClientAcceptor();
+    ~Acceptor();
 };
 
 #endif

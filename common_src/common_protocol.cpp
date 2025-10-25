@@ -34,4 +34,22 @@ ActionCode CommonProtocol::receiveAction(Socket& socket) {
     return ActionCode(action);
 }
 
+void CommonProtocol::sendString(Socket& socket, const std::string& str) {
+    sendUint16(socket, str.length());
+    if (!str.empty()) {
+        socket.sendall(str.c_str(), str.length());
+    }
+}
+
+std::string CommonProtocol::receiveString(Socket& socket) {
+    uint16_t length = receiveUint16(socket);
+    if (length == 0) {
+        return "";
+    }
+    
+    std::vector<char> buffer(length);
+    socket.recvall(buffer.data(), length);
+    return std::string(buffer.data(), length);
+}
+
 CommonProtocol::~CommonProtocol() {}

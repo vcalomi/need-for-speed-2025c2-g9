@@ -4,34 +4,38 @@
 #include <vector>
 
 #include "../common_src/client_command.h"
-#include "../common_src/nitro_message.h"
 #include "../common_src/socket.h"
 #include "../common_src/socket_closed.h"
 #include "../common_src/thread.h"
+#include "../common_src/nitro_message.h"
+#include "../common_src/queue.h"
 
 #include "client_handler.h"
-#include "client_monitor.h"
+#include "game_lobby.h"
 #include "client_receiver.h"
 #include "client_sender.h"
 #include "server_protocol.h"
+#include "client_state.h"
 
 class ClientHandler {
 private:
     Socket peer;
-    Queue<ClientCommand>& gameLoopQueue;
-    ClientMonitor& clientMonitor;
-    Queue<NitroMessage> clientQueue;
+    GameLobby gameLobby;
     ServerProtocol protocol;
-    ClientReceiver receiver;
-    ClientSender sender;
     std::atomic_bool keep_running;
+    ClientState state;
+    int clientId;
+    Queue<NitroMessage> senderQueue;    // para enviar al cliente
+    std::unique_ptr<ClientReceiver> receiver;;
+    ClientSender sender;
 
 public:
-    ClientHandler(Socket socket, ClientMonitor& monitor, Queue<ClientCommand>& queue, int clientId);
+    ClientHandler(Socket socket, int clientId);
     void start();
     void join();
     void stop();
     bool is_alive() const;
+    void handleLobbyCommand(ActionCode action);
     ~ClientHandler();
 };
 

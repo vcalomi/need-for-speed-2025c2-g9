@@ -60,5 +60,12 @@
         "typeinfo": "cpp",
         "variant": "cpp",
         "map": "cpp"
-    }
+    },
+    "debug.onTaskErrors": "showErrors",
+    "debug.internalConsoleOptions": "openOnSessionStart",
+    "debug.allowBreakpointsEverywhere": true,
+    "debug.showBreakpointsInOverviewRuler": true,
+    "debug.showSubSessionsInToolBar": true,
+    "C_Cpp.default.configurationProvider": "ms-vscode.cpptools",
+    "terminal.integrated.scrollback": 10000,
 }

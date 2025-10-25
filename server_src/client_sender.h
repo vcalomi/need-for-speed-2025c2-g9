@@ -11,12 +11,6 @@
 
 #include "server_protocol.h"
 
-/*
-    clientQueue debe ser blocking queue y unbounded ya que el sender debe bloquearse esperando
-   mensajes. Además, unbounded porque no puede llenarse ya que generaría un deadlock y el gameloop
-   se bloquearía
-*/
-
 class ClientSender: public Thread {
 private:
     Queue<NitroMessage>& clientQueue;

@@ -5,17 +5,13 @@
 #include "../common_src/queue.h"
 
 Server::Server(const std::string& port):
-        gameLoopQueue(100),
-        clientMonitor(),
-        clientAcceptor(port, clientMonitor, gameLoopQueue),
-        gameLoop(gameLoopQueue, clientMonitor),
+        acceptor(port),
         inputHandler() {}
 
 int Server::run() {
     try {
         inputHandler.start();
-        clientAcceptor.start();
-        gameLoop.start();
+        acceptor.start();
 
         inputHandler.join();
         stop();
@@ -26,11 +22,8 @@ int Server::run() {
 }
 
 void Server::stop() {
-    clientAcceptor.close();
-    clientAcceptor.join();
-    gameLoopQueue.close();
-    gameLoop.stop();
-    gameLoop.join();
+    acceptor.close();
+    acceptor.join();
 }
 
 Server::~Server() {}

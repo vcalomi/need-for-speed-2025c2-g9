@@ -4,10 +4,20 @@
 #include <cstdint>
 
 enum class ActionCode : uint8_t {
-    ACTIVATE_NITRO = 0x04,
-    NITRO_ACTIVATED = 0x07,
-    NITRO_DEACTIVATED = 0x08,
-    SERVER_MSG = 0x10
+    // Comandos del Lobby
+    SEND_USERNAME = 0x01,
+    CREATE_ROOM = 0x02,
+    ROOM_CREATED = 0x3,
+    JOIN_ROOM = 0x04,
+    JOIN_OK = 0x5,
+    LIST_ROOMS = 0x06,
+    
+    // Comandos de Sala
+    CHOOSE_CAR = 0x07,
+    CHOOSE_CAR_OK = 0x08,
+    START_GAME = 0x09,
+
+    SEND_ERROR_MSG = 0x10
 };
 
 #endif

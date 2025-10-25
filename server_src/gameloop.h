@@ -6,33 +6,27 @@
 
 #include "../common_src/client_command.h"
 #include "../common_src/common_codes.h"
-#include "../common_src/nitro_state.h"
 #include "../common_src/queue.h"
 #include "../common_src/thread.h"
-
-#include "client_monitor.h"
-#include "message_parser.h"
+#include "game_room.h"
 
 /*
-    commandQueue debe ser non-blocking y bounded ya que no puede bloquearse y que ni crecer
-   indefinidamente
+    Maneja el juego
 */
 
 class GameLoop: public Thread {
 private:
+    // std::map<int, CarConfig>& cars;
     Queue<ClientCommand>& gameLoopQueue;
-    ClientMonitor& clientMonitor;
-    std::map<int, NitroState> nitroStates;
-    MessageParser messageParser;
 
 public:
-    GameLoop(Queue<ClientCommand>& commandQueue, ClientMonitor& clientMonitor);
+    GameLoop(Queue<ClientCommand>& gameLoopQueue);
     void run() override;
-    void broadcastNitroEvent(uint16_t carsWithActiveNitro, bool activated);
     void processCommands();
     void simulateGame();
-    int countActiveNitro();
-    void processNitroCommand(int clientId);
+    
+    // logica del juego
+    // checkpoints
     ~GameLoop();
 };
 

@@ -5,17 +5,12 @@
 #include "../common_src/client_command.h"
 #include "../common_src/queue.h"
 
-#include "client_acceptor.h"
-#include "client_monitor.h"
-#include "gameloop.h"
+#include "acceptor.h"
 #include "server_input_handler.h"
 
 class Server {
 private:
-    Queue<ClientCommand> gameLoopQueue;
-    ClientMonitor clientMonitor;
-    ClientAcceptor clientAcceptor;
-    GameLoop gameLoop;
+    Acceptor acceptor;
     ServerInputHandler inputHandler;
 
 public:
