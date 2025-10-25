@@ -3,9 +3,11 @@ target_sources(taller_client
     # .cpp files
     main.cpp
     spritesheet.cpp
-    lobbyScreen.cpp
+    game.cpp
+    player.cpp
     PUBLIC
     # .h files
     spritesheet.h
-    lobbyScreen.h
+    player.h
+    game.h
     )
