@@ -16,19 +16,9 @@ Player::Player(const std::string& id, const std::string& carType, float x, float
         accel_(0.0f),
         turnDir_(0.0f) {}
 
-void Player::HandleInput(const Uint8* keys, float delta) {
-    accel_ = 0;
-    turnDir_ = 0;
-
-    if (keys[SDL_SCANCODE_W])
-        accel_ = 1;
-    if (keys[SDL_SCANCODE_S])
-        accel_ = -1;
-    if (keys[SDL_SCANCODE_A])
-        turnDir_ = -1;
-    if (keys[SDL_SCANCODE_D])
-        turnDir_ = 1;
-
+void Player::ApplyInput(float accelInput, float turnInput, float delta) {
+    accel_ = accelInput;
+    turnDir_ = turnInput;
     angle_ += turnDir_ * rotationSpeed_ * delta;
 
     if (angle_ < 0)
@@ -37,17 +27,19 @@ void Player::HandleInput(const Uint8* keys, float delta) {
         angle_ -= 360;
 }
 
+void Player::UpdateFromNetwork(float x, float y, float angle, float speed) {
+    x_ = x;
+    y_ = y;
+    angle_ = angle;
+    speed_ = speed;
+    currentSprite_ = GetSpriteForAngle(angle_);
+}
+
 void Player::Update(float delta) {
     float radians = angle_ * M_PI / 180.0f;
     x_ += cos(radians) * speed_ * accel_ * delta;
     y_ += sin(radians) * speed_ * accel_ * delta;
     currentSprite_ = GetSpriteForAngle(angle_);
-}
-
-void Player::Render(Renderer& renderer, SpriteSheet& cars) {
-    const Rect& src = cars.GetSprite(currentSprite_);
-    Rect dest(x_ - src.GetW() / 2, y_ - src.GetH() / 2, src.GetW(), src.GetH());
-    renderer.Copy(cars.GetTexture(), src, dest);
 }
 
 std::string Player::GetSpriteForAngle(float angleDeg) const {

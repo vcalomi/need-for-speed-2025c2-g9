@@ -9,10 +9,14 @@ class Player {
 public:
     Player(const std::string& id, const std::string& carType, float x, float y);
 
-    void HandleInput(const Uint8* keys, float delta);
+    void ApplyInput(float accelInput, float turnInput, float delta);
     void Update(float delta);
-    void Render(SDL2pp::Renderer& renderer, SpriteSheet& cars);
+    void UpdateFromNetwork(float x, float y, float angle, float speed);
 
+    float GetX() const { return x_; }
+    float GetY() const { return y_; }
+    float GetAngle() const { return angle_; }
+    const std::string& GetId() const { return id_; }
     std::string GetSpriteForAngle(float angle) const;
 
 private:
