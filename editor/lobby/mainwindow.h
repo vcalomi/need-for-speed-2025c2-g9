@@ -1,6 +1,7 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
+#include "player_info.h"
 #include <QMainWindow>
 
 QT_BEGIN_NAMESPACE
@@ -26,14 +27,15 @@ private slots:
     void handleContinueToWait();
     void showNextRoom();
     void showPrevRoom();
+    void handleRefreshPlayers();
+    void updateLobbyStatus();
 
 private:
     Ui::Lobby* ui;
+    PlayerInfo player;
     static constexpr int PAGE_SIZE = 10; // cantidad de salas por página
     int currentPage = 0;
     QStringList allRooms;
-    QString currentRoomCode;
-    bool isHost = false;
 
     QString generateRoomCode();
     void loadRooms();
