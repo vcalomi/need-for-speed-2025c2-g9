@@ -10,7 +10,6 @@ target_sources(taller_client
     world.cpp
     engine.cpp
     resource_loader.cpp
-    physics_debug_system.cpp
     PUBLIC
     # .h files
     spritesheet.h
@@ -22,5 +21,4 @@ target_sources(taller_client
     engine.h
     resource_loader.h
     map.h
-    physics_debug_system.h
     )
