@@ -1,11 +1,9 @@
 #pragma once
-#include <map>
-#include <string>
-
-#include <SDL2pp/SDL2pp.hh>
-
-#include "./player.h"
-#include "./spritesheet.h"
+#include "./engine.h"
+#include "./input_system.h"
+#include "./renderer_system.h"
+#include "./resource_loader.h"
+#include "./world.h"
 
 class Game {
 public:
@@ -13,10 +11,9 @@ public:
     void Run();
 
 private:
-    SDL2pp::SDL sdl_;
-    SDL2pp::Window window_;
-    SDL2pp::Renderer renderer_;
-    SpriteSheet cars_;
-    std::string localPlayerId_;
-    std::map<std::string, Player> players_;
+    Engine engine_;
+    ResourceLoader resources_;
+    World world_;
+    InputSystem inputSystem_;
+    RendererSystem rendererSystem_;
 };
