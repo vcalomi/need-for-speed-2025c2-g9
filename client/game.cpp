@@ -13,7 +13,7 @@ Game::Game():
                 600, SDL_WINDOW_SHOWN),
         renderer_(window_, -1, SDL_RENDERER_ACCELERATED),
         cars_(renderer_, "../client/assets/need-for-speed/cars/cars.png"),
-        player_("1", "CamionetaRoja", 400.0f, 300.0f) {
+        localPlayerId_("1") {
 
     // Cargar sprites
     cars_.AddSprite("CamionetaRojaSur", {167, 304, 26, 39});
@@ -32,6 +32,9 @@ Game::Game():
     cars_.AddSprite("CamionetaRojaSureste75", {123, 304, 36, 40});
     cars_.AddSprite("CamionetaRojaNoreste75", {203, 344, 36, 40});
     cars_.AddSprite("CamionetaRojaNoroeste75", {121, 344, 36, 40});
+
+    players_.emplace("1", Player("1", "CamionetaRoja", 400.0f, 300.0f));
+    players_.emplace("2", Player("2", "CamionetaRoja", 500.0f, 300.0f));
 }
 
 void Game::Run() {
@@ -50,11 +53,23 @@ void Game::Run() {
         }
 
         const Uint8* keys = SDL_GetKeyboardState(NULL);
-        player_.HandleInput(keys, delta);
-        player_.Update(delta);
 
+        // Actualizar solo el jugador local con input
+        Player& local = players_.at(localPlayerId_);
+        local.HandleInput(keys, delta);
+        local.Update(delta);
+
+        // Actualizar los demás (por ahora simulado)
+        for (auto& [id, player]: players_) {
+            if (id == localPlayerId_)
+                continue;
+            // En el futuro, acá vas a usar datos recibidos del servidor
+            player.Update(delta);
+        }
+
+        // Dibujar todos
         renderer_.Clear();
-        player_.Render(renderer_, cars_);
+        for (auto& [id, player]: players_) player.Render(renderer_, cars_);
         renderer_.Present();
 
         SDL_Delay(16);

@@ -1,4 +1,7 @@
 #pragma once
+#include <map>
+#include <string>
+
 #include <SDL2pp/SDL2pp.hh>
 
 #include "./player.h"
@@ -14,5 +17,6 @@ private:
     SDL2pp::Window window_;
     SDL2pp::Renderer renderer_;
     SpriteSheet cars_;
-    Player player_;
+    std::string localPlayerId_;
+    std::map<std::string, Player> players_;
 };
