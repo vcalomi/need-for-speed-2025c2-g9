@@ -1,10 +1,10 @@
 target_sources(taller_server
     PRIVATE
     # .cpp files
-    server.cpp
-    acceptor.cpp
+    vehicle_specs.yaml
     PUBLIC
-    server.h
-    acceptor.h
+    vehicle.h
+    constants.h
+    vehicleDTO.h
     # .h files
     )

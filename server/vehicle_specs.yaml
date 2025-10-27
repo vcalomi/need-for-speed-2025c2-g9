@@ -1,0 +1,59 @@
+
+vehicles:
+  fiat_600:
+    width_m: 1.20
+    length_m: 2.40
+    mass_kg: 1200.0
+    engine_force_N: 6500.0
+    brake_force_N: 8000.0
+    steer_torque: 5.0
+  
+  ferrari_F40:
+    width_m: 1.20
+    length_m: 2.40
+    mass_kg: 1200.0
+    engine_force_N: 6500.0
+    brake_force_N: 8000.0
+    steer_torque: 5.0
+  
+  porsche_911:
+    width_m: 1.20
+    length_m: 2.40
+    mass_kg: 1200.0
+    engine_force_N: 6500.0
+    brake_force_N: 8000.0
+    steer_torque: 5.0
+  
+  sedan:
+    width_m: 1.20
+    length_m: 2.40
+    mass_kg: 1200.0
+    engine_force_N: 6500.0
+    brake_force_N: 8000.0
+    steer_torque: 5.0
+  
+  jeep:
+    width_m: 1.20
+    length_m: 2.40
+    mass_kg: 1200.0
+    engine_force_N: 6500.0
+    brake_force_N: 8000.0
+    steer_torque: 5.0
+  
+  f100:
+    width_m: 1.20
+    length_m: 2.40
+    mass_kg: 1200.0
+    engine_force_N: 6500.0
+    brake_force_N: 8000.0
+    steer_torque: 5.0
+
+  truck:
+    width_m: 1.20
+    length_m: 2.40
+    mass_kg: 1200.0
+    engine_force_N: 6500.0
+    brake_force_N: 8000.0
+    steer_torque: 5.0
+
+  
