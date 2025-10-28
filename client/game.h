@@ -1,4 +1,7 @@
 #pragma once
+#include <string>
+
+#include "./MockServer.h"
 #include "./engine.h"
 #include "./input_system.h"
 #include "./map.h"
@@ -18,4 +21,7 @@ private:
     InputSystem inputSystem_;
     RendererSystem rendererSystem_;
     Map map_;
+    MockServer mockServer_;
+
+    void ProcessServerMessage(const std::string& msg);
 };
