@@ -10,7 +10,8 @@ public:
                    bool isLocal);
     Player& GetLocalPlayer();
     const std::map<std::string, Player>& GetPlayers() const;
-    void Update(float delta);
+    void UpdateFromServer(const std::string& id, float x, float y, float angle);
+    void OnCollision(const std::string& id1, const std::string& id2);
 
 private:
     std::map<std::string, Player> players_;
