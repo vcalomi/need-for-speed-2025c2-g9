@@ -1,6 +1,7 @@
 #pragma once
 #include <string>
 
+#include "./AudioManager.h"
 #include "./MockServer.h"
 #include "./engine.h"
 #include "./input_system.h"
@@ -16,6 +17,7 @@ public:
 
 private:
     Engine engine_;
+    AudioManager audioManager_;
     ResourceLoader resources_;
     World world_;
     InputSystem inputSystem_;

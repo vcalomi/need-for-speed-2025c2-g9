@@ -4,6 +4,7 @@
 
 Game::Game():
         engine_(),
+        audioManager_(),
         resources_(engine_.GetRenderer()),
         world_(),
         inputSystem_(),
@@ -15,6 +16,8 @@ Game::Game():
     for (const auto& [id, p]: players) {
         world_.AddPlayer(id, "CamionetaRoja", p.x, p.y, id == "1");
     }
+
+    audioManager_.PlayBackgroundMusic("../client/assets/need-for-speed/music/background.wav");
 }
 
 void Game::ProcessServerMessage(const std::string& msg) {
