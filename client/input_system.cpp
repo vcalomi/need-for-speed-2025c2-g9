@@ -1,5 +1,10 @@
 #include "./input_system.h"
 
+#define INPUT_FORWARD 0x01
+#define INPUT_BACKWARD 0x02
+#define INPUT_LEFT 0x04
+#define INPUT_RIGHT 0x08
+
 void InputSystem::PollEvents(bool& running) {
     SDL_Event e;
     while (SDL_PollEvent(&e)) {
@@ -8,20 +13,18 @@ void InputSystem::PollEvents(bool& running) {
     }
 }
 
-void InputSystem::HandlePlayerInput(Player& player, float delta) {
+uint8_t InputSystem::GetInputByte() const {
     const Uint8* keys = SDL_GetKeyboardState(NULL);
-
-    float accel = 0.0f;
-    float turn = 0.0f;
+    uint8_t inputByte = 0;
 
     if (keys[SDL_SCANCODE_W])
-        accel = 1.0f;
+        inputByte |= INPUT_FORWARD;
     if (keys[SDL_SCANCODE_S])
-        accel = -1.0f;
+        inputByte |= INPUT_BACKWARD;
     if (keys[SDL_SCANCODE_A])
-        turn = -1.0f;
+        inputByte |= INPUT_LEFT;
     if (keys[SDL_SCANCODE_D])
-        turn = 1.0f;
+        inputByte |= INPUT_RIGHT;
 
-    player.ApplyInput(accel, turn, delta);
+    return inputByte;
 }
