@@ -11,6 +11,7 @@ target_sources(taller_client
     engine.cpp
     resource_loader.cpp
     MockServer.cpp
+    AudioManager.cpp
     PUBLIC
     # .h files
     spritesheet.h
@@ -23,4 +24,5 @@ target_sources(taller_client
     resource_loader.h
     map.h
     MockServer.h
+    AudioManager.h
     )
