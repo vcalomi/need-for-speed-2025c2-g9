@@ -5,40 +5,12 @@
 using SDL2pp::Renderer;
 
 Player::Player(const std::string& id, const std::string& carType, float x, float y):
-        id_(id),
-        carType_(carType),
-        currentSprite_(carType + "Norte"),
-        x_(x),
-        y_(y),
-        speed_(150.0f),
-        angle_(0.0f),
-        rotationSpeed_(180.0f),
-        accel_(0.0f),
-        turnDir_(0.0f) {}
+        id_(id), carType_(carType), currentSprite_(carType + "Norte"), x_(x), y_(y), angle_(0.0f) {}
 
-void Player::ApplyInput(float accelInput, float turnInput, float delta) {
-    accel_ = accelInput;
-    turnDir_ = turnInput;
-    angle_ += turnDir_ * rotationSpeed_ * delta;
-
-    if (angle_ < 0)
-        angle_ += 360;
-    if (angle_ >= 360)
-        angle_ -= 360;
-}
-
-void Player::UpdateFromNetwork(float x, float y, float angle, float speed) {
+void Player::UpdateFromNetwork(float x, float y, float angle) {
     x_ = x;
     y_ = y;
     angle_ = angle;
-    speed_ = speed;
-    currentSprite_ = GetSpriteForAngle(angle_);
-}
-
-void Player::Update(float delta) {
-    float radians = angle_ * M_PI / 180.0f;
-    x_ += cos(radians) * speed_ * accel_ * delta;
-    y_ += sin(radians) * speed_ * accel_ * delta;
     currentSprite_ = GetSpriteForAngle(angle_);
 }
 

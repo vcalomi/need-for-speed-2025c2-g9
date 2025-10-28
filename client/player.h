@@ -9,9 +9,7 @@ class Player {
 public:
     Player(const std::string& id, const std::string& carType, float x, float y);
 
-    void ApplyInput(float accelInput, float turnInput, float delta);
-    void Update(float delta);
-    void UpdateFromNetwork(float x, float y, float angle, float speed);
+    void UpdateFromNetwork(float x, float y, float angle);
 
     float GetX() const { return x_; }
     float GetY() const { return y_; }
@@ -25,9 +23,5 @@ private:
     std::string currentSprite_;
     float x_;
     float y_;
-    float speed_;
     float angle_;
-    float rotationSpeed_;
-    float accel_;
-    float turnDir_;
 };
