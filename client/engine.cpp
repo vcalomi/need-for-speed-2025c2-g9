@@ -2,10 +2,14 @@
 
 using SDL2pp::Renderer;
 
+#define WINDOW_TITLE "Need for Speed - Simulation"
+#define WINDOW_WIDTH 800
+#define WINDOW_HEIGHT 600
+
 Engine::Engine():
         sdl_(SDL_INIT_VIDEO),
-        window_("Need for Speed - Simulation", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 800,
-                600, SDL_WINDOW_SHOWN),
+        window_(WINDOW_TITLE, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, WINDOW_WIDTH,
+                WINDOW_HEIGHT, SDL_WINDOW_SHOWN),
         renderer_(window_, -1, SDL_RENDERER_ACCELERATED) {}
 
 Renderer& Engine::GetRenderer() { return renderer_; }
