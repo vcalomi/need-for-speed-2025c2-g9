@@ -2,7 +2,10 @@
 #define MAINWINDOW_H
 
 #include "player_info.h"
+#include "car.h"
 #include <QMainWindow>
+#include <QVector>
+
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -36,11 +39,14 @@ private:
     static constexpr int PAGE_SIZE = 10; // cantidad de salas por página
     int currentPage = 0;
     QStringList allRooms;
+    QVector<Car> cars;
+    int currentCarIndex = 0;
 
     QString generateRoomCode();
     void loadRooms();
     void showPage(int page);
     void goToPage(QWidget *page);
+    void updateCarImage();
 
 };
 #endif  // MAINWINDOW_H

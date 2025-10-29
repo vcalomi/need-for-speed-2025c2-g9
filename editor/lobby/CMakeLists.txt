@@ -30,6 +30,8 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         navigation.h navigation.cpp
         room_manager.h room_manager.cpp
         player_info.h
+        car.h
+
     )
 # Define target properties for Android with Qt 6 as:
 #    set_property(TARGET loby APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR

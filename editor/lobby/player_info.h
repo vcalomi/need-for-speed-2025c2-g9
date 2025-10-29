@@ -2,6 +2,7 @@
 #define PLAYER_INFO_H
 
 #include <QString>
+#include "car.h"
 
 struct PlayerInfo {
     QString host;
@@ -14,7 +15,7 @@ struct PlayerInfo {
     int minPlayers = 2;
     int maxPlayers = 8;
     int currentPlayers = 1; // host siempre cuenta
-    int selectedCar = -1;  // luego lo reemplazamos por enum
+    CarType selectedCar;  // luego lo reemplazamos por enum
 };
 
 

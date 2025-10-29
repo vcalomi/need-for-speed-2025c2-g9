@@ -19,6 +19,16 @@ MainWindow::MainWindow(QWidget* parent)
         : QMainWindow(parent), ui(new Ui::Lobby) {
     ui->setupUi(this);
 
+    cars = {
+            Car(CarType::FIAT_600,    "Fiat 600",    ":/fiat_600.png"),
+            Car(CarType::FERRARI_F40, "Ferrari F40", ":/ferrari.png"),
+            Car(CarType::PORSCHE_911, "Porsche 911", ":/porsche.png"),
+            Car(CarType::SEDAN,       "Sedan",       ":/sedan.png"),
+            Car(CarType::SHEEP_4X4,   "Sheep 4x4",   ":/jeep_4x4.png"),
+            Car(CarType::FORD_F100,   "Ford F100",   ":/ford_f100.png"),
+            Car(CarType::TRUCK,      "Truck",      ":/truck.png")
+    };
+
     // Estilos y fuente global
     UIStyles::applyGlobalStyle();
 
@@ -84,6 +94,31 @@ MainWindow::MainWindow(QWidget* parent)
     connect(ui->btnBackJoin, &QPushButton::clicked, this, &MainWindow::handleBackToMenu);
     connect(ui->btnRefresh, &QPushButton::clicked, this, &MainWindow::handleRefreshPlayers, Qt::UniqueConnection);
     connect(ui->btnStartGame, &QPushButton::clicked, this, &MainWindow::handleStartGame);
+
+    connect(ui->btnChooseCar, &QPushButton::clicked, this, [this]() {
+        ui->stackedWidget->setCurrentWidget(ui->page_car);
+        updateCarImage();   // para mostrar el primer auto
+    });
+
+
+    // Elegir  autos con el carrousel
+    connect(ui->btnNextCar, &QPushButton::clicked, this, [this]() {
+        currentCarIndex = (currentCarIndex + 1) % cars.size();
+        updateCarImage();
+    });
+    connect(ui->btnPrevCar, &QPushButton::clicked, this, [this]() {
+        currentCarIndex = (currentCarIndex - 1 + cars.size()) % cars.size();
+        updateCarImage();
+    });
+    connect(ui->btnBackToLobby, &QPushButton::clicked, this, [this]() {
+        const Car& selectedCar = cars[currentCarIndex];
+
+        player.selectedCar = selectedCar.getType();
+        ui->stackedWidget->setCurrentWidget(ui->page_wait);
+    });
+    connect(ui->btnBackToLobby, &QPushButton::clicked, this, [this]() {
+        ui->stackedWidget->setCurrentWidget(ui->page_wait);
+    });
 
     // Centrar ventana
     QRect screenGeometry = QGuiApplication::primaryScreen()->geometry();
@@ -151,7 +186,7 @@ void MainWindow::handleCreateButton() {
         QLabel {
             color: white;
             font-family: 'Tektur';
-            font-size: 16px;
+            font-size: 18px;
             font-style: italic;
             qproperty-alignment: 'AlignCenter';
         }
@@ -235,6 +270,15 @@ void MainWindow::handleRefreshPlayers() {
     }
 
     updateLobbyStatus();
+}
+
+void MainWindow::updateCarImage() {
+    const Car& currentCar = cars[currentCarIndex];
+    QPixmap pixmap(currentCar.getImagePath());
+
+    ui->labelCarImage->setPixmap(
+            pixmap.scaled(550, 350, Qt::KeepAspectRatio, Qt::SmoothTransformation)
+            );
 }
 
 void MainWindow::handleStartGame() {
