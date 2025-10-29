@@ -1,11 +1,14 @@
-    #pragma once
+#pragma once
+#include "constants.h"
 
-
-    struct VehicleSpec{
-        float width_m;
-        float length_m;
-        float mass_kg;
-        float engine_force_N;
-        float brake_force_N;
-        float steer_torque;
-    };
+struct VehicleSpec {
+    //VehicleType name;
+    float width_m;
+    float height_m;
+    float density;
+    float engine_force_N;
+    float brake_force_N;
+    float steer_torque;
+    float friction;
+    float restitution;
+};

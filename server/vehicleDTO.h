@@ -1,7 +1,6 @@
 #pragma once
 #include "constants.h"
 
-
 struct vehicleDTO {
     int id;
     VehicleType type;

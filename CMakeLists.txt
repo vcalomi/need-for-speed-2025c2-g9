@@ -105,9 +105,12 @@ endif()
 ## --- Dependencias del SERVER (Box2D) -------------------------------
 if(TALLER_SERVER)
     include(FetchContent)
+
     set(BUILD_SHARED_LIBS OFF CACHE BOOL "" FORCE)
     set(SDL_SHARED OFF CACHE BOOL "" FORCE)
     set(SDL_STATIC ON  CACHE BOOL "" FORCE)
+
+    # Box2D
     FetchContent_Declare(
         box2d
         GIT_REPOSITORY https://github.com/erincatto/box2d.git
@@ -116,9 +119,24 @@ if(TALLER_SERVER)
         GIT_PROGRESS TRUE
     )
     FetchContent_MakeAvailable(box2d)
+
+    # yaml-cpp
+    FetchContent_Declare(
+        yaml-cpp
+        GIT_REPOSITORY https://github.com/jbeder/yaml-cpp.git
+        GIT_TAG        master
+    )
+    FetchContent_MakeAvailable(yaml-cpp)
+
+    # nlohmann_json (header-only)
+    # Tip: desactivamos tests para acelerar
+    set(JSON_BuildTests OFF CACHE INTERNAL "")
+    FetchContent_Declare(
+        nlohmann_json
+        URL https://github.com/nlohmann/json/releases/download/v3.11.3/json.tar.xz
+    )
+    FetchContent_MakeAvailable(nlohmann_json)
 endif()
-
-
 
 # Program section
 # ---------------
@@ -142,26 +160,37 @@ if(TALLER_CLIENT)
     target_link_libraries(taller_client taller_common SDL2pp::SDL2pp)
 endif()
 
+
 if(TALLER_SERVER)
-    # HEY!! TODO XXX: Change the name of the executable to the one you like!
+    # ejecutables
     add_executable(taller_server)
 
     add_executable(physics_sandbox
-    server/physics/physics_sandbox.cpp
+        server/physics/physics_sandbox.cpp
+        server/physics/LevelAdministrator.cpp       # <-- AÑADIDO
+        server/YamlParser.cpp
+        server/vehicle.cpp
     )
-    # Make them depend on taller_common lib
-    add_dependencies(taller_server taller_common)
 
-    # Add source files and enable warnings
-    # HEY!! TODO XXX: add more subfolders here
+    add_dependencies(taller_server taller_common)
     add_subdirectory(server)
 
     set_project_warnings(taller_server ${TALLER_MAKE_WARNINGS_AS_ERRORS} FALSE)
 
-    # Link the taller_common lib target
-    target_link_libraries(taller_server PRIVATE taller_common box2d)
-    target_link_libraries(physics_sandbox PRIVATE box2d SDL2::SDL2)
+    # links
+    target_link_libraries(taller_server PRIVATE
+        taller_common
+        box2d
+    )
+
+    target_link_libraries(physics_sandbox PRIVATE
+        box2d
+        SDL2::SDL2
+        yaml-cpp
+        nlohmann_json::nlohmann_json               # <-- AÑADIDO
+    )
 endif()
+
 
 if(TALLER_EDITOR)
     # HEY!! TODO XXX: Change the name of the executable to the one you like!

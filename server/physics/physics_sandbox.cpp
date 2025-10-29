@@ -1,14 +1,21 @@
 #include <box2d/box2d.h>
 #include <SDL.h>
 #include <iostream>
+#include "../YamlParser.h"
+#include "../vehicle.h"
+#include "../spawn.h"
+#include "../constants.h"
+#include "LevelAdministrator.h"
 
-const float MOVE_FORCE = 30.0f;       // Newtons 
-const float STEER_TORQUE = 5.0f;      // N·m 
-const float MIN_SPEED_STEER = 0.5f;   // m/s para permitir girar
+inline constexpr float PPM = 2.0f;     
 
 int main() {
+    // --- Config ---
+    YamlParser parser;
+    auto mapa_config = parser.parse("../server/vehicle_specs.yaml");
+    VehicleSpec ferrari_spec = mapa_config["ferrari_F40"];
 
-    // --- Init SDL ---
+    // --- SDL ---
     SDL_Init(SDL_INIT_VIDEO);
     SDL_Window* window = SDL_CreateWindow("Physics Sandbox",
                                           SDL_WINDOWPOS_CENTERED,
@@ -16,98 +23,139 @@ int main() {
                                           1200, 800, 0);
     SDL_Renderer* renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
 
-    // --- Crear mundo (top-down) ---
+    const float screen_w = 1200.0f;
+    const float screen_h = 800.0f;
+
+     // --- Cámara ---
+    float cameraZoom = 6.0f;             // 1.0 = sin zoom, >1 acerca, <1 aleja
+    float camX_px = 0.0f, camY_px = -200.0f; // offset de cámara en PIXELES de mundo (no metros)
+    const float panSpeed_px = 400.0f;     // velocidad de paneo en px/seg (se escala con dt)
+    
+    Uint64 now = SDL_GetPerformanceCounter();
+    Uint64 last = now;
+    const double freq = (double)SDL_GetPerformanceFrequency();
+
+    // --- Mundo Box2D (top-down) ---
     b2WorldDef wdef = b2DefaultWorldDef();
     wdef.gravity = {0.0f, 0.0f};
     b2WorldId worldId = b2CreateWorld(&wdef);
 
-    // --- Crear un cuerpo dinámico ---
-    b2BodyDef bodyDef = b2DefaultBodyDef();
-    bodyDef.type = b2_dynamicBody;
-    bodyDef.position = {0.0f, 0.0f};
-    bodyDef.linearDamping = 2.0f;
-    bodyDef.angularDamping = 3.f;
     
-    b2BodyId body = b2CreateBody(worldId, &bodyDef);
+    // 🔹 Cargar y construir colisión del mapa
+    LevelAdministrator lvl;
+    std::string err;
+    if (!lvl.loadCollisionGrid("../server/physics/Level_0.ldtkl", "", /*layerId=*/"Collision2px", &err)) {
+        std::cerr << "[LDtk] " << err << "\n";
+        // si querés, podés abortar aquí
+    } else {
+        LevelAdministrator::BuildConfig cfg;
+        cfg.ppm = PPM;                 // 🔹 MUY IMPORTANTE: usar el mismo PPM
+        cfg.mergeHorizontal = true;    // 🔹 menos fixtures
+        cfg.flipY = true;           // ponelo true si invertís el eje Y en tu render
+        cfg.levelPxHeight = 384;     // solo requerido si flipY=true
+        b2BodyId staticCollision = lvl.buildCollision(worldId, cfg);
+        (void)staticCollision; // solo para evitar warning si no lo usás
+    }
 
-    // --- Crear un box shape (1x1 metro) ---
-    b2Polygon boxShape = b2MakeBox(1.0f, 0.5f);
-    b2ShapeDef shapeDef = b2DefaultShapeDef();
-    shapeDef.density = 1.0f;
-    b2CreatePolygonShape(body, &shapeDef, &boxShape);
+
+    // --- Auto ---
+    Vehicle vehicle(worldId, ferrari_spec, Spawn{-10.0f, -10.0f, 0.0f}, /*player_id=*/0);
 
     bool running = true;
     SDL_Event e;
-    const float pixels_per_meter = 50.0f;
-    const float move_force = 10.0f;
 
     while (running) {
-        while (SDL_PollEvent(&e)) if (e.type == SDL_QUIT) running = false;
+        // dt para pan suave
+        last = now; now = SDL_GetPerformanceCounter();
+        float dt = float((now - last) / freq);
+
+        // --- Input ---
+        TurnDir dir = TurnDir::None;
+        bool go = false, stop = false;
+
+        while (SDL_PollEvent(&e)) {
+            if (e.type == SDL_QUIT) running = false;
+
+            // Zoom con rueda del mouse
+            if (e.type == SDL_MOUSEWHEEL) {
+                float factor = (e.wheel.y > 0) ? 1.1f : 1.0f/1.1f;
+                cameraZoom *= factor;
+                if (cameraZoom < 0.25f) cameraZoom = 0.25f;
+                if (cameraZoom > 12.0f) cameraZoom = 12.0f;
+            }
+        }
 
         const Uint8* ks = SDL_GetKeyboardState(NULL);
+        go   = ks[SDL_SCANCODE_W] || ks[SDL_SCANCODE_UP];
+        stop = ks[SDL_SCANCODE_S] || ks[SDL_SCANCODE_DOWN];
+        if (ks[SDL_SCANCODE_A] || ks[SDL_SCANCODE_LEFT])  dir = TurnDir::Left;
+        if (ks[SDL_SCANCODE_D] || ks[SDL_SCANCODE_RIGHT]) dir = TurnDir::Right;
+        if (go)   vehicle.accelerate();
+        if (stop) vehicle.brake();
+        vehicle.turn(dir);
 
-         b2Vec2 forward = b2Body_GetWorldVector(body, (b2Vec2){0.0f, 1.0f});
-
-        float thrust = 0.0f;
-        if (ks[SDL_SCANCODE_UP])   thrust += MOVE_FORCE;
-        if (ks[SDL_SCANCODE_DOWN]) thrust -= MOVE_FORCE;
-
-        if (thrust != 0.0f) {
-            b2Vec2 F = { forward.x * thrust, forward.y * thrust };
-            b2Body_ApplyForceToCenter(body, F, true);
-        }
-
-        // Permitir girar solo si hay velocidad hacia adelante/atrás
-        b2Vec2 v = b2Body_GetLinearVelocity(body);
-        float speedForward = v.x * forward.x + v.y * forward.y; // dot(v, forward)
-
-        if (fabsf(speedForward) > MIN_SPEED_STEER) {
-            if (ks[SDL_SCANCODE_LEFT])  b2Body_ApplyTorque(body, +STEER_TORQUE, true);
-            if (ks[SDL_SCANCODE_RIGHT]) b2Body_ApplyTorque(body, -STEER_TORQUE, true);
-        }
-        
-        // --- Step del mundo ---
+        // --- Step física ---
         b2World_Step(worldId, 1.0f / 60.0f, 8);
 
-        // --- Mundo → pantalla ---
-        b2Vec2 p = b2Body_GetPosition(body);
-        float x = p.x * pixels_per_meter + 400;
-        float y = 300 - p.y * pixels_per_meter;
+        // --- Pose (metros) ---
+        float x_m, y_m, ang_rad;
+        vehicle.getPosition(x_m, y_m, ang_rad);
 
-        // --- Ángulo
-        b2Rot rot = b2Body_GetRotation(body);
-        float ang_rad_world = b2Rot_GetAngle(rot);
 
-        // rotación en pantalla y invertido
-        float a = -ang_rad_world;
+                // --- Cámara que sigue al auto ---
+        float world_x_px = x_m * PPM;
+        float world_y_px = y_m * PPM;
 
+        // seguimiento suave
+        float lerp = 5.0f * dt;  // cuanto más alto, más rápido sigue (5 a 10 va bien)
+        camX_px += (world_x_px - camX_px) * lerp;
+        camY_px += (world_y_px - camY_px) * lerp;
+        
+
+        // aplicar offset de cámara (en px de mundo) y zoom.
+        // X pantalla: centro de la ventana + desplazamiento
+        float x_px = (world_x_px - camX_px) * cameraZoom + screen_w * 0.5f;
+
+        // Y pantalla: invertimos porque la pantalla crece hacia abajo
+        float y_px =  screen_h * 0.5f - (world_y_px - camY_px) * cameraZoom;
+
+        // rotación pantalla
+        float a = -ang_rad; 
         float c = cosf(a), s = sinf(a);
 
-        const float hw = 25.0f;
-        const float hh = 50.0f;
+        // Tamaños: (m -> px) y luego zoom
+        float w_px = vehicle.width()  * PPM * cameraZoom;
+        float h_px = vehicle.height() * PPM * cameraZoom;
 
-        SDL_FPoint local[4] = {
-            {-hw, -hh}, { hw, -hh}, { hw,  hh}, {-hw,  hh}
-        };
+        const float hw = w_px * 0.5f;
+        const float hh = h_px * 0.5f;
 
-        // Rotar + trasladar
+        SDL_FPoint local[4] = { {-hw,-hh},{hw,-hh},{hw,hh},{-hw,hh} };
+
         SDL_Vertex verts[4];
         for (int i = 0; i < 4; ++i) {
-            float rx =  local[i].x * c - local[i].y * s;
-            float ry =  local[i].x * s + local[i].y * c;
-            verts[i].position.x = x + rx;
-            verts[i].position.y = y + ry;
+            float rx = local[i].x * c - local[i].y * s;
+            float ry = local[i].x * s + local[i].y * c;
+            verts[i].position.x = x_px + rx;
+            verts[i].position.y = y_px + ry;
             verts[i].color = {0, 255, 0, 255};
             verts[i].tex_coord = {0, 0};
         }
 
-        // Triangulación (dos triángulos)
-        int indices[6] = {0, 1, 2,  0, 2, 3};
+        int indices[6] = {0,1,2, 0,2,3};
 
+        // --- Render ---
         SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
         SDL_RenderClear(renderer);
+
+        // 🔶 DEBUG: dibujar colisión del mapa
+        lvl.debugDraw(renderer, camX_px, camY_px, cameraZoom, screen_w, screen_h,
+        /*color*/ SDL_Color{255,128,0,80}); // naranja translúcido
+
         SDL_RenderGeometry(renderer, nullptr, verts, 4, indices, 6);
         SDL_RenderPresent(renderer);
+
+        // cap ~60fps
         SDL_Delay(16);
     }
 
@@ -116,6 +164,5 @@ int main() {
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
     SDL_Quit();
-
     return 0;
 }
