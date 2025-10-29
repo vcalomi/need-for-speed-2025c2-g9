@@ -1,14 +1,14 @@
 #pragma once
 #include <string>
 
-#include "./AudioManager.h"
-#include "./MockServer.h"
+#include "../graphics/renderer_system.h"
+#include "../input/input_system.h"
+#include "../network/mock_server.h"
+#include "../world/world.h"
+#include "./audio_manager.h"
 #include "./engine.h"
-#include "./input_system.h"
 #include "./map.h"
-#include "./renderer_system.h"
 #include "./resource_loader.h"
-#include "./world.h"
 
 class Game {
 public:

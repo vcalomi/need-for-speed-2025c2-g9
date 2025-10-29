@@ -1,7 +1,7 @@
 #include <exception>
 #include <iostream>
 
-#include "./game.h"
+#include "./core/game.h"
 
 int main() try {
     Game game;

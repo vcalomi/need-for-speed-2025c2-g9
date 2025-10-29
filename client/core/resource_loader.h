@@ -1,5 +1,5 @@
 #pragma once
-#include "./spritesheet.h"
+#include "../graphics/spritesheet.h"
 
 class ResourceLoader {
 public:

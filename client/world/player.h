@@ -3,7 +3,7 @@
 
 #include <SDL2pp/SDL2pp.hh>
 
-#include "./spritesheet.h"
+#include "../graphics/spritesheet.h"
 
 class Player {
 public:

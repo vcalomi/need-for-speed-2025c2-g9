@@ -1,9 +1,9 @@
 #pragma once
 #include <SDL2pp/SDL2pp.hh>
 
-#include "./map.h"
+#include "../core/map.h"
+#include "../world/world.h"
 #include "./spritesheet.h"
-#include "./world.h"
 
 class RendererSystem {
 public:

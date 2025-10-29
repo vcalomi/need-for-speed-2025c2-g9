@@ -1,6 +1,4 @@
-#include "./AudioManager.h"
-
-#include "AudioManager.h"
+#include "./audio_manager.h"
 
 #define CHANNELS 2
 #define CHUNK_SIZE 512
