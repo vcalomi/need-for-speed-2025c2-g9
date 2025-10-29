@@ -1,5 +1,5 @@
-#ifndef CLIENT_RECEIVER_H
-#define CLIENT_RECEIVER_H
+#ifndef RECEIVER_H
+#define RECEIVER_H
 
 #include "../common_src/client_command.h"
 #include "../common_src/queue.h"
@@ -13,17 +13,17 @@
 
 #include <optional>
 
-class ClientReceiver: public Thread {
+class Receiver: public Thread {
 private:
     Queue<ClientCommand>& gameQueue;
     ServerProtocol& protocol;
     int clientId;
 
 public:
-    ClientReceiver(ServerProtocol& serverProtocol, Queue<ClientCommand>& gameQueue,
+    Receiver(ServerProtocol& serverProtocol, Queue<ClientCommand>& gameQueue,
                    int clientId);
     void run() override;
-    ~ClientReceiver();
+    ~Receiver();
 };
 
 #endif

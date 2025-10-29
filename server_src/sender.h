@@ -1,5 +1,5 @@
-#ifndef CLIENT_SENDER_H
-#define CLIENT_SENDER_H
+#ifndef SENDER_H
+#define SENDER_H
 
 #include <vector>
 
@@ -11,15 +11,15 @@
 
 #include "server_protocol.h"
 
-class ClientSender: public Thread {
+class Sender: public Thread {
 private:
     Queue<NitroMessage>& clientQueue;
     ServerProtocol& protocol;
 
 public:
-    explicit ClientSender(ServerProtocol& serverProtocol, Queue<NitroMessage>& clientQueue);
+    explicit Sender(ServerProtocol& serverProtocol, Queue<NitroMessage>& clientQueue);
     void run() override;
-    ~ClientSender();
+    ~Sender();
 };
 
 #endif

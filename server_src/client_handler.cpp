@@ -7,7 +7,7 @@
 #include "../common_src/queue.h"
 #include "../common_src/socket.h"
 #include "../common_src/thread.h"
-#include "client_receiver.h"
+#include "receiver.h"
 
 ClientHandler::ClientHandler(Socket socket, GameLobby& gameLobby, int clientId):
         peer(std::move(socket)),
@@ -85,7 +85,7 @@ void ClientHandler::handleLobbyCommand(ActionCode action) {
 };
 
 void ClientHandler::startGameThreads(Queue<ClientCommand>& gameQueue) {
-    receiver = std::make_unique<ClientReceiver>(protocol, gameQueue, clientId);
+    receiver = std::make_unique<Receiver>(protocol, gameQueue, clientId);
     receiver->start();
     sender.start();
     state = ClientState::IN_GAME;

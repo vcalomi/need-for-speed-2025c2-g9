@@ -12,8 +12,8 @@
 
 #include "client_handler.h"
 #include "game_lobby.h"
-#include "client_receiver.h"
-#include "client_sender.h"
+#include "receiver.h"
+#include "sender.h"
 #include "server_protocol.h"
 #include "client_state.h"
 
@@ -26,8 +26,8 @@ private:
     ClientState state;
     int clientId;
     Queue<NitroMessage> senderQueue;    // para enviar al cliente
-    std::unique_ptr<ClientReceiver> receiver;;
-    ClientSender sender;
+    std::unique_ptr<Receiver> receiver;;
+    Sender sender;
 
 public:
     ClientHandler(Socket socket, GameLobby& gameLobby, int clientId);

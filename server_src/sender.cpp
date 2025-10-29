@@ -1,4 +1,4 @@
-#include "client_sender.h"
+#include "sender.h"
 
 #include <vector>
 
@@ -6,10 +6,10 @@
 
 #include "../common_src/common_codes.h"
 
-ClientSender::ClientSender(ServerProtocol& serverProtocol, Queue<NitroMessage>& clientQueue):
+Sender::Sender(ServerProtocol& serverProtocol, Queue<NitroMessage>& clientQueue):
         clientQueue(clientQueue), protocol(serverProtocol) {}
 
-void ClientSender::run() {
+void Sender::run() {
     try {
         while (should_keep_running()) {
             NitroMessage message = clientQueue.pop();
@@ -21,4 +21,4 @@ void ClientSender::run() {
         return;
     }
 }
-ClientSender::~ClientSender() {}
+Sender::~Sender() {}

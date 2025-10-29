@@ -1,16 +1,16 @@
-#include "client_receiver.h"
+#include "receiver.h"
 
 #include <sys/socket.h>
 
 #include "../common_src/common_codes.h"
 
-ClientReceiver::ClientReceiver(ServerProtocol& serverProtocol,Queue<ClientCommand>& gameQueue,
+Receiver::Receiver(ServerProtocol& serverProtocol,Queue<ClientCommand>& gameQueue,
                                int clientId) :
         gameQueue(gameQueue),
         protocol(serverProtocol),
         clientId(clientId) {}
 
-void ClientReceiver::run() {
+void Receiver::run() {
     try {
         while (should_keep_running()) {
             ActionCode action = protocol.receiveActionCode();
@@ -26,4 +26,4 @@ void ClientReceiver::run() {
     }
 }
 
-ClientReceiver::~ClientReceiver() {}
+Receiver::~Receiver() {}
