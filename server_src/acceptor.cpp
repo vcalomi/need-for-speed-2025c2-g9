@@ -7,8 +7,8 @@
 
 #include "client_handler.h"
 
-Acceptor::Acceptor(const std::string& port):
-        acceptor(port.c_str()), nextClientId(0) {}
+Acceptor::Acceptor(const std::string& port, GameLobby& gameLobby):
+        gameLobby(gameLobby), acceptor(port.c_str()), nextClientId(0) {}
 
 void Acceptor::run() {
     while (should_keep_running()) {
@@ -21,7 +21,8 @@ void Acceptor::run() {
             }
             int clientId = nextClientId++;
             ClientHandler* client =
-                    new ClientHandler(std::move(socket), clientId);
+                    new ClientHandler(std::move(socket), gameLobby, clientId);
+            gameLobby.registerClientHandler(clientId, client);
             reap();
             clients.push_back(client);
             client->start();

@@ -9,9 +9,9 @@
 #include "../common_src/thread.h"
 #include "client_receiver.h"
 
-ClientHandler::ClientHandler(Socket socket, int clientId):
+ClientHandler::ClientHandler(Socket socket, GameLobby& gameLobby, int clientId):
         peer(std::move(socket)),
-        gameLobby(),
+        gameLobby(gameLobby),
         sender(protocol, senderQueue),
         protocol(peer),
         keep_running(true),
@@ -61,13 +61,8 @@ void ClientHandler::handleLobbyCommand(ActionCode action) {
         }
             
         case ActionCode::START_GAME: {
-            if (gameLobby.startGameByClientId(clientId)) {
-                Queue<ClientCommand>& gameQueue = gameLobby.getGameQueueForClient(clientId);
-                receiver = std::make_unique<ClientReceiver>(protocol, gameQueue, clientId);
-                receiver->start();
-                sender.start();
-                state = ClientState::IN_GAME;
-            } else {
+            bool started = gameLobby.startGameByClientId(clientId);
+            if (!started) {
                 protocol.sendMsg({ActionCode::SEND_ERROR_MSG});
             }
             break;
@@ -88,6 +83,14 @@ void ClientHandler::handleLobbyCommand(ActionCode action) {
             break;
     }
 };
+
+void ClientHandler::startGameThreads(Queue<ClientCommand>& gameQueue) {
+    receiver = std::make_unique<ClientReceiver>(protocol, gameQueue, clientId);
+    receiver->start();
+    sender.start();
+    state = ClientState::IN_GAME;
+}
+
 
 void ClientHandler::stop() {
     keep_running = false;

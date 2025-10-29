@@ -12,6 +12,7 @@
 
 /*
     Maneja el juego
+    FALTA JOIN
 */
 
 class GameLoop: public Thread {

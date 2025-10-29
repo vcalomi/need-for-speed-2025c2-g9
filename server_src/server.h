@@ -7,9 +7,11 @@
 
 #include "acceptor.h"
 #include "server_input_handler.h"
+#include "game_lobby.h"
 
 class Server {
 private:
+    GameLobby gameLobby;
     Acceptor acceptor;
     ServerInputHandler inputHandler;
 

@@ -7,6 +7,12 @@
 
 GameLobby::GameLobby() {}
 
+void GameLobby::registerClientHandler(int clientId, ClientHandler* handler) {
+    std::lock_guard<std::mutex> lock(mtx);
+    clientHandlers[clientId] = handler;
+}
+
+
 bool GameLobby::createGameRoom(const std::string& roomName, int hostId, Queue<NitroMessage>& hostQueue) {
     std::lock_guard<std::mutex> lock(mtx);
 
@@ -58,8 +64,19 @@ bool GameLobby::startGameByClientId(int clientId) {
     if (!room->isHost(clientId)) {
         return false;  // No es el host
     }
+
+    if (!room->startGame()) return false;
     
-    return room->startGame();
+    // inciar threads sender/receiver de todos los jugadores de esa partida
+    Queue<ClientCommand>& gameQueue = room->getGameQueue();
+    for (const auto& [playerId, _] : room->getPlayers()) {
+        if (clientHandlers.count(playerId)) {
+            ClientHandler* handler = clientHandlers[playerId];
+            handler->startGameThreads(gameQueue);
+        }
+    }
+
+    return true;
 }
 
 bool GameLobby::chooseCarByClientId(int clientId, const CarConfig& car) {

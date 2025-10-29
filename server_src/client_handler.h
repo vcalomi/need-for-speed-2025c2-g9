@@ -20,7 +20,7 @@
 class ClientHandler {
 private:
     Socket peer;
-    GameLobby gameLobby;
+    GameLobby& gameLobby;
     ServerProtocol protocol;
     std::atomic_bool keep_running;
     ClientState state;
@@ -30,11 +30,12 @@ private:
     ClientSender sender;
 
 public:
-    ClientHandler(Socket socket, int clientId);
+    ClientHandler(Socket socket, GameLobby& gameLobby, int clientId);
     void start();
     void join();
     void stop();
     bool is_alive() const;
+    void startGameThreads(Queue<ClientCommand>& gameQueue);
     void handleLobbyCommand(ActionCode action);
     ~ClientHandler();
 };
