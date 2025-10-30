@@ -4,6 +4,7 @@
 #include <string>
 #include <vector>
 #include <map>
+#include <memory>
 
 #include "../common_src/common_protocol.h"
 #include "../common_src/socket.h"
@@ -15,19 +16,20 @@ class ServerProtocol {
 private:
     Socket& socket;
     CommonProtocol protocol;
-    std::map<uint8_t, Serializer> serializers;
+    std::map<uint8_t, std::unique_ptr<Serializer>> serializers;
 
 public:
     explicit ServerProtocol(Socket& socket);
-    void sendDTO(Dto dto);
-    Dto receiveDTO();
+    void sendDTO(std::shared_ptr<Dto> dto);
+    std::shared_ptr<Dto> receiveDTO();
     ActionCode receiveActionCode();
     Socket releaseSocket();
     std::string receiveRoomName();
-    CarConfig receiveCarConfig();
+    // CarConfig receiveCarConfig();
     void sendActionCode();
     void sendRoomList(const std::vector<std::string>& rooms);
     void sendErrorMsg(const std::string& errorMsg);
+    void sendMsg(ActionCode code);
     
     ~ServerProtocol();
 };

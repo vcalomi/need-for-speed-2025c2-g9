@@ -5,6 +5,7 @@
 #include "../common_src/socket.h"
 #include "../common_src/socket_closed.h"
 #include "../common_src/thread.h"
+#include "../common_src/Dto/dto.h"
 
 #include "client_protocol.h"
 
@@ -12,11 +13,11 @@
 
 class ClientReceiver: public Thread {
 private:
-    Queue<>& queue;
+    Queue<std::shared_ptr<Dto>>& queue;
     ClientProtocol& protocol;
 
 public:
-    ClientReceiver(ClientProtocol& clientProtocol, Queue<>& queue);
+    ClientReceiver(ClientProtocol& clientProtocol, Queue<std::shared_ptr<Dto>>& queue);
     void run() override;
     ~ClientReceiver();
 };

@@ -3,31 +3,23 @@
 #include <algorithm>
 
 #include "../common_src/queue.h"
-#include "client_handler.h"
+#include "../common_src/Dto/vehicle.h"
 
 GameRoom::GameRoom(const std::string& roomName, int hostId) : 
     roomName(roomName),
     hostId(hostId),
     state(RoomState::WAITING_FOR_PLAYERS),
-    gameQueue() {}
+    gameQueue(),
+    broadcaster() {}
     // gameLoop(gameQueue) {}
 
-bool GameRoom::addPlayer(int clientId, ClientHandler* client) {
+bool GameRoom::addPlayer(int clientId, Queue<std::shared_ptr<Dto>>& senderQueue) {
     std::lock_guard<std::mutex> lock(mtx);
-
+    
     if (!canJoin()) return false;
 
-    players[clientId] = client;
-    broadcaster.addQueue(&client->senderQueue);
-    return true;
-}
-
-bool GameRoom::removePlayer(int clientId) {
-    std::lock_guard<std::mutex> lock(mtx);
-    auto it = players.find(clientId);
-    broadcaster.removeQueue(&it->second->senderQueue);
-    if (it == players.end()) return false;
-    players.erase(it);
+    players[clientId] = &senderQueue;
+    broadcaster.addQueue(&senderQueue);
     return true;
 }
 
@@ -39,12 +31,17 @@ bool GameRoom::startGame() {
     }
 
     state = RoomState::IN_RACE;
-    for (const auto& [playerId, handler] : players) {
-        if (handler) {
-            handler->start(gameQueue);
-        }
-    }
 
+    uint8_t idx = 0;
+    for (const auto& entry : players) {
+        uint8_t id = static_cast<uint8_t>(entry.first % 255);
+        auto dto = std::make_shared<VehicleDto>(id, 1.0f * idx, 0.0f, 0.0f);
+        std::cout << "CREATED VehicleDto: id=" << (int)dto->id 
+                  << " x=" << dto->x << " y=" << dto->y << std::endl;
+        
+        broadcaster.broadcast(dto);  // ← Pasar shared_ptr, no objeto
+        idx++;
+    }
     // gameLoop.start();
     return true;
 }
@@ -63,6 +60,10 @@ bool GameRoom::chooseCar(int clientId, const CarConfig& car) {
     return true;
 }
 
+// void removePlayer(int clientId) {
+
+// }
+
 bool GameRoom::canJoin() const {
     return state == RoomState::WAITING_FOR_PLAYERS && players.size() < 8;
 }
@@ -71,8 +72,6 @@ bool GameRoom::isHost(int clientId) const {
     return hostId == clientId;
 }
 
-void GameRoom::broadcastToAll(const Dto& message) {
-    broadcaster.broadcast(message);
-}
+Queue<std::shared_ptr<Dto>>& GameRoom::getGameQueue() { return gameQueue; }
 
 GameRoom::~GameRoom() {}

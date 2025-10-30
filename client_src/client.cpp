@@ -4,7 +4,7 @@
 #include <string>
 
 Client::Client(const std::string& hostname, const std::string& port):
-        clientProtocol(hostname, port), connected(true) {}
+        clientProtocol(hostname, port), connected(true), recvQueue(), receiver(nullptr) {}
 
 void Client::run() {
     while (connected) {
@@ -29,14 +29,12 @@ void Client::processCommand(const std::string& command) {
 
     if (cmd == "LIST_ROOMS") {
         clientProtocol.sendListRooms();
-        // leer y mostrar la lista de salas disponible
         try {
             auto rooms = clientProtocol.receiveRoomList();
             for (const auto& r : rooms) {
                 std::cout << r << std::endl;
             }
         } catch (const std::exception&) {
-            // ignorar errores de lectura por ahora
         }
         return;
     }
@@ -45,6 +43,7 @@ void Client::processCommand(const std::string& command) {
         std::getline(iss, roomName);
         if (!roomName.empty() && roomName.front() == ' ') roomName.erase(0, 1);
         if (!roomName.empty()) clientProtocol.sendCreateRoom(roomName);
+        clientProtocol.receiveAction();
         return;
     }
     if (cmd == "JOIN_ROOM") {
@@ -56,6 +55,10 @@ void Client::processCommand(const std::string& command) {
     }
     if (cmd == "START_GAME") {
         clientProtocol.sendStartGame();
+        if (!receiver) {
+            receiver = std::make_unique<ClientReceiver>(clientProtocol, recvQueue);
+            receiver->start();
+        }
         return;
     }
     if (cmd == "CHOOSE_CAR") {
@@ -67,6 +70,10 @@ void Client::processCommand(const std::string& command) {
     if (cmd == "EXIT") {
         connected = false;
         clientProtocol.close();
+        if (receiver) {
+            receiver->stop();
+            receiver->join();
+        }
         return;
     }
 }

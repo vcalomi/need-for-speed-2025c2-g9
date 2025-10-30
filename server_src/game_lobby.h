@@ -4,11 +4,9 @@
 #include <vector>
 #include <map>
 
-#include "client_handler.h"
 #include "../common_src/queue.h"
 #include "game_room.h"
 #include "../common_src/Dto/dto.h"
-#include "server_protocol.h"
 
 /*
     (Monitor) Gestiona las partidas
@@ -21,21 +19,15 @@ private:
     std::map<int, GameRoom*> clientToRoom;
     std::map<std::string, CarConfig> availableCars;
     std::map<std::string, GameRoom*> activeGames;
-    std::map<int, ClientHandler*> clientHandlers;
-    std::map<int, Socket> clientSockets;
-    std::atomic<bool> lobbyOpen{true};
     
-public:
+    public:
     GameLobby();
-    void processClients();
-    void registerClient(Socket socket, int clientId);
-    bool createGameRoom(const std::string& roomName, int hostId);
-    bool joinGameRoom(const std::string& roomName, int clientId);
-    void sendAvailableRooms(ServerProtocol& protocol);
+    bool createGameRoom(const std::string& roomName, int hostId, Queue<std::shared_ptr<Dto>>& hostQueue);
+    bool joinGameRoom(const std::string& roomName, int clientId, Queue<std::shared_ptr<Dto>>& clientQueue);
+    std::vector<std::string> getAvailableRooms();
     bool startGameByClientId(int clientId);
+    Queue<std::shared_ptr<Dto>>& getGameQueueForClient(int clientId);
     bool chooseCarByClientId(int clientId, const CarConfig& car);
-    void reapClients();
-    void clearClients();
     ~GameLobby();
 };
 

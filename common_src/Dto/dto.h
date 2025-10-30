@@ -18,8 +18,8 @@ public:
     Dto();
     explicit Dto(uint8_t code);
     explicit Dto(uint8_t code, uint8_t id);
-    ~Dto();
     uint8_t get_cliente_id();
-    uint8_t return_code();
+    virtual ~Dto();
+    uint8_t return_code() const;
 };
 #endif

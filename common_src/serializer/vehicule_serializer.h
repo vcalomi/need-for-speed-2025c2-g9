@@ -10,8 +10,8 @@ private:
 
 public:
     explicit VehicleSerializer() {}
-    std::vector<uint8_t> serialize(Dto dto) const override;
-    Dto deserialize(const std::vector<uint8_t>& buffer) const override;
+    std::vector<uint8_t> serialize(const Dto& dto) const override;
+    std::shared_ptr<Dto> deserialize(const std::vector<uint8_t>& buffer) const override;
     int getSize() const override { return size; }
 };
 

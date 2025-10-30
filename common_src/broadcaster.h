@@ -8,13 +8,13 @@
 
 class Broadcaster {
 private:
-    std::vector<Queue<Dto>*> queues;
+    std::vector<Queue<std::shared_ptr<Dto>>*> queues;
     std::mutex mtx;
 
 public:
-    void addQueue(Queue<Dto>* queue);
-    void removeQueue(Queue<Dto>* queue);
-    void broadcast(const Dto& message);
+    void addQueue(Queue<std::shared_ptr<Dto>>* queue);
+    void removeQueue(Queue<std::shared_ptr<Dto>>* queue);
+    void broadcast(std::shared_ptr<Dto> dto);
 };
 
 #endif

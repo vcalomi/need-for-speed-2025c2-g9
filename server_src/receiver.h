@@ -14,11 +14,11 @@
 
 class Receiver: public Thread {
 private:
-    Queue<Dto>& gameQueue;
+     Queue<std::shared_ptr<Dto>>& gameQueue;
     ServerProtocol& protocol;
 
 public:
-    Receiver(ServerProtocol& serverProtocol, Queue<Dto>& gameQueue);
+    Receiver(ServerProtocol& serverProtocol,  Queue<std::shared_ptr<Dto>>& gameQueue);
     void run() override;
     ~Receiver();
 };

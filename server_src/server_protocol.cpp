@@ -8,7 +8,7 @@
 #include "../common_src/serializer/vehicule_serializer.h"
 
 ServerProtocol::ServerProtocol(Socket& socket): socket(socket), protocol() {
-    serializers[static_cast<uint8_t>(ActionCode::SEND_CARS)] = VehicleSerializer();
+    serializers[static_cast<uint8_t>(ActionCode::SEND_CARS)] = std::make_unique<VehicleSerializer>();
 }
 
 // CarConfig ServerProtocol::receiveCarConfig() {
@@ -17,28 +17,25 @@ ServerProtocol::ServerProtocol(Socket& socket): socket(socket), protocol() {
 //     return car;
 // }
 
-// void ServerProtocol::sendRoomList(const std::vector<std::string>& rooms) {
-//     protocol.sendUint16(socket, rooms.size());
-//     for (const auto& room : rooms) {
-//         protocol.sendString(socket, room);
-//     }
-// }
+void ServerProtocol::sendMsg(ActionCode code) {
+    protocol.sendAction(socket, code);
+}
 
-void ServerProtocol::sendDTO(Dto dto) {
-    uint8_t dtoCode = dto.return_code();
-    auto buffer = serializers[dtoCode].serialize(dto);
-
+void ServerProtocol::sendDTO(std::shared_ptr<Dto> dto) {
+    uint8_t dtoCode = dto->return_code();
+    protocol.sendAction(socket, static_cast<ActionCode>(dtoCode));
+    auto buffer = serializers[dtoCode]->serialize(*dto);
     socket.sendall(buffer.data(), buffer.size());
 }
 
-Dto ServerProtocol::receiveDTO() {
+std::shared_ptr<Dto> ServerProtocol::receiveDTO() {
     uint8_t dtoCode;
     socket.recvall(&dtoCode, sizeof(dtoCode));
 
-    std::vector<uint8_t> buffer(serializers[dtoCode].getSize());
+    std::vector<uint8_t> buffer(serializers[dtoCode]->getSize());
     socket.recvall(buffer.data(), buffer.size());
 
-    return serializers[dtoCode].deserialize(buffer);
+    return serializers[dtoCode]->deserialize(buffer);
 }
 
 Socket ServerProtocol::releaseSocket() {

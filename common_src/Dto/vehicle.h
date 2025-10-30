@@ -1,3 +1,5 @@
+#ifndef VEHICLE_DTO_H
+#define VEHICLE_DTO_H
 #include "dto.h"
 
 class VehicleDto : public Dto {
@@ -9,3 +11,5 @@ public:
     float rotation;
     VehicleDto(uint8_t id, float x, float y, float v);
 };
+
+#endif

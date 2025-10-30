@@ -1,10 +1,11 @@
 #include "vehicule_serializer.h"
 #include <netinet/in.h>
 #include <cstring>
+#include <memory>
 
-std::vector<uint8_t> VehicleSerializer::serialize(Dto dto) const {
-    VehicleDto& vehicleDto = static_cast<VehicleDto&>(dto);
-    std::vector<uint8_t> buffer(14);
+std::vector<uint8_t> VehicleSerializer::serialize(const Dto& dto) const {
+    const VehicleDto& vehicleDto = static_cast<const VehicleDto&>(dto);
+    std::vector<uint8_t> buffer(13);
     size_t pos = 0;
 
     auto writeFloat = [&](float value) {
@@ -14,7 +15,6 @@ std::vector<uint8_t> VehicleSerializer::serialize(Dto dto) const {
         pos += sizeof(parsed);
     };
 
-    buffer[pos++] = dto.return_code();
     buffer[pos++] = vehicleDto.id;
     writeFloat(vehicleDto.x);
     writeFloat(vehicleDto.y);
@@ -23,7 +23,7 @@ std::vector<uint8_t> VehicleSerializer::serialize(Dto dto) const {
     return buffer;
 }
 
-Dto VehicleSerializer::deserialize(const std::vector<uint8_t>& buffer) const {
+std::shared_ptr<Dto> VehicleSerializer::deserialize(const std::vector<uint8_t>& buffer) const {
     size_t pos = 0;
     
     auto readFloat = [&]() {
@@ -33,10 +33,10 @@ Dto VehicleSerializer::deserialize(const std::vector<uint8_t>& buffer) const {
         uint32_t parsed = ntohl(value);
         return float(parsed) / 100.0f;
     };
-    
+
     uint8_t id = buffer[pos++];
     float x = readFloat();
     float y = readFloat();
     float rotation = readFloat();
-    return VehicleDto(id, x, y, rotation);
+    return std::make_shared<VehicleDto>(id, x, y, rotation);
 }

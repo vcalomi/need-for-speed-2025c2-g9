@@ -5,8 +5,10 @@
 
 #include <sys/socket.h>
 
-Acceptor::Acceptor(const std::string& port, GameLobby& gameLobby):
-        acceptor(port.c_str()), gameLobby(gameLobby), nextClientId(0) {}
+#include "client_handler.h"
+
+Acceptor::Acceptor(const std::string& port, GameLobby& lobby):
+        acceptor(port.c_str()), gameLobby(lobby), nextClientId(0) {}
 
 void Acceptor::run() {
     while (should_keep_running()) {
@@ -18,14 +20,41 @@ void Acceptor::run() {
                 break;
             }
             int clientId = nextClientId++;
-            gameLobby.registerClient(std::move(socket), clientId);
-            gameLobby.processClients();
+            ClientHandler* client =
+                    new ClientHandler(std::move(socket), gameLobby, clientId);
+            reap();
+            clients.push_back(client);
+            client->start();
         } catch (const LibError& e) {
             this->stop();
         } catch (const std::exception& e) {
             this->stop();
         }
     }
+    clear();
+}
+
+void Acceptor::reap() {
+    auto new_end = std::remove_if(clients.begin(), clients.end(), [](ClientHandler* c) {
+        bool is_dead = !c->is_alive();
+        if (is_dead) {
+            c->join();
+            delete c;
+        }
+        return is_dead;
+    });
+    clients.erase(new_end, clients.end());
+}
+
+void Acceptor::clear() {
+    for (auto& client: clients) {
+        client->stop();
+    }
+    for (auto& client: clients) {
+        client->join();
+        delete client;
+    }
+    clients.clear();
 }
 
 void Acceptor::close() {
@@ -34,4 +63,4 @@ void Acceptor::close() {
     acceptor.close();
 }
 
-Acceptor::~Acceptor() {}
+Acceptor::~Acceptor() { clear(); }

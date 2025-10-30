@@ -8,7 +8,6 @@
 #include "../common_src/liberror.h"
 #include "../common_src/socket.h"
 #include "../common_src/thread.h"
-
 #include "game_lobby.h"
 #include "client_handler.h"
 
@@ -17,11 +16,14 @@ private:
     Socket acceptor;
     GameLobby& gameLobby;
     std::atomic<int> nextClientId;
+    std::vector<ClientHandler*> clients;
 
 public:
-    Acceptor(const std::string& port, GameLobby& gameLobby);
+    Acceptor(const std::string& port, GameLobby& lobby);
     void run() override;
     void close();
+    void reap();
+    void clear();
     ~Acceptor();
 };
 

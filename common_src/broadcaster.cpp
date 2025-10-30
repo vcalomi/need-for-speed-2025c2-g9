@@ -1,12 +1,12 @@
 #include "broadcaster.h"
 #include <algorithm>
 
-void Broadcaster::addQueue(Queue<Dto>* queue) {
+void Broadcaster::addQueue(Queue<std::shared_ptr<Dto>>* queue) {
     std::lock_guard<std::mutex> lock(mtx);
     queues.push_back(queue);
 }
 
-void Broadcaster::removeQueue(Queue<Dto>* queue) {
+void Broadcaster::removeQueue(Queue<std::shared_ptr<Dto>>* queue) {
     std::lock_guard<std::mutex> lock(mtx);
     auto it = std::find(queues.begin(), queues.end(), queue);
     if (it != queues.end()) {
@@ -14,9 +14,9 @@ void Broadcaster::removeQueue(Queue<Dto>* queue) {
     }
 }
 
-void Broadcaster::broadcast(const Dto& message) {
+void Broadcaster::broadcast(std::shared_ptr<Dto> dto) {
     std::lock_guard<std::mutex> lock(mtx);
     for (auto* queue : queues) {
-        queue->try_push(message);
+        queue->try_push(dto);
     }
 }
