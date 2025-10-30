@@ -28,8 +28,9 @@ public:
     void sendChooseCar(const std::string& carType);
     std::vector<std::string> receiveRoomList();
     ActionCode receiveAction();
-    VehicleDto receiveVehicleDto();
     std::shared_ptr<Dto> receiveDTO();
+    ActionCode receiveActionCode();
+    bool isClientConnected() const;
     void close();
     ~ClientProtocol();
 };

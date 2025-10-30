@@ -25,6 +25,7 @@ public:
     // void listRooms();
     // void startGame();
     // void chooseCar(const std::string& carType);
+    void stop();
     ~Client();
 };
 

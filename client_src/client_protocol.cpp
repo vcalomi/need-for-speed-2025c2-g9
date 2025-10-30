@@ -48,8 +48,7 @@ ActionCode ClientProtocol::receiveAction() {
 }
 
 std::shared_ptr<Dto> ClientProtocol::receiveDTO() {
-    uint8_t dtoCode;
-    socket.recvall(&dtoCode, sizeof(dtoCode));
+    int8_t dtoCode = uint8_t(receiveActionCode());
 
     auto it = serializers.find(dtoCode);
     if (it == serializers.end()) {
@@ -63,10 +62,15 @@ std::shared_ptr<Dto> ClientProtocol::receiveDTO() {
     return it->second->deserialize(buffer);
 }
 
+ActionCode ClientProtocol::receiveActionCode() { return protocol.receiveAction(socket); }
+
+bool ClientProtocol::isClientConnected() const {
+    return socket.is_stream_recv_closed() || socket.is_stream_send_closed();
+}
+
 void ClientProtocol::close() {
-    try {
-        socket.close();
-    } catch (const SocketClosed&) {}
+    socket.shutdown(SHUT_RDWR);
+    socket.close();
 }
 
 ClientProtocol::~ClientProtocol() {}

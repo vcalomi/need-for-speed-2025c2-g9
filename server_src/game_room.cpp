@@ -35,11 +35,11 @@ bool GameRoom::startGame() {
     uint8_t idx = 0;
     for (const auto& entry : players) {
         uint8_t id = static_cast<uint8_t>(entry.first % 255);
-        auto dto = std::make_shared<VehicleDto>(id, 1.0f * idx, 0.0f, 0.0f);
+        auto dto = std::make_shared<VehicleDto>(id, 1.0f + idx, 0.0f, 0.0f);;
         std::cout << "CREATED VehicleDto: id=" << (int)dto->id 
                   << " x=" << dto->x << " y=" << dto->y << std::endl;
         
-        broadcaster.broadcast(dto);  // ← Pasar shared_ptr, no objeto
+        broadcaster.broadcast(dto);
         idx++;
     }
     // gameLoop.start();

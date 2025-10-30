@@ -29,17 +29,12 @@ void ServerProtocol::sendDTO(std::shared_ptr<Dto> dto) {
 }
 
 std::shared_ptr<Dto> ServerProtocol::receiveDTO() {
-    uint8_t dtoCode;
-    socket.recvall(&dtoCode, sizeof(dtoCode));
+    uint8_t dtoCode = uint8_t(receiveActionCode());
 
     std::vector<uint8_t> buffer(serializers[dtoCode]->getSize());
     socket.recvall(buffer.data(), buffer.size());
 
     return serializers[dtoCode]->deserialize(buffer);
-}
-
-Socket ServerProtocol::releaseSocket() {
-    return std::move(socket);
 }
 
 ActionCode ServerProtocol::receiveActionCode() { return protocol.receiveAction(socket); }

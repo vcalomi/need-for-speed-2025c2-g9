@@ -11,7 +11,7 @@ ClientReceiver::ClientReceiver(ClientProtocol& clientProtocol, Queue<std::shared
 
 void ClientReceiver::run() {
     try {
-        while (should_keep_running()) {
+        while (should_keep_running() && !protocol.isClientConnected()) {
             std::shared_ptr<Dto> dto = protocol.receiveDTO();
             ActionCode code = static_cast<ActionCode>(dto->return_code());
             
@@ -36,7 +36,9 @@ void ClientReceiver::run() {
                 }
             }
         }
-    } catch (const SocketClosed&) {
+    } catch (const SocketClosed& e) {
+        return;
+    } catch (const ClosedQueue& e) {
         return;
     }
 }

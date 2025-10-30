@@ -68,14 +68,19 @@ void Client::processCommand(const std::string& command) {
         return;
     }
     if (cmd == "EXIT") {
-        connected = false;
-        clientProtocol.close();
-        if (receiver) {
-            receiver->stop();
-            receiver->join();
-        }
+        stop();
         return;
     }
+}
+
+void Client::stop() {
+    connected = false;
+    clientProtocol.close();
+    recvQueue.close();
+    // senderQueeue.close();
+    receiver->stop();
+    receiver->join();
+    // sender.stop();
 }
 
 Client::~Client() {}

@@ -12,11 +12,11 @@
 
 class Sender: public Thread {
 private:
-    Queue<>& clientQueue;
+    Queue<std::shared_ptr<Dto>>& clientQueue;
     ClientProtocol& protocol;
 
 public:
-    explicit Sender(ClientProtocol& clientProtocol, Queue<>& clientQueue);
+    explicit Sender(ClientProtocol& clientProtocol, Queue<std::shared_ptr<Dto>>& clientQueue);
     void run() override;
     ~Sender();
 };
