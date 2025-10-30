@@ -28,4 +28,20 @@ void ClientProtocol::sendChooseCar(const std::string& carType) {
     // protocol.sendString(socket, carType); // Implementar cuando haya CarConfig
 }
 
+std::vector<std::string> ClientProtocol::receiveRoomList() {
+    uint16_t count = protocol.receiveUint16(socket);
+    std::vector<std::string> rooms;
+    rooms.reserve(count);
+    for (uint16_t i = 0; i < count; ++i) {
+        rooms.push_back(protocol.receiveString(socket));
+    }
+    return rooms;
+}
+
+void ClientProtocol::close() {
+    try {
+        socket.close();
+    } catch (const SocketClosed&) {}
+}
+
 ClientProtocol::~ClientProtocol() {}

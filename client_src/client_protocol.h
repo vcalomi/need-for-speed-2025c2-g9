@@ -20,6 +20,8 @@ public:
     void sendListRooms();
     void sendStartGame();
     void sendChooseCar(const std::string& carType);
+    std::vector<std::string> receiveRoomList();
+    void close();
     ~ClientProtocol();
 };
 

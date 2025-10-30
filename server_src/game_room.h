@@ -32,7 +32,7 @@ private:
     std::map<int, CarConfig> chosenCars;
     RoomState state;
     Queue<Dto> gameQueue;  // Para comandos de juego
-    GameLoop gameLoop;
+    // GameLoop gameLoop;
     Broadcaster broadcaster;
     // ConfigCarrera config;
     // GameLoop& gameLoop;

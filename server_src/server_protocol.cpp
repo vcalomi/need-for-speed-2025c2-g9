@@ -8,7 +8,7 @@
 #include "../common_src/serializer/vehicule_serializer.h"
 
 ServerProtocol::ServerProtocol(Socket& socket): socket(socket), protocol() {
-    serializers[1] = VehicleSerializer();
+    serializers[static_cast<uint8_t>(ActionCode::SEND_CARS)] = VehicleSerializer();
 }
 
 // CarConfig ServerProtocol::receiveCarConfig() {
@@ -46,5 +46,16 @@ Socket ServerProtocol::releaseSocket() {
 }
 
 ActionCode ServerProtocol::receiveActionCode() { return protocol.receiveAction(socket); }
+
+std::string ServerProtocol::receiveRoomName() {
+    return protocol.receiveString(socket);
+}
+
+void ServerProtocol::sendRoomList(const std::vector<std::string>& rooms) {
+    protocol.sendUint16(socket, static_cast<uint16_t>(rooms.size()));
+    for (const auto& room : rooms) {
+        protocol.sendString(socket, room);
+    }
+}
 
 ServerProtocol::~ServerProtocol() {}

@@ -17,7 +17,8 @@ enum class ActionCode : uint8_t {
     CHOOSE_CAR_OK = 0x08,
     START_GAME = 0x09,
 
-    SEND_ERROR_MSG = 0x10
+    SEND_ERROR_MSG = 0x10,
+    SEND_CARS = 0x11
 };
 
 #endif

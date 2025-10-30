@@ -6,7 +6,7 @@
 
 class VehicleSerializer : public Serializer {
 private:
-    const int size = 12;
+    const int size = 13;
 
 public:
     explicit VehicleSerializer() {}

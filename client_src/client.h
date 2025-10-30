@@ -14,7 +14,7 @@ public:
     Client(const std::string& hostname, const std::string& port);
     void run();
     // void readMessages(int count);
-    // void processCommand(const std::string& command);
+    void processCommand(const std::string& command);
     // void createRoom(const std::string& roomName);
     // void joinRoom(const std::string& roomName);
     // void listRooms();

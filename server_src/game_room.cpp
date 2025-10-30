@@ -9,8 +9,8 @@ GameRoom::GameRoom(const std::string& roomName, int hostId) :
     roomName(roomName),
     hostId(hostId),
     state(RoomState::WAITING_FOR_PLAYERS),
-    gameQueue(),
-    gameLoop(gameQueue) {}
+    gameQueue() {}
+    // gameLoop(gameQueue) {}
 
 bool GameRoom::addPlayer(int clientId, ClientHandler* client) {
     std::lock_guard<std::mutex> lock(mtx);
@@ -45,7 +45,7 @@ bool GameRoom::startGame() {
         }
     }
 
-    gameLoop.start();
+    // gameLoop.start();
     return true;
 }
 

@@ -18,12 +18,13 @@ class ClientHandler {
 private:
     Socket peer;
     ServerProtocol protocol;
+public:
+    Queue<Dto> senderQueue;    // para enviar al cliente
     Sender sender;
     std::unique_ptr<Receiver> receiver;
     std::atomic_bool keep_running;
-    
+
 public:
-    Queue<Dto> senderQueue;    // para enviar al cliente
     ClientHandler(Socket socket);
     void start(Queue<Dto>& gameQueue);
     void join();

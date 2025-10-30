@@ -4,7 +4,7 @@
 
 std::vector<uint8_t> VehicleSerializer::serialize(Dto dto) const {
     VehicleDto& vehicleDto = static_cast<VehicleDto&>(dto);
-    std::vector<uint8_t> buffer(13);
+    std::vector<uint8_t> buffer(14);
     size_t pos = 0;
 
     auto writeFloat = [&](float value) {
@@ -14,6 +14,7 @@ std::vector<uint8_t> VehicleSerializer::serialize(Dto dto) const {
         pos += sizeof(parsed);
     };
 
+    buffer[pos++] = dto.return_code();
     buffer[pos++] = vehicleDto.id;
     writeFloat(vehicleDto.x);
     writeFloat(vehicleDto.y);

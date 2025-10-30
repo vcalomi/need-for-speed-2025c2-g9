@@ -14,7 +14,7 @@ void GameLobby::registerClient(Socket socket, int clientId) {
         return;
     }
 
-    clientSockets[clientId] = std::move(socket);
+    clientSockets.emplace(clientId, std::move(socket));
 }
 
 void GameLobby::processClients() {
@@ -24,9 +24,14 @@ void GameLobby::processClients() {
 
             ActionCode action = protocol.receiveActionCode();
             switch (action) {
+                case ActionCode::LIST_ROOMS: {
+                    sendAvailableRooms(protocol);
+                    break;
+                }
                 case ActionCode::CREATE_ROOM: {
                     std::string roomName = protocol.receiveRoomName(); // o creo ROOMCODE
                     if (createGameRoom(roomName, clientId)) {
+                        std::cout << "Room created: " << roomName << std::endl;
                         // protocol.sendMsg({ActionCode::ROOM_CREATED});
                     } else {
                         // protocol.sendMsg({ActionCode::SEND_ERROR_MSG});
@@ -54,12 +59,12 @@ void GameLobby::processClients() {
                 }
 
                 case ActionCode::CHOOSE_CAR: {
-                    CarConfig car = protocol.receiveCarConfig();
-                    if (chooseCarByClientId(clientId, car)) {
-                        // protocol.sendMsg({ActionCode::CHOOSE_CAR_OK});
-                    } else {
-                        // protocol.sendMsg({ActionCode::SEND_ERROR_MSG});
-                    }
+                    // CarConfig car = protocol.receiveCarConfig();
+                    // if (chooseCarByClientId(clientId, car)) {
+                    //     // protocol.sendMsg({ActionCode::CHOOSE_CAR_OK});
+                    // } else {
+                    //     // protocol.sendMsg({ActionCode::SEND_ERROR_MSG});
+                    // }
                     break;
                     }
                     
@@ -83,14 +88,6 @@ bool GameLobby::createGameRoom(const std::string& roomName, int hostId) {
     GameRoom* newRoom = new GameRoom(roomName, hostId);
     activeGames[roomName] = newRoom;
     clientToRoom[hostId] = newRoom;
-    if (clientHandlers.count(hostId)) {
-        Socket gameSocket = std::move(clientSockets[hostId]);
-        clientSockets.erase(hostId);
-        
-        ClientHandler* handler = new ClientHandler(std::move(gameSocket));
-        clientHandlers[hostId] = handler;
-        newRoom->addPlayer(hostId, handler);
-    }
     return true;
 }
 
@@ -106,18 +103,8 @@ bool GameLobby::joinGameRoom(const std::string& roomName, int clientId) {
         return false;
     }
     
-    if (clientHandlers.count(clientId)) {
-        Socket gameSocket = std::move(clientSockets[clientId]);
-        clientSockets.erase(clientId);
-        
-        ClientHandler* handler = new ClientHandler(std::move(gameSocket));
-        clientHandlers[clientId] = handler;
-
-        room->addPlayer(clientId, clientHandlers[clientId]);
-        clientToRoom[clientId] = room;
-        return true;
-    }
-    return false;
+    clientToRoom[clientId] = room;
+    return true;
 }
 
 void GameLobby::sendAvailableRooms(ServerProtocol& protocol) {
@@ -144,8 +131,27 @@ bool GameLobby::startGameByClientId(int clientId) {
     if (!room->isHost(clientId)) {
         return false;  // No es el host
     }
+    
+    // Migrar sockets de todos los jugadores asignados a esta sala
+    std::vector<int> playersToMigrate;
+    for (const auto& pair : clientToRoom) {
+        if (pair.second == room) playersToMigrate.push_back(pair.first);
+    }
 
-    if (!room->startGame()) return false;
+    for (int id : playersToMigrate) {
+        auto socketIt = clientSockets.find(id);
+        if (socketIt != clientSockets.end()) {
+            Socket gameSocket = std::move(socketIt->second);
+            clientSockets.erase(socketIt);
+
+            ClientHandler* handler = new ClientHandler(std::move(gameSocket));
+            clientHandlers[id] = handler;
+            room->addPlayer(id, handler);
+        }
+    } 
+    if (!room->startGame()) {
+        return false;
+    }
     return true;
 }
 

@@ -14,10 +14,60 @@ void Client::run() {
                 connected = false;
                 break;
             }
-            // processCommand(command);
+            processCommand(command);
         } catch (const std::exception& e) {
             connected = false;
         }
+    }
+}
+
+void Client::processCommand(const std::string& command) {
+    std::istringstream iss(command);
+    std::string cmd;
+    iss >> cmd;
+    if (cmd.empty()) return;
+
+    if (cmd == "LIST_ROOMS") {
+        clientProtocol.sendListRooms();
+        // leer y mostrar la lista de salas disponible
+        try {
+            auto rooms = clientProtocol.receiveRoomList();
+            for (const auto& r : rooms) {
+                std::cout << r << std::endl;
+            }
+        } catch (const std::exception&) {
+            // ignorar errores de lectura por ahora
+        }
+        return;
+    }
+    if (cmd == "CREATE_ROOM" || cmd == "CREATE_GAME") {
+        std::string roomName;
+        std::getline(iss, roomName);
+        if (!roomName.empty() && roomName.front() == ' ') roomName.erase(0, 1);
+        if (!roomName.empty()) clientProtocol.sendCreateRoom(roomName);
+        return;
+    }
+    if (cmd == "JOIN_ROOM") {
+        std::string roomName;
+        std::getline(iss, roomName);
+        if (!roomName.empty() && roomName.front() == ' ') roomName.erase(0, 1);
+        if (!roomName.empty()) clientProtocol.sendJoinRoom(roomName);
+        return;
+    }
+    if (cmd == "START_GAME") {
+        clientProtocol.sendStartGame();
+        return;
+    }
+    if (cmd == "CHOOSE_CAR") {
+        std::string carType;
+        iss >> carType;
+        if (!carType.empty()) clientProtocol.sendChooseCar(carType);
+        return;
+    }
+    if (cmd == "EXIT") {
+        connected = false;
+        clientProtocol.close();
+        return;
     }
 }
 
