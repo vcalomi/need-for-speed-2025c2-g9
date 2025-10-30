@@ -12,18 +12,20 @@ GameRoom::GameRoom(const std::string& roomName, int hostId) :
     gameQueue(),
     gameLoop(gameQueue) {}
 
-bool GameRoom::addPlayer(int clientId, ClientHandler* handler) {
+bool GameRoom::addPlayer(int clientId, ClientHandler* client) {
     std::lock_guard<std::mutex> lock(mtx);
 
     if (!canJoin()) return false;
 
-    players[clientId] = handler;
+    players[clientId] = client;
+    broadcaster.addQueue(&client->senderQueue);
     return true;
 }
 
 bool GameRoom::removePlayer(int clientId) {
     std::lock_guard<std::mutex> lock(mtx);
     auto it = players.find(clientId);
+    broadcaster.removeQueue(&it->second->senderQueue);
     if (it == players.end()) return false;
     players.erase(it);
     return true;
@@ -69,6 +71,8 @@ bool GameRoom::isHost(int clientId) const {
     return hostId == clientId;
 }
 
-Queue<Dto>& GameRoom::getGameQueue() { return gameQueue; }
+void GameRoom::broadcastToAll(const Dto& message) {
+    broadcaster.broadcast(message);
+}
 
 GameRoom::~GameRoom() {}

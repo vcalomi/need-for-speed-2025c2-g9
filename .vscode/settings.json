@@ -59,7 +59,9 @@
         "thread": "cpp",
         "typeinfo": "cpp",
         "variant": "cpp",
-        "map": "cpp"
+        "map": "cpp",
+        "set": "cpp",
+        "unordered_set": "cpp"
     },
     "debug.onTaskErrors": "showErrors",
     "debug.internalConsoleOptions": "openOnSessionStart",

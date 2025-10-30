@@ -11,8 +11,9 @@
 
 ClientHandler::ClientHandler(Socket socket):
         peer(std::move(socket)),
-        sender(protocol, senderQueue),
         protocol(peer),
+        senderQueue(),
+        sender(protocol, senderQueue),
         keep_running(true){}
 
 void ClientHandler::start(Queue<Dto>& gameQueue) {
