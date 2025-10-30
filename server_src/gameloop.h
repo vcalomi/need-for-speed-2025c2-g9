@@ -4,7 +4,7 @@
 #include <map>
 #include <vector>
 
-#include "../common_src/client_command.h"
+#include "../common_src/Dto/dto.h"
 #include "../common_src/common_codes.h"
 #include "../common_src/queue.h"
 #include "../common_src/thread.h"
@@ -18,10 +18,10 @@
 class GameLoop: public Thread {
 private:
     // std::map<int, CarConfig>& cars;
-    Queue<ClientCommand>& gameLoopQueue;
+    Queue<Dto>& gameLoopQueue;
 
 public:
-    GameLoop(Queue<ClientCommand>& gameLoopQueue);
+    GameLoop(Queue<Dto>& gameLoopQueue);
     void run() override;
     void processCommands();
     void simulateGame();

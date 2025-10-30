@@ -6,22 +6,20 @@
 #include "../common_src/socket.h"
 #include "../common_src/socket_closed.h"
 #include "../common_src/thread.h"
+#include "../common_src/Dto/dto.h"
 
 #include "server_protocol.h"
 #include "game_lobby.h"
-#include "../common_src/nitro_message.h"
 
 #include <optional>
 
 class Receiver: public Thread {
 private:
-    Queue<ClientCommand>& gameQueue;
+    Queue<Dto>& gameQueue;
     ServerProtocol& protocol;
-    int clientId;
 
 public:
-    Receiver(ServerProtocol& serverProtocol, Queue<ClientCommand>& gameQueue,
-                   int clientId);
+    Receiver(ServerProtocol& serverProtocol, Queue<Dto>& gameQueue);
     void run() override;
     ~Receiver();
 };

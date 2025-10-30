@@ -7,6 +7,8 @@
 #include "../common_src/queue.h"
 #include "game_room.h"
 #include "client_handler.h"
+#include "../common_src/Dto/dto.h"
+#include "server_protocol.h"
 
 /*
     (Monitor) Gestiona las partidas
@@ -20,16 +22,20 @@ private:
     std::map<std::string, CarConfig> availableCars;
     std::map<std::string, GameRoom*> activeGames;
     std::map<int, ClientHandler*> clientHandlers;
+    std::map<int, Socket> clientSockets;
+    std::atomic<bool> lobbyOpen{true};
     
-    public:
+public:
     GameLobby();
-    void registerClientHandler(int clientId, ClientHandler* handler);
-    bool createGameRoom(const std::string& roomName, int hostId, Queue<NitroMessage>& hostQueue);
-    bool joinGameRoom(const std::string& roomName, int clientId, Queue<NitroMessage>& clientQueue);
-    std::vector<std::string> getAvailableRooms();
+    void processClients();
+    void registerClient(Socket socket, int clientId);
+    bool createGameRoom(const std::string& roomName, int hostId);
+    bool joinGameRoom(const std::string& roomName, int clientId);
+    void sendAvailableRooms(ServerProtocol& protocol);
     bool startGameByClientId(int clientId);
-    Queue<ClientCommand>& getGameQueueForClient(int clientId);
     bool chooseCarByClientId(int clientId, const CarConfig& car);
+    void reapClients();
+    void clearClients();
     ~GameLobby();
 };
 

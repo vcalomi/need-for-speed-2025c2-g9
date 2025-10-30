@@ -3,8 +3,6 @@
 #include <string>
 #include <vector>
 
-#include "../common_src/nitro_message.h"
-
 #include "client_protocol.h"
 
 class Client {

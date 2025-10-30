@@ -13,7 +13,7 @@ using Clock = std::chrono::steady_clock;
 using Milliseconds = std::chrono::milliseconds;
 using Seconds = std::chrono::seconds;
 
-GameLoop::GameLoop(Queue<ClientCommand>& gameLoopQueue) : 
+GameLoop::GameLoop(Queue<Dto>& gameLoopQueue) : 
     gameLoopQueue(gameLoopQueue) {}
 
 void GameLoop::run() {
@@ -30,7 +30,7 @@ void GameLoop::run() {
 }
 
 void GameLoop::processCommands() {
-    ClientCommand command;
+    Dto command;
     while (gameLoopQueue.try_pop(command)) {
         
     }

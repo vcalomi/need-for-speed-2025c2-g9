@@ -3,6 +3,7 @@
 #include <algorithm>
 
 #include "../common_src/queue.h"
+#include "client_handler.h"
 
 GameRoom::GameRoom(const std::string& roomName, int hostId) : 
     roomName(roomName),
@@ -11,12 +12,20 @@ GameRoom::GameRoom(const std::string& roomName, int hostId) :
     gameQueue(),
     gameLoop(gameQueue) {}
 
-bool GameRoom::addPlayer(int clientId, Queue<NitroMessage>& senderQueue) {
+bool GameRoom::addPlayer(int clientId, ClientHandler* handler) {
     std::lock_guard<std::mutex> lock(mtx);
-    
+
     if (!canJoin()) return false;
 
-    players[clientId] = &senderQueue;
+    players[clientId] = handler;
+    return true;
+}
+
+bool GameRoom::removePlayer(int clientId) {
+    std::lock_guard<std::mutex> lock(mtx);
+    auto it = players.find(clientId);
+    if (it == players.end()) return false;
+    players.erase(it);
     return true;
 }
 
@@ -27,7 +36,13 @@ bool GameRoom::startGame() {
         return false;
     }
 
-    // state = RoomState::IN_GAME;
+    state = RoomState::IN_RACE;
+    for (const auto& [playerId, handler] : players) {
+        if (handler) {
+            handler->start(gameQueue);
+        }
+    }
+
     gameLoop.start();
     return true;
 }
@@ -38,7 +53,7 @@ bool GameRoom::chooseCar(int clientId, const CarConfig& car) {
     // if (state != RoomState::IN_GAME) return false;
 
     // Verificar que el jugador existe
-    if (std::find(players.begin(), players.end(), clientId) == players.end()) {
+    if (players.find(clientId) == players.end()) {
         return false;
     }
     
@@ -54,6 +69,6 @@ bool GameRoom::isHost(int clientId) const {
     return hostId == clientId;
 }
 
-Queue<ClientCommand>& GameRoom::getGameQueue() { return gameQueue; }
+Queue<Dto>& GameRoom::getGameQueue() { return gameQueue; }
 
 GameRoom::~GameRoom() {}

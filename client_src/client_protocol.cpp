@@ -28,12 +28,4 @@ void ClientProtocol::sendChooseCar(const std::string& carType) {
     // protocol.sendString(socket, carType); // Implementar cuando haya CarConfig
 }
 
-NitroMessage ClientProtocol::receiveMessage() {
-    NitroMessage msg;
-    msg.msgCode = protocol.receiveAction(socket);
-    msg.carsWithNitro = protocol.receiveUint16(socket);
-    msg.nitroState = protocol.receiveAction(socket);
-    return msg;
-}
-
 ClientProtocol::~ClientProtocol() {}

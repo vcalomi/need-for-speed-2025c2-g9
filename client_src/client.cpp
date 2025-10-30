@@ -14,7 +14,7 @@ void Client::run() {
                 connected = false;
                 break;
             }
-            processCommand(command);
+            // processCommand(command);
         } catch (const std::exception& e) {
             connected = false;
         }

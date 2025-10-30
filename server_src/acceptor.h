@@ -17,14 +17,11 @@ private:
     Socket acceptor;
     GameLobby& gameLobby;
     std::atomic<int> nextClientId;
-    std::vector<ClientHandler*> clients;
 
 public:
     Acceptor(const std::string& port, GameLobby& gameLobby);
     void run() override;
     void close();
-    void reap();
-    void clear();
     ~Acceptor();
 };
 
