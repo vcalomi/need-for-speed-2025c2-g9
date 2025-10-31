@@ -25,7 +25,7 @@ std::unordered_map<std::string, VehicleSpec> YamlParser::parse(const std::string
         }
 
         // Ejemplo de uso
-        for (const auto& [name, v]: vehicles) {
+        /*for (const auto& [name, v]: vehicles) {
             std::cout << "Vehicle: " << name << "\n";
             std::cout << "  Width: " << v.width_m << " m\n";
             std::cout << "  Height: " << v.height_m << " m\n";
@@ -35,7 +35,7 @@ std::unordered_map<std::string, VehicleSpec> YamlParser::parse(const std::string
             std::cout << "  Steer torque: " << v.steer_torque << "\n";
             std::cout << "  Friction: " << v.friction << "\n";
             std::cout << "  Restitution: " << v.restitution << "\n\n";
-        }
+        }*/
         return vehicles;
 
     } catch (const YAML::Exception& e) {

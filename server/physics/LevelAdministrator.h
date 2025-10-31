@@ -1,54 +1,62 @@
 #pragma once
+
+#include <box2d/box2d.h>
 #include <string>
 #include <vector>
 #include <cstdint>
-#include <box2d/box2d.h>
 #include <SDL.h>
+#include "../spawn.h"
+
+namespace lvlcfg {
+    inline constexpr int kTileSizePx     = 2;    
+    inline constexpr int kChunkCols      = 192;  
+    inline constexpr int kChunkRows      = 192;  
+}
+
+struct ChunkGrid {
+    // Dimensiones fijas
+    int tile_size_px = lvlcfg::kTileSizePx;
+    int cols         = lvlcfg::kChunkCols;
+    int rows         = lvlcfg::kChunkRows;
+
+    // Origen top-left del level dentro del mundo LDtk (en píxeles)
+    int level_origin_px_x = 0;  // level["worldX"]
+    int level_origin_px_y = 0;  // level["worldY"]
+
+    int layer_offset_px_x = 0;  
+    int layer_offset_px_y = 0;  
+
+    std::vector<uint8_t> solid_mask;
+};
 
 class LevelAdministrator {
-public:
-    struct BuildConfig {
-        float ppm = 2.0f;               // 2 px = 1 m  -> cada celda de 2px mide 1m
-        bool flipY = false;             // invertir Y (si tu render usa origen abajo-izq)
-        int levelPxHeight = 0;          // requerido si flipY=true (alto en px del nivel)
-        float friction = 0.9f;
-        float restitution = 0.0f;
-        bool mergeHorizontal = true;    // agrupa runs horizontales en un solo fixture
-    };
+    public:
+        ChunkGrid loadChunk(const std::string& path_ldtkl, const std::string& layerId) const;
 
-    // Carga la IntGrid de colisión desde .ldtk o .ldtkl
-    // levelId: "" para el primero (si usás .ldtkl por-nivel, dejalo "")
-    // layerId: nombre de tu capa IntGrid (ej: "Collision2px")
-    bool loadCollisionGrid(const std::string& ldtkPath,
-                           const std::string& levelId,
-                           const std::string& layerId,
-                           std::string* outErr = nullptr);
+        b2BodyId buildStaticCollisionBody(b2WorldId world, const ChunkGrid& chunk, float ppm, float friction, float restitution) const;
 
-    // Construye un body estático con fixtures según la grilla cargada
-    // Devuelve el body creado (o B2_NULL_BODY si falló o no hay grilla)
-    b2BodyId buildCollision(b2WorldId world, const BuildConfig& cfg);
+        void debugDrawChunkCells(SDL_Renderer* r,
+                            const ChunkGrid& G,
+                            float camX_px,
+                            float camY_px,
+                            float screen_w,
+                            float screen_h,
+                            SDL_Color color = {255, 255, 0, 200},
+                            bool fill = true) const;
 
-    // Accesos útiles
-    int gridWidthCells()  const { return G_.w; }
-    int gridHeightCells() const { return G_.h; }
-    int gridSizePx()      const { return G_.gridPx; }
-    bool hasGrid()        const { return !G_.v.empty(); }
-    void debugDraw(SDL_Renderer* r,
-                   float camX_px, float camY_px,
-                   float zoom,
-                   float screen_w, float screen_h,
-                   SDL_Color color = {255,128,0,120}) const;
-private:
-    struct Grid {
-        int w=0, h=0, gridPx=0;
-        std::vector<uint8_t> v; // row-major: v[y*w + x], 0/1
-    } G_;
+        void buildSpawnPoints(const ChunkGrid& chunk, float ppm);
+        const std::vector<Spawn>& getSpawnPoints() const { return spawn_points; }
 
-    // Helpers de construcción
-    b2BodyId buildCellByCell_(b2WorldId, const BuildConfig&);
-    b2BodyId buildMergeHorizontal_(b2WorldId, const BuildConfig&);
+    private:
+        static inline float tileIdToAngle(int tileId) {
+            switch (tileId) {
+                case 3: return  +3.14159265358979323846f * 0.5f;  // arriba (π/2)
+                case 2: return  0.0f;                             // derecha
+                case 4: return -3.14159265358979323846f * 0.5f;   // abajo (-π/2)
+                case 6: return  3.14159265358979323846f;          // izquierda (π)
+                default: return 0.0f;
+            }
+        }
 
-    // Conversión (x,y celda) -> centro en metros
-    inline void cellCenterMeters_(int x, int y, const BuildConfig& cfg,
-                                  float cell_m, float& cx, float& cy) const;
-};
+        std::vector<Spawn> spawn_points;
+};  

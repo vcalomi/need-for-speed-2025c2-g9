@@ -6,6 +6,9 @@
 #include "../spawn.h"
 #include "../constants.h"
 #include "LevelAdministrator.h"
+#include <algorithm>
+#include <vector>
+
 
 inline constexpr float PPM = 2.0f;     
 
@@ -26,11 +29,10 @@ int main() {
     const float screen_w = 1200.0f;
     const float screen_h = 800.0f;
 
-     // --- Cámara ---
-    float cameraZoom = 6.0f;             // 1.0 = sin zoom, >1 acerca, <1 aleja
-    float camX_px = 0.0f, camY_px = -200.0f; // offset de cámara en PIXELES de mundo (no metros)
-    const float panSpeed_px = 400.0f;     // velocidad de paneo en px/seg (se escala con dt)
-    
+    // --- Cámara ---
+    float camX_px = 0.0f, camY_px = -200.0f; // cámara en píxeles de mundo
+    const float panSpeed_px = 400.0f;        // velocidad de paneo en px/seg
+
     Uint64 now = SDL_GetPerformanceCounter();
     Uint64 last = now;
     const double freq = (double)SDL_GetPerformanceFrequency();
@@ -40,26 +42,28 @@ int main() {
     wdef.gravity = {0.0f, 0.0f};
     b2WorldId worldId = b2CreateWorld(&wdef);
 
-    
-    // 🔹 Cargar y construir colisión del mapa
-    LevelAdministrator lvl;
-    std::string err;
-    if (!lvl.loadCollisionGrid("../server/physics/Level_0.ldtkl", "", /*layerId=*/"Collision2px", &err)) {
-        std::cerr << "[LDtk] " << err << "\n";
-        // si querés, podés abortar aquí
-    } else {
-        LevelAdministrator::BuildConfig cfg;
-        cfg.ppm = PPM;                 // 🔹 MUY IMPORTANTE: usar el mismo PPM
-        cfg.mergeHorizontal = true;    // 🔹 menos fixtures
-        cfg.flipY = true;           // ponelo true si invertís el eje Y en tu render
-        cfg.levelPxHeight = 384;     // solo requerido si flipY=true
-        b2BodyId staticCollision = lvl.buildCollision(worldId, cfg);
-        (void)staticCollision; // solo para evitar warning si no lo usás
-    }
+    // --- Nivel LDtk ---
+    LevelAdministrator admin;                               
+    ChunkGrid chunk = admin.loadChunk("../server/physics/Level_0.ldtkl", "Collision2px");
+    ChunkGrid chunk_2 = admin.loadChunk("../server/physics/Level_1.ldtkl", "Collision2px");
+    ChunkGrid chunk_3 = admin.loadChunk("../server/physics/Level_2.ldtkl", "Collision2px");
+    ChunkGrid chunk_4 = admin.loadChunk("../server/physics/Level_3.ldtkl", "Collision2px");
 
+    b2BodyId mapBody = admin.buildStaticCollisionBody(worldId, chunk, PPM, /*friction=*/0.8f, /*rest=*/0.0f);
+    b2BodyId mapBody_2 = admin.buildStaticCollisionBody(worldId, chunk_2, PPM, /*friction=*/0.8f, /*rest=*/0.0f);
+    b2BodyId mapBody_3 = admin.buildStaticCollisionBody(worldId, chunk_3, PPM, /*friction=*/0.8f, /*rest=*/0.0f);
+    b2BodyId mapBody_4 = admin.buildStaticCollisionBody(worldId, chunk_4, PPM, /*friction=*/0.8f, /*rest=*/0.0f);
+    
+    /*std::cout << "solid tiles: "
+              << std::count_if(chunk.solid_mask.begin(), chunk.solid_mask.end(),
+                               [](uint8_t v){ return v != 0; })
+              << "\n";*/
+    
+    admin.buildSpawnPoints(chunk, PPM);
+    std::vector<Spawn> vect_spawn = admin.getSpawnPoints();
 
     // --- Auto ---
-    Vehicle vehicle(worldId, ferrari_spec, Spawn{-10.0f, -10.0f, 0.0f}, /*player_id=*/0);
+    Vehicle vehicle(worldId, ferrari_spec,vect_spawn[0], /*player_id=*/0);
 
     bool running = true;
     SDL_Event e;
@@ -74,15 +78,8 @@ int main() {
         bool go = false, stop = false;
 
         while (SDL_PollEvent(&e)) {
-            if (e.type == SDL_QUIT) running = false;
-
-            // Zoom con rueda del mouse
-            if (e.type == SDL_MOUSEWHEEL) {
-                float factor = (e.wheel.y > 0) ? 1.1f : 1.0f/1.1f;
-                cameraZoom *= factor;
-                if (cameraZoom < 0.25f) cameraZoom = 0.25f;
-                if (cameraZoom > 12.0f) cameraZoom = 12.0f;
-            }
+            if (e.type == SDL_QUIT)
+                running = false;
         }
 
         const Uint8* ks = SDL_GetKeyboardState(NULL);
@@ -101,31 +98,24 @@ int main() {
         float x_m, y_m, ang_rad;
         vehicle.getPosition(x_m, y_m, ang_rad);
 
-
-                // --- Cámara que sigue al auto ---
+        // --- Cámara que sigue al auto ---
         float world_x_px = x_m * PPM;
         float world_y_px = y_m * PPM;
-
-        // seguimiento suave
-        float lerp = 5.0f * dt;  // cuanto más alto, más rápido sigue (5 a 10 va bien)
+        float lerp = 8.0f * dt;
         camX_px += (world_x_px - camX_px) * lerp;
         camY_px += (world_y_px - camY_px) * lerp;
-        
 
-        // aplicar offset de cámara (en px de mundo) y zoom.
-        // X pantalla: centro de la ventana + desplazamiento
-        float x_px = (world_x_px - camX_px) * cameraZoom + screen_w * 0.5f;
+        // --- Transformaciones a pantalla ---
+        float x_px = (world_x_px - camX_px) + screen_w * 0.5f;
+        float y_px =  screen_h * 0.5f - (world_y_px - camY_px);
 
-        // Y pantalla: invertimos porque la pantalla crece hacia abajo
-        float y_px =  screen_h * 0.5f - (world_y_px - camY_px) * cameraZoom;
-
-        // rotación pantalla
+        // --- Rotación del auto ---
         float a = -ang_rad; 
         float c = cosf(a), s = sinf(a);
 
-        // Tamaños: (m -> px) y luego zoom
-        float w_px = vehicle.width()  * PPM * cameraZoom;
-        float h_px = vehicle.height() * PPM * cameraZoom;
+        // Tamaños: (m -> px)
+        float w_px = vehicle.width()  * PPM;
+        float h_px = vehicle.height() * PPM;
 
         const float hw = w_px * 0.5f;
         const float hh = h_px * 0.5f;
@@ -148,15 +138,20 @@ int main() {
         SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
         SDL_RenderClear(renderer);
 
-        // 🔶 DEBUG: dibujar colisión del mapa
-        lvl.debugDraw(renderer, camX_px, camY_px, cameraZoom, screen_w, screen_h,
-        /*color*/ SDL_Color{255,128,0,80}); // naranja translúcido
-
+        // Auto
         SDL_RenderGeometry(renderer, nullptr, verts, 4, indices, 6);
+
+        // Mapa (sin zoom)
+        admin.debugDrawChunkCells(renderer,
+                                  chunk,
+                                  camX_px, camY_px,
+                                  screen_w, screen_h,
+                                  {255, 255, 0, 160},
+                                  false);
+
         SDL_RenderPresent(renderer);
 
-        // cap ~60fps
-        SDL_Delay(16);
+        SDL_Delay(16); // cap ~60fps
     }
 
     // --- Cleanup ---
