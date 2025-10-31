@@ -1,18 +1,30 @@
-#include "./server.h"
+#include "server.h"
 
-#include <iostream>
+#include <string>
 
-#include "../common/socket.h"
-#include "./acceptor.h"
+#include "../common_src/queue.h"
 
+Server::Server(const std::string& port):
+        gameLobby(),
+        acceptor(port, gameLobby),
+        inputHandler() {}
 
-void Server::run(const char* port) {
-    Acceptor client_acceptor(port);
-    client_acceptor.start();
+int Server::run() {
+    try {
+        inputHandler.start();
+        acceptor.start();
+
+        inputHandler.join();
+        stop();
+    } catch (const std::exception& e) {
+        stop();
+    }
+    return 0;
 }
 
-int main(int argc, char** argv) {
-    std::cout << argc << std::endl;
-    Server server;
-    server.run(argv[1]);
+void Server::stop() {
+    acceptor.close();
+    acceptor.join();
 }
+
+Server::~Server() {}

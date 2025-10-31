@@ -1,8 +1,25 @@
-#pragma once
+#ifndef SERVER_H
+#define SERVER_H
+#include <string>
 
+#include "../common_src/client_command.h"
+#include "../common_src/queue.h"
+
+#include "acceptor.h"
+#include "server_input_handler.h"
+#include "game_lobby.h"
 
 class Server {
+private:
+    GameLobby gameLobby;
+    Acceptor acceptor;
+    ServerInputHandler inputHandler;
 
 public:
-    void run(const char* port);
+    explicit Server(const std::string& port);
+    int run();
+    void stop();
+    ~Server();
 };
+
+#endif

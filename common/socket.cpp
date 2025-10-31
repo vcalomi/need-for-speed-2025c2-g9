@@ -24,7 +24,7 @@ Socket::Socket(const char* hostname, const char* servname) {
     Resolver resolver(hostname, servname, false);
 
     int s = -1;
-    int skt = -1;
+    int skt = -1;  // cppcheck-suppress shadowVariable
     this->closed = true;
     this->stream_status = STREAM_BOTH_CLOSED;
 
@@ -100,7 +100,7 @@ Socket::Socket(const char* servname) {
     Resolver resolver(nullptr, servname, true);
 
     int s = -1;
-    int skt = -1;
+    int skt = -1;  // cppcheck-suppress shadowVariable
     this->closed = true;
     this->stream_status = STREAM_BOTH_CLOSED;
     while (resolver.has_next()) {
@@ -248,7 +248,7 @@ Socket& Socket::operator=(Socket&& other) {
 
 int Socket::recvsome(void* data, unsigned int sz) {
     chk_skt_or_fail();
-    int s = recv(this->skt, (char*)data, sz, 0);
+    int s = recv(this->skt, (char*)data, sz, 0);  // cppcheck-suppress cstyleCast
     if (s == 0) {
         /*
          * Puede ser o no un error, dependerá del protocolo.
@@ -287,7 +287,7 @@ int Socket::sendsome(const void* data, unsigned int sz) {
      * Esta en nosotros luego hace el chequeo correspondiente
      * (ver más abajo).
      * */
-    int s = send(this->skt, (char*)data, sz, MSG_NOSIGNAL);
+    int s = send(this->skt, (char*)data, sz, MSG_NOSIGNAL);  // cppcheck-suppress cstyleCast
     if (s == -1) {
         /*
          * Este es un caso especial: cuando enviamos algo pero en el medio
@@ -323,7 +323,7 @@ int Socket::recvall(void* data, unsigned int sz) {
     unsigned int received = 0;
 
     while (received < sz) {
-        int s = recvsome((char*)data + received, sz - received);
+        int s = recvsome((char*)data + received, sz - received);  // cppcheck-suppress cstyleCast
 
         if (s <= 0) {
             /*
@@ -358,7 +358,7 @@ int Socket::sendall(const void* data, unsigned int sz) {
     unsigned int sent = 0;
 
     while (sent < sz) {
-        int s = sendsome((char*)data + sent, sz - sent);
+        int s = sendsome((char*)data + sent, sz - sent);  // cppcheck-suppress cstyleCast
 
         /* Véase los comentarios de `Socket::recvall` */
         if (s <= 0) {

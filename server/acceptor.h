@@ -1,15 +1,30 @@
-#pragma once
+#ifndef ACCEPTOR_H
+#define ACCEPTOR_H
 
-#include "../common/socket.h"
-#include "../common/thread.h"
+#include <string>
+#include <vector>
+
+#include "../common_src/client_command.h"
+#include "../common_src/liberror.h"
+#include "../common_src/socket.h"
+#include "../common_src/thread.h"
+#include "game_lobby.h"
+#include "client_handler.h"
 
 class Acceptor: public Thread {
-
 private:
-    Socket listen_socket_;
+    Socket acceptor;
+    GameLobby& gameLobby;
+    std::atomic<int> nextClientId;
+    std::vector<ClientHandler*> clients;
 
 public:
-    explicit Acceptor(const char* port);
-    ~Acceptor();
+    Acceptor(const std::string& port, GameLobby& lobby);
     void run() override;
+    void close();
+    void reap();
+    void clear();
+    ~Acceptor();
 };
+
+#endif
