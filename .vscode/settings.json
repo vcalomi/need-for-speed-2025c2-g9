@@ -61,7 +61,13 @@
         "variant": "cpp",
         "map": "cpp",
         "set": "cpp",
-        "unordered_set": "cpp"
+        "unordered_set": "cpp",
+        "any": "cpp",
+        "cinttypes": "cpp",
+        "forward_list": "cpp",
+        "list": "cpp",
+        "fstream": "cpp",
+        "cfenv": "cpp"
     },
     "debug.onTaskErrors": "showErrors",
     "debug.internalConsoleOptions": "openOnSessionStart",

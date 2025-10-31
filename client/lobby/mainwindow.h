@@ -3,6 +3,8 @@
 
 #include "player_info.h"
 #include "car.h"
+#include "../client/client_protocol.h"
+#include <memory>
 #include <QMainWindow>
 #include <QVector>
 
@@ -36,6 +38,8 @@ private slots:
 private:
     Ui::Lobby* ui;
     PlayerInfo player;
+    std::unique_ptr<ClientProtocol> protocol; // conexión TCP al servidor
+
     static constexpr int PAGE_SIZE = 10; // cantidad de salas por página
     int currentPage = 0;
     QStringList allRooms;
@@ -47,6 +51,7 @@ private:
     void showPage(int page);
     void goToPage(QWidget *page);
     void updateCarImage();
+    void connectToServer(); // función privada que usará el botón
 
 };
 #endif  // MAINWINDOW_H
