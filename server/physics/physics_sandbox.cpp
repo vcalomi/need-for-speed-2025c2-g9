@@ -54,11 +54,22 @@ int main() {
     b2BodyId mapBody_3 = admin.buildStaticCollisionBody(worldId, chunk_3, PPM, /*friction=*/0.8f, /*rest=*/0.0f);
     b2BodyId mapBody_4 = admin.buildStaticCollisionBody(worldId, chunk_4, PPM, /*friction=*/0.8f, /*rest=*/0.0f);
     
-    /*std::cout << "solid tiles: "
+    std::cout << "solid tiles: "
               << std::count_if(chunk.solid_mask.begin(), chunk.solid_mask.end(),
                                [](uint8_t v){ return v != 0; })
-              << "\n";*/
-    
+              << "\n";
+        std::cout << "solid tiles2: "
+              << std::count_if(chunk_2.solid_mask.begin(), chunk_2.solid_mask.end(),
+                               [](uint8_t v){ return v != 0; })
+              << "\n";
+    std::cout << "solid tiles3: "
+              << std::count_if(chunk_3.solid_mask.begin(), chunk_3.solid_mask.end(),
+                               [](uint8_t v){ return v != 0; })
+              << "\n";
+    std::cout << "solid tiles4: "
+              << std::count_if(chunk_4.solid_mask.begin(), chunk_4.solid_mask.end(),
+                               [](uint8_t v){ return v != 0; })
+              << "\n";
     admin.buildSpawnPoints(chunk, PPM);
     std::vector<Spawn> vect_spawn = admin.getSpawnPoints();
 
@@ -101,7 +112,7 @@ int main() {
         // --- Cámara que sigue al auto ---
         float world_x_px = x_m * PPM;
         float world_y_px = y_m * PPM;
-        float lerp = 8.0f * dt;
+        float lerp = 5.0f * dt;
         camX_px += (world_x_px - camX_px) * lerp;
         camY_px += (world_y_px - camY_px) * lerp;
 
@@ -144,6 +155,24 @@ int main() {
         // Mapa (sin zoom)
         admin.debugDrawChunkCells(renderer,
                                   chunk,
+                                  camX_px, camY_px,
+                                  screen_w, screen_h,
+                                  {255, 255, 0, 160},
+                                  false);
+        admin.debugDrawChunkCells(renderer,
+                                chunk_2,
+                                  camX_px, camY_px,
+                                  screen_w, screen_h,
+                                  {255, 255, 0, 160},
+                                  false);
+        admin.debugDrawChunkCells(renderer,
+                                  chunk_3,
+                                  camX_px, camY_px,
+                                  screen_w, screen_h,
+                                  {255, 255, 0, 160},
+                                  false);
+        admin.debugDrawChunkCells(renderer,
+                                  chunk_4,
                                   camX_px, camY_px,
                                   screen_w, screen_h,
                                   {255, 255, 0, 160},
