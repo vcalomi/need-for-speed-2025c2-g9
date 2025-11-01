@@ -37,9 +37,10 @@ private:
     // ConfigCarrera config;
     // GameLoop& gameLoop;
     Broadcaster broadcaster;
+    int maxPlayers;
 
 public:
-    GameRoom(const std::string& roomName, int hostId);
+    GameRoom(const std::string& roomName, int hostId, int maxPlayers);
     
     // gestión de jugadores
     bool addPlayer(int clientId, Queue<std::shared_ptr<Dto>>& senderQueue);
@@ -51,7 +52,7 @@ public:
     Queue<std::shared_ptr<Dto>>& getGameQueue();
     std::vector<int> getPlayerIds();
     bool isInRace();
-    
+    int getMaxPlayers() const { return maxPlayers; }
     ~GameRoom();
 };
 

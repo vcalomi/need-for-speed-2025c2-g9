@@ -5,12 +5,13 @@
 #include "../common/queue.h"
 #include "../common/Dto/vehicle.h"
 
-GameRoom::GameRoom(const std::string& roomName, int hostId) : 
+GameRoom::GameRoom(const std::string& roomName, int hostId, int maxPlayers) : 
     roomName(roomName),
     hostId(hostId),
     state(RoomState::WAITING_FOR_PLAYERS),
     gameQueue(),
-    broadcaster() {}
+    broadcaster(),
+    maxPlayers(maxPlayers) {}
     // gameLoop(gameQueue) {}
 
 bool GameRoom::addPlayer(int clientId, Queue<std::shared_ptr<Dto>>& senderQueue) {

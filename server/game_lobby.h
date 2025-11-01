@@ -26,7 +26,7 @@ private:
     
     public:
     GameLobby();
-    bool createGameRoom(const std::string& roomName, int hostId, Queue<std::shared_ptr<Dto>>& hostQueue);
+    bool createGameRoom(const std::string& roomName, int hostId, Queue<std::shared_ptr<Dto>>& hostQueue, int maxPlayers = 8);
     bool joinGameRoom(const std::string& roomName, int clientId, Queue<std::shared_ptr<Dto>>& clientQueue);
     std::vector<std::string> getAvailableRooms();
     bool startGameByClientId(int clientId);

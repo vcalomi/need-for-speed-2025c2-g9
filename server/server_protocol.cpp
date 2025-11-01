@@ -11,12 +11,6 @@ ServerProtocol::ServerProtocol(Socket& socket): socket(socket), protocol() {
     serializers[static_cast<uint8_t>(ActionCode::SEND_CARS)] = std::make_unique<VehicleSerializer>();
 }
 
-// CarConfig ServerProtocol::receiveCarConfig() {
-//     CarConfig car;
-//     // fata implementar
-//     return car;
-// }
-
 void ServerProtocol::sendMsg(ActionCode code) {
     protocol.sendAction(socket, code);
 }
@@ -51,8 +45,11 @@ void ServerProtocol::sendRoomList(const std::vector<std::string>& rooms) {
 }
 
 void ServerProtocol::sendErrorMsg(const std::string& /*errorMsg*/) {
-    // Mantener compatibilidad actual: solo enviamos el código de error, sin payload
     protocol.sendAction(socket, ActionCode::SEND_ERROR_MSG);
+}
+
+int ServerProtocol::receiveMaxPlayers() {
+    return protocol.receiveUint16(socket);
 }
 
 ServerProtocol::~ServerProtocol() {}

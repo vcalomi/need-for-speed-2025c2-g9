@@ -7,10 +7,10 @@
 
 GameLobby::GameLobby() {}
 
-bool GameLobby::createGameRoom(const std::string& roomName, int hostId, Queue<std::shared_ptr<Dto>>& hostQueue) {
+bool GameLobby::createGameRoom(const std::string& roomName, int hostId, Queue<std::shared_ptr<Dto>>& hostQueue, int maxPlayers) {
     std::lock_guard<std::mutex> lock(mtx);
 
-    GameRoom* newRoom = new GameRoom(roomName, hostId);
+    GameRoom* newRoom = new GameRoom(roomName, hostId, maxPlayers);
     activeGames[roomName] = newRoom;
     clientToRoom[hostId] = newRoom;
     newRoom->addPlayer(hostId, hostQueue);   
@@ -107,9 +107,11 @@ std::vector<std::string> GameLobby::getPlayersInRoomByClient(int clientId) {
     std::lock_guard<std::mutex> lock(mtx);
     std::vector<std::string> result;
     if (!clientToRoom.count(clientId)) return result;
+
     GameRoom* room = clientToRoom[clientId];
     auto ids = room->getPlayerIds();
     result.reserve(ids.size());
+    result.push_back("maxPlayers:" + std::to_string(room->getMaxPlayers()));
     for (int id : ids) {
         auto it = clientUsernames.find(id);
         if (it != clientUsernames.end()) {
