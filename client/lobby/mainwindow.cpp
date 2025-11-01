@@ -57,7 +57,19 @@ MainWindow::MainWindow(QWidget* parent)
         }
 
         player.username = name;
-        // enviar al socket
+        if (protocol) {
+            try {
+                protocol->sendUsername(player.username.toStdString());
+                protocol->sendListRooms();
+                auto rooms = protocol->receiveRoomList();
+                allRooms.clear();
+                for (const auto& r : rooms) allRooms << QString::fromStdString(r);
+                showPage(0);
+            } catch (const std::exception& e) {
+                QMessageBox::critical(this, "Error", QString("Server error: %1").arg(e.what()));
+                return;
+            }
+        }
 
         // Ir a la pantalla de salas dispo
         Navigation::goToPage(ui->page_rooms, ui->stackedWidget, this);
@@ -102,6 +114,14 @@ MainWindow::MainWindow(QWidget* parent)
         const Car& selectedCar = cars[currentCarIndex];
 
         player.selectedCar = selectedCar.getType();
+        if (protocol) {
+            try {
+                protocol->sendChooseCar(selectedCar.getName().toStdString());
+                // Opcional: podríamos esperar CHOOSE_CAR_OK con receiveActionCode()
+            } catch (const std::exception& e) {
+                QMessageBox::warning(this, "Choose Car", QString("Failed to send car: %1").arg(e.what()));
+            }
+        }
         ui->stackedWidget->setCurrentWidget(ui->page_wait);
     });
     connect(ui->btnBackToLobby, &QPushButton::clicked, this, [this]() {
@@ -235,6 +255,19 @@ void MainWindow::handleCreateButton() {
 
 void MainWindow::handleContinueToWait() {
     player.maxPlayers = ui->comboMaxPlayers->currentText().toUInt();
+    if (protocol) {
+        try {
+            protocol->sendCreateRoom(player.roomCode.toStdString());
+            ActionCode resp = protocol->receiveActionCode();
+            if (resp != ActionCode::ROOM_CREATED) {
+                QMessageBox::critical(this, "Create Room", "Failed to create room on server.");
+                return;
+            }
+        } catch (const std::exception& e) {
+            QMessageBox::critical(this, "Create Room", QString("Error: %1").arg(e.what()));
+            return;
+        }
+    }
 
     Navigation::goToPage(ui->page_wait, ui->stackedWidget, this);
     ui->labelRoomCode->setText("ROOM CODE: " + player.roomCode.toUpper());
@@ -253,6 +286,20 @@ void MainWindow::handleConfirmJoin() {
     if (code.isEmpty()) {
         QMessageBox::warning(this, "Join Game", "Please enter a room code.");
         return;
+    }
+
+    if (protocol) {
+        try {
+            protocol->sendJoinRoom(code.toStdString());
+            ActionCode resp = protocol->receiveActionCode();
+            if (resp != ActionCode::JOIN_OK) {
+                QMessageBox::critical(this, "Join Game", "Failed to join room on server.");
+                return;
+            }
+        } catch (const std::exception& e) {
+            QMessageBox::critical(this, "Join Game", QString("Error: %1").arg(e.what()));
+            return;
+        }
     }
 
     player.roomCode = code;
@@ -299,6 +346,13 @@ void MainWindow::updateCarImage() {
 }
 
 void MainWindow::handleStartGame() {
+    if (protocol) {
+        try {
+            protocol->sendStartGame();
+        } catch (const std::exception& e) {
+            QMessageBox::critical(this, "Start Game", QString("Error: %1").arg(e.what()));
+        }
+    }
     this->close();
 }
 
