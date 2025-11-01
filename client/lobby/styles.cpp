@@ -1,13 +1,19 @@
 #include "styles.h"
 #include <QFontDatabase>
 #include <QApplication>
+#include <QGraphicsDropShadowEffect>
+#include <QPushButton>
+#include <QLineEdit>
+#include <QComboBox>
 
 void UIStyles::applyGlobalStyle() {
+    // Fuente global
     int fontId = QFontDatabase::addApplicationFont(":/Tektur-SemiBold.ttf");
     QString fontFamily = QFontDatabase::applicationFontFamilies(fontId).at(0);
     QFont tekturFont(fontFamily, 12);
     qApp->setFont(tekturFont);
 
+    // --- Estilo global (sin box-shadow, solo colores y bordes) ---
     qApp->setStyleSheet(R"(
         QLineEdit {
             background: #2c2c2c;
@@ -17,12 +23,6 @@ void UIStyles::applyGlobalStyle() {
             padding: 6px;
             font-family: 'Tektur';
             font-size: 17px;
-            box-shadow: 0 0 15px #ff6600;
-        }
-
-        QLineEdit::placeholder {
-            color: rgba(255, 255, 255, 200);
-            font-style: italic;
         }
 
         QPushButton {
@@ -34,12 +34,10 @@ void UIStyles::applyGlobalStyle() {
             font-family: 'Tektur';
             font-size: 15px;
             font-weight: bold;
-            box-shadow: 0px 0px 15px #ff6600;
         }
 
         QPushButton:hover {
             background-color: #ffa31a;
-            box-shadow: 0px 0px 25px #ffa31a;
         }
 
         QPushButton:pressed {
@@ -55,34 +53,26 @@ void UIStyles::applyGlobalStyle() {
             border-radius: 10px;
             padding: 6px 12px;
         }
-
-        QComboBox::down-arrow {
-            width: 14px;
-            height: 14px;
-            color: white;
-        }
-
-        // Mostramos la flecha nativa
-        QComboBox::down-arrow:!pressed {
-            image: none;
-        }
-
-        // Evitar que el fondo la tape
-        QComboBox::drop-down {
-            background: transparent;
-            border: none;
-            width: 20px;
-        }
-
-        QComboBox QAbstractItemView {
-            background-color: #1f1f1f;
-            color: white;
-            selection-background-color: #ff6600;
-            selection-color: black;
-            border: 2px solid #ff6600;
-            font-family: 'Tektur';
-        }
-
-
     )");
+
+    // --- Aplicar sombras globales a ciertos widgets ---
+    const QList<QWidget*> widgets = qApp->allWidgets();
+    for (QWidget *w : widgets) {
+        // Sombra para botones
+        if (auto btn = qobject_cast<QPushButton*>(w)) {
+            auto *shadow = new QGraphicsDropShadowEffect(btn);
+            shadow->setBlurRadius(20);
+            shadow->setOffset(0, 0);
+            shadow->setColor(QColor("#ff6600"));
+            btn->setGraphicsEffect(shadow);
+        }
+        // Sombra para campos de texto
+        else if (auto edit = qobject_cast<QLineEdit*>(w)) {
+            auto *shadow = new QGraphicsDropShadowEffect(edit);
+            shadow->setBlurRadius(15);
+            shadow->setOffset(0, 0);
+            shadow->setColor(QColor("#ff6600"));
+            edit->setGraphicsEffect(shadow);
+        }
+    }
 }

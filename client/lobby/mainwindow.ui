@@ -35,27 +35,10 @@ QPushButton:hover {
 }
 </string>
       </property>
+      <property name="currentIndex">
+       <number>0</number>
+      </property>
       <widget class="QWidget" name="page_connection">
-       <widget class="QLineEdit" name="hostInput">
-        <property name="geometry">
-         <rect>
-          <x>220</x>
-          <y>210</y>
-          <width>271</width>
-          <height>41</height>
-         </rect>
-        </property>
-       </widget>
-       <widget class="QLineEdit" name="portInput">
-        <property name="geometry">
-         <rect>
-          <x>710</x>
-          <y>210</y>
-          <width>271</width>
-          <height>41</height>
-         </rect>
-        </property>
-       </widget>
        <widget class="QPushButton" name="connectButton">
         <property name="geometry">
          <rect>
@@ -67,6 +50,94 @@ QPushButton:hover {
         </property>
         <property name="text">
          <string>Connect</string>
+        </property>
+       </widget>
+       <widget class="QLabel" name="game_name">
+        <property name="geometry">
+         <rect>
+          <x>110</x>
+          <y>160</y>
+          <width>971</width>
+          <height>121</height>
+         </rect>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">QLabel#game_name {
+    color: #ff6600;
+    font-family: 'Tektur';
+    font-size: 100px;
+    font-weight: 900;
+    qproperty-alignment: 'AlignCenter';
+    text-transform: uppercase;
+    letter-spacing: 6px;
+    padding: 20px 40px;
+    background-color: rgba(0, 0, 0, 160);
+    border-radius: 15px;
+    /* Sombra de texto para simular borde negro */
+    text-shadow: 3px 3px 2px black;
+}
+
+</string>
+        </property>
+        <property name="text">
+         <string>NEED FOR SPEED</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
+        </property>
+       </widget>
+       <widget class="QLabel" name="flag_left">
+        <property name="geometry">
+         <rect>
+          <x>-70</x>
+          <y>170</y>
+          <width>184</width>
+          <height>101</height>
+         </rect>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">QLabel#flag_left,
+QLabel#flag_right {
+    background-image: url(:/flag_pattern.png);
+    background-repeat: repeat-x;
+    background-position: center;
+    background-size: 50px 50px;   /* Escala del patrón: más chico = más cuadros visibles */
+    border: none;
+    min-width: 150px;
+    min-height: 40px;
+}
+
+</string>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+       </widget>
+       <widget class="QLabel" name="flag_right">
+        <property name="geometry">
+         <rect>
+          <x>1080</x>
+          <y>170</y>
+          <width>184</width>
+          <height>101</height>
+         </rect>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">QLabel#flag_left,
+QLabel#flag_right {
+    background-image: url(:/flag_pattern.png);
+    background-repeat: repeat-x;
+    background-position: center;
+    background-size: 50px 50px;   /* Escala del patrón: más chico = más cuadros visibles */
+    border: none;
+    min-width: 150px;
+    min-height: 40px;
+}
+
+</string>
+        </property>
+        <property name="text">
+         <string/>
         </property>
        </widget>
       </widget>
@@ -336,6 +407,9 @@ QPushButton:pressed { background-color: #cc5200; }
         </property>
         <property name="alignment">
          <set>Qt::AlignCenter</set>
+        </property>
+        <property name="margin">
+         <number>-2</number>
         </property>
        </widget>
        <widget class="QLabel" name="labelCreateInfo">

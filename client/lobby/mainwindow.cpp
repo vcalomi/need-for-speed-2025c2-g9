@@ -13,6 +13,7 @@
 #include <QtMath>
 #include <QStandardItemModel>
 #include <QStandardItem>
+#include <QGraphicsDropShadowEffect>
 
 
 MainWindow::MainWindow(QWidget* parent)
@@ -33,18 +34,27 @@ MainWindow::MainWindow(QWidget* parent)
     UIStyles::applyGlobalStyle();
 
     // Placeholders
-    ui->hostInput->setPlaceholderText("Host");
-    ui->portInput->setPlaceholderText("Port");
+    // ui->hostInput->setPlaceholderText("Host");
+    // ui->portInput->setPlaceholderText("Port");
 
     // Cargar salas simuladas --> acá le voy a pedir el sockt que me diga cuantas salas hay
     allRooms = RoomManager::generateRooms(20);
     showPage(0);
 
     // Página inicial
+    // Navigation::goToPage(ui->page_connection, ui->stackedWidget, this);
+
     Navigation::goToPage(ui->page_connection, ui->stackedWidget, this);
+    QGraphicsDropShadowEffect *outline = new QGraphicsDropShadowEffect(ui->game_name);
+    outline->setOffset(0);
+    outline->setBlurRadius(0);
+    outline->setColor(Qt::black);
+    ui->game_name->setGraphicsEffect(outline);
+    ui->game_name->setStyleSheet("color: #ff6600; font-family: 'Tektur'; font-size: 120px; font-weight: 900;");
+
 
     connect(ui->connectButton, &QPushButton::clicked, this, [this]() {
-    connectToServer();
+    Navigation::goToPage(ui->page_username, ui->stackedWidget, this);
 });
 
     // Username
@@ -57,14 +67,14 @@ MainWindow::MainWindow(QWidget* parent)
         }
 
         player.username = name;
-        // enviar al socket
+        // ------------------------ ENVIAR AL SERVIDOR EL NOMBRE DE USUARIO --------------------------
 
         // Ir a la pantalla de salas dispo
         Navigation::goToPage(ui->page_rooms, ui->stackedWidget, this);
     });
 
 
-    // 6Botones del menú principal
+    // Botones del menú principal
     connect(ui->btnCreate, &QPushButton::clicked, this, &MainWindow::handleCreateButton);
     connect(ui->btnJoin,   &QPushButton::clicked, this, &MainWindow::handleJoinGame);
 
@@ -113,34 +123,34 @@ MainWindow::MainWindow(QWidget* parent)
     this->move(screenGeometry.center() - this->rect().center());
 }
 
-void MainWindow::connectToServer() {
-    QString hostname = ui->hostInput->text();
-    QString port = ui->portInput->text();
+// void MainWindow::connectToServer() {
+//     QString hostname = ui->hostInput->text();
+//     QString port = ui->portInput->text();
 
-    if (hostname.isEmpty() || port.isEmpty()) {
-        QMessageBox::warning(this, "Connection error",
-                             "Please enter a valid Host and Port");
-        return;
-    }
+//     if (hostname.isEmpty() || port.isEmpty()) {
+//         QMessageBox::warning(this, "Connection error",
+//                              "Please enter a valid Host and Port");
+//         return;
+//     }
 
-    try {
-        protocol = std::make_unique<ClientProtocol>(
-            hostname.toStdString(), port.toStdString()
-        );
+//     try {
+//         protocol = std::make_unique<ClientProtocol>(
+//             hostname.toStdString(), port.toStdString()
+//         );
 
-        QMessageBox::information(this, "Connected",
-                                 "Successfully connected to server!");
+//         QMessageBox::information(this, "Connected",
+//                                  "Successfully connected to server!");
 
-        // Si querés, podés enviar algo inicial:
-        // protocol->sendListRooms();
+//         // Si querés, podés enviar algo inicial:
+//         // protocol->sendListRooms();
 
-        Navigation::goToPage(ui->page_username, ui->stackedWidget, this);
-    }
-    catch (const std::exception &e) {
-        QMessageBox::critical(this, "Connection failed",
-                              QString("Unable to connect: %1").arg(e.what()));
-    }
-}
+        // Navigation::goToPage(ui->page_username, ui->stackedWidget, this);
+//     }
+//     catch (const std::exception &e) {
+//         QMessageBox::critical(this, "Connection failed",
+//                               QString("Unable to connect: %1").arg(e.what()));
+//     }
+// }
 
 void MainWindow::showPage(int page) {
     ui->listRooms->clear();

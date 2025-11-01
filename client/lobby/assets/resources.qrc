@@ -8,6 +8,7 @@
 	<file>sedan.png</file>
 	<file>jeep_4x4.png</file>
 	<file>truck.png</file>
+	<file>flag_pattern.png</file>
         <file>Tektur-SemiBold.ttf</file>
         <file>Tektur_Condensed-Bold.ttf</file>
     </qresource>
