@@ -1,34 +1,31 @@
 #include "mainwindow.h"
-#include "ui_mainwindow.h"
-#include "player_info.h"
 
-#include "styles.h"
-#include "navigation.h"
-#include "room_manager.h"
-
+#include <QDebug>
+#include <QGraphicsDropShadowEffect>
+#include <QGuiApplication>
 #include <QMessageBox>
 #include <QScreen>
-#include <QGuiApplication>
-#include <QDebug>
-#include <QtMath>
-#include <QStandardItemModel>
 #include <QStandardItem>
-#include <QGraphicsDropShadowEffect>
+#include <QStandardItemModel>
+#include <QtMath>
+
+#include "navigation.h"
+#include "player_info.h"
+#include "room_manager.h"
+#include "styles.h"
+#include "ui_mainwindow.h"
 
 
-MainWindow::MainWindow(QWidget* parent)
-        : QMainWindow(parent), ui(new Ui::Lobby) {
+MainWindow::MainWindow(QWidget* parent): QMainWindow(parent), ui(new Ui::Lobby) {
     ui->setupUi(this);
 
-    cars = {
-            Car(CarType::FIAT_600,    "Fiat 600",    ":/fiat_600.png"),
+    cars = {Car(CarType::FIAT_600, "Fiat 600", ":/fiat_600.png"),
             Car(CarType::FERRARI_F40, "Ferrari F40", ":/ferrari.png"),
             Car(CarType::PORSCHE_911, "Porsche 911", ":/porsche.png"),
-            Car(CarType::SEDAN,       "Sedan",       ":/sedan.png"),
-            Car(CarType::SHEEP_4X4,   "Sheep 4x4",   ":/jeep_4x4.png"),
-            Car(CarType::FORD_F100,   "Ford F100",   ":/ford_f100.png"),
-            Car(CarType::TRUCK,      "Truck",      ":/truck.png")
-    };
+            Car(CarType::SEDAN, "Sedan", ":/sedan.png"),
+            Car(CarType::SHEEP_4X4, "Sheep 4x4", ":/jeep_4x4.png"),
+            Car(CarType::FORD_F100, "Ford F100", ":/ford_f100.png"),
+            Car(CarType::TRUCK, "Truck", ":/truck.png")};
 
     // Estilos y fuente global
     UIStyles::applyGlobalStyle();
@@ -39,9 +36,8 @@ MainWindow::MainWindow(QWidget* parent)
 
     Navigation::goToPage(ui->page_connection, ui->stackedWidget, this);
 
-    connect(ui->connectButton, &QPushButton::clicked, this, [this]() {
-    Navigation::goToPage(ui->page_username, ui->stackedWidget, this);
-});
+    connect(ui->connectButton, &QPushButton::clicked, this,
+            [this]() { Navigation::goToPage(ui->page_username, ui->stackedWidget, this); });
 
     // Username
     connect(ui->btnConfirmUsername, &QPushButton::clicked, this, [this]() {
@@ -55,11 +51,11 @@ MainWindow::MainWindow(QWidget* parent)
         player.username = name;
         if (protocol) {
             try {
-                protocol->sendUsername(player.username.toStdString());
+                // protocol->sendUsername(player.username.toStdString());
                 protocol->sendListRooms();
                 auto rooms = protocol->receiveRoomList();
                 allRooms.clear();
-                for (const auto& r : rooms) allRooms << QString::fromStdString(r);
+                for (const auto& r: rooms) allRooms << QString::fromStdString(r);
                 showPage(0);
             } catch (const std::exception& e) {
                 QMessageBox::critical(this, "Error", QString("Server error: %1").arg(e.what()));
@@ -74,26 +70,26 @@ MainWindow::MainWindow(QWidget* parent)
 
     // Botones del menú principal
     connect(ui->btnCreate, &QPushButton::clicked, this, &MainWindow::handleCreateButton);
-    connect(ui->btnJoin,   &QPushButton::clicked, this, &MainWindow::handleJoinGame);
+    connect(ui->btnJoin, &QPushButton::clicked, this, &MainWindow::handleJoinGame);
 
     // Paginación salas disponibles
     connect(ui->btnNextRooms, &QPushButton::clicked, this, &MainWindow::showNextRoom);
     connect(ui->btnPrevRooms, &QPushButton::clicked, this, &MainWindow::showPrevRoom);
 
     // Otros botones
-    connect(ui->btnContinueRooms, &QPushButton::clicked, this, [this]() {
-        Navigation::goToPage(ui->page_menu, ui->stackedWidget, this);
-    });
+    connect(ui->btnContinueRooms, &QPushButton::clicked, this,
+            [this]() { Navigation::goToPage(ui->page_menu, ui->stackedWidget, this); });
 
     connect(ui->btnContinue, &QPushButton::clicked, this, &MainWindow::handleContinueToWait);
     connect(ui->btnConfirmJoin, &QPushButton::clicked, this, &MainWindow::handleConfirmJoin);
     connect(ui->btnBackJoin, &QPushButton::clicked, this, &MainWindow::handleBackToMenu);
-    connect(ui->btnRefresh, &QPushButton::clicked, this, &MainWindow::handleRefreshPlayers, Qt::UniqueConnection);
+    connect(ui->btnRefresh, &QPushButton::clicked, this, &MainWindow::handleRefreshPlayers,
+            Qt::UniqueConnection);
     connect(ui->btnStartGame, &QPushButton::clicked, this, &MainWindow::handleStartGame);
 
     connect(ui->btnChooseCar, &QPushButton::clicked, this, [this]() {
         ui->stackedWidget->setCurrentWidget(ui->page_car);
-        updateCarImage();   // para mostrar el primer auto
+        updateCarImage();  // para mostrar el primer auto
     });
 
 
@@ -115,14 +111,14 @@ MainWindow::MainWindow(QWidget* parent)
                 protocol->sendChooseCar(selectedCar.getName().toStdString());
                 // Opcional: podríamos esperar CHOOSE_CAR_OK con receiveActionCode()
             } catch (const std::exception& e) {
-                QMessageBox::warning(this, "Choose Car", QString("Failed to send car: %1").arg(e.what()));
+                QMessageBox::warning(this, "Choose Car",
+                                     QString("Failed to send car: %1").arg(e.what()));
             }
         }
         ui->stackedWidget->setCurrentWidget(ui->page_wait);
     });
-    connect(ui->btnBackToLobby, &QPushButton::clicked, this, [this]() {
-        ui->stackedWidget->setCurrentWidget(ui->page_wait);
-    });
+    connect(ui->btnBackToLobby, &QPushButton::clicked, this,
+            [this]() { ui->stackedWidget->setCurrentWidget(ui->page_wait); });
 
     // Centrar ventana
     QRect screenGeometry = QGuiApplication::primaryScreen()->geometry();
@@ -137,12 +133,9 @@ void MainWindow::showPage(int page) {
 
     int start = currentPage * PAGE_SIZE;
     int end = qMin(start + PAGE_SIZE, allRooms.size());
-    for (int i = start; i < end; ++i)
-        ui->listRooms->addItem(allRooms[i]);
+    for (int i = start; i < end; ++i) ui->listRooms->addItem(allRooms[i]);
 
-    ui->labelPageInfo->setText(QString("Page %1 / %2")
-                                       .arg(currentPage + 1)
-                                       .arg(totalPages));
+    ui->labelPageInfo->setText(QString("Page %1 / %2").arg(currentPage + 1).arg(totalPages));
 
     ui->btnPrevRooms->setEnabled(currentPage > 0);
     ui->btnNextRooms->setEnabled(currentPage < totalPages - 1);
@@ -204,7 +197,7 @@ void MainWindow::handleCreateButton() {
 
     // Placeholder
     ui->comboMaxPlayers->addItem("Select players...");
-    auto *model = qobject_cast<QStandardItemModel*>(ui->comboMaxPlayers->model());
+    auto* model = qobject_cast<QStandardItemModel*>(ui->comboMaxPlayers->model());
 
     if (model) {
         QStandardItem* first = model->item(0);
@@ -214,8 +207,7 @@ void MainWindow::handleCreateButton() {
     }
 
     // Valores reales
-    for(int i = 2; i <= 8; i++)
-        ui->comboMaxPlayers->addItem(QString::number(i));
+    for (int i = 2; i <= 8; i++) ui->comboMaxPlayers->addItem(QString::number(i));
 
     ui->comboMaxPlayers->setCurrentIndex(0);
 }
@@ -286,18 +278,17 @@ void MainWindow::handleConfirmJoin() {
 }
 
 void MainWindow::updateLobbyStatus() {
-    QString text = QString("Players: %1 / %2")
-    .arg(player.currentPlayers)
-            .arg(player.maxPlayers);
+    QString text = QString("Players: %1 / %2").arg(player.currentPlayers).arg(player.maxPlayers);
     ui->labelLobbyStatus->setText(text);
 }
 
 void MainWindow::handleRefreshPlayers() {
-    if (!player.isHost) return;
+    if (!player.isHost)
+        return;
 
     if (player.currentPlayers < player.maxPlayers) {
         player.currentPlayers++;
-        ui->listPlayers->addItem("New Player"); // Luego vendrá del servidor
+        ui->listPlayers->addItem("New Player");  // Luego vendrá del servidor
     }
 
     updateLobbyStatus();
@@ -308,8 +299,7 @@ void MainWindow::updateCarImage() {
     QPixmap pixmap(currentCar.getImagePath());
 
     ui->labelCarImage->setPixmap(
-            pixmap.scaled(550, 350, Qt::KeepAspectRatio, Qt::SmoothTransformation)
-            );
+            pixmap.scaled(550, 350, Qt::KeepAspectRatio, Qt::SmoothTransformation));
 }
 
 void MainWindow::handleStartGame() {
@@ -323,6 +313,4 @@ void MainWindow::handleStartGame() {
     this->close();
 }
 
-MainWindow::~MainWindow() {
-    delete ui;
-}
+MainWindow::~MainWindow() { delete ui; }
