@@ -23,7 +23,6 @@ public:
     void sendDTO(std::shared_ptr<Dto> dto);
     std::shared_ptr<Dto> receiveDTO();
     ActionCode receiveActionCode();
-    Socket releaseSocket();
     std::string receiveRoomName();
     // CarConfig receiveCarConfig();
     void sendActionCode();

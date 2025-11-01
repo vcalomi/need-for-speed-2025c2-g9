@@ -1,14 +1,12 @@
 #include <iostream>
 #include <QApplication>
-
-#include "client.h"
 #include "lobby/mainwindow.h"
+#include "client.h"
 
 #define NUMBER_ARG 3
 #define MSG_ERROR_STDIN "Command line: <hostname> <port>"
 #define ARG_INDEX_HOSTNAME 1
 #define ARG_INDEX_PORT 2
-
 
 int main(int argc, char* argv[]) {
     if (argc != NUMBER_ARG) {
@@ -17,20 +15,26 @@ int main(int argc, char* argv[]) {
     }
     std::string hostname = std::string(argv[ARG_INDEX_HOSTNAME]);
     std::string port = std::string(argv[ARG_INDEX_PORT]);
+    
     try {
-        // 2. Iniciar la interfaz Qt
         QApplication app(argc, argv);
-        MainWindow w;
-        w.show();
+        
+        // 1. Ejecutar Lobby
+        bool game_started = false;
+        MainWindow lobby(QString::fromStdString(hostname), QString::fromStdString(port), std::ref(game_started));
+        lobby.show();
         app.exec();
 
-        // 1. Crear el cliente y conectar
-        Client client(hostname, port);
-        client.run();
+        // 2. Si el juego inició, ejecutar Client
+        if (game_started) {
+            std::cout << "Game started! Launching game client..." << std::endl;
+            Client client(hostname, port);
+            client.run();
+        }
 
         return 0;
-    } catch (...) {
-
+    } catch (const std::exception& e) {
+        std::cout << "Error: " << e.what() << std::endl;
         return 1;
     }
 }

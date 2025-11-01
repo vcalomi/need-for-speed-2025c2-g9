@@ -74,4 +74,19 @@ bool GameRoom::isHost(int clientId) const {
 
 Queue<std::shared_ptr<Dto>>& GameRoom::getGameQueue() { return gameQueue; }
 
+std::vector<int> GameRoom::getPlayerIds() {
+    std::lock_guard<std::mutex> lock(mtx);
+    std::vector<int> ids;
+    ids.reserve(players.size());
+    for (const auto& player : players) {
+        ids.push_back(player.first);
+    }
+    return ids;
+}
+
+bool GameRoom::isInRace() {
+    std::lock_guard<std::mutex> lock(mtx);
+    return state == RoomState::IN_RACE;
+}
+
 GameRoom::~GameRoom() {}

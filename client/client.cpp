@@ -5,26 +5,35 @@
 #include <string>
 
 Client::Client(const std::string& hostname, const std::string& port):
-        clientProtocol(hostname, port), connected(true), recvQueue(), receiver(nullptr) {}
+        clientProtocol(hostname, port), 
+        connected(true), 
+        recvQueue(), 
+        senderQueue(),
+        sender(clientProtocol, senderQueue),
+        receiver(clientProtocol, recvQueue) {}
 
 void Client::run() {
     while (connected) {
         try {
-            // QApplication a(argc, argv);
+            sender.start();
+            receiver.start();
+            std::cout << "Client: Game communication started" << std::endl;
         } catch (const std::exception& e) {
             connected = false;
         }
     }
+    stop();
 }
 
 void Client::stop() {
     connected = false;
     clientProtocol.close();
     recvQueue.close();
-    // senderQueeue.close();
-    receiver->stop();
-    receiver->join();
-    // sender.stop();
+    senderQueue.close();
+    sender.stop();
+    sender.join();
+    receiver.stop();
+    receiver.join();
 }
 
 Client::~Client() {}

@@ -10,6 +10,11 @@ ClientProtocol::ClientProtocol(const std::string& hostname, const std::string& p
     serializers[static_cast<uint8_t>(ActionCode::SEND_CARS)] = std::make_unique<VehicleSerializer>();
 }
 
+void ClientProtocol::sendUsername(const std::string& username) {
+    protocol.sendAction(socket, ActionCode::SEND_USERNAME);
+    protocol.sendString(socket, username);
+}
+
 void ClientProtocol::sendCreateRoom(const std::string& roomName) {
     protocol.sendAction(socket, ActionCode::CREATE_ROOM);
     protocol.sendString(socket, roomName);
@@ -30,7 +35,15 @@ void ClientProtocol::sendStartGame() {
 
 void ClientProtocol::sendChooseCar(const std::string& carType) {
     protocol.sendAction(socket, ActionCode::CHOOSE_CAR);
-    // protocol.sendString(socket, carType); // Implementar cuando haya CarConfig
+    protocol.sendString(socket, carType);
+}
+
+void ClientProtocol::sendListPlayers() {
+    protocol.sendAction(socket, ActionCode::LIST_PLAYERS);
+}
+
+void ClientProtocol::sendListState() {
+    protocol.sendAction(socket, ActionCode::LIST_STATE);
 }
 
 std::vector<std::string> ClientProtocol::receiveRoomList() {
@@ -60,6 +73,13 @@ std::shared_ptr<Dto> ClientProtocol::receiveDTO() {
     socket.recvall(buffer.data(), buffer.size());
 
     return it->second->deserialize(buffer);
+}
+
+void ClientProtocol::sendDTO(std::shared_ptr<Dto> dto) {
+    uint8_t dtoCode = dto->return_code();
+    protocol.sendAction(socket, static_cast<ActionCode>(dtoCode));
+    auto buffer = serializers[dtoCode]->serialize(*dto);
+    socket.sendall(buffer.data(), buffer.size());
 }
 
 ActionCode ClientProtocol::receiveActionCode() { return protocol.receiveAction(socket); }
