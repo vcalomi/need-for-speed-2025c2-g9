@@ -19,7 +19,7 @@ class MainWindow: public QMainWindow {
     Q_OBJECT
 
 public:
-    MainWindow(QWidget* parent = nullptr);
+    MainWindow(const QString& host, const QString& port, bool& game_started_ref, QWidget* parent = nullptr);
     ~MainWindow();
 
 private slots:
@@ -39,12 +39,18 @@ private:
     Ui::Lobby* ui;
     PlayerInfo player;
     std::unique_ptr<ClientProtocol> protocol; // conexión TCP al servidor
+    QString defaultHost;
+    QString defaultPort;
+    bool& game_started;
+    QTimer* waitTimer;
+    QTimer* refreshTimer;
 
     static constexpr int PAGE_SIZE = 10; // cantidad de salas por página
     int currentPage = 0;
     QStringList allRooms;
     QVector<Car> cars;
     int currentCarIndex = 0;
+    bool inFlight = false; // serializa lecturas del protocolo en wait
 
     QString generateRoomCode();
     void loadRooms();

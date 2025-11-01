@@ -14,37 +14,15 @@ LobbyWorker::LobbyWorker(ServerProtocol& protocol,
     initHandlers();
 }
 
-void LobbyWorker::start() {
-    alive = true;
-    keep_running = true;
-    th = std::thread(&LobbyWorker::run, this);
-}
-
-void LobbyWorker::stop() {
-    keep_running = false;
-}
-
-void LobbyWorker::join() {
-    if (th.joinable()) th.join();
-}
-
-bool LobbyWorker::is_alive() const {
-    return (bool)alive;
-}
-
 void LobbyWorker::run() {
     try {
-        while (keep_running) {
+        while (should_keep_running()) {
             ActionCode action = protocol.receiveActionCode();
             if (!dispatcher.dispatch(action)) {
                 protocol.sendMsg({ActionCode::SEND_ERROR_MSG});
             }
-            // Si START_GAME fue recibido, el handler corta keep_running
         }
-    } catch (const std::exception& e) {
-        // opcional: logging
-    }
-    alive = false;
+    } catch (const std::exception& e) {}
 }
 
 void LobbyWorker::initHandlers() {
@@ -54,6 +32,8 @@ void LobbyWorker::initHandlers() {
     dispatcher.registerHandler(ActionCode::CHOOSE_CAR, [this]{ handleChooseCar(); });
     dispatcher.registerHandler(ActionCode::SEND_USERNAME, [this]{ handleSendUsername(); });
     dispatcher.registerHandler(ActionCode::START_GAME, [this]{ handleStartGame(); });
+    dispatcher.registerHandler(ActionCode::LIST_PLAYERS, [this]{ handleListPlayers(); });
+    dispatcher.registerHandler(ActionCode::LIST_STATE, [this]{ handleListState(); });
 }
 
 void LobbyWorker::handleListRooms() {
@@ -62,7 +42,7 @@ void LobbyWorker::handleListRooms() {
 }
 
 void LobbyWorker::handleCreateRoom() {
-    std::string roomName = protocol.receiveString();
+    std::string roomName = protocol.receiveRoomName();
     if (lobby.createGameRoom(roomName, clientId, senderQueue)) {
         protocol.sendMsg({ActionCode::ROOM_CREATED});
     } else {
@@ -71,7 +51,7 @@ void LobbyWorker::handleCreateRoom() {
 }
 
 void LobbyWorker::handleJoinRoom() {
-    std::string roomName = protocol.receiveString();
+    std::string roomName = protocol.receiveRoomName();
     if (lobby.joinGameRoom(roomName, clientId, senderQueue)) {
         protocol.sendMsg({ActionCode::JOIN_OK});
     } else {
@@ -82,14 +62,14 @@ void LobbyWorker::handleJoinRoom() {
 void LobbyWorker::handleStartGame() {
     if (lobby.startGameByClientId(clientId)) {
         if (onStartGame) onStartGame();
-        keep_running = false; // corta el loop de lobby
+        stop();
     } else {
         protocol.sendMsg({ActionCode::SEND_ERROR_MSG});
     }
 }
 
 void LobbyWorker::handleChooseCar() {
-    std::string carType = protocol.receiveString();
+    std::string carType = protocol.receiveRoomName();
     CarConfig car{};
     car.carType = carType;
     if (lobby.chooseCarByClientId(clientId, car)) {
@@ -100,7 +80,16 @@ void LobbyWorker::handleChooseCar() {
 }
 
 void LobbyWorker::handleSendUsername() {
-    std::string username = protocol.receiveString();
-    // TODO: persistir en lobby/room si se desea
-    std::cout << "Cliente " << clientId << " username: " << username << std::endl;
+    std::string username = protocol.receiveRoomName();
+    lobby.setUsername(clientId, username);
+}
+
+void LobbyWorker::handleListPlayers() {
+    auto players = lobby.getPlayersInRoomByClient(clientId);
+    protocol.sendRoomList(players);
+}
+
+void LobbyWorker::handleListState() {
+    bool started = lobby.isGameStartedByClient(clientId);
+    protocol.sendRoomList({ started ? std::string("started") : std::string("waiting") });
 }

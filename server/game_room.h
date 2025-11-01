@@ -3,6 +3,7 @@
 
 #include <map>
 #include <string>
+#include <vector>
 
 #include "../common/queue.h"
 #include <atomic>
@@ -48,6 +49,8 @@ public:
     bool canJoin() const;
     bool isHost(int clientId) const;
     Queue<std::shared_ptr<Dto>>& getGameQueue();
+    std::vector<int> getPlayerIds();
+    bool isInRace();
     
     ~GameRoom();
 };

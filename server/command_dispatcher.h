@@ -24,4 +24,4 @@ public:
     }
 };
 
-#endif // COMMAND_DISPATCHER_H
+#endif

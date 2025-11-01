@@ -11,6 +11,7 @@ target_sources(taller_client
     client.cpp
     client_protocol.cpp
     client_receiver.cpp
+    client_sender.cpp
     ../common/socket.cpp
     ../common/resolver.cpp
     ../common/liberror.cpp
@@ -33,6 +34,7 @@ target_sources(taller_client
     client.h
     client_protocol.h
     client_receiver.h
+    client_sender.h
     ../common/socket.h
     ../common/resolver.h
     ../common/liberror.h

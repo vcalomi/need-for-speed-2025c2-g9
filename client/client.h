@@ -7,13 +7,17 @@
 #include "../common/queue.h"
 #include "client_receiver.h"
 #include "../common/Dto/dto.h"
+#include "client_receiver.h"
+#include "client_sender.h"
 
 class Client {
 private:
     ClientProtocol clientProtocol;
     bool connected;
     Queue<std::shared_ptr<Dto>> recvQueue;
-    std::unique_ptr<ClientReceiver> receiver;
+    Queue<std::shared_ptr<Dto>> senderQueue;
+    ClientSender sender;
+    ClientReceiver receiver;
 
 public:
     Client(const std::string& hostname, const std::string& port);

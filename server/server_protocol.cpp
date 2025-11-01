@@ -50,4 +50,9 @@ void ServerProtocol::sendRoomList(const std::vector<std::string>& rooms) {
     }
 }
 
+void ServerProtocol::sendErrorMsg(const std::string& /*errorMsg*/) {
+    // Mantener compatibilidad actual: solo enviamos el código de error, sin payload
+    protocol.sendAction(socket, ActionCode::SEND_ERROR_MSG);
+}
+
 ServerProtocol::~ServerProtocol() {}

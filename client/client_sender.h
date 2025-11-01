@@ -1,5 +1,5 @@
-#ifndef SENDER_H
-#define SENDER_H
+#ifndef CLIENT_SENDER_H
+#define CLIENT_SENDER_H
 
 #include <vector>
 
@@ -7,18 +7,19 @@
 #include "../common/socket.h"
 #include "../common/socket_closed.h"
 #include "../common/thread.h"
+#include "../common/Dto/dto.h"
 
 #include "client_protocol.h"
 
-class Sender: public Thread {
+class ClientSender: public Thread {
 private:
     Queue<std::shared_ptr<Dto>>& clientQueue;
     ClientProtocol& protocol;
 
 public:
-    explicit Sender(ClientProtocol& clientProtocol, Queue<std::shared_ptr<Dto>>& clientQueue);
+    explicit ClientSender(ClientProtocol& clientProtocol, Queue<std::shared_ptr<Dto>>& clientQueue);
     void run() override;
-    ~Sender();
+    ~ClientSender();
 };
 
 #endif

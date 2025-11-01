@@ -11,42 +11,36 @@
 #include "command_dispatcher.h"
 #include "../common/Dto/dto.h"
 #include "../common/queue.h"
+#include "../common/thread.h"
 
-class LobbyWorker {
+class LobbyWorker : public Thread {
+private:
+    ServerProtocol& protocol;
+    GameLobby& lobby;
+    int clientId;
+    Queue<std::shared_ptr<Dto>>& senderQueue;
+    std::function<void()> onStartGame;
+    CommandDispatcher dispatcher;
+
+    void initHandlers();
+    // Handlers
+    void handleListRooms();
+    void handleCreateRoom();
+    void handleJoinRoom();
+    void handleStartGame();
+    void handleListPlayers();
+    void handleListState();
+    void handleChooseCar();
+    void handleSendUsername();
+
+
 public:
     LobbyWorker(ServerProtocol& protocol,
                 GameLobby& lobby,
                 int clientId,
                 Queue<std::shared_ptr<Dto>>& senderQueue,
                 std::function<void()> onStartGame);
-
-    void start();
-    void stop();
-    void join();
-    bool is_alive() const;
-
-private:
-    void run();
-    void initHandlers();
-
-    // Handlers
-    void handleListRooms();
-    void handleCreateRoom();
-    void handleJoinRoom();
-    void handleStartGame();
-    void handleChooseCar();
-    void handleSendUsername();
-
-    ServerProtocol& protocol;
-    GameLobby& lobby;
-    int clientId;
-    Queue<std::shared_ptr<Dto>>& senderQueue;
-    std::function<void()> onStartGame;
-
-    std::thread th;
-    std::atomic_bool keep_running{true};
-    std::atomic_bool alive{false};
-    CommandDispatcher dispatcher;
+    void run() override;
 };
 
-#endif // LOBBY_WORKER_H
+#endif

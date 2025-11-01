@@ -14,6 +14,7 @@
 #include "server_protocol.h"
 #include "client_state.h"
 #include "../common/Dto/dto.h"
+#include "lobby_worker.h"
 
 class ClientHandler {
 private:
@@ -25,15 +26,16 @@ private:
     Sender sender;
     ClientState state;
     int clientId;
+    LobbyWorker lobbyWorker;
     std::unique_ptr<Receiver> receiver;
 
 public:
     ClientHandler(Socket socket, GameLobby& lobby, int clientId);
+    void startThreads();
     void start();
     void join();
     void stop();
     bool is_alive() const;
-    void handleLobbyCommand(ActionCode action);
     ~ClientHandler();
 };
 

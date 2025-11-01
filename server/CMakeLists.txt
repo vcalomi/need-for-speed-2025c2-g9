@@ -7,6 +7,7 @@ target_sources(taller_server
     server_input_handler.cpp
     acceptor.cpp
     client_handler.cpp
+    lobby_worker.cpp
     receiver.cpp
     sender.cpp
     game_lobby.cpp
@@ -24,4 +25,5 @@ target_sources(taller_server
     gameloop.h
     server_protocol.h
     server_input_handler.h
+    lobby_worker.h
     )

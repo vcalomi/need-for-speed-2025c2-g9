@@ -59,7 +59,22 @@ bool GameLobby::startGameByClientId(int clientId) {
         return false;  // No es el host
     }
     
-    return room->startGame();
+    bool ok = room->startGame();
+    if (!ok) return false;
+
+    std::vector<std::function<void()>> callbacks;
+    callbacks.reserve(clientToRoom.size());
+    for (const auto& entry : clientToRoom) {
+        if (entry.second == room) {
+            auto it = startNotifiers.find(entry.first);
+            if (it != startNotifiers.end()) callbacks.push_back(it->second);
+        }
+    }
+
+    for (auto& cb : callbacks) {
+        if (cb) cb();
+    }
+    return true;
 }
 
 bool GameLobby::chooseCarByClientId(int clientId, const CarConfig& car) {
@@ -86,4 +101,45 @@ GameLobby::~GameLobby() {
     for (auto& pair : activeGames) {
         delete pair.second;
     }
+}
+
+std::vector<std::string> GameLobby::getPlayersInRoomByClient(int clientId) {
+    std::lock_guard<std::mutex> lock(mtx);
+    std::vector<std::string> result;
+    if (!clientToRoom.count(clientId)) return result;
+    GameRoom* room = clientToRoom[clientId];
+    auto ids = room->getPlayerIds();
+    result.reserve(ids.size());
+    for (int id : ids) {
+        auto it = clientUsernames.find(id);
+        if (it != clientUsernames.end()) {
+            result.push_back(it->second);
+        } else {
+            result.push_back(std::to_string(id));
+        }
+    }
+    return result;
+}
+
+void GameLobby::setUsername(int clientId, const std::string& username) {
+    std::lock_guard<std::mutex> lock(mtx);
+    clientUsernames[clientId] = username;
+}
+
+std::string GameLobby::getUsername(int clientId) const {
+    auto it = clientUsernames.find(clientId);
+    if (it != clientUsernames.end()) return it->second;
+    return std::to_string(clientId);
+}
+
+bool GameLobby::isGameStartedByClient(int clientId) {
+    std::lock_guard<std::mutex> lock(mtx);
+    if (!clientToRoom.count(clientId)) return false;
+    GameRoom* room = clientToRoom[clientId];
+    return room->isInRace();
+}
+
+void GameLobby::registerStartNotifier(int clientId, std::function<void()> notifier) {
+    std::lock_guard<std::mutex> lock(mtx);
+    startNotifiers[clientId] = std::move(notifier);
 }
