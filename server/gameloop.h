@@ -4,10 +4,10 @@
 #include <map>
 #include <vector>
 
-#include "../common_src/Dto/dto.h"
-#include "../common_src/common_codes.h"
-#include "../common_src/queue.h"
-#include "../common_src/thread.h"
+#include "../common/Dto/dto.h"
+#include "../common/common_codes.h"
+#include "../common/queue.h"
+#include "../common/thread.h"
 #include "game_room.h"
 
 /*

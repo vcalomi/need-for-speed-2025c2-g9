@@ -4,9 +4,9 @@
 #include <vector>
 
 #include "client_protocol.h"
-#include "../common_src/queue.h"
+#include "../common/queue.h"
 #include "client_receiver.h"
-#include "../common_src/Dto/dto.h"
+#include "../common/Dto/dto.h"
 
 class Client {
 private:

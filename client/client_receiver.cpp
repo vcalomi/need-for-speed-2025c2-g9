@@ -1,10 +1,10 @@
 #include "client_receiver.h"
 
 #include <iostream>
-#include "../common_src/common_codes.h"
-#include "../common_src/serializer/vehicule_serializer.h"
-#include "../common_src/Dto/dto.h"
-#include "../common_src/Dto/vehicle.h"
+#include "../common/common_codes.h"
+#include "../common/serializer/vehicle_serializer.h"
+#include "../common/Dto/dto.h"
+#include "../common/Dto/vehicle.h"
 
 ClientReceiver::ClientReceiver(ClientProtocol& clientProtocol, Queue<std::shared_ptr<Dto>>& queue)
     : queue(queue), protocol(clientProtocol) {}

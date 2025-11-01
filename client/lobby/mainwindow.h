@@ -3,7 +3,7 @@
 
 #include "player_info.h"
 #include "car.h"
-#include "../client/client_protocol.h"
+#include "../client_protocol.h"
 #include <memory>
 #include <QMainWindow>
 #include <QVector>

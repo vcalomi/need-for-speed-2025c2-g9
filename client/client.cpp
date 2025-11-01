@@ -1,5 +1,6 @@
 #include "client.h"
 #include <iostream>
+// #include <QApplication>
 #include <sstream>
 #include <string>
 
@@ -9,7 +10,7 @@ Client::Client(const std::string& hostname, const std::string& port):
 void Client::run() {
     while (connected) {
         try {
-            QApplication a(argc, argv);
+            // QApplication a(argc, argv);
         } catch (const std::exception& e) {
             connected = false;
         }

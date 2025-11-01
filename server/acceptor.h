@@ -4,10 +4,10 @@
 #include <string>
 #include <vector>
 
-#include "../common_src/client_command.h"
-#include "../common_src/liberror.h"
-#include "../common_src/socket.h"
-#include "../common_src/thread.h"
+#include "../common/client_command.h"
+#include "../common/liberror.h"
+#include "../common/socket.h"
+#include "../common/thread.h"
 #include "game_lobby.h"
 #include "client_handler.h"
 

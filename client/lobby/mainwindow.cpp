@@ -43,23 +43,6 @@ MainWindow::MainWindow(QWidget* parent)
     // Página inicial
     Navigation::goToPage(ui->page_connection, ui->stackedWidget, this);
 
-    // // Conexión al servidor
-    // connect(ui->connectButton, &QPushButton::clicked, this, [this]() {
-    //     player.host = ui->hostInput->text();
-    //     player.port = ui->portInput->text().toInt();
-
-    //     if (player.host.isEmpty() || player.port <= 0) {
-    //         QMessageBox::warning(this, "Connection error",
-    //                              "Please enter Host and Port before connecting");
-    //         return;
-    //     }
-
-    //     showPage(0);
-
-    //     Navigation::goToPage(ui->page_username, ui->stackedWidget, this);
-    // });
-
-
     connect(ui->connectButton, &QPushButton::clicked, this, [this]() {
     connectToServer();
 });
@@ -130,7 +113,6 @@ MainWindow::MainWindow(QWidget* parent)
     this->move(screenGeometry.center() - this->rect().center());
 }
 
-// -------------------------
 void MainWindow::connectToServer() {
     QString hostname = ui->hostInput->text();
     QString port = ui->portInput->text();
@@ -159,9 +141,6 @@ void MainWindow::connectToServer() {
                               QString("Unable to connect: %1").arg(e.what()));
     }
 }
-
-
-// ---------------------------
 
 void MainWindow::showPage(int page) {
     ui->listRooms->clear();

@@ -2,7 +2,7 @@
 
 #include <string>
 
-#include "../common_src/queue.h"
+#include "../common/queue.h"
 
 Server::Server(const std::string& port):
         gameLobby(),

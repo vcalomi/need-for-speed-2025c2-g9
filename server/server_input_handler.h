@@ -3,7 +3,7 @@
 
 #include <string>
 
-#include "../common_src/thread.h"
+#include "../common/thread.h"
 
 class ServerInputHandler: public Thread {
 private:

@@ -1,0 +1,28 @@
+target_sources(taller_common
+    PRIVATE
+    # .cpp files
+    liberror.cpp
+    resolver.cpp
+    resolvererror.cpp
+    socket.cpp
+    broadcaster.cpp
+    common_protocol.cpp
+    serializer/serializer.cpp
+    serializer/vehicle_serializer.cpp
+    Dto/dto.cpp
+    Dto/vehicle.cpp
+    PUBLIC
+    # .h files
+    liberror.h
+    queue.h
+    resolver.h
+    resolvererror.h
+    socket.h
+    thread.h
+    broadcaster.h
+    common_protocol.h
+    serializer/serializer.h
+    serializer/vehicle_serializer.h
+    Dto/dto.h
+    Dto/vehicle.h
+)

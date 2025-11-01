@@ -1,11 +1,11 @@
 #ifndef CLIENT_RECEIVER_H
 #define CLIENT_RECEIVER_H
 
-#include "../common_src/queue.h"
-#include "../common_src/socket.h"
-#include "../common_src/socket_closed.h"
-#include "../common_src/thread.h"
-#include "../common_src/Dto/dto.h"
+#include "../common/queue.h"
+#include "../common/socket.h"
+#include "../common/socket_closed.h"
+#include "../common/thread.h"
+#include "../common/Dto/dto.h"
 
 #include "client_protocol.h"
 

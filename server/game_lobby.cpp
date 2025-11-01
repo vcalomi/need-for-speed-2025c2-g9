@@ -3,7 +3,7 @@
 #include <iostream>
 #include <vector>
 
-#include "../common_src/queue.h"
+#include "../common/queue.h"
 
 GameLobby::GameLobby() {}
 

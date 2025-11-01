@@ -1,7 +1,7 @@
 #include "client_protocol.h"
 
-#include "../common_src/common_codes.h"
-#include "../common_src/serializer/vehicule_serializer.h"
+#include "../common/common_codes.h"
+#include "../common/serializer/vehicle_serializer.h"
 #include <arpa/inet.h>
 #include <stdexcept>
 

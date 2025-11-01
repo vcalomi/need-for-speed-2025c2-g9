@@ -4,9 +4,9 @@
 #include <vector>
 #include <map>
 
-#include "../common_src/queue.h"
+#include "../common/queue.h"
 #include "game_room.h"
-#include "../common_src/Dto/dto.h"
+#include "../common/Dto/dto.h"
 
 /*
     (Monitor) Gestiona las partidas

@@ -6,11 +6,11 @@
 #include <map>
 #include <memory>
 
-#include "../common_src/common_protocol.h"
-#include "../common_src/socket.h"
-#include "../common_src/car_config.h"
-#include "../common_src/Dto/dto.h"
-#include "../common_src/serializer/serializer.h"
+#include "../common/common_protocol.h"
+#include "../common/socket.h"
+#include "../common/car_config.h"
+#include "../common/Dto/dto.h"
+#include "../common/serializer/serializer.h"
 
 class ServerProtocol {
 private:

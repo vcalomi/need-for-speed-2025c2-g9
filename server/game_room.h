@@ -4,12 +4,12 @@
 #include <map>
 #include <string>
 
-#include "../common_src/queue.h"
+#include "../common/queue.h"
 #include <atomic>
 #include "gameloop.h"
-#include "../common_src/client_command.h"
-#include "../common_src/Dto/dto.h"
-#include "../common_src/broadcaster.h"
+#include "../common/client_command.h"
+#include "../common/Dto/dto.h"
+#include "../common/broadcaster.h"
 
 /*
     Maneja el estado y los jugadores de cada sala

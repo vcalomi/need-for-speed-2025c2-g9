@@ -2,8 +2,8 @@
 #define SERVER_H
 #include <string>
 
-#include "../common_src/client_command.h"
-#include "../common_src/queue.h"
+#include "../common/client_command.h"
+#include "../common/queue.h"
 
 #include "acceptor.h"
 #include "server_input_handler.h"

@@ -2,7 +2,7 @@
 
 #include <sys/socket.h>
 
-#include "../common_src/common_codes.h"
+#include "../common/common_codes.h"
 
 Receiver::Receiver(ServerProtocol& serverProtocol, Queue<std::shared_ptr<Dto>>& gameQueue) :
         gameQueue(gameQueue),

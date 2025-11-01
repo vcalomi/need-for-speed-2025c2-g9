@@ -17,6 +17,26 @@ set(PROJECT_SOURCES
         mainwindow.cpp
         mainwindow.h
         mainwindow.ui
+
+        # --- CLIENTE ---
+        ../client_protocol.cpp
+        ../client_receiver.cpp
+
+        # --- COMÚN ---
+        ../../common/socket.cpp
+        ../../common/resolver.cpp
+        ../../common/resolvererror.cpp
+        ../../common/liberror.cpp
+        ../../common/common_protocol.cpp
+        ../../common/broadcaster.cpp
+
+        # --- SERIALIZERS ---
+        ../../common/serializer/serializer.cpp
+        ../../common/serializer/vehicle_serializer.cpp
+
+        # --- DTOs ---
+        ../../common/Dto/dto.cpp
+        ../../common/Dto/vehicle.cpp
 )
 
 qt_add_resources(APP_RESOURCES assets/resources.qrc)

@@ -4,9 +4,9 @@
 
 #include <sys/socket.h>
 
-#include "../common_src/queue.h"
-#include "../common_src/socket.h"
-#include "../common_src/thread.h"
+#include "../common/queue.h"
+#include "../common/socket.h"
+#include "../common/thread.h"
 #include "receiver.h"
 
 ClientHandler::ClientHandler(Socket socket, GameLobby& lobby, int clientId):

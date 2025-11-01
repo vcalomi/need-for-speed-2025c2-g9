@@ -2,8 +2,8 @@
 #include <iostream>
 #include <algorithm>
 
-#include "../common_src/queue.h"
-#include "../common_src/Dto/vehicle.h"
+#include "../common/queue.h"
+#include "../common/Dto/vehicle.h"
 
 GameRoom::GameRoom(const std::string& roomName, int hostId) : 
     roomName(roomName),
