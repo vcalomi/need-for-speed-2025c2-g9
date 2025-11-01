@@ -13,6 +13,7 @@
 #include <QtMath>
 #include <QStandardItemModel>
 #include <QStandardItem>
+#include <QGraphicsDropShadowEffect>
 
 
 MainWindow::MainWindow(QWidget* parent)
@@ -32,19 +33,14 @@ MainWindow::MainWindow(QWidget* parent)
     // Estilos y fuente global
     UIStyles::applyGlobalStyle();
 
-    // Placeholders
-    ui->hostInput->setPlaceholderText("Host");
-    ui->portInput->setPlaceholderText("Port");
-
     // Cargar salas simuladas --> acá le voy a pedir el sockt que me diga cuantas salas hay
     allRooms = RoomManager::generateRooms(20);
     showPage(0);
 
-    // Página inicial
     Navigation::goToPage(ui->page_connection, ui->stackedWidget, this);
 
     connect(ui->connectButton, &QPushButton::clicked, this, [this]() {
-    connectToServer();
+    Navigation::goToPage(ui->page_username, ui->stackedWidget, this);
 });
 
     // Username
@@ -76,7 +72,7 @@ MainWindow::MainWindow(QWidget* parent)
     });
 
 
-    // 6Botones del menú principal
+    // Botones del menú principal
     connect(ui->btnCreate, &QPushButton::clicked, this, &MainWindow::handleCreateButton);
     connect(ui->btnJoin,   &QPushButton::clicked, this, &MainWindow::handleJoinGame);
 
@@ -131,35 +127,6 @@ MainWindow::MainWindow(QWidget* parent)
     // Centrar ventana
     QRect screenGeometry = QGuiApplication::primaryScreen()->geometry();
     this->move(screenGeometry.center() - this->rect().center());
-}
-
-void MainWindow::connectToServer() {
-    QString hostname = ui->hostInput->text();
-    QString port = ui->portInput->text();
-
-    if (hostname.isEmpty() || port.isEmpty()) {
-        QMessageBox::warning(this, "Connection error",
-                             "Please enter a valid Host and Port");
-        return;
-    }
-
-    try {
-        protocol = std::make_unique<ClientProtocol>(
-            hostname.toStdString(), port.toStdString()
-        );
-
-        QMessageBox::information(this, "Connected",
-                                 "Successfully connected to server!");
-
-        // Si querés, podés enviar algo inicial:
-        // protocol->sendListRooms();
-
-        Navigation::goToPage(ui->page_username, ui->stackedWidget, this);
-    }
-    catch (const std::exception &e) {
-        QMessageBox::critical(this, "Connection failed",
-                              QString("Unable to connect: %1").arg(e.what()));
-    }
 }
 
 void MainWindow::showPage(int page) {

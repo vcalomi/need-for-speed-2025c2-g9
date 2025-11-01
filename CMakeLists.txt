@@ -104,25 +104,58 @@ endif()
 
 # Program section
 # ---------------
-if(TALLER_CLIENT)
-    # HEY!! TODO XXX: Change the name of the executable to the one you like!
-    add_executable(taller_client)
+# if(TALLER_CLIENT)
+#     # HEY!! TODO XXX: Change the name of the executable to the one you like!
+#     add_executable(taller_client)
 
-    # Make them depend on taller_common lib
+#     # Make them depend on taller_common lib
+#     add_dependencies(taller_client taller_common SDL2pp::SDL2pp)
+
+#     # --- habilitar Qt ---
+#     find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets)
+#     find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets)
+
+#     # Add source files and enable warnings
+#     # HEY!! TODO XXX: add more subfolders here
+#     add_subdirectory(client)
+
+#     set_project_warnings(taller_client ${TALLER_MAKE_WARNINGS_AS_ERRORS} FALSE)
+
+#     # add libSDL2pp's headers
+#     target_include_directories(taller_client PRIVATE ${libSDL2pp_SOURCE_DIR})
+
+#     # Link the taller_common lib target
+#     target_link_libraries(taller_client taller_common SDL2pp::SDL2pp)
+# endif()
+
+if(TALLER_CLIENT)
+    add_executable(taller_client)
     add_dependencies(taller_client taller_common SDL2pp::SDL2pp)
 
-    # Add source files and enable warnings
-    # HEY!! TODO XXX: add more subfolders here
+    # --- Habilitar Qt6 globalmente para el cliente ---
+    set(CMAKE_AUTOMOC ON)
+    set(CMAKE_AUTOUIC ON)
+    set(CMAKE_AUTORCC ON)
+
+    # Ruta de instalación de Qt6 (Ubuntu/Debian)
+    list(APPEND CMAKE_PREFIX_PATH "/usr/lib/x86_64-linux-gnu/cmake/Qt6")
+
+    find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets)
+    find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets)
+
     add_subdirectory(client)
 
     set_project_warnings(taller_client ${TALLER_MAKE_WARNINGS_AS_ERRORS} FALSE)
-
-    # add libSDL2pp's headers
     target_include_directories(taller_client PRIVATE ${libSDL2pp_SOURCE_DIR})
 
-    # Link the taller_common lib target
-    target_link_libraries(taller_client taller_common SDL2pp::SDL2pp)
+    target_link_libraries(taller_client
+        PRIVATE
+            taller_common
+            SDL2pp::SDL2pp
+            Qt${QT_VERSION_MAJOR}::Widgets
+    )
 endif()
+
 
 if(TALLER_SERVER)
     # HEY!! TODO XXX: Change the name of the executable to the one you like!

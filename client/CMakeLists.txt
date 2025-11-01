@@ -1,3 +1,9 @@
+set_target_properties(taller_client PROPERTIES
+    AUTOMOC ON
+    AUTOUIC ON
+    AUTORCC ON
+)
+
 target_sources(taller_client
     PRIVATE
     # .cpp files
@@ -10,6 +16,18 @@ target_sources(taller_client
     ../common/liberror.cpp
     ../common/resolvererror.cpp
     ../common/common_protocol.cpp
+    # lobby
+    lobby/mainwindow.cpp
+    lobby/navigation.cpp
+    lobby/room_manager.cpp
+    lobby/styles.cpp
+
+    # --- .ui files ---
+    lobby/mainwindow.ui
+
+    # --- .qrc (si tenés recursos de Qt) ---
+    lobby/assets/resources.qrc
+
     PUBLIC
     # .h files
     client.h
@@ -20,5 +38,14 @@ target_sources(taller_client
     ../common/liberror.h
     ../common/resolvererror.h
     ../common/common_protocol.h
-    )
     
+    # --- LOBBY headers ---
+    lobby/mainwindow.h
+    lobby/navigation.h
+    lobby/room_manager.h
+    lobby/styles.h
+    lobby/player_info.h
+    lobby/car.h
+    )
+
+    target_link_libraries(taller_client PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
