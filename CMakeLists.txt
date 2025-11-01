@@ -99,7 +99,25 @@ if(TALLER_CLIENT OR TALLER_EDITOR)
         URL https://github.com/libSDL2pp/libSDL2pp/archive/cc198c9a5657048bee67ece82de620b2d5661084.zip
     )
 
+    set(SDL2PP_WITH_IMAGE ON CACHE BOOL "Enable SDL2_image support in SDL2pp" FORCE)
+    set(SDL2PP_WITH_TTF ON CACHE BOOL "Enable SDL2_ttf support in SDL2pp" FORCE)
+    set(SDL2PP_WITH_MIXER ON CACHE BOOL "Enable SDL2_mixer support in SDL2pp" FORCE)
+    set(SDL_SHARED ON CACHE BOOL "" FORCE)
+    set(SDL_STATIC OFF CACHE BOOL "" FORCE)
+
+    
+
     FetchContent_MakeAvailable(SDL2 SDL2_image SDL2_mixer SDL2_ttf libSDL2pp)
+
+    if (NOT TARGET SDL2_image::SDL2_image)
+        add_library(SDL2_image::SDL2_image ALIAS SDL2_image)
+    endif()
+    if (NOT TARGET SDL2_ttf::SDL2_ttf)
+        add_library(SDL2_ttf::SDL2_ttf ALIAS SDL2_ttf)
+    endif()
+    if (NOT TARGET SDL2_mixer::SDL2_mixer)
+        add_library(SDL2_mixer::SDL2_mixer ALIAS SDL2_mixer)
+    endif()
 endif()
 
 # Program section
