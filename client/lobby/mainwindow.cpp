@@ -16,8 +16,8 @@
 #include "room_manager.h"
 
 
-MainWindow::MainWindow(const QString& host, const QString& port, bool& game_started_ref, QWidget* parent)
-        : QMainWindow(parent), ui(new Ui::Lobby), defaultHost(host), defaultPort(port), game_started(game_started_ref), waitTimer(nullptr), refreshTimer(nullptr) {
+MainWindow::MainWindow(ClientProtocol& protocol, bool& game_started_ref, QWidget* parent)
+        : QMainWindow(parent), ui(new Ui::Lobby), protocol(protocol), game_started(game_started_ref), waitTimer(nullptr), refreshTimer(nullptr) {
     ui->setupUi(this);
     game_started = false;
     cars = {
@@ -36,16 +36,13 @@ MainWindow::MainWindow(const QString& host, const QString& port, bool& game_star
     Navigation::goToPage(ui->page_connection, ui->stackedWidget, this);
 
     connect(ui->connectButton, &QPushButton::clicked, this, [this]() {
-        const QString hostname = defaultHost.isEmpty() ? QString("127.0.0.1") : defaultHost;
-        const QString port = defaultPort.isEmpty() ? QString("8080") : defaultPort;
-
-        try {
-            protocol = std::make_unique<ClientProtocol>(hostname.toStdString(), port.toStdString());
-            QMessageBox::information(this, "Connected", QString("Connected to %1:%2").arg(hostname, port));
-            Navigation::goToPage(ui->page_username, ui->stackedWidget, this);
-        } catch (const std::exception& e) {
-            QMessageBox::critical(this, "Connection failed", QString("Unable to connect: %1").arg(e.what()));
+        // Verificar que el socket NO esté cerrado (isClientConnected==true significa socket cerrado)
+        if (this->protocol.isClientConnected()) {
+            QMessageBox::critical(this, "Connection failed", "Connection is not available");
+            return;
         }
+        QMessageBox::information(this, "Connected", "Successfully connected to server");
+        Navigation::goToPage(ui->page_username, ui->stackedWidget, this);
     });
 
     // Username
@@ -58,18 +55,16 @@ MainWindow::MainWindow(const QString& host, const QString& port, bool& game_star
         }
 
         player.username = name;
-        if (protocol) {
-            try {
-                protocol->sendUsername(player.username.toStdString());
-                protocol->sendListRooms();
-                auto rooms = protocol->receiveRoomList();
-                allRooms.clear();
-                for (const auto& r: rooms) allRooms << QString::fromStdString(r);
-                showPage(0);
-            } catch (const std::exception& e) {
-                QMessageBox::critical(this, "Error", QString("Server error: %1").arg(e.what()));
-                return;
-            }
+        try {
+            this->protocol.sendUsername(player.username.toStdString());
+            this->protocol.sendListRooms();
+            auto rooms = this->protocol.receiveRoomList();
+            allRooms.clear();
+            for (const auto& r: rooms) allRooms << QString::fromStdString(r);
+            showPage(0);
+        } catch (const std::exception& e) {
+            QMessageBox::critical(this, "Error", QString("Server error: %1").arg(e.what()));
+            return;
         }
 
         // Ir a la pantalla de salas dispo
@@ -115,14 +110,12 @@ MainWindow::MainWindow(const QString& host, const QString& port, bool& game_star
         const Car& selectedCar = cars[currentCarIndex];
 
         player.selectedCar = selectedCar.getType();
-        if (protocol) {
-            try {
-                protocol->sendChooseCar(selectedCar.getName().toStdString());
-                // Opcional: podríamos esperar CHOOSE_CAR_OK con receiveActionCode()
-            } catch (const std::exception& e) {
-                QMessageBox::warning(this, "Choose Car",
-                                     QString("Failed to send car: %1").arg(e.what()));
-            }
+        try {
+            this->protocol.sendChooseCar(selectedCar.getName().toStdString());
+            // Opcional: podríamos esperar CHOOSE_CAR_OK con receiveActionCode()
+        } catch (const std::exception& e) {
+            QMessageBox::warning(this, "Choose Car",
+                                    QString("Failed to send car: %1").arg(e.what()));
         }
         ui->stackedWidget->setCurrentWidget(ui->page_wait);
     });
@@ -139,16 +132,14 @@ MainWindow::MainWindow(const QString& host, const QString& port, bool& game_star
 
 void MainWindow::showPage(int page) {
     ui->listRooms->clear();
-    if (protocol) {
-        try {
-            protocol->sendListRooms();
-            auto rooms = protocol->receiveRoomList();
-            if (!rooms.empty()) {
-                allRooms.clear();
-                for (const auto& r : rooms) allRooms << QString::fromStdString(r);
-            }
-        } catch (const std::exception& e) { }
-    }
+    try {
+        this->protocol.sendListRooms();
+        auto rooms = this->protocol.receiveRoomList();
+        if (!rooms.empty()) {
+            allRooms.clear();
+            for (const auto& r : rooms) allRooms << QString::fromStdString(r);
+        }
+    } catch (const std::exception& e) { }
     int totalPages = qMax(1, qCeil(allRooms.size() / static_cast<double>(PAGE_SIZE)));
     currentPage = qBound(0, page, totalPages - 1);
 
@@ -235,18 +226,16 @@ void MainWindow::handleCreateButton() {
 
 void MainWindow::handleContinueToWait() {
     player.maxPlayers = ui->comboMaxPlayers->currentText().toUInt();
-    if (protocol) {
-        try {
-            protocol->sendCreateRoom(player.roomCode.toStdString(), player.maxPlayers);
-            ActionCode resp = protocol->receiveActionCode();
-            if (resp != ActionCode::ROOM_CREATED) {
-                QMessageBox::critical(this, "Create Room", "Failed to create room on server.");
-                return;
-            }
-        } catch (const std::exception& e) {
-            QMessageBox::critical(this, "Create Room", QString("Error: %1").arg(e.what()));
+    try {
+        this->protocol.sendCreateRoom(player.roomCode.toStdString(), player.maxPlayers);
+        ActionCode resp = this->protocol.receiveActionCode();
+        if (resp != ActionCode::ROOM_CREATED) {
+            QMessageBox::critical(this, "Create Room", "Failed to create room on server.");
             return;
         }
+    } catch (const std::exception& e) {
+        QMessageBox::critical(this, "Create Room", QString("Error: %1").arg(e.what()));
+        return;
     }
 
     Navigation::goToPage(ui->page_wait, ui->stackedWidget, this);
@@ -262,11 +251,11 @@ void MainWindow::handleContinueToWait() {
     if (!waitTimer) {
         waitTimer = new QTimer(this);
         connect(waitTimer, &QTimer::timeout, this, [this]() {
-            if (!protocol || inFlight) return;
+            if (inFlight) return;
             inFlight = true;
             try {
-                protocol->sendListState();
-                auto v = protocol->receiveRoomList();
+                this->protocol.sendListState();
+                auto v = this->protocol.receiveRoomList();
                 if (!v.empty() && v[0] == std::string("started")) {
                     game_started = true;
                     this->close();
@@ -285,19 +274,17 @@ void MainWindow::handleConfirmJoin() {
         return;
     }
 
-    if (protocol) {
-        try {
-            protocol->sendJoinRoom(code.toStdString());
-            ActionCode resp = protocol->receiveActionCode();
-            if (resp != ActionCode::JOIN_OK) {
-                QMessageBox::critical(this, "Join Game", "Failed to join room on server.");
-                return;
-            }
-            handleRefreshPlayers();
-        } catch (const std::exception& e) {
-            QMessageBox::critical(this, "Join Game", QString("Error: %1").arg(e.what()));
+    try {
+        this->protocol.sendJoinRoom(code.toStdString());
+        ActionCode resp = this->protocol.receiveActionCode();
+        if (resp != ActionCode::JOIN_OK) {
+            QMessageBox::critical(this, "Join Game", "Failed to join room on server.");
             return;
         }
+        handleRefreshPlayers();
+    } catch (const std::exception& e) {
+        QMessageBox::critical(this, "Join Game", QString("Error: %1").arg(e.what()));
+        return;
     }
 
     player.roomCode = code;
@@ -309,11 +296,11 @@ void MainWindow::handleConfirmJoin() {
     if (!waitTimer) {
         waitTimer = new QTimer(this);
         connect(waitTimer, &QTimer::timeout, this, [this]() {
-            if (!protocol || inFlight) return;
+            if (inFlight) return;
             inFlight = true;
             try {
-                protocol->sendListState();
-                auto v = protocol->receiveRoomList();
+                protocol.sendListState();
+                auto v = protocol.receiveRoomList();
                 if (!v.empty() && v[0] == std::string("started")) {
                     game_started = true;
                     this->close();
@@ -334,12 +321,11 @@ void MainWindow::updateLobbyStatus() {
 }
 
 void MainWindow::handleRefreshPlayers() {
-    if (!protocol) return;
     if (inFlight) return;
     inFlight = true;
     try {
-        protocol->sendListPlayers();
-        auto players = protocol->receiveRoomList();
+        this->protocol.sendListPlayers();
+        auto players = this->protocol.receiveRoomList();
         ui->listPlayers->clear();
 
         if (!players.empty() && players[0].find("maxPlayers:") == 0) {
@@ -368,12 +354,10 @@ void MainWindow::updateCarImage() {
 
 void MainWindow::handleStartGame() {
     game_started = true;
-    if (protocol) {
-        try {
-            protocol->sendStartGame();
-        } catch (const std::exception& e) {
-            QMessageBox::critical(this, "Start Game", QString("Error: %1").arg(e.what()));
-        }
+    try {
+        this->protocol.sendStartGame();
+    } catch (const std::exception& e) {
+        QMessageBox::critical(this, "Start Game", QString("Error: %1").arg(e.what()));
     }
     this->close();
 }

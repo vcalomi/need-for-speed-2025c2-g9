@@ -7,10 +7,10 @@ target_sources(taller_server
     server_input_handler.cpp
     acceptor.cpp
     client_handler.cpp
-    lobby_worker.cpp
+    lobby.cpp
     receiver.cpp
     sender.cpp
-    game_lobby.cpp
+    game_monitor.cpp
     game_room.cpp
     gameloop.cpp
     PUBLIC
@@ -20,10 +20,10 @@ target_sources(taller_server
     client_handler.h
     receiver.h
     sender.h
-    game_lobby.h
+    game_monitor.h
     game_room.h
     gameloop.h
     server_protocol.h
     server_input_handler.h
-    lobby_worker.h
+    lobby.h
     )

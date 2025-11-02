@@ -1,11 +1,11 @@
 #include "client.h"
 #include <iostream>
-// #include <QApplication>
 #include <sstream>
 #include <string>
+#include "client_input_handler.h"
 
-Client::Client(const std::string& hostname, const std::string& port):
-        clientProtocol(hostname, port), 
+Client::Client(ClientProtocol& protocol):
+        clientProtocol(protocol), 
         connected(true), 
         recvQueue(), 
         senderQueue(),
@@ -13,27 +13,33 @@ Client::Client(const std::string& hostname, const std::string& port):
         receiver(clientProtocol, recvQueue) {}
 
 void Client::run() {
-    while (connected) {
-        try {
-            sender.start();
-            receiver.start();
-            std::cout << "Client: Game communication started" << std::endl;
-        } catch (const std::exception& e) {
-            connected = false;
-        }
+    try {
+        ClientInputHandler input([this]() { this->stop(); });
+        input.start();
+        sender.start();
+        receiver.start();
+        std::cout << "Client: Game communication started" << std::endl;
+        if (receiver.is_alive()) receiver.join();
+        if (sender.is_alive()) sender.join();
+        input.stop();
+        input.join();
+    } catch (const std::exception& e) {
+        std::cerr << "Client fatal error: " << e.what() << std::endl;
     }
     stop();
 }
 
 void Client::stop() {
     connected = false;
-    clientProtocol.close();
-    recvQueue.close();
-    senderQueue.close();
+    try {
+        clientProtocol.close();
+    } catch (...) {}
+    try { recvQueue.close(); } catch (...) {}
+    try { senderQueue.close(); } catch (...) {}
     sender.stop();
-    sender.join();
     receiver.stop();
-    receiver.join();
+    if (sender.is_alive()) sender.join();
+    if (receiver.is_alive()) receiver.join();
 }
 
 Client::~Client() {}

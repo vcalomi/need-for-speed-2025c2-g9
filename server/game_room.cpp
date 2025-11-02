@@ -49,10 +49,6 @@ bool GameRoom::startGame() {
 
 bool GameRoom::chooseCar(int clientId, const CarConfig& car) {
     std::lock_guard<std::mutex> lock(mtx);
-    
-    // if (state != RoomState::IN_GAME) return false;
-
-    // Verificar que el jugador existe
     if (players.find(clientId) == players.end()) {
         return false;
     }
@@ -66,7 +62,7 @@ bool GameRoom::chooseCar(int clientId, const CarConfig& car) {
 // }
 
 bool GameRoom::canJoin() const {
-    return state == RoomState::WAITING_FOR_PLAYERS && players.size() < 8;
+    return state == RoomState::WAITING_FOR_PLAYERS && players.size() < maxPlayers;
 }
 
 bool GameRoom::isHost(int clientId) const {

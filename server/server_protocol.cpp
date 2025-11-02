@@ -18,17 +18,25 @@ void ServerProtocol::sendMsg(ActionCode code) {
 void ServerProtocol::sendDTO(std::shared_ptr<Dto> dto) {
     uint8_t dtoCode = dto->return_code();
     protocol.sendAction(socket, static_cast<ActionCode>(dtoCode));
-    auto buffer = serializers[dtoCode]->serialize(*dto);
+    auto it = serializers.find(dtoCode);
+    if (it == serializers.end() || !it->second) {
+        throw std::runtime_error("Serializer not registered for dtoCode: " + std::to_string(dtoCode));
+    }
+    auto buffer = it->second->serialize(*dto);
     socket.sendall(buffer.data(), buffer.size());
 }
 
 std::shared_ptr<Dto> ServerProtocol::receiveDTO() {
     uint8_t dtoCode = uint8_t(receiveActionCode());
 
-    std::vector<uint8_t> buffer(serializers[dtoCode]->getSize());
+    auto it = serializers.find(dtoCode);
+    if (it == serializers.end() || !it->second) {
+        throw std::runtime_error("Serializer not registered for dtoCode: " + std::to_string(dtoCode));
+    }
+    std::vector<uint8_t> buffer(it->second->getSize());
     socket.recvall(buffer.data(), buffer.size());
 
-    return serializers[dtoCode]->deserialize(buffer);
+    return it->second->deserialize(buffer);
 }
 
 ActionCode ServerProtocol::receiveActionCode() { return protocol.receiveAction(socket); }

@@ -19,6 +19,9 @@ void ClientSender::run() {
         return;
     } catch (const SocketClosed& e) {
         return;
+    } catch (const std::exception& e) {
+        std::cerr << "ClientSender error: " << e.what() << std::endl;
+        return;
     }
 }
 ClientSender::~ClientSender() {}

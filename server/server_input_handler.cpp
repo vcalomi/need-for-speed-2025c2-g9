@@ -10,6 +10,7 @@ void ServerInputHandler::run() {
             std::getline(std::cin, line);
             if (line == "q") {
                 this->stop();
+                break;
             }
         }
     } catch (const std::exception& e) {

@@ -9,65 +9,77 @@
 #include "../common/thread.h"
 #include "receiver.h"
 
-ClientHandler::ClientHandler(Socket socket, GameLobby& lobby, int clientId):
+ClientHandler::ClientHandler(Socket socket, GameMonitor& gameMonitor, int clientId):
         peer(std::move(socket)),
-        gameLobby(lobby),
+        gameMonitor(gameMonitor),
         protocol(peer),
         keep_running(true),
         senderQueue(),
-        sender(protocol, senderQueue),
         state(ClientState::IN_LOBBY),
         clientId(clientId),
-        lobbyWorker(
-        protocol,
-        gameLobby,
-        clientId,
-        senderQueue,
-        [this]{
-            startThreads();
-        }
+        gameStarted(false),
+        lobby(
+            protocol,
+            gameMonitor,
+            clientId,
+            senderQueue,
+            [this](std::shared_ptr<GameRoom> room) {
+                startThreads(room);
+            }
         
     ) {
-        gameLobby.registerStartNotifier(clientId, [this] {
-        std::cout << "ClientHandler: Starting game for client " << this->clientId << " via StartNotifier" << std::endl;
-        startThreads();
-        });
-    }
+        gameMonitor.registerStartNotifier(clientId, [this](std::shared_ptr<GameRoom> room) {
+        startThreads(room);
+    });
+}
 
-void ClientHandler::startThreads() {
-    std::cout << "ClientHandler: Starting game for client " << this->clientId << std::endl;
-    Queue<std::shared_ptr<Dto>>& gameQueue = gameLobby.getGameQueueForClient(this->clientId);
-    receiver = std::make_unique<Receiver>(protocol, gameQueue);
-    receiver->start();
-    sender.start();
-    state = ClientState::IN_GAME;
+void ClientHandler::startThreads(std::shared_ptr<GameRoom> room) {
+    if (gameStarted) return;
+    
+    try {
+        if (lobby.is_alive()) {
+            lobby.stop();
+        }
+
+        Queue<std::shared_ptr<Dto>>& gameQueue = room->getGameQueue();
+        receiver = std::make_unique<Receiver>(protocol, gameQueue);
+        sender = std::make_unique<Sender>(protocol, senderQueue);
+        receiver->start();
+        sender->start();
+        state = ClientState::IN_GAME;
+        gameStarted = true;
+    } catch (const std::exception& e) {
+        std::cout << "ClientHandler: ERROR starting game for client " << clientId 
+                  << ": " << e.what() << std::endl;
+    }
 }
 
 void ClientHandler::start() {
     keep_running = true;
-    lobbyWorker.start();
+    lobby.start();
 }
 
 void ClientHandler::join() {
-    if (lobbyWorker.is_alive()) lobbyWorker.join();
+    if (sender) sender->join();
     if (receiver) receiver->join();
-    if (sender.is_alive()) sender.join();
+    lobby.join();
 }
 
 void ClientHandler::stop() {
     keep_running = false;
-    if (lobbyWorker.is_alive()) lobbyWorker.stop();
     try {
         peer.close();
     } catch (const SocketClosed& e) {}
     senderQueue.close();
+    if (lobby.is_alive()) {
+        lobby.stop();
+    }
     if (receiver) receiver->stop();
-    sender.stop();
+    if (sender) sender->stop();
 }
 
 bool ClientHandler::is_alive() const {
-    bool recvAlive = receiver ? receiver->is_alive() : false;
-    return lobbyWorker.is_alive() || recvAlive || sender.is_alive();
+    return lobby.is_alive() || (receiver && receiver->is_alive()) || (sender && sender->is_alive());
 }
 
 ClientHandler::~ClientHandler() { }

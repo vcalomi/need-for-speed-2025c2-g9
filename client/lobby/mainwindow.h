@@ -19,7 +19,7 @@ class MainWindow: public QMainWindow {
     Q_OBJECT
 
 public:
-    MainWindow(const QString& host, const QString& port, bool& game_started_ref, QWidget* parent = nullptr);
+    MainWindow(ClientProtocol& protocol, bool& game_started_ref, QWidget* parent = nullptr);
     ~MainWindow();
 
 private slots:
@@ -38,9 +38,7 @@ private slots:
 private:
     Ui::Lobby* ui;
     PlayerInfo player;
-    std::unique_ptr<ClientProtocol> protocol; // conexión TCP al servidor
-    QString defaultHost;
-    QString defaultPort;
+    ClientProtocol& protocol; // conexión TCP al servidor
     bool& game_started;
     QTimer* waitTimer;
     QTimer* refreshTimer;

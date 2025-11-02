@@ -12,7 +12,7 @@
 
 class Client {
 private:
-    ClientProtocol clientProtocol;
+    ClientProtocol& clientProtocol;
     bool connected;
     Queue<std::shared_ptr<Dto>> recvQueue;
     Queue<std::shared_ptr<Dto>> senderQueue;
@@ -20,7 +20,7 @@ private:
     ClientReceiver receiver;
 
 public:
-    Client(const std::string& hostname, const std::string& port);
+    Client(ClientProtocol& protocol);
     void run();
     void stop();
     ~Client();

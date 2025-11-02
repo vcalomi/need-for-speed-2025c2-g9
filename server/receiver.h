@@ -14,7 +14,7 @@
 
 class Receiver: public Thread {
 private:
-     Queue<std::shared_ptr<Dto>>& gameQueue;
+    Queue<std::shared_ptr<Dto>>& gameQueue;
     ServerProtocol& protocol;
 
 public:

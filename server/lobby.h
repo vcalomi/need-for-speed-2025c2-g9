@@ -1,5 +1,5 @@
-#ifndef LOBBY_WORKER_H
-#define LOBBY_WORKER_H
+#ifndef LOBBY_H
+#define LOBBY_H
 
 #include <atomic>
 #include <functional>
@@ -7,19 +7,19 @@
 #include <thread>
 
 #include "server_protocol.h"
-#include "game_lobby.h"
+#include "game_monitor.h"
 #include "command_dispatcher.h"
 #include "../common/Dto/dto.h"
 #include "../common/queue.h"
 #include "../common/thread.h"
 
-class LobbyWorker : public Thread {
+class Lobby : public Thread {
 private:
     ServerProtocol& protocol;
-    GameLobby& lobby;
+    GameMonitor& gameMonitor;
     int clientId;
     Queue<std::shared_ptr<Dto>>& senderQueue;
-    std::function<void()> onStartGame;
+    std::function<void(std::shared_ptr<GameRoom> room)> onStartGame;
     CommandDispatcher dispatcher;
 
     void initHandlers();
@@ -35,11 +35,11 @@ private:
 
 
 public:
-    LobbyWorker(ServerProtocol& protocol,
-                GameLobby& lobby,
+    Lobby(ServerProtocol& protocol,
+                GameMonitor& gameMonitor,
                 int clientId,
                 Queue<std::shared_ptr<Dto>>& senderQueue,
-                std::function<void()> onStartGame);
+                std::function<void(std::shared_ptr<GameRoom> room)> onStartGame);
     void run() override;
 };
 

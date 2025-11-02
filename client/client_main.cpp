@@ -18,17 +18,17 @@ int main(int argc, char* argv[]) {
     
     try {
         QApplication app(argc, argv);
-        
+        ClientProtocol protocol(hostname, port);
         // 1. Ejecutar Lobby
         bool game_started = false;
-        MainWindow lobby(QString::fromStdString(hostname), QString::fromStdString(port), std::ref(game_started));
+        MainWindow lobby(protocol, std::ref(game_started));
         lobby.show();
         app.exec();
 
         // 2. Si el juego inició, ejecutar Client
         if (game_started) {
             std::cout << "Game started! Launching game client..." << std::endl;
-            Client client(hostname, port);
+            Client client(protocol);
             client.run();
         }
 

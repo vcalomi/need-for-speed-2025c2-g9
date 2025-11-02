@@ -1,31 +1,37 @@
-#include "lobby_worker.h"
+#include "lobby.h"
 
 #include <iostream>
 #include <utility>
 
 #include "../common/common_codes.h"
 
-LobbyWorker::LobbyWorker(ServerProtocol& protocol,
-                         GameLobby& lobby,
+Lobby::Lobby(ServerProtocol& protocol,
+                         GameMonitor& gameMonitor,
                          int clientId,
                          Queue<std::shared_ptr<Dto>>& senderQueue,
-                         std::function<void()> onStartGame)
-    : protocol(protocol), lobby(lobby), clientId(clientId), senderQueue(senderQueue), onStartGame(std::move(onStartGame)) {
+                         std::function<void(std::shared_ptr<GameRoom> room)> onStartGame)
+    : protocol(protocol), gameMonitor(gameMonitor), clientId(clientId), senderQueue(senderQueue), onStartGame(std::move(onStartGame)) {
     initHandlers();
 }
 
-void LobbyWorker::run() {
+void Lobby::run() {
     try {
         while (should_keep_running()) {
             ActionCode action = protocol.receiveActionCode();
-            if (!dispatcher.dispatch(action)) {
+            if (!should_keep_running()) {
+                break;
+            };
+            bool handled = dispatcher.dispatch(action);
+            if (!handled) {
                 protocol.sendMsg({ActionCode::SEND_ERROR_MSG});
             }
         }
-    } catch (const std::exception& e) {}
+    } catch (const std::exception& e) {
+        this->stop();
+    }
 }
 
-void LobbyWorker::initHandlers() {
+void Lobby::initHandlers() {
     dispatcher.registerHandler(ActionCode::LIST_ROOMS, [this]{ handleListRooms(); });
     dispatcher.registerHandler(ActionCode::CREATE_ROOM, [this]{ handleCreateRoom(); });
     dispatcher.registerHandler(ActionCode::JOIN_ROOM, [this]{ handleJoinRoom(); });
@@ -36,61 +42,67 @@ void LobbyWorker::initHandlers() {
     dispatcher.registerHandler(ActionCode::LIST_STATE, [this]{ handleListState(); });
 }
 
-void LobbyWorker::handleListRooms() {
-    auto rooms = lobby.getAvailableRooms();
+void Lobby::handleListRooms() {
+    auto rooms = gameMonitor.getAvailableRooms();
     protocol.sendRoomList(rooms);
 }
 
-void LobbyWorker::handleCreateRoom() {
+void Lobby::handleCreateRoom() {
     std::string roomName = protocol.receiveRoomName();
     int maxPlayers = protocol.receiveMaxPlayers();
-    if (lobby.createGameRoom(roomName, clientId, senderQueue, maxPlayers)) {
+    if (gameMonitor.createGameRoom(roomName, clientId, senderQueue, maxPlayers)) {
         protocol.sendMsg({ActionCode::ROOM_CREATED});
     } else {
         protocol.sendMsg({ActionCode::SEND_ERROR_MSG});
     }
 }
 
-void LobbyWorker::handleJoinRoom() {
+void Lobby::handleJoinRoom() {
     std::string roomName = protocol.receiveRoomName();
-    if (lobby.joinGameRoom(roomName, clientId, senderQueue)) {
+    if (gameMonitor.joinGameRoom(roomName, clientId, senderQueue)) {
         protocol.sendMsg({ActionCode::JOIN_OK});
     } else {
         protocol.sendMsg({ActionCode::SEND_ERROR_MSG});
     }
 }
 
-void LobbyWorker::handleStartGame() {
-    if (lobby.startGameByClientId(clientId)) {
-        if (onStartGame) onStartGame();
+void Lobby::handleStartGame() {
+    if (gameMonitor.startGameByClientId(clientId)) {
         stop();
     } else {
         protocol.sendMsg({ActionCode::SEND_ERROR_MSG});
     }
 }
 
-void LobbyWorker::handleChooseCar() {
+void Lobby::handleChooseCar() {
     std::string carType = protocol.receiveRoomName();
     CarConfig car{};
     car.carType = carType;
-    if (lobby.chooseCarByClientId(clientId, car)) {
+    if (gameMonitor.chooseCarByClientId(clientId, car)) {
         protocol.sendMsg({ActionCode::CHOOSE_CAR_OK});
     } else {
         protocol.sendMsg({ActionCode::SEND_ERROR_MSG});
     }
 }
 
-void LobbyWorker::handleSendUsername() {
+void Lobby::handleSendUsername() {
     std::string username = protocol.receiveRoomName();
-    lobby.setUsername(clientId, username);
+    gameMonitor.setUsername(clientId, username);
 }
 
-void LobbyWorker::handleListPlayers() {
-    auto players = lobby.getPlayersInRoomByClient(clientId);
+void Lobby::handleListPlayers() {
+    auto players = gameMonitor.getPlayersInRoomByClient(clientId);
     protocol.sendRoomList(players);
 }
 
-void LobbyWorker::handleListState() {
-    bool started = lobby.isGameStartedByClient(clientId);
+void Lobby::handleListState() {
+    bool started = gameMonitor.isGameStartedByClient(clientId);
     protocol.sendRoomList({ started ? std::string("started") : std::string("waiting") });
+    if (started) {
+        auto room = gameMonitor.getRoomByClient(clientId);
+        if (room && onStartGame) {
+            onStartGame(room);
+        }
+        stop();
+    }
 }

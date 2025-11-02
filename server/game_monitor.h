@@ -1,5 +1,5 @@
-#ifndef GAME_LOBBY_H
-#define GAME_LOBBY_H
+#ifndef GAME_MONITOR_H
+#define GAME_MONITOR_H
 
 #include <vector>
 #include <map>
@@ -13,19 +13,19 @@
     (Monitor) Gestiona las partidas
 */
 
-class GameLobby {
+class GameMonitor {
 private:
     std::mutex mtx;
     // clienteId y GameRoom
-    std::map<int, GameRoom*> clientToRoom;
+    std::map<int, std::shared_ptr<GameRoom>> clientToRoom;
     std::map<int, std::string> clientUsernames;
     std::map<std::string, CarConfig> availableCars;
-    std::map<std::string, GameRoom*> activeGames;
-    // clientId -> callback a invocar cuando la partida de su sala se inicia
-    std::map<int, std::function<void()>> startNotifiers;
+    std::map<std::string, std::shared_ptr<GameRoom>> activeGames;
+    std::map<int, std::function<void(std::shared_ptr<GameRoom>)>> startNotifiers;
+    std::map<int, bool> pendingGameStarts;
     
-    public:
-    GameLobby();
+public:
+    GameMonitor();
     bool createGameRoom(const std::string& roomName, int hostId, Queue<std::shared_ptr<Dto>>& hostQueue, int maxPlayers = 8);
     bool joinGameRoom(const std::string& roomName, int clientId, Queue<std::shared_ptr<Dto>>& clientQueue);
     std::vector<std::string> getAvailableRooms();
@@ -36,8 +36,9 @@ private:
     void setUsername(int clientId, const std::string& username);
     std::string getUsername(int clientId) const;
     bool isGameStartedByClient(int clientId);
-    void registerStartNotifier(int clientId, std::function<void()> notifier);
-    ~GameLobby();
+    void registerStartNotifier(int clientId, std::function<void(std::shared_ptr<GameRoom>)> notifier);
+    std::shared_ptr<GameRoom> getRoomByClient(int clientId);
+    ~GameMonitor();
 };
 
 #endif

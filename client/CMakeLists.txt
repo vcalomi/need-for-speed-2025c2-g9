@@ -35,6 +35,7 @@ target_sources(taller_client
     client_protocol.h
     client_receiver.h
     client_sender.h
+    client_input_handler.h
     ../common/socket.h
     ../common/resolver.h
     ../common/liberror.h

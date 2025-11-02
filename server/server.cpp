@@ -5,8 +5,8 @@
 #include "../common/queue.h"
 
 Server::Server(const std::string& port):
-        gameLobby(),
-        acceptor(port, gameLobby),
+        gameMonitor(),
+        acceptor(port, gameMonitor),
         inputHandler() {}
 
 int Server::run() {
@@ -23,7 +23,9 @@ int Server::run() {
 }
 
 void Server::stop() {
-    acceptor.close();
+    try {
+        acceptor.close();
+    } catch (...) { }
     acceptor.join();
 }
 

@@ -8,30 +8,31 @@
 #include "../common/queue.h"
 
 #include "client_handler.h"
-#include "game_lobby.h"
+#include "game_monitor.h"
 #include "receiver.h"
 #include "sender.h"
 #include "server_protocol.h"
 #include "client_state.h"
 #include "../common/Dto/dto.h"
-#include "lobby_worker.h"
+#include "lobby.h"
 
 class ClientHandler {
 private:
     Socket peer;
-    GameLobby& gameLobby;
+    GameMonitor& gameMonitor;
     ServerProtocol protocol;
     std::atomic_bool keep_running;
     Queue<std::shared_ptr<Dto>> senderQueue;    // para enviar al cliente
-    Sender sender;
     ClientState state;
     int clientId;
-    LobbyWorker lobbyWorker;
+    bool gameStarted;
+    Lobby lobby;
     std::unique_ptr<Receiver> receiver;
+    std::unique_ptr<Sender> sender;
 
 public:
-    ClientHandler(Socket socket, GameLobby& lobby, int clientId);
-    void startThreads();
+    ClientHandler(Socket socket, GameMonitor& gameMonitor, int clientId);
+    void startThreads(std::shared_ptr<GameRoom> room);
     void start();
     void join();
     void stop();
