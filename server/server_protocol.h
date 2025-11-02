@@ -24,12 +24,11 @@ public:
     std::shared_ptr<Dto> receiveDTO();
     ActionCode receiveActionCode();
     std::string receiveRoomName();
-    // CarConfig receiveCarConfig();
+    int receiveMaxPlayers();
     void sendActionCode();
     void sendRoomList(const std::vector<std::string>& rooms);
     void sendErrorMsg(const std::string& errorMsg);
     void sendMsg(ActionCode code);
-    
     ~ServerProtocol();
 };
 

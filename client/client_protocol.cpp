@@ -15,9 +15,10 @@ void ClientProtocol::sendUsername(const std::string& username) {
     protocol.sendString(socket, username);
 }
 
-void ClientProtocol::sendCreateRoom(const std::string& roomName) {
+void ClientProtocol::sendCreateRoom(const std::string& roomName, unsigned maxPlayers) {
     protocol.sendAction(socket, ActionCode::CREATE_ROOM);
     protocol.sendString(socket, roomName);
+    protocol.sendUint16(socket, uint16_t(maxPlayers));
 }
 
 void ClientProtocol::sendJoinRoom(const std::string& roomName) {

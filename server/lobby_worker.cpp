@@ -43,7 +43,8 @@ void LobbyWorker::handleListRooms() {
 
 void LobbyWorker::handleCreateRoom() {
     std::string roomName = protocol.receiveRoomName();
-    if (lobby.createGameRoom(roomName, clientId, senderQueue)) {
+    int maxPlayers = protocol.receiveMaxPlayers();
+    if (lobby.createGameRoom(roomName, clientId, senderQueue, maxPlayers)) {
         protocol.sendMsg({ActionCode::ROOM_CREATED});
     } else {
         protocol.sendMsg({ActionCode::SEND_ERROR_MSG});

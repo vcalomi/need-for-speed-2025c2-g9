@@ -22,7 +22,7 @@ public:
     ClientProtocol(const std::string& hostname, const std::string& port);
 
     void sendUsername(const std::string& username);
-    void sendCreateRoom(const std::string& roomName);
+    void sendCreateRoom(const std::string& roomName, unsigned maxPlayers = 8);
     void sendJoinRoom(const std::string& roomName);
     void sendListRooms();
     void sendListPlayers();

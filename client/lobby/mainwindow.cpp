@@ -4,7 +4,7 @@
 
 #include "styles.h"
 #include "navigation.h"
-
+#include <QtMath>
 #include <QMessageBox>
 #include <QScreen>
 #include <QStandardItem>
@@ -60,7 +60,7 @@ MainWindow::MainWindow(const QString& host, const QString& port, bool& game_star
         player.username = name;
         if (protocol) {
             try {
-                // protocol->sendUsername(player.username.toStdString());
+                protocol->sendUsername(player.username.toStdString());
                 protocol->sendListRooms();
                 auto rooms = protocol->receiveRoomList();
                 allRooms.clear();
@@ -143,12 +143,13 @@ void MainWindow::showPage(int page) {
         try {
             protocol->sendListRooms();
             auto rooms = protocol->receiveRoomList();
-            allRooms.clear();
-            for (const auto& r : rooms) allRooms << QString::fromStdString(r);
+            if (!rooms.empty()) {
+                allRooms.clear();
+                for (const auto& r : rooms) allRooms << QString::fromStdString(r);
+            }
         } catch (const std::exception& e) { }
     }
-
-    int totalPages = qCeil(allRooms.size() / static_cast<double>(PAGE_SIZE));
+    int totalPages = qMax(1, qCeil(allRooms.size() / static_cast<double>(PAGE_SIZE)));
     currentPage = qBound(0, page, totalPages - 1);
 
     int start = currentPage * PAGE_SIZE;
@@ -236,7 +237,7 @@ void MainWindow::handleContinueToWait() {
     player.maxPlayers = ui->comboMaxPlayers->currentText().toUInt();
     if (protocol) {
         try {
-            protocol->sendCreateRoom(player.roomCode.toStdString());
+            protocol->sendCreateRoom(player.roomCode.toStdString(), player.maxPlayers);
             ActionCode resp = protocol->receiveActionCode();
             if (resp != ActionCode::ROOM_CREATED) {
                 QMessageBox::critical(this, "Create Room", "Failed to create room on server.");
@@ -292,6 +293,7 @@ void MainWindow::handleConfirmJoin() {
                 QMessageBox::critical(this, "Join Game", "Failed to join room on server.");
                 return;
             }
+            handleRefreshPlayers();
         } catch (const std::exception& e) {
             QMessageBox::critical(this, "Join Game", QString("Error: %1").arg(e.what()));
             return;
@@ -339,6 +341,12 @@ void MainWindow::handleRefreshPlayers() {
         protocol->sendListPlayers();
         auto players = protocol->receiveRoomList();
         ui->listPlayers->clear();
+
+        if (!players.empty() && players[0].find("maxPlayers:") == 0) {
+            QString maxPlayersStr = QString::fromStdString(players[0]).remove("maxPlayers:");
+            player.maxPlayers = maxPlayersStr.toUInt();
+            players.erase(players.begin());
+        }
         for (const auto& p : players) {
             ui->listPlayers->addItem(QString::fromStdString(p));
         }
