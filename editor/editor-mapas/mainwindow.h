@@ -31,6 +31,8 @@ private:
     Ui::MainWindow *ui;
     QGraphicsScene *scene;
     QVector<QPointF> checkpoints;
+    QSize currentMapSize;
+
 
     void drawCheckpoint(const QPointF &p, int id);
     void drawLine(const QPointF &from, const QPointF &to);

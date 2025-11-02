@@ -1,6 +1,7 @@
 #include "yamlhandler.h"
 #include <QFileDialog>
 #include <fstream>
+#include <yaml-cpp/yaml.h>
 
 QString YamlHandler::getSaveFilename() {
     return QFileDialog::getSaveFileName(nullptr,
@@ -11,8 +12,10 @@ QString YamlHandler::getSaveFilename() {
 
 void YamlHandler::save(const QString &filename,
                        const QVector<QPointF> &checkpoints,
-                       const QString &city) {
-    if (filename.isEmpty()) return;
+                       const QString &city,
+                       const QSize &canvasSize) 
+{
+    if (filename.isEmpty() || canvasSize.isEmpty()) return;
 
     YAML::Emitter out;
     out << YAML::BeginMap;
@@ -21,10 +24,14 @@ void YamlHandler::save(const QString &filename,
 
     int id = 1;
     for (const auto &p : checkpoints) {
+        // Normalizamos entre 0 y 1
+        double normX = p.x() / canvasSize.width();
+        double normY = p.y() / canvasSize.height();
+
         out << YAML::BeginMap;
         out << YAML::Key << "id" << YAML::Value << id++;
-        out << YAML::Key << "x" << YAML::Value << p.x();
-        out << YAML::Key << "y" << YAML::Value << p.y();
+        out << YAML::Key << "x" << YAML::Value << normX;
+        out << YAML::Key << "y" << YAML::Value << normY;
         out << YAML::EndMap;
     }
 
