@@ -74,7 +74,8 @@ void ClientProtocol::sendDTO(std::shared_ptr<Dto> dto) {
     protocol.sendAction(socket, static_cast<ActionCode>(dtoCode));
     auto it = serializers.find(dtoCode);
     if (it == serializers.end() || !it->second) {
-        throw std::runtime_error("Serializer not registered for dtoCode: " + std::to_string(dtoCode));
+        throw std::runtime_error("Serializer not registered for dtoCode: " +
+                                 std::to_string(dtoCode));
     }
     auto buffer = it->second->serialize(*dto);
     socket.sendall(buffer.data(), buffer.size());

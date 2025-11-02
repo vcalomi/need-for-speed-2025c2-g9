@@ -19,24 +19,18 @@ ClientHandler::ClientHandler(Socket socket, GameMonitor& gameMonitor, int client
         state(ClientState::IN_LOBBY),
         clientId(clientId),
         gameStarted(false),
-        lobby(
-            protocol,
-            gameMonitor,
-            clientId,
-            senderQueue,
-            [this](std::shared_ptr<GameRoom> room) {
-                startThreads(room);
-            }
-        
-    ) {
-        gameMonitor.registerStartNotifier(clientId, [this](std::shared_ptr<GameRoom> room) {
-        startThreads(room);
-    });
+        lobby(protocol, gameMonitor, clientId, senderQueue,
+              [this](std::shared_ptr<GameRoom> room) { startThreads(room); }
+
+        ) {
+    gameMonitor.registerStartNotifier(
+            clientId, [this](std::shared_ptr<GameRoom> room) { startThreads(room); });
 }
 
 void ClientHandler::startThreads(std::shared_ptr<GameRoom> room) {
-    if (gameStarted) return;
-    
+    if (gameStarted)
+        return;
+
     try {
         if (lobby.is_alive()) {
             lobby.stop();
@@ -50,8 +44,8 @@ void ClientHandler::startThreads(std::shared_ptr<GameRoom> room) {
         state = ClientState::IN_GAME;
         gameStarted = true;
     } catch (const std::exception& e) {
-        std::cout << "ClientHandler: ERROR starting game for client " << clientId 
-                  << ": " << e.what() << std::endl;
+        std::cout << "ClientHandler: ERROR starting game for client " << clientId << ": "
+                  << e.what() << std::endl;
     }
 }
 
@@ -61,8 +55,10 @@ void ClientHandler::start() {
 }
 
 void ClientHandler::join() {
-    if (sender) sender->join();
-    if (receiver) receiver->join();
+    if (sender)
+        sender->join();
+    if (receiver)
+        receiver->join();
     lobby.join();
 }
 
@@ -75,8 +71,10 @@ void ClientHandler::stop() {
     if (lobby.is_alive()) {
         lobby.stop();
     }
-    if (receiver) receiver->stop();
-    if (sender) sender->stop();
+    if (receiver)
+        receiver->stop();
+    if (sender)
+        sender->stop();
 }
 
 bool ClientHandler::is_alive() const {

@@ -3,15 +3,18 @@
 
 #include <functional>
 #include <string>
+#include <utility>
+
 #include "../common/thread.h"
 
-class ClientInputHandler : public Thread {
+class ClientInputHandler: public Thread {
 private:
     std::function<void()> onQuit;
     std::string line;
+
 public:
-    explicit ClientInputHandler(std::function<void()> onQuitCb)
-        : onQuit(std::move(onQuitCb)), line("") {}
+    explicit ClientInputHandler(std::function<void()> onQuitCb):
+            onQuit(std::move(onQuitCb)), line("") {}
 
     void run() override {
         try {
@@ -20,7 +23,8 @@ public:
                     break;
                 }
                 if (line == "q") {
-                    if (onQuit) onQuit();
+                    if (onQuit)
+                        onQuit();
                     this->stop();
                     break;
                 }

@@ -5,12 +5,14 @@
 
 #include "../common/common_codes.h"
 
-Lobby::Lobby(ServerProtocol& protocol,
-                         GameMonitor& gameMonitor,
-                         int clientId,
-                         Queue<std::shared_ptr<Dto>>& senderQueue,
-                         std::function<void(std::shared_ptr<GameRoom> room)> onStartGame)
-    : protocol(protocol), gameMonitor(gameMonitor), clientId(clientId), senderQueue(senderQueue), onStartGame(std::move(onStartGame)) {
+Lobby::Lobby(ServerProtocol& protocol, GameMonitor& gameMonitor, int clientId,
+             Queue<std::shared_ptr<Dto>>& senderQueue,
+             std::function<void(std::shared_ptr<GameRoom> room)> onStartGame):
+        protocol(protocol),
+        gameMonitor(gameMonitor),
+        clientId(clientId),
+        senderQueue(senderQueue),
+        onStartGame(std::move(onStartGame)) {
     initHandlers();
 }
 
@@ -20,7 +22,7 @@ void Lobby::run() {
             ActionCode action = protocol.receiveActionCode();
             if (!should_keep_running()) {
                 break;
-            };
+            }
             bool handled = dispatcher.dispatch(action);
             if (!handled) {
                 protocol.sendMsg({ActionCode::SEND_ERROR_MSG});
@@ -32,14 +34,14 @@ void Lobby::run() {
 }
 
 void Lobby::initHandlers() {
-    dispatcher.registerHandler(ActionCode::LIST_ROOMS, [this]{ handleListRooms(); });
-    dispatcher.registerHandler(ActionCode::CREATE_ROOM, [this]{ handleCreateRoom(); });
-    dispatcher.registerHandler(ActionCode::JOIN_ROOM, [this]{ handleJoinRoom(); });
-    dispatcher.registerHandler(ActionCode::CHOOSE_CAR, [this]{ handleChooseCar(); });
-    dispatcher.registerHandler(ActionCode::SEND_USERNAME, [this]{ handleSendUsername(); });
-    dispatcher.registerHandler(ActionCode::START_GAME, [this]{ handleStartGame(); });
-    dispatcher.registerHandler(ActionCode::LIST_PLAYERS, [this]{ handleListPlayers(); });
-    dispatcher.registerHandler(ActionCode::LIST_STATE, [this]{ handleListState(); });
+    dispatcher.registerHandler(ActionCode::LIST_ROOMS, [this] { handleListRooms(); });
+    dispatcher.registerHandler(ActionCode::CREATE_ROOM, [this] { handleCreateRoom(); });
+    dispatcher.registerHandler(ActionCode::JOIN_ROOM, [this] { handleJoinRoom(); });
+    dispatcher.registerHandler(ActionCode::CHOOSE_CAR, [this] { handleChooseCar(); });
+    dispatcher.registerHandler(ActionCode::SEND_USERNAME, [this] { handleSendUsername(); });
+    dispatcher.registerHandler(ActionCode::START_GAME, [this] { handleStartGame(); });
+    dispatcher.registerHandler(ActionCode::LIST_PLAYERS, [this] { handleListPlayers(); });
+    dispatcher.registerHandler(ActionCode::LIST_STATE, [this] { handleListState(); });
 }
 
 void Lobby::handleListRooms() {
@@ -97,7 +99,7 @@ void Lobby::handleListPlayers() {
 
 void Lobby::handleListState() {
     bool started = gameMonitor.isGameStartedByClient(clientId);
-    protocol.sendRoomList({ started ? std::string("started") : std::string("waiting") });
+    protocol.sendRoomList({started ? std::string("started") : std::string("waiting")});
     if (started) {
         auto room = gameMonitor.getRoomByClient(clientId);
         if (room && onStartGame) {

@@ -43,7 +43,7 @@ private slots:
 private:
     Ui::Lobby* ui;
     PlayerInfo player;
-    ClientProtocol& protocol; // conexión TCP al servidor
+    ClientProtocol& protocol;  // conexión TCP al servidor
     bool& game_started;
     QTimer* waitTimer;
     QTimer* refreshTimer;

@@ -3,12 +3,13 @@
 #include <iostream>
 #include <sstream>
 #include <string>
+
 #include "client_input_handler.h"
 
 Client::Client(ClientProtocol& protocol):
-        clientProtocol(protocol), 
-        connected(true), 
-        recvQueue(), 
+        clientProtocol(protocol),
+        connected(true),
+        recvQueue(),
         senderQueue(),
         sender(clientProtocol, senderQueue),
         receiver(clientProtocol, recvQueue) {}
@@ -20,8 +21,10 @@ void Client::run() {
         sender.start();
         receiver.start();
         std::cout << "Client: Game communication started" << std::endl;
-        if (receiver.is_alive()) receiver.join();
-        if (sender.is_alive()) sender.join();
+        if (receiver.is_alive())
+            receiver.join();
+        if (sender.is_alive())
+            sender.join();
         input.stop();
         input.join();
     } catch (const std::exception& e) {
@@ -35,12 +38,18 @@ void Client::stop() {
     try {
         clientProtocol.close();
     } catch (...) {}
-    try { recvQueue.close(); } catch (...) {}
-    try { senderQueue.close(); } catch (...) {}
+    try {
+        recvQueue.close();
+    } catch (...) {}
+    try {
+        senderQueue.close();
+    } catch (...) {}
     sender.stop();
     receiver.stop();
-    if (sender.is_alive()) sender.join();
-    if (receiver.is_alive()) receiver.join();
+    if (sender.is_alive())
+        sender.join();
+    if (receiver.is_alive())
+        receiver.join();
 }
 
 Client::~Client() {}

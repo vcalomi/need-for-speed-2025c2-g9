@@ -6,14 +6,15 @@
 #include <memory>
 #include <thread>
 
-#include "server_protocol.h"
-#include "game_monitor.h"
-#include "command_dispatcher.h"
 #include "../common/Dto/dto.h"
 #include "../common/queue.h"
 #include "../common/thread.h"
 
-class Lobby : public Thread {
+#include "command_dispatcher.h"
+#include "game_monitor.h"
+#include "server_protocol.h"
+
+class Lobby: public Thread {
 private:
     ServerProtocol& protocol;
     GameMonitor& gameMonitor;
@@ -35,11 +36,9 @@ private:
 
 
 public:
-    Lobby(ServerProtocol& protocol,
-                GameMonitor& gameMonitor,
-                int clientId,
-                Queue<std::shared_ptr<Dto>>& senderQueue,
-                std::function<void(std::shared_ptr<GameRoom> room)> onStartGame);
+    Lobby(ServerProtocol& protocol, GameMonitor& gameMonitor, int clientId,
+          Queue<std::shared_ptr<Dto>>& senderQueue,
+          std::function<void(std::shared_ptr<GameRoom> room)> onStartGame);
     void run() override;
 };
 

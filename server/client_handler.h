@@ -11,13 +11,12 @@
 #include "../common/thread.h"
 
 #include "client_handler.h"
+#include "client_state.h"
 #include "game_monitor.h"
+#include "lobby.h"
 #include "receiver.h"
 #include "sender.h"
 #include "server_protocol.h"
-#include "client_state.h"
-#include "../common/Dto/dto.h"
-#include "lobby.h"
 
 class ClientHandler {
 private:
@@ -25,7 +24,7 @@ private:
     GameMonitor& gameMonitor;
     ServerProtocol protocol;
     std::atomic_bool keep_running;
-    Queue<std::shared_ptr<Dto>> senderQueue;    // para enviar al cliente
+    Queue<std::shared_ptr<Dto>> senderQueue;  // para enviar al cliente
     ClientState state;
     int clientId;
     bool gameStarted;

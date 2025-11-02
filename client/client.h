@@ -21,7 +21,7 @@ private:
     ClientReceiver receiver;
 
 public:
-    Client(ClientProtocol& protocol);
+    explicit Client(ClientProtocol& protocol);
     void run();
     void stop();
     ~Client();

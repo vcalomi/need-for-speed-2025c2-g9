@@ -8,9 +8,9 @@
 #include "../common/liberror.h"
 #include "../common/socket.h"
 #include "../common/thread.h"
-#include "game_monitor.h"
+
 #include "client_handler.h"
-#include "game_lobby.h"
+#include "game_monitor.h"
 
 class Acceptor: public Thread {
 private:
