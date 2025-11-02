@@ -1,12 +1,14 @@
 #include "client_sender.h"
 
+#include <memory>
 #include <vector>
 
 #include <sys/socket.h>
 
 #include "../common/common_codes.h"
 
-ClientSender::ClientSender(ClientProtocol& clientProtocol, Queue<std::shared_ptr<Dto>>& clientQueue):
+ClientSender::ClientSender(ClientProtocol& clientProtocol,
+                           Queue<std::shared_ptr<Dto>>& clientQueue):
         clientQueue(clientQueue), protocol(clientProtocol) {}
 
 void ClientSender::run() {

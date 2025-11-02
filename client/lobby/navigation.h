@@ -1,8 +1,8 @@
 #ifndef NAVIGATION_H
 #define NAVIGATION_H
 
-#include <QWidget>
 #include <QStackedWidget>
+#include <QWidget>
 
 class Navigation {
 public:
@@ -10,4 +10,4 @@ public:
     static void goToPage(QWidget* page, QStackedWidget* stackedWidget, QWidget* window);
 };
 
-#endif // NAVIGATION_H
+#endif  // NAVIGATION_H

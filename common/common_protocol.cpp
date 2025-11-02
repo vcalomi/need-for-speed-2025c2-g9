@@ -46,7 +46,7 @@ std::string CommonProtocol::receiveString(Socket& socket) {
     if (length == 0) {
         return "";
     }
-    
+
     std::vector<char> buffer(length);
     socket.recvall(buffer.data(), length);
     return std::string(buffer.data(), length);

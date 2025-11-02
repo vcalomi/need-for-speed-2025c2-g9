@@ -4,13 +4,15 @@
         <file>ferrari.png</file>
         <file>fiat_600.png</file>
         <file>ford_f100.png</file>
-	<file>porsche.png</file>
-	<file>sedan.png</file>
-	<file>jeep_4x4.png</file>
-	<file>truck.png</file>
-	<file>flag_pattern.png</file>
+        <file>porsche.png</file>
+        <file>sedan.png</file>
+        <file>jeep_4x4.png</file>
+        <file>truck.png</file>
+        <file>flag_pattern.png</file>
         <file>Tektur-SemiBold.ttf</file>
         <file>Tektur_Condensed-Bold.ttf</file>
     </qresource>
+    <qresource prefix="/music">
+        <file>music/derezzed.mp3</file>
+    </qresource>
 </RCC>
-

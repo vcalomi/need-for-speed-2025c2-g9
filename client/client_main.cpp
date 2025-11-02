@@ -1,6 +1,8 @@
-#include <iostream>
 #include <QApplication>
+#include <iostream>
+
 #include "lobby/mainwindow.h"
+
 #include "client.h"
 
 #define NUMBER_ARG 3
@@ -15,7 +17,7 @@ int main(int argc, char* argv[]) {
     }
     std::string hostname = std::string(argv[ARG_INDEX_HOSTNAME]);
     std::string port = std::string(argv[ARG_INDEX_PORT]);
-    
+
     try {
         QApplication app(argc, argv);
         ClientProtocol protocol(hostname, port);

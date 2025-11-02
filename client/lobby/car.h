@@ -3,20 +3,12 @@
 
 #include <QString>
 
-enum class CarType {
-    FIAT_600,
-    FERRARI_F40,
-    PORSCHE_911,
-    SEDAN,
-    SHEEP_4X4,
-    FORD_F100,
-    TRUCK
-};
+enum class CarType { FIAT_600, FERRARI_F40, PORSCHE_911, SEDAN, SHEEP_4X4, FORD_F100, TRUCK };
 
 class Car {
 public:
-    Car(CarType type, const QString& name, const QString& imagePath)
-            : type(type), name(name), imagePath(imagePath) {}
+    Car(CarType type, const QString& name, const QString& imagePath):
+            type(type), name(name), imagePath(imagePath) {}
 
     CarType getType() const { return type; }
     QString getName() const { return name; }
@@ -28,4 +20,4 @@ private:
     QString imagePath;
 };
 
-#endif // CAR_H
+#endif  // CAR_H

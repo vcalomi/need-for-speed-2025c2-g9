@@ -1,8 +1,9 @@
 #include "navigation.h"
-#include <QPixmap>
-#include <QPalette>
-#include <QPainter>
+
 #include <QDebug>
+#include <QPainter>
+#include <QPalette>
+#include <QPixmap>
 
 void Navigation::goToPage(QWidget* page, QStackedWidget* stackedWidget, QWidget* window) {
     stackedWidget->setCurrentWidget(page);
@@ -28,7 +29,7 @@ void Navigation::goToPage(QWidget* page, QStackedWidget* stackedWidget, QWidget*
     // En cualquier otra página --> aplicar overlay negro translúcido sobre la imagen
     QPixmap backgroundDark = background;
     QPainter painter(&backgroundDark);
-    painter.fillRect(backgroundDark.rect(), QColor(0, 0, 0, 160)); // negro con 160/255 de opacidad
+    painter.fillRect(backgroundDark.rect(), QColor(0, 0, 0, 160));  // negro con 160/255 de opacidad
     painter.end();
 
     QPalette palette;

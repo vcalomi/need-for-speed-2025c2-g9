@@ -1,27 +1,42 @@
 #include "mainwindow.h"
-#include "ui_mainwindow.h"
-#include "player_info.h"
 
-#include "styles.h"
-#include "navigation.h"
-#include <QtMath>
+#include <QDir>
+#include <QFile>
+#include <QGraphicsDropShadowEffect>
 #include <QMessageBox>
+#include <QRandomGenerator>
 #include <QScreen>
 #include <QStandardItem>
 #include <QStandardItemModel>
-#include <QStandardItem>
-#include <QGraphicsDropShadowEffect>
-#include <QRandomGenerator>
 #include <QTimer>
+#include <QtMath>
+#include <string>
+
+#include "navigation.h"
+#include "player_info.h"
 #include "room_manager.h"
+#include "styles.h"
+#include "ui_mainwindow.h"
 
 
 MainWindow::MainWindow(ClientProtocol& protocol, bool& game_started_ref, QWidget* parent)
         : QMainWindow(parent), ui(new Ui::Lobby), protocol(protocol), game_started(game_started_ref), waitTimer(nullptr), refreshTimer(nullptr) {
     ui->setupUi(this);
+
+    // Música de fondo
+    setupBackgroundMusic();
+
+    connect(backgroundMusic, &QMediaPlayer::mediaStatusChanged,
+            [this](QMediaPlayer::MediaStatus status) {
+                if (status == QMediaPlayer::EndOfMedia) {
+                    backgroundMusic->play();
+                }
+            });
+
+    backgroundMusic->play();
+
     game_started = false;
-    cars = {
-            Car(CarType::FIAT_600,    "Fiat 600",    ":/fiat_600.png"),
+    cars = {Car(CarType::FIAT_600, "Fiat 600", ":/fiat_600.png"),
             Car(CarType::FERRARI_F40, "Ferrari F40", ":/ferrari.png"),
             Car(CarType::PORSCHE_911, "Porsche 911", ":/porsche.png"),
             Car(CarType::SEDAN, "Sedan", ":/sedan.png"),
@@ -119,9 +134,8 @@ MainWindow::MainWindow(ClientProtocol& protocol, bool& game_started_ref, QWidget
         }
         ui->stackedWidget->setCurrentWidget(ui->page_wait);
     });
-    connect(ui->btnBackToLobby, &QPushButton::clicked, this, [this]() {
-        ui->stackedWidget->setCurrentWidget(ui->page_wait);
-    });
+    connect(ui->btnBackToLobby, &QPushButton::clicked, this,
+            [this]() { ui->stackedWidget->setCurrentWidget(ui->page_wait); });
     refreshTimer = new QTimer(this);
     connect(refreshTimer, &QTimer::timeout, this, &MainWindow::handleRefreshPlayers);
 
@@ -333,13 +347,14 @@ void MainWindow::handleRefreshPlayers() {
             player.maxPlayers = maxPlayersStr.toUInt();
             players.erase(players.begin());
         }
-        for (const auto& p : players) {
+        for (const auto& p: players) {
             ui->listPlayers->addItem(QString::fromStdString(p));
         }
         player.currentPlayers = static_cast<unsigned>(players.size());
         updateLobbyStatus();
     } catch (const std::exception& e) {
-        QMessageBox::warning(this, "Refresh Players", QString("Failed to refresh: %1").arg(e.what()));
+        QMessageBox::warning(this, "Refresh Players",
+                             QString("Failed to refresh: %1").arg(e.what()));
     }
     inFlight = false;
 }
@@ -362,4 +377,33 @@ void MainWindow::handleStartGame() {
     this->close();
 }
 
-MainWindow::~MainWindow() { delete ui; }
+void MainWindow::setupBackgroundMusic() {
+    backgroundMusic = new QMediaPlayer(this);
+    audioOutput = new QAudioOutput(this);
+    backgroundMusic->setAudioOutput(audioOutput);
+
+    // USA LA RUTA LOCAL QUE SÍ FUNCIONÓ
+    QString localPath =
+            "/home/mora/taller/need-for-speed-2025c2-g9/client/lobby/assets/music/derezzed.mp3";
+    QUrl musicUrl = QUrl::fromLocalFile(localPath);
+    backgroundMusic->setSource(musicUrl);
+
+    audioOutput->setVolume(30);  // Volumen bajo
+
+    connect(backgroundMusic, &QMediaPlayer::mediaStatusChanged,
+            [this](QMediaPlayer::MediaStatus status) {
+                if (status == QMediaPlayer::EndOfMedia) {
+                    backgroundMusic->play();  // Loop
+                }
+            });
+
+    backgroundMusic->play();
+}
+
+MainWindow::~MainWindow() {
+    // Detener música al cerrar
+    if (backgroundMusic) {
+        backgroundMusic->stop();
+    }
+    delete ui;
+}

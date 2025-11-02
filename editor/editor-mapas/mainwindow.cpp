@@ -1,24 +1,22 @@
 #include "mainwindow.h"
+
+#include <QGraphicsLineItem>
+#include <QMessageBox>
+#include <QMouseEvent>
+#include <QPixmap>
+
 #include "ui_mainwindow.h"
 #include "yamlhandler.h"
-#include <QMouseEvent>
-#include <QGraphicsLineItem>
-#include <QPixmap>
-#include <QMessageBox>
 
-MainWindow::MainWindow(QWidget *parent)
-        : QMainWindow(parent),
-        ui(new Ui::MainWindow),
-        scene(new QGraphicsScene(this)) {
+MainWindow::MainWindow(QWidget* parent):
+        QMainWindow(parent), ui(new Ui::MainWindow), scene(new QGraphicsScene(this)) {
 
     ui->setupUi(this);
     ui->graphicsViewMap->setScene(scene);
     ui->comboCity->addItems({"Liberty City", "San Andreas", "Vice City"});
 }
 
-MainWindow::~MainWindow() {
-    delete ui;
-}
+MainWindow::~MainWindow() { delete ui; }
 
 void MainWindow::on_loadMapBtn_clicked() {
     QString city = ui->comboCity->currentText();
@@ -38,37 +36,58 @@ void MainWindow::on_loadMapBtn_clicked() {
         return;
     }
 
-    // Limpiar escena anterior si había algo
     scene->clear();
 
-    // Crear un QGraphicsPixmapItem y agregarlo a la escena
     QGraphicsPixmapItem* background = scene->addPixmap(pixmap);
-    background->setZValue(-1);  // para que quede detrás de los checkpoints
+    background->setZValue(-1);
 
-    // Ajustar tamaño de la vista
+    currentMapSize = pixmap.size();  // Guardamos el tamaño del mapa cargado
+
     ui->graphicsViewMap->fitInView(background, Qt::KeepAspectRatio);
 }
 
+void MainWindow::mousePressEvent(QMouseEvent* event) {
+    // Verificamos si el click fue dentro del graphicsView
+    if (!ui->graphicsViewMap->rect().contains(
+                ui->graphicsViewMap->mapFromGlobal(event->globalPos())))
+        return;
 
-void MainWindow::mousePressEvent(QMouseEvent *event) {
-    QPointF scenePos = ui->graphicsViewMap->mapToScene(event->pos());
-    checkpoints.append(scenePos);
+    // Convertir posición de click a coordenadas de escena
+    QPointF scenePos =
+            ui->graphicsViewMap->mapToScene(ui->graphicsViewMap->mapFromGlobal(event->globalPos()));
 
-    drawCheckpoint(scenePos, checkpoints.size());
-    if (checkpoints.size() > 1)
-        drawLine(checkpoints[checkpoints.size() - 2], checkpoints.last());
+    // Normalizar (0 a 1) según el tamaño actual del mapa
+    if (currentMapSize.isEmpty())
+        return;
+
+    QPointF normalized(scenePos.x() / currentMapSize.width(),
+                       scenePos.y() / currentMapSize.height());
+
+    checkpoints.append(normalized);
+
+    // Dibujar el checkpoint en coordenadas reales (desnormalizadas)
+    QPointF realPos(normalized.x() * currentMapSize.width(),
+                    normalized.y() * currentMapSize.height());
+    drawCheckpoint(realPos, checkpoints.size());
+
+    if (checkpoints.size() > 1) {
+        QPointF prev(checkpoints[checkpoints.size() - 2].x() * currentMapSize.width(),
+                     checkpoints[checkpoints.size() - 2].y() * currentMapSize.height());
+        drawLine(prev, realPos);
+    }
 }
 
-void MainWindow::drawCheckpoint(const QPointF &p, int id) {
+
+void MainWindow::drawCheckpoint(const QPointF& p, int id) {
     int size = 10;
-    auto *circle = scene->addEllipse(p.x() - size / 2, p.y() - size / 2, size, size,
-                                     QPen(Qt::red), QBrush(Qt::red));
-    auto *label = scene->addText(QString::number(id));
+    auto* circle = scene->addEllipse(p.x() - size / 2, p.y() - size / 2, size, size, QPen(Qt::red),
+                                     QBrush(Qt::red));
+    auto* label = scene->addText(QString::number(id));
     label->setDefaultTextColor(Qt::white);
     label->setPos(p.x() + 8, p.y() - 8);
 }
 
-void MainWindow::drawLine(const QPointF &from, const QPointF &to) {
+void MainWindow::drawLine(const QPointF& from, const QPointF& to) {
     scene->addLine(QLineF(from, to), QPen(Qt::yellow, 2));
 }
 
@@ -84,8 +103,10 @@ void MainWindow::on_saveMapBtn_clicked() {
     }
 
     QString filename = YamlHandler::getSaveFilename();
-    if (filename.isEmpty()) return;
+    if (filename.isEmpty())
+        return;
 
-    YamlHandler::save(filename, checkpoints, ui->comboCity->currentText());
+    YamlHandler::save(filename, checkpoints, ui->comboCity->currentText(), currentMapSize);
+
     QMessageBox::information(this, "Guardado", "Recorrido guardado exitosamente.");
 }

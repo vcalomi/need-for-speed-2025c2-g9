@@ -1,9 +1,9 @@
 #ifndef SERIALIZER_H
 #define SERIALIZER_H
 
-#include <vector>
 #include <cstdint>
 #include <memory>
+#include <vector>
 
 #include "../Dto/dto.h"
 

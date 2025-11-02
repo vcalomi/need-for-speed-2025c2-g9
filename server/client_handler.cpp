@@ -7,6 +7,7 @@
 #include "../common/queue.h"
 #include "../common/socket.h"
 #include "../common/thread.h"
+
 #include "receiver.h"
 
 ClientHandler::ClientHandler(Socket socket, GameMonitor& gameMonitor, int clientId):
@@ -82,4 +83,5 @@ bool ClientHandler::is_alive() const {
     return lobby.is_alive() || (receiver && receiver->is_alive()) || (sender && sender->is_alive());
 }
 
-ClientHandler::~ClientHandler() { }
+ClientHandler::~ClientHandler() {}
+#include <memory>

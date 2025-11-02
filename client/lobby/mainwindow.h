@@ -1,12 +1,16 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
-#include "player_info.h"
-#include "car.h"
-#include "../client_protocol.h"
-#include <memory>
+#include <QAudioOutput>
 #include <QMainWindow>
+#include <QMediaPlayer>
 #include <QVector>
+#include <memory>
+
+#include "../client_protocol.h"
+
+#include "car.h"
+#include "player_info.h"
 
 
 QT_BEGIN_NAMESPACE
@@ -34,6 +38,7 @@ private slots:
     void showPrevRoom();
     void handleRefreshPlayers();
     void updateLobbyStatus();
+    void setupBackgroundMusic();
 
 private:
     Ui::Lobby* ui;
@@ -42,20 +47,21 @@ private:
     bool& game_started;
     QTimer* waitTimer;
     QTimer* refreshTimer;
+    QMediaPlayer* backgroundMusic;
+    QAudioOutput* audioOutput;
 
-    static constexpr int PAGE_SIZE = 10; // cantidad de salas por página
+    static constexpr int PAGE_SIZE = 10;  // cantidad de salas por página
     int currentPage = 0;
     QStringList allRooms;
     QVector<Car> cars;
     int currentCarIndex = 0;
-    bool inFlight = false; // serializa lecturas del protocolo en wait
+    bool inFlight = false;  // serializa lecturas del protocolo en wait
 
     QString generateRoomCode();
     void loadRooms();
     void showPage(int page);
-    void goToPage(QWidget *page);
+    void goToPage(QWidget* page);
     void updateCarImage();
-    void connectToServer(); // función privada que usará el botón
-
+    void connectToServer();  // función privada que usará el botón
 };
 #endif  // MAINWINDOW_H

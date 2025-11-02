@@ -1,23 +1,25 @@
 #include "game_room.h"
-#include <iostream>
+
 #include <algorithm>
+#include <iostream>
 
-#include "../common/queue.h"
 #include "../common/Dto/vehicle.h"
+#include "../common/queue.h"
 
-GameRoom::GameRoom(const std::string& roomName, int hostId, int maxPlayers) : 
-    roomName(roomName),
-    hostId(hostId),
-    state(RoomState::WAITING_FOR_PLAYERS),
-    gameQueue(),
-    broadcaster(),
-    maxPlayers(maxPlayers) {}
-    // gameLoop(gameQueue) {}
+GameRoom::GameRoom(const std::string& roomName, int hostId, int maxPlayers):
+        roomName(roomName),
+        hostId(hostId),
+        state(RoomState::WAITING_FOR_PLAYERS),
+        gameQueue(),
+        broadcaster(),
+        maxPlayers(maxPlayers) {}
+// gameLoop(gameQueue) {}
 
 bool GameRoom::addPlayer(int clientId, Queue<std::shared_ptr<Dto>>& senderQueue) {
     std::lock_guard<std::mutex> lock(mtx);
-    
-    if (!canJoin()) return false;
+
+    if (!canJoin())
+        return false;
 
     players[clientId] = &senderQueue;
     broadcaster.addQueue(&senderQueue);
@@ -26,7 +28,7 @@ bool GameRoom::addPlayer(int clientId, Queue<std::shared_ptr<Dto>>& senderQueue)
 
 bool GameRoom::startGame() {
     std::lock_guard<std::mutex> lock(mtx);
-    
+
     if (state != RoomState::WAITING_FOR_PLAYERS || players.size() < 1) {
         return false;
     }
@@ -34,12 +36,13 @@ bool GameRoom::startGame() {
     state = RoomState::IN_RACE;
 
     uint8_t idx = 0;
-    for (const auto& entry : players) {
+    for (const auto& entry: players) {
         uint8_t id = static_cast<uint8_t>(entry.first % 255);
-        auto dto = std::make_shared<VehicleDto>(id, 1.0f + idx, 0.0f, 0.0f);;
-        std::cout << "CREATED VehicleDto: id=" << (int)dto->id 
-                  << " x=" << dto->x << " y=" << dto->y << std::endl;
-        
+        auto dto = std::make_shared<VehicleDto>(id, 1.0f + idx, 0.0f, 0.0f);
+        {}
+        std::cout << "CREATED VehicleDto: id=" << (int)dto->id << " x=" << dto->x << " y=" << dto->y
+                  << std::endl;
+
         broadcaster.broadcast(dto);
         idx++;
     }
@@ -52,7 +55,7 @@ bool GameRoom::chooseCar(int clientId, const CarConfig& car) {
     if (players.find(clientId) == players.end()) {
         return false;
     }
-    
+
     chosenCars[clientId] = car;
     return true;
 }
@@ -65,9 +68,7 @@ bool GameRoom::canJoin() const {
     return state == RoomState::WAITING_FOR_PLAYERS && players.size() < maxPlayers;
 }
 
-bool GameRoom::isHost(int clientId) const {
-    return hostId == clientId;
-}
+bool GameRoom::isHost(int clientId) const { return hostId == clientId; }
 
 Queue<std::shared_ptr<Dto>>& GameRoom::getGameQueue() { return gameQueue; }
 
@@ -75,7 +76,7 @@ std::vector<int> GameRoom::getPlayerIds() {
     std::lock_guard<std::mutex> lock(mtx);
     std::vector<int> ids;
     ids.reserve(players.size());
-    for (const auto& player : players) {
+    for (const auto& player: players) {
         ids.push_back(player.first);
     }
     return ids;
@@ -87,3 +88,4 @@ bool GameRoom::isInRace() {
 }
 
 GameRoom::~GameRoom() {}
+#include <memory>

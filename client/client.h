@@ -1,12 +1,13 @@
+#include <memory>
 #ifndef CLIENT_H
 #define CLIENT_H
 #include <string>
 #include <vector>
 
-#include "client_protocol.h"
-#include "../common/queue.h"
-#include "client_receiver.h"
 #include "../common/Dto/dto.h"
+#include "../common/queue.h"
+
+#include "client_protocol.h"
 #include "client_receiver.h"
 #include "client_sender.h"
 

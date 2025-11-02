@@ -1,13 +1,14 @@
 #ifndef GAME_MONITOR_H
 #define GAME_MONITOR_H
 
-#include <vector>
-#include <map>
 #include <functional>
+#include <map>
+#include <vector>
 
-#include "../common/queue.h"
-#include "game_room.h"
 #include "../common/Dto/dto.h"
+#include "../common/queue.h"
+
+#include "game_room.h"
 
 /*
     (Monitor) Gestiona las partidas
@@ -42,3 +43,5 @@ public:
 };
 
 #endif
+#include <memory>
+#include <string>

@@ -106,3 +106,4 @@ void Lobby::handleListState() {
         stop();
     }
 }
+#include <string>
