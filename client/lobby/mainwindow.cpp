@@ -9,6 +9,7 @@
 #include <QStandardItem>
 #include <QStandardItemModel>
 #include <QTimer>
+#include <QUrl>
 #include <QtMath>
 #include <string>
 
@@ -18,6 +19,35 @@
 #include "styles.h"
 #include "ui_mainwindow.h"
 
+void MainWindow::onWaitTimerTickHost() {
+    if (inFlight)
+        return;
+    inFlight = true;
+    try {
+        this->protocol.sendListState();
+        auto v = this->protocol.receiveRoomList();
+        if (!v.empty() && v[0] == std::string("started")) {
+            game_started = true;
+            this->close();
+        }
+    } catch (...) {}
+    inFlight = false;
+}
+
+void MainWindow::onWaitTimerTickJoin() {
+    if (inFlight)
+        return;
+    inFlight = true;
+    try {
+        this->protocol.sendListState();
+        auto v = this->protocol.receiveRoomList();
+        if (!v.empty() && v[0] == std::string("started")) {
+            game_started = true;
+            this->close();
+        }
+    } catch (...) {}
+    inFlight = false;
+}
 
 MainWindow::MainWindow(ClientProtocol& protocol, bool& game_started_ref, QWidget* parent):
         QMainWindow(parent),
@@ -270,24 +300,11 @@ void MainWindow::handleContinueToWait() {
 
     if (!waitTimer) {
         waitTimer = new QTimer(this);
-        connect(
-                waitTimer, &QTimer::timeout, this,
-                [this]() {
-                    if (inFlight)
-                        return;
-                    inFlight = true;
-                    try {
-                        this->protocol.sendListState();
-                        auto v = this->protocol.receiveRoomList();
-                        if (!v.empty() && v[0] == std::string("started")) {
-                            game_started = true;
-                            this->close();
-                        }
-                    } catch (...) {}
-                    inFlight = false;
-                },
-                Qt::UniqueConnection);
     }
+    // Reestablecer conexión de manera robusta
+    QObject::disconnect(waitTimer, nullptr, this, nullptr);
+    connect(waitTimer, &QTimer::timeout, this, &MainWindow::onWaitTimerTickHost,
+            Qt::UniqueConnection);
     waitTimer->start(1000);
 }
 
@@ -319,24 +336,10 @@ void MainWindow::handleConfirmJoin() {
 
     if (!waitTimer) {
         waitTimer = new QTimer(this);
-        connect(
-                waitTimer, &QTimer::timeout, this,
-                [this]() {
-                    if (inFlight)
-                        return;
-                    inFlight = true;
-                    try {
-                        protocol.sendListState();
-                        auto v = protocol.receiveRoomList();
-                        if (!v.empty() && v[0] == std::string("started")) {
-                            game_started = true;
-                            this->close();
-                        }
-                    } catch (...) {}
-                    inFlight = false;
-                },
-                Qt::UniqueConnection);
     }
+    QObject::disconnect(waitTimer, nullptr, this, nullptr);
+    connect(waitTimer, &QTimer::timeout, this, &MainWindow::onWaitTimerTickJoin,
+            Qt::UniqueConnection);
     waitTimer->start(1000);
 
     ui->btnStartGame->setVisible(false);

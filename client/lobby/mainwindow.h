@@ -63,5 +63,7 @@ private:
     void goToPage(QWidget* page);
     void updateCarImage();
     void connectToServer();  // función privada que usará el botón
+    void onWaitTimerTickHost();
+    void onWaitTimerTickJoin();
 };
 #endif  // MAINWINDOW_H
