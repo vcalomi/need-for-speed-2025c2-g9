@@ -1,14 +1,16 @@
+#include <utility>
 #ifndef COMMAND_DISPATCHER_H
 #define COMMAND_DISPATCHER_H
 
-#include <map>
 #include <functional>
+#include <map>
 
 #include "../common/common_codes.h"
 
 class CommandDispatcher {
 private:
     std::map<ActionCode, std::function<void()>> handlers;
+
 public:
     CommandDispatcher() = default;
 
@@ -18,7 +20,8 @@ public:
 
     bool dispatch(ActionCode code) {
         auto it = handlers.find(code);
-        if (it == handlers.end()) return false;
+        if (it == handlers.end())
+            return false;
         it->second();
         return true;
     }

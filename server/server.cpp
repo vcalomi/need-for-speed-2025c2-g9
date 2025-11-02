@@ -4,10 +4,7 @@
 
 #include "../common/queue.h"
 
-Server::Server(const std::string& port):
-        gameLobby(),
-        acceptor(port, gameLobby),
-        inputHandler() {}
+Server::Server(const std::string& port): gameLobby(), acceptor(port, gameLobby), inputHandler() {}
 
 int Server::run() {
     try {

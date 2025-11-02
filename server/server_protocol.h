@@ -1,16 +1,16 @@
 #ifndef SERVER_PROTOCOL_H
 #define SERVER_PROTOCOL_H
 
-#include <string>
-#include <vector>
 #include <map>
 #include <memory>
+#include <string>
+#include <vector>
 
-#include "../common/common_protocol.h"
-#include "../common/socket.h"
-#include "../common/car_config.h"
 #include "../common/Dto/dto.h"
+#include "../common/car_config.h"
+#include "../common/common_protocol.h"
 #include "../common/serializer/serializer.h"
+#include "../common/socket.h"
 
 class ServerProtocol {
 private:

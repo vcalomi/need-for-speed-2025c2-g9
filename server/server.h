@@ -6,8 +6,8 @@
 #include "../common/queue.h"
 
 #include "acceptor.h"
-#include "server_input_handler.h"
 #include "game_lobby.h"
+#include "server_input_handler.h"
 
 class Server {
 private:

@@ -1,7 +1,10 @@
 #include "vehicle_serializer.h"
-#include <netinet/in.h>
+
 #include <cstring>
 #include <memory>
+#include <vector>
+
+#include <netinet/in.h>
 
 std::vector<uint8_t> VehicleSerializer::serialize(const Dto& dto) const {
     const VehicleDto& vehicleDto = static_cast<const VehicleDto&>(dto);
@@ -25,7 +28,7 @@ std::vector<uint8_t> VehicleSerializer::serialize(const Dto& dto) const {
 
 std::shared_ptr<Dto> VehicleSerializer::deserialize(const std::vector<uint8_t>& buffer) const {
     size_t pos = 0;
-    
+
     auto readFloat = [&]() {
         uint32_t value;
         memcpy(&value, &buffer[pos], sizeof(value));

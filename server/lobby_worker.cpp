@@ -5,12 +5,14 @@
 
 #include "../common/common_codes.h"
 
-LobbyWorker::LobbyWorker(ServerProtocol& protocol,
-                         GameLobby& lobby,
-                         int clientId,
+LobbyWorker::LobbyWorker(ServerProtocol& protocol, GameLobby& lobby, int clientId,
                          Queue<std::shared_ptr<Dto>>& senderQueue,
-                         std::function<void()> onStartGame)
-    : protocol(protocol), lobby(lobby), clientId(clientId), senderQueue(senderQueue), onStartGame(std::move(onStartGame)) {
+                         std::function<void()> onStartGame):
+        protocol(protocol),
+        lobby(lobby),
+        clientId(clientId),
+        senderQueue(senderQueue),
+        onStartGame(std::move(onStartGame)) {
     initHandlers();
 }
 
@@ -26,14 +28,14 @@ void LobbyWorker::run() {
 }
 
 void LobbyWorker::initHandlers() {
-    dispatcher.registerHandler(ActionCode::LIST_ROOMS, [this]{ handleListRooms(); });
-    dispatcher.registerHandler(ActionCode::CREATE_ROOM, [this]{ handleCreateRoom(); });
-    dispatcher.registerHandler(ActionCode::JOIN_ROOM, [this]{ handleJoinRoom(); });
-    dispatcher.registerHandler(ActionCode::CHOOSE_CAR, [this]{ handleChooseCar(); });
-    dispatcher.registerHandler(ActionCode::SEND_USERNAME, [this]{ handleSendUsername(); });
-    dispatcher.registerHandler(ActionCode::START_GAME, [this]{ handleStartGame(); });
-    dispatcher.registerHandler(ActionCode::LIST_PLAYERS, [this]{ handleListPlayers(); });
-    dispatcher.registerHandler(ActionCode::LIST_STATE, [this]{ handleListState(); });
+    dispatcher.registerHandler(ActionCode::LIST_ROOMS, [this] { handleListRooms(); });
+    dispatcher.registerHandler(ActionCode::CREATE_ROOM, [this] { handleCreateRoom(); });
+    dispatcher.registerHandler(ActionCode::JOIN_ROOM, [this] { handleJoinRoom(); });
+    dispatcher.registerHandler(ActionCode::CHOOSE_CAR, [this] { handleChooseCar(); });
+    dispatcher.registerHandler(ActionCode::SEND_USERNAME, [this] { handleSendUsername(); });
+    dispatcher.registerHandler(ActionCode::START_GAME, [this] { handleStartGame(); });
+    dispatcher.registerHandler(ActionCode::LIST_PLAYERS, [this] { handleListPlayers(); });
+    dispatcher.registerHandler(ActionCode::LIST_STATE, [this] { handleListState(); });
 }
 
 void LobbyWorker::handleListRooms() {
@@ -62,7 +64,8 @@ void LobbyWorker::handleJoinRoom() {
 
 void LobbyWorker::handleStartGame() {
     if (lobby.startGameByClientId(clientId)) {
-        if (onStartGame) onStartGame();
+        if (onStartGame)
+            onStartGame();
         stop();
     } else {
         protocol.sendMsg({ActionCode::SEND_ERROR_MSG});
@@ -92,5 +95,6 @@ void LobbyWorker::handleListPlayers() {
 
 void LobbyWorker::handleListState() {
     bool started = lobby.isGameStartedByClient(clientId);
-    protocol.sendRoomList({ started ? std::string("started") : std::string("waiting") });
+    protocol.sendRoomList({started ? std::string("started") : std::string("waiting")});
 }
+#include <string>

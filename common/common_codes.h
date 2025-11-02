@@ -11,7 +11,7 @@ enum class ActionCode : uint8_t {
     JOIN_ROOM = 0x04,
     JOIN_OK = 0x5,
     LIST_ROOMS = 0x06,
-    
+
     // Comandos de Sala
     CHOOSE_CAR = 0x07,
     CHOOSE_CAR_OK = 0x08,

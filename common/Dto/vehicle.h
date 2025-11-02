@@ -2,7 +2,7 @@
 #define VEHICLE_DTO_H
 #include "dto.h"
 
-class VehicleDto : public Dto {
+class VehicleDto: public Dto {
 public:
     uint8_t id;
     // VehicleType type;

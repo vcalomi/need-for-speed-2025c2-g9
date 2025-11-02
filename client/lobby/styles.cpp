@@ -1,10 +1,11 @@
 #include "styles.h"
-#include <QFontDatabase>
+
 #include <QApplication>
-#include <QGraphicsDropShadowEffect>
-#include <QPushButton>
-#include <QLineEdit>
 #include <QComboBox>
+#include <QFontDatabase>
+#include <QGraphicsDropShadowEffect>
+#include <QLineEdit>
+#include <QPushButton>
 
 void UIStyles::applyGlobalStyle() {
     // Fuente global
@@ -57,18 +58,16 @@ void UIStyles::applyGlobalStyle() {
 
     // --- Aplicar sombras globales a ciertos widgets ---
     const QList<QWidget*> widgets = qApp->allWidgets();
-    for (QWidget *w : widgets) {
+    for (QWidget* w: widgets) {
         // Sombra para botones
         if (auto btn = qobject_cast<QPushButton*>(w)) {
-            auto *shadow = new QGraphicsDropShadowEffect(btn);
+            auto* shadow = new QGraphicsDropShadowEffect(btn);
             shadow->setBlurRadius(20);
             shadow->setOffset(0, 0);
             shadow->setColor(QColor("#ff6600"));
             btn->setGraphicsEffect(shadow);
-        }
-        // Sombra para campos de texto
-        else if (auto edit = qobject_cast<QLineEdit*>(w)) {
-            auto *shadow = new QGraphicsDropShadowEffect(edit);
+            auto* shadow = new QGraphicsDropShadowEffect(edit);
+        } else if (auto edit = qobject_cast<QLineEdit*>(w)) {  // Sombra para campos de texto
             shadow->setBlurRadius(15);
             shadow->setOffset(0, 0);
             shadow->setColor(QColor("#ff6600"));

@@ -1,13 +1,16 @@
 #include "client_protocol.h"
 
+#include <stdexcept>
+
+#include <arpa/inet.h>
+
 #include "../common/common_codes.h"
 #include "../common/serializer/vehicle_serializer.h"
-#include <arpa/inet.h>
-#include <stdexcept>
 
 ClientProtocol::ClientProtocol(const std::string& hostname, const std::string& port):
         socket(hostname.c_str(), port.c_str()), protocol(), serializers() {
-    serializers[static_cast<uint8_t>(ActionCode::SEND_CARS)] = std::make_unique<VehicleSerializer>();
+    serializers[static_cast<uint8_t>(ActionCode::SEND_CARS)] =
+            std::make_unique<VehicleSerializer>();
 }
 
 void ClientProtocol::sendUsername(const std::string& username) {
@@ -26,26 +29,18 @@ void ClientProtocol::sendJoinRoom(const std::string& roomName) {
     protocol.sendString(socket, roomName);
 }
 
-void ClientProtocol::sendListRooms() {
-    protocol.sendAction(socket, ActionCode::LIST_ROOMS);
-}
+void ClientProtocol::sendListRooms() { protocol.sendAction(socket, ActionCode::LIST_ROOMS); }
 
-void ClientProtocol::sendStartGame() {
-    protocol.sendAction(socket, ActionCode::START_GAME);
-}
+void ClientProtocol::sendStartGame() { protocol.sendAction(socket, ActionCode::START_GAME); }
 
 void ClientProtocol::sendChooseCar(const std::string& carType) {
     protocol.sendAction(socket, ActionCode::CHOOSE_CAR);
     protocol.sendString(socket, carType);
 }
 
-void ClientProtocol::sendListPlayers() {
-    protocol.sendAction(socket, ActionCode::LIST_PLAYERS);
-}
+void ClientProtocol::sendListPlayers() { protocol.sendAction(socket, ActionCode::LIST_PLAYERS); }
 
-void ClientProtocol::sendListState() {
-    protocol.sendAction(socket, ActionCode::LIST_STATE);
-}
+void ClientProtocol::sendListState() { protocol.sendAction(socket, ActionCode::LIST_STATE); }
 
 std::vector<std::string> ClientProtocol::receiveRoomList() {
     uint16_t count = protocol.receiveUint16(socket);
@@ -57,9 +52,7 @@ std::vector<std::string> ClientProtocol::receiveRoomList() {
     return rooms;
 }
 
-ActionCode ClientProtocol::receiveAction() {
-    return protocol.receiveAction(socket);
-}
+ActionCode ClientProtocol::receiveAction() { return protocol.receiveAction(socket); }
 
 std::shared_ptr<Dto> ClientProtocol::receiveDTO() {
     int8_t dtoCode = uint8_t(receiveActionCode());

@@ -1,13 +1,14 @@
+#include <memory>
 #ifndef SENDER_H
 #define SENDER_H
 
 #include <vector>
 
+#include "../common/Dto/dto.h"
 #include "../common/queue.h"
 #include "../common/socket.h"
 #include "../common/socket_closed.h"
 #include "../common/thread.h"
-#include "../common/Dto/dto.h"
 
 #include "server_protocol.h"
 

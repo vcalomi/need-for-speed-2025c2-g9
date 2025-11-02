@@ -1,13 +1,14 @@
 #ifndef GAME_LOBBY_H
 #define GAME_LOBBY_H
 
-#include <vector>
-#include <map>
 #include <functional>
+#include <map>
+#include <vector>
 
-#include "../common/queue.h"
-#include "game_room.h"
 #include "../common/Dto/dto.h"
+#include "../common/queue.h"
+
+#include "game_room.h"
 
 /*
     (Monitor) Gestiona las partidas
@@ -23,11 +24,13 @@ private:
     std::map<std::string, GameRoom*> activeGames;
     // clientId -> callback a invocar cuando la partida de su sala se inicia
     std::map<int, std::function<void()>> startNotifiers;
-    
-    public:
+
+public:
     GameLobby();
-    bool createGameRoom(const std::string& roomName, int hostId, Queue<std::shared_ptr<Dto>>& hostQueue, int maxPlayers = 8);
-    bool joinGameRoom(const std::string& roomName, int clientId, Queue<std::shared_ptr<Dto>>& clientQueue);
+    bool createGameRoom(const std::string& roomName, int hostId,
+                        Queue<std::shared_ptr<Dto>>& hostQueue, int maxPlayers = 8);
+    bool joinGameRoom(const std::string& roomName, int clientId,
+                      Queue<std::shared_ptr<Dto>>& clientQueue);
     std::vector<std::string> getAvailableRooms();
     bool startGameByClientId(int clientId);
     Queue<std::shared_ptr<Dto>>& getGameQueueForClient(int clientId);
@@ -41,3 +44,5 @@ private:
 };
 
 #endif
+#include <memory>
+#include <string>

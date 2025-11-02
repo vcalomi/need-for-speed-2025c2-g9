@@ -7,6 +7,7 @@
 #include "../common/queue.h"
 #include "../common/socket.h"
 #include "../common/thread.h"
+
 #include "receiver.h"
 
 ClientHandler::ClientHandler(Socket socket, GameLobby& lobby, int clientId):
@@ -18,21 +19,15 @@ ClientHandler::ClientHandler(Socket socket, GameLobby& lobby, int clientId):
         sender(protocol, senderQueue),
         state(ClientState::IN_LOBBY),
         clientId(clientId),
-        lobbyWorker(
-        protocol,
-        gameLobby,
-        clientId,
-        senderQueue,
-        [this]{
-            startThreads();
-        }
-        
-    ) {
-        gameLobby.registerStartNotifier(clientId, [this] {
-        std::cout << "ClientHandler: Starting game for client " << this->clientId << " via StartNotifier" << std::endl;
+        lobbyWorker(protocol, gameLobby, clientId, senderQueue, [this] { startThreads(); }
+
+        ) {
+    gameLobby.registerStartNotifier(clientId, [this] {
+        std::cout << "ClientHandler: Starting game for client " << this->clientId
+                  << " via StartNotifier" << std::endl;
         startThreads();
-        });
-    }
+    });
+}
 
 void ClientHandler::startThreads() {
     std::cout << "ClientHandler: Starting game for client " << this->clientId << std::endl;
@@ -49,19 +44,24 @@ void ClientHandler::start() {
 }
 
 void ClientHandler::join() {
-    if (lobbyWorker.is_alive()) lobbyWorker.join();
-    if (receiver) receiver->join();
-    if (sender.is_alive()) sender.join();
+    if (lobbyWorker.is_alive())
+        lobbyWorker.join();
+    if (receiver)
+        receiver->join();
+    if (sender.is_alive())
+        sender.join();
 }
 
 void ClientHandler::stop() {
     keep_running = false;
-    if (lobbyWorker.is_alive()) lobbyWorker.stop();
+    if (lobbyWorker.is_alive())
+        lobbyWorker.stop();
     try {
         peer.close();
     } catch (const SocketClosed& e) {}
     senderQueue.close();
-    if (receiver) receiver->stop();
+    if (receiver)
+        receiver->stop();
     sender.stop();
 }
 
@@ -70,4 +70,5 @@ bool ClientHandler::is_alive() const {
     return lobbyWorker.is_alive() || recvAlive || sender.is_alive();
 }
 
-ClientHandler::~ClientHandler() { }
+ClientHandler::~ClientHandler() {}
+#include <memory>

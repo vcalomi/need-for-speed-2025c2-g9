@@ -9,4 +9,4 @@ public:
     static void applyGlobalStyle();
 };
 
-#endif // UI_STYLES_H
+#endif  // UI_STYLES_H

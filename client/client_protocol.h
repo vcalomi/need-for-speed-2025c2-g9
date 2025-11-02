@@ -1,16 +1,16 @@
 #ifndef CLIENT_PROTOCOL_H
 #define CLIENT_PROTOCOL_H
 
-#include <string>
-#include <vector>
 #include <map>
 #include <memory>
+#include <string>
+#include <vector>
 
-#include "../common/common_protocol.h"
-#include "../common/socket.h"
-#include "../common/common_codes.h"
 #include "../common/Dto/vehicle.h"
+#include "../common/common_codes.h"
+#include "../common/common_protocol.h"
 #include "../common/serializer/serializer.h"
+#include "../common/socket.h"
 
 class ClientProtocol {
 private:

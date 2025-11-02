@@ -8,6 +8,7 @@
 #include "../common/common_codes.h"
 #include "../common/queue.h"
 #include "../common/thread.h"
+
 #include "game_room.h"
 
 /*
@@ -21,11 +22,11 @@ private:
     Queue<Dto>& gameLoopQueue;
 
 public:
-    GameLoop(Queue<Dto>& gameLoopQueue);
+    explicit GameLoop(Queue<Dto>& gameLoopQueue);
     void run() override;
     void processCommands();
     void simulateGame();
-    
+
     // logica del juego
     // checkpoints
     ~GameLoop();

@@ -1,15 +1,14 @@
 #ifndef DTO_H
 #define DTO_H
 
+#include <cstdint>
 #include <iostream>
 #include <string>
 #include <vector>
-#include <cstdint>
 
 const char VACIO[] = "";
 
-class Dto
-{
+class Dto {
 private:
     uint8_t code;
     uint8_t id_cliente;

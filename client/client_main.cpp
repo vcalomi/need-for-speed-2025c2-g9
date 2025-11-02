@@ -1,6 +1,8 @@
-#include <iostream>
 #include <QApplication>
+#include <iostream>
+
 #include "lobby/mainwindow.h"
+
 #include "client.h"
 
 #define NUMBER_ARG 3
@@ -15,13 +17,14 @@ int main(int argc, char* argv[]) {
     }
     std::string hostname = std::string(argv[ARG_INDEX_HOSTNAME]);
     std::string port = std::string(argv[ARG_INDEX_PORT]);
-    
+
     try {
         QApplication app(argc, argv);
-        
+
         // 1. Ejecutar Lobby
         bool game_started = false;
-        MainWindow lobby(QString::fromStdString(hostname), QString::fromStdString(port), std::ref(game_started));
+        MainWindow lobby(QString::fromStdString(hostname), QString::fromStdString(port),
+                         std::ref(game_started));
         lobby.show();
         app.exec();
 

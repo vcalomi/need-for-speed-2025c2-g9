@@ -20,8 +20,7 @@ void Acceptor::run() {
                 break;
             }
             int clientId = nextClientId++;
-            ClientHandler* client =
-                    new ClientHandler(std::move(socket), gameLobby, clientId);
+            ClientHandler* client = new ClientHandler(std::move(socket), gameLobby, clientId);
             reap();
             clients.push_back(client);
             client->start();

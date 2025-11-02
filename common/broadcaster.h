@@ -1,8 +1,10 @@
+#include <memory>
 #ifndef BROADCASTER_H
 #define BROADCASTER_H
 
-#include <vector>
 #include <mutex>
+#include <vector>
+
 #include "../common/queue.h"
 #include "Dto/dto.h"
 

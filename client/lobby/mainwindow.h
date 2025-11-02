@@ -1,12 +1,14 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
-#include "player_info.h"
-#include "car.h"
-#include "../client_protocol.h"
-#include <memory>
 #include <QMainWindow>
 #include <QVector>
+#include <memory>
+
+#include "../client_protocol.h"
+
+#include "car.h"
+#include "player_info.h"
 
 
 QT_BEGIN_NAMESPACE
@@ -19,7 +21,8 @@ class MainWindow: public QMainWindow {
     Q_OBJECT
 
 public:
-    MainWindow(const QString& host, const QString& port, bool& game_started_ref, QWidget* parent = nullptr);
+    MainWindow(const QString& host, const QString& port, bool& game_started_ref,
+               QWidget* parent = nullptr);
     ~MainWindow();
 
 private slots:
@@ -38,26 +41,25 @@ private slots:
 private:
     Ui::Lobby* ui;
     PlayerInfo player;
-    std::unique_ptr<ClientProtocol> protocol; // conexión TCP al servidor
+    std::unique_ptr<ClientProtocol> protocol;  // conexión TCP al servidor
     QString defaultHost;
     QString defaultPort;
     bool& game_started;
     QTimer* waitTimer;
     QTimer* refreshTimer;
 
-    static constexpr int PAGE_SIZE = 10; // cantidad de salas por página
+    static constexpr int PAGE_SIZE = 10;  // cantidad de salas por página
     int currentPage = 0;
     QStringList allRooms;
     QVector<Car> cars;
     int currentCarIndex = 0;
-    bool inFlight = false; // serializa lecturas del protocolo en wait
+    bool inFlight = false;  // serializa lecturas del protocolo en wait
 
     QString generateRoomCode();
     void loadRooms();
     void showPage(int page);
-    void goToPage(QWidget *page);
+    void goToPage(QWidget* page);
     void updateCarImage();
-    void connectToServer(); // función privada que usará el botón
-
+    void connectToServer();  // función privada que usará el botón
 };
 #endif  // MAINWINDOW_H

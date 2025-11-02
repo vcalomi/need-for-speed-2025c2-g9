@@ -1,27 +1,24 @@
+#include <memory>
 #ifndef GAME_ROOM_H
 #define GAME_ROOM_H
 
+#include <atomic>
 #include <map>
 #include <string>
 #include <vector>
 
-#include "../common/queue.h"
-#include <atomic>
-#include "gameloop.h"
-#include "../common/client_command.h"
 #include "../common/Dto/dto.h"
 #include "../common/broadcaster.h"
+#include "../common/client_command.h"
+#include "../common/queue.h"
+
+#include "gameloop.h"
 
 /*
     Maneja el estado y los jugadores de cada sala
 */
 
-enum class RoomState {
-    WAITING_FOR_PLAYERS,
-    CHOOSING_CARS,
-    IN_RACE,
-    RACE_FINISHED
-};
+enum class RoomState { WAITING_FOR_PLAYERS, CHOOSING_CARS, IN_RACE, RACE_FINISHED };
 
 class GameRoom {
 private:
@@ -41,7 +38,7 @@ private:
 
 public:
     GameRoom(const std::string& roomName, int hostId, int maxPlayers);
-    
+
     // gestión de jugadores
     bool addPlayer(int clientId, Queue<std::shared_ptr<Dto>>& senderQueue);
     void removePlayer(int clientId);

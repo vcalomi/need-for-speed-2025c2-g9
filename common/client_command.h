@@ -2,8 +2,9 @@
 #define CLIENT_COMMAND
 
 #include <string>
-#include "common_codes.h"
+
 #include "car_config.h"
+#include "common_codes.h"
 
 struct ClientCommand {
     ActionCode action;

@@ -1,27 +1,33 @@
 #include "mainwindow.h"
-#include "ui_mainwindow.h"
-#include "player_info.h"
 
-#include "styles.h"
-#include "navigation.h"
-#include <QtMath>
+#include <QGraphicsDropShadowEffect>
 #include <QMessageBox>
+#include <QRandomGenerator>
 #include <QScreen>
 #include <QStandardItem>
 #include <QStandardItemModel>
-#include <QStandardItem>
-#include <QGraphicsDropShadowEffect>
-#include <QRandomGenerator>
 #include <QTimer>
+#include <QtMath>
+
+#include "navigation.h"
+#include "player_info.h"
 #include "room_manager.h"
+#include "styles.h"
+#include "ui_mainwindow.h"
 
 
-MainWindow::MainWindow(const QString& host, const QString& port, bool& game_started_ref, QWidget* parent)
-        : QMainWindow(parent), ui(new Ui::Lobby), defaultHost(host), defaultPort(port), game_started(game_started_ref), waitTimer(nullptr), refreshTimer(nullptr) {
+MainWindow::MainWindow(const QString& host, const QString& port, bool& game_started_ref,
+                       QWidget* parent):
+        QMainWindow(parent),
+        ui(new Ui::Lobby),
+        defaultHost(host),
+        defaultPort(port),
+        game_started(game_started_ref),
+        waitTimer(nullptr),
+        refreshTimer(nullptr) {
     ui->setupUi(this);
     game_started = false;
-    cars = {
-            Car(CarType::FIAT_600,    "Fiat 600",    ":/fiat_600.png"),
+    cars = {Car(CarType::FIAT_600, "Fiat 600", ":/fiat_600.png"),
             Car(CarType::FERRARI_F40, "Ferrari F40", ":/ferrari.png"),
             Car(CarType::PORSCHE_911, "Porsche 911", ":/porsche.png"),
             Car(CarType::SEDAN, "Sedan", ":/sedan.png"),
@@ -41,10 +47,12 @@ MainWindow::MainWindow(const QString& host, const QString& port, bool& game_star
 
         try {
             protocol = std::make_unique<ClientProtocol>(hostname.toStdString(), port.toStdString());
-            QMessageBox::information(this, "Connected", QString("Connected to %1:%2").arg(hostname, port));
+            QMessageBox::information(this, "Connected",
+                                     QString("Connected to %1:%2").arg(hostname, port));
             Navigation::goToPage(ui->page_username, ui->stackedWidget, this);
         } catch (const std::exception& e) {
-            QMessageBox::critical(this, "Connection failed", QString("Unable to connect: %1").arg(e.what()));
+            QMessageBox::critical(this, "Connection failed",
+                                  QString("Unable to connect: %1").arg(e.what()));
         }
     });
 
@@ -126,9 +134,8 @@ MainWindow::MainWindow(const QString& host, const QString& port, bool& game_star
         }
         ui->stackedWidget->setCurrentWidget(ui->page_wait);
     });
-    connect(ui->btnBackToLobby, &QPushButton::clicked, this, [this]() {
-        ui->stackedWidget->setCurrentWidget(ui->page_wait);
-    });
+    connect(ui->btnBackToLobby, &QPushButton::clicked, this,
+            [this]() { ui->stackedWidget->setCurrentWidget(ui->page_wait); });
     refreshTimer = new QTimer(this);
     connect(refreshTimer, &QTimer::timeout, this, &MainWindow::handleRefreshPlayers);
 
@@ -145,9 +152,9 @@ void MainWindow::showPage(int page) {
             auto rooms = protocol->receiveRoomList();
             if (!rooms.empty()) {
                 allRooms.clear();
-                for (const auto& r : rooms) allRooms << QString::fromStdString(r);
+                for (const auto& r: rooms) allRooms << QString::fromStdString(r);
             }
-        } catch (const std::exception& e) { }
+        } catch (const std::exception& e) {}
     }
     int totalPages = qMax(1, qCeil(allRooms.size() / static_cast<double>(PAGE_SIZE)));
     currentPage = qBound(0, page, totalPages - 1);
@@ -261,19 +268,23 @@ void MainWindow::handleContinueToWait() {
 
     if (!waitTimer) {
         waitTimer = new QTimer(this);
-        connect(waitTimer, &QTimer::timeout, this, [this]() {
-            if (!protocol || inFlight) return;
-            inFlight = true;
-            try {
-                protocol->sendListState();
-                auto v = protocol->receiveRoomList();
-                if (!v.empty() && v[0] == std::string("started")) {
-                    game_started = true;
-                    this->close();
-                }
-            } catch (...) { }
-            inFlight = false;
-        }, Qt::UniqueConnection);
+        connect(
+                waitTimer, &QTimer::timeout, this,
+                [this]() {
+                    if (!protocol || inFlight)
+                        return;
+                    inFlight = true;
+                    try {
+                        protocol->sendListState();
+                        auto v = protocol->receiveRoomList();
+                        if (!v.empty() && v[0] == std::string("started")) {
+                            game_started = true;
+                            this->close();
+                        }
+                    } catch (...) {}
+                    inFlight = false;
+                },
+                Qt::UniqueConnection);
     }
     waitTimer->start(1000);
 }
@@ -308,19 +319,23 @@ void MainWindow::handleConfirmJoin() {
 
     if (!waitTimer) {
         waitTimer = new QTimer(this);
-        connect(waitTimer, &QTimer::timeout, this, [this]() {
-            if (!protocol || inFlight) return;
-            inFlight = true;
-            try {
-                protocol->sendListState();
-                auto v = protocol->receiveRoomList();
-                if (!v.empty() && v[0] == std::string("started")) {
-                    game_started = true;
-                    this->close();
-                }
-            } catch (...) { }
-            inFlight = false;
-        }, Qt::UniqueConnection);
+        connect(
+                waitTimer, &QTimer::timeout, this,
+                [this]() {
+                    if (!protocol || inFlight)
+                        return;
+                    inFlight = true;
+                    try {
+                        protocol->sendListState();
+                        auto v = protocol->receiveRoomList();
+                        if (!v.empty() && v[0] == std::string("started")) {
+                            game_started = true;
+                            this->close();
+                        }
+                    } catch (...) {}
+                    inFlight = false;
+                },
+                Qt::UniqueConnection);
     }
     waitTimer->start(1000);
 
@@ -334,8 +349,10 @@ void MainWindow::updateLobbyStatus() {
 }
 
 void MainWindow::handleRefreshPlayers() {
-    if (!protocol) return;
-    if (inFlight) return;
+    if (!protocol)
+        return;
+    if (inFlight)
+        return;
     inFlight = true;
     try {
         protocol->sendListPlayers();
@@ -347,13 +364,14 @@ void MainWindow::handleRefreshPlayers() {
             player.maxPlayers = maxPlayersStr.toUInt();
             players.erase(players.begin());
         }
-        for (const auto& p : players) {
+        for (const auto& p: players) {
             ui->listPlayers->addItem(QString::fromStdString(p));
         }
         player.currentPlayers = static_cast<unsigned>(players.size());
         updateLobbyStatus();
     } catch (const std::exception& e) {
-        QMessageBox::warning(this, "Refresh Players", QString("Failed to refresh: %1").arg(e.what()));
+        QMessageBox::warning(this, "Refresh Players",
+                             QString("Failed to refresh: %1").arg(e.what()));
     }
     inFlight = false;
 }
@@ -379,3 +397,4 @@ void MainWindow::handleStartGame() {
 }
 
 MainWindow::~MainWindow() { delete ui; }
+#include <string>

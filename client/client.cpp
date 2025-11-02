@@ -1,13 +1,14 @@
 #include "client.h"
+
 #include <iostream>
 // #include <QApplication>
 #include <sstream>
 #include <string>
 
 Client::Client(const std::string& hostname, const std::string& port):
-        clientProtocol(hostname, port), 
-        connected(true), 
-        recvQueue(), 
+        clientProtocol(hostname, port),
+        connected(true),
+        recvQueue(),
         senderQueue(),
         sender(clientProtocol, senderQueue),
         receiver(clientProtocol, recvQueue) {}
