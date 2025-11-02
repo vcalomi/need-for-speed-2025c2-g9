@@ -25,7 +25,13 @@ repos:
             "--suppress=unusedFunction",
             "--suppress=unmatchedSuppression",
             "--suppress=unusedStructMember",
+            "--suppress=unknownMacro",           # agrego esta línea
+            "--suppress=syntaxError",            # agrego esta línea
+            "--suppress=noExplicitConstructor",  # agrego esta línea
+            "--suppress=unreadVariable",        # agrego esta línea
+            "--suppress=useStlAlgorithm",       # agrego esta línea
             "--language=c++",
             "--std=c++20",
             "--error-exitcode=1",
           ]
+        

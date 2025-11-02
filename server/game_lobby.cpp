@@ -75,7 +75,7 @@ bool GameLobby::startGameByClientId(int clientId) {
         }
     }
 
-    for (auto& cb: callbacks) {
+    for (const auto& cb: callbacks) {
         if (cb)
             cb();
     }
@@ -103,7 +103,7 @@ Queue<std::shared_ptr<Dto>>& GameLobby::getGameQueueForClient(int clientId) {
 }
 
 GameLobby::~GameLobby() {
-    for (auto& pair: activeGames) {
+    for (const auto& pair: activeGames) {
         delete pair.second;
     }
 }
