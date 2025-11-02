@@ -65,7 +65,7 @@ bool GameRoom::chooseCar(int clientId, const CarConfig& car) {
 // }
 
 bool GameRoom::canJoin() const {
-    return state == RoomState::WAITING_FOR_PLAYERS && players.size() < maxPlayers;
+    return state == RoomState::WAITING_FOR_PLAYERS && static_cast<int>(players.size()) < maxPlayers;
 }
 
 bool GameRoom::isHost(int clientId) const { return hostId == clientId; }

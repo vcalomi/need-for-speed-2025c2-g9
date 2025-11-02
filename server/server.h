@@ -6,7 +6,6 @@
 #include "../common/queue.h"
 
 #include "acceptor.h"
-#include "game_lobby.h"
 #include "game_monitor.h"
 #include "server_input_handler.h"
 
