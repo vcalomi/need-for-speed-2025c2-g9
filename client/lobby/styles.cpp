@@ -61,17 +61,17 @@ void UIStyles::applyGlobalStyle() {
     for (QWidget* w: widgets) {
         // Sombra para botones
         if (auto btn = qobject_cast<QPushButton*>(w)) {
-            auto* shadow = new QGraphicsDropShadowEffect(btn);
-            shadow->setBlurRadius(20);
-            shadow->setOffset(0, 0);
-            shadow->setColor(QColor("#ff6600"));
-            btn->setGraphicsEffect(shadow);
-            auto* shadow = new QGraphicsDropShadowEffect(edit);
-        } else if (auto edit = qobject_cast<QLineEdit*>(w)) {  // Sombra para campos de texto
-            shadow->setBlurRadius(15);
-            shadow->setOffset(0, 0);
-            shadow->setColor(QColor("#ff6600"));
-            edit->setGraphicsEffect(shadow);
+            auto* btnShadow = new QGraphicsDropShadowEffect(btn);
+            btnShadow->setBlurRadius(20);
+            btnShadow->setOffset(0, 0);
+            btnShadow->setColor(QColor("#ff6600"));
+            btn->setGraphicsEffect(btnShadow);
+        } else if (auto edit = qobject_cast<QLineEdit*>(w)) {
+            auto* editShadow = new QGraphicsDropShadowEffect(edit);
+            editShadow->setBlurRadius(15);
+            editShadow->setOffset(0, 0);
+            editShadow->setColor(QColor("#ff6600"));
+            edit->setGraphicsEffect(editShadow);
         }
     }
 }

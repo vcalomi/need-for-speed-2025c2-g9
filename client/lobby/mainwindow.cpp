@@ -1,5 +1,7 @@
 #include "mainwindow.h"
 
+#include <QDir>
+#include <QFile>
 #include <QGraphicsDropShadowEffect>
 #include <QMessageBox>
 #include <QRandomGenerator>
@@ -8,6 +10,7 @@
 #include <QStandardItemModel>
 #include <QTimer>
 #include <QtMath>
+#include <string>
 
 #include "navigation.h"
 #include "player_info.h"
@@ -26,6 +29,19 @@ MainWindow::MainWindow(const QString& host, const QString& port, bool& game_star
         waitTimer(nullptr),
         refreshTimer(nullptr) {
     ui->setupUi(this);
+
+    // Música de fondo
+    setupBackgroundMusic();
+
+    connect(backgroundMusic, &QMediaPlayer::mediaStatusChanged,
+            [this](QMediaPlayer::MediaStatus status) {
+                if (status == QMediaPlayer::EndOfMedia) {
+                    backgroundMusic->play();
+                }
+            });
+
+    backgroundMusic->play();
+
     game_started = false;
     cars = {Car(CarType::FIAT_600, "Fiat 600", ":/fiat_600.png"),
             Car(CarType::FERRARI_F40, "Ferrari F40", ":/ferrari.png"),
@@ -396,5 +412,33 @@ void MainWindow::handleStartGame() {
     this->close();
 }
 
-MainWindow::~MainWindow() { delete ui; }
-#include <string>
+void MainWindow::setupBackgroundMusic() {
+    backgroundMusic = new QMediaPlayer(this);
+    audioOutput = new QAudioOutput(this);
+    backgroundMusic->setAudioOutput(audioOutput);
+
+    // USA LA RUTA LOCAL QUE SÍ FUNCIONÓ
+    QString localPath =
+            "/home/mora/taller/need-for-speed-2025c2-g9/client/lobby/assets/music/derezzed.mp3";
+    QUrl musicUrl = QUrl::fromLocalFile(localPath);
+    backgroundMusic->setSource(musicUrl);
+
+    audioOutput->setVolume(30);  // Volumen bajo
+
+    connect(backgroundMusic, &QMediaPlayer::mediaStatusChanged,
+            [this](QMediaPlayer::MediaStatus status) {
+                if (status == QMediaPlayer::EndOfMedia) {
+                    backgroundMusic->play();  // Loop
+                }
+            });
+
+    backgroundMusic->play();
+}
+
+MainWindow::~MainWindow() {
+    // Detener música al cerrar
+    if (backgroundMusic) {
+        backgroundMusic->stop();
+    }
+    delete ui;
+}

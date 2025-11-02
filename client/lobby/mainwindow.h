@@ -1,7 +1,9 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
+#include <QAudioOutput>
 #include <QMainWindow>
+#include <QMediaPlayer>
 #include <QVector>
 #include <memory>
 
@@ -37,6 +39,7 @@ private slots:
     void showPrevRoom();
     void handleRefreshPlayers();
     void updateLobbyStatus();
+    void setupBackgroundMusic();
 
 private:
     Ui::Lobby* ui;
@@ -47,6 +50,8 @@ private:
     bool& game_started;
     QTimer* waitTimer;
     QTimer* refreshTimer;
+    QMediaPlayer* backgroundMusic;
+    QAudioOutput* audioOutput;
 
     static constexpr int PAGE_SIZE = 10;  // cantidad de salas por página
     int currentPage = 0;

@@ -4,6 +4,8 @@ set_target_properties(taller_client PROPERTIES
     AUTORCC ON
 )
 
+find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets Multimedia)
+
 target_sources(taller_client
     PRIVATE
     # .cpp files
@@ -50,4 +52,7 @@ target_sources(taller_client
     lobby/car.h
     )
 
-    target_link_libraries(taller_client PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
+  target_link_libraries(taller_client PRIVATE 
+    Qt${QT_VERSION_MAJOR}::Widgets 
+    Qt${QT_VERSION_MAJOR}::Multimedia
+)

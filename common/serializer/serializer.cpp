@@ -1,10 +1,12 @@
 #include "serializer.h"
 
 std::vector<uint8_t> Serializer::serialize(const Dto& dto) const {
+    (void)dto;  // Marcar como usado
     throw std::runtime_error("Serializer::serialize not implemented");
 }
 
 std::shared_ptr<Dto> Serializer::deserialize(const std::vector<uint8_t>& buffer) const {
+    (void)buffer;  // Marcar como usado
     throw std::runtime_error("Serializer::deserialize not implemented");
 }
 
