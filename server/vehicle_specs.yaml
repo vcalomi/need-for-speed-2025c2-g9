@@ -1,0 +1,71 @@
+
+vehicles:
+  fiat_600:
+    width_m: 10.20
+    height_m: 10.40
+    density: 1200.0
+    engine_force_N: 6500.0
+    brake_force_N: 8000.0
+    steer_torque: 5.0
+    friction: 1.0
+    restitution: 1.0
+  
+  ferrari_F40:
+    width_m: 0.04
+    height_m: 0.07
+    density: 1.0
+    engine_force_N: 0.003
+    brake_force_N: 0.001
+    steer_torque: 0.00001
+    friction: 1.0
+    restitution: 1.0
+  
+  porsche_911:
+    width_m: 1.20
+    height_m: 2.40
+    density: 1200.0
+    engine_force_N: 6500.0
+    brake_force_N: 8000.0
+    steer_torque: 5.0
+    friction: 1.0
+    restitution: 1.0
+  
+  sedan:
+    width_m: 1.20
+    height_m: 2.40
+    density: 1200.0
+    engine_force_N: 6500.0
+    brake_force_N: 8000.0
+    steer_torque: 5.0
+    friction: 1.0
+    restitution: 1.0
+  
+  jeep:
+    width_m: 1.20
+    height_m: 2.40
+    density: 1200.0
+    engine_force_N: 6500.0
+    brake_force_N: 8000.0
+    steer_torque: 5.0
+    friction: 1.0
+    restitution: 1.0
+  
+  f100:
+    width_m: 1.20
+    height_m: 2.40
+    density: 1200.0
+    engine_force_N: 6500.0
+    brake_force_N: 8000.0
+    steer_torque: 5.0
+    friction: 1.0
+    restitution: 1.0
+
+  truck:
+    width_m: 1.20
+    height_m: 2.40
+    density: 1200.0
+    engine_force_N: 6500.0
+    brake_force_N: 8000.0
+    steer_torque: 5.0
+    friction: 1.0
+    restitution: 1.0
