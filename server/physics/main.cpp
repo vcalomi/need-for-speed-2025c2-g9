@@ -54,7 +54,7 @@ int main() {
     // --- Cámara / zoom (zoom fijo = 1.0) ---
     float camX_px = 65.0f;
     float camY_px = 11.0f;
-    const float zoom = 8.0f;
+    const float zoom = 1.0f;
 
     bool running = true;
     SDL_Event e;

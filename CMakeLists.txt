@@ -168,8 +168,7 @@ if(TALLER_SERVER)
     add_executable(physics_sandbox
         #server/physics/physics_sandbox.cpp
         server/physics/main.cpp
-        server/physics/LevelCreator.cpp
-        server/physics/LevelAdministrator.cpp       # <-- AÑADIDO
+        server/physics/LevelCreator.cpp    # <-- AÑADIDO
         server/YamlParser.cpp
         server/vehicle.cpp
     )
