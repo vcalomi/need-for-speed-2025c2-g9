@@ -8,7 +8,7 @@ using json = nlohmann::json;
 ChunkGrid LevelAdministrator::loadChunk(const std::string& pathLdtkl,
                                         const std::string& layerId) const
 {
-    // 1) Abrir y parsear el .ldtkl (un level suelto)
+
     std::ifstream in(pathLdtkl);
     if (!in) throw std::runtime_error("No pude abrir: " + pathLdtkl);
     json L;

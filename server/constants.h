@@ -1,7 +1,6 @@
 #pragma once
 
-const float MIN_SPEED_STEER = 0.5f; 
-
+const float MIN_SPEED_STEER = 0.05f; 
 enum TurnDir { 
     Left = -1, 
     None = 0, 

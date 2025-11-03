@@ -7,6 +7,7 @@ Vehicle::Vehicle(b2WorldId worldId, VehicleSpec spec, Spawn spawn, int player_id
     , spawn_(spawn)
     , vehicle_id_(player_id)
 {
+
     b2BodyDef bodyDef = b2DefaultBodyDef();
     bodyDef.type = b2_dynamicBody;
     bodyDef.position = {spawn_.x, spawn_.y};
@@ -63,4 +64,31 @@ void Vehicle::getPosition(float& x, float& y, float& angle) const {
 
 b2BodyId Vehicle::get_body(){
     return this->body_;
+}
+
+void Vehicle::draw(SDL_Renderer* r, float camX_px, float camY_px, float zoom, float ppm) const {
+    // 1) esquinas locales del rectángulo (en METROS)
+    const float hx = width()  * 0.5f;
+    const float hy = height() * 0.5f;
+    const b2Vec2 local[4] = { {-hx,-hy}, {+hx,-hy}, {+hx,+hy}, {-hx,+hy} };
+
+    // 2) transformar cada esquina a MUNDO con la API de Box2D
+    SDL_FPoint scr[4];
+    for (int i = 0; i < 4; ++i) {
+        b2Vec2 w = b2Body_GetWorldPoint(body_, local[i]); // metros
+        float px = w.x * ppm;                             // a píxeles
+        float py = w.y * ppm;
+
+        scr[i].x = (px - camX_px) * zoom;                 // cámara + zoom
+        scr[i].y = (py - camY_px) * zoom;
+    }
+
+    // 3) dibujar wireframe
+    SDL_SetRenderDrawBlendMode(r, SDL_BLENDMODE_BLEND);
+    SDL_SetRenderDrawColor(r, 0, 180, 255, 220);
+    for (int i = 0; i < 4; ++i) {
+        const SDL_FPoint& A = scr[i];
+        const SDL_FPoint& B = scr[(i + 1) % 4];
+        SDL_RenderDrawLineF(r, A.x, A.y, B.x, B.y);
+    }
 }

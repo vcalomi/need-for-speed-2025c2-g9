@@ -4,6 +4,7 @@
 #include "VehicleSpec.h"
 #include "spawn.h"
 #include "constants.h"
+#include <SDL.h>
 
 class Vehicle {
 public:
@@ -16,6 +17,7 @@ public:
     b2BodyId get_body();
     float width()  const noexcept { return spec_.width_m;  }
     float height() const noexcept { return spec_.height_m; }
+    void draw(SDL_Renderer* r, float camX_px, float camY_px, float zoom, float ppm) const;
 private:
     b2WorldId   world_id_;
     VehicleSpec spec_;      

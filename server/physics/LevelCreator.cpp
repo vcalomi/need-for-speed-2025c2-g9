@@ -14,6 +14,42 @@ constexpr float PPM = 50.0f; // píxeles por metro
 constexpr int TILE_SIZE_PX = 2; // cada tile mide 2 píxeles en LDtk
 
 
+float tileIdToAngle(int tileId) {
+    switch (tileId) {
+        case 6: return  +3.14159265358979323846f * 0.5f;  // west
+        case 4: return  0.0f;                             // south
+        case 5: return -3.14159265358979323846f * 0.5f;   // east
+        case 3: return  3.14159265358979323846f;          // north
+        default: return 0.0f;
+    }
+}
+
+
+void LevelCreator::addDebugTileRect(float cx_px, float cy_px, float size_px) {
+    SDL_FRect r{
+        cx_px - size_px * 0.5f,
+        cy_px - size_px * 0.5f,
+        size_px,
+        size_px
+    };
+    debug_tile_rects_.push_back(r);
+}
+
+void LevelCreator::drawDebugTiles(SDL_Renderer* r,
+                                  float camX_px, float camY_px, float zoom) {
+    SDL_SetRenderDrawBlendMode(r, SDL_BLENDMODE_BLEND);
+    SDL_SetRenderDrawColor(r, 0, 255, 0, 220);
+    for (const auto& aabb : debug_tile_rects_) {
+        SDL_FRect s{
+            (aabb.x - camX_px) * zoom,
+            (aabb.y - camY_px) * zoom,
+            aabb.w * zoom,
+            aabb.h * zoom
+        };
+        SDL_RenderDrawRectF(r, &s);
+    }
+}
+
 static std::optional<int> extract_suffix_index(const std::filesystem::path& p) {
     std::string stem = p.stem().string();           // ej: "sanAndreas_2"
     auto pos = stem.find_last_of('_');
@@ -126,9 +162,14 @@ void LevelCreator::createLevelCollision(b2WorldId world, const std::vector<Matri
                 float world_x_px = offset_x_px + x * tile_px + tile_px / 2.0f;
                 float world_y_px = offset_y_px + y * tile_px + tile_px / 2.0f;
 
-                createTileCollider(world, world_x_px, world_y_px, tile_px);
+                if (v == 3 || v == 4 || v == 5 || v == 6){
+                    spawn_points.push_back(Spawn{world_x_px/PPM, world_y_px/PPM, tileIdToAngle(v)});
+                    continue;
+                }
 
-                // más adelante: si v == 3,4,5,6 crear otra cosa
+                createTileCollider(world, world_x_px, world_y_px, tile_px);
+                addDebugTileRect(world_x_px, world_y_px, tile_px);
+
             }
         }
     }

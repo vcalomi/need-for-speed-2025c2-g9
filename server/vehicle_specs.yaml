@@ -11,12 +11,12 @@ vehicles:
     restitution: 1.0
   
   ferrari_F40:
-    width_m: 0.90
-    height_m: 1.40
+    width_m: 0.04
+    height_m: 0.07
     density: 1.0
-    engine_force_N: 55.0
-    brake_force_N: 15.0
-    steer_torque: 5.0
+    engine_force_N: 0.003
+    brake_force_N: 0.001
+    steer_torque: 0.00001
     friction: 1.0
     restitution: 1.0
   
