@@ -4,7 +4,7 @@
 #include <utility>
 #include <vector>
 
-#include "../common/queue.h"
+#include "../../common/queue.h"
 
 GameMonitor::GameMonitor() {}
 

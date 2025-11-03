@@ -3,7 +3,7 @@
 #include <iostream>
 #include <utility>
 
-#include "../common/common_codes.h"
+#include "../../common/common_codes.h"
 
 Lobby::Lobby(ServerProtocol& protocol, GameMonitor& gameMonitor, int clientId,
              Queue<std::shared_ptr<Dto>>& senderQueue,

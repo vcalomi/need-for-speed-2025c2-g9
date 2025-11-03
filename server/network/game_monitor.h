@@ -5,8 +5,8 @@
 #include <map>
 #include <vector>
 
-#include "../common/Dto/dto.h"
-#include "../common/queue.h"
+#include "../../common/Dto/dto.h"
+#include "../../common/queue.h"
 
 #include "game_room.h"
 

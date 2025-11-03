@@ -3,8 +3,8 @@
 #include <algorithm>
 #include <iostream>
 
-#include "../common/Dto/vehicle.h"
-#include "../common/queue.h"
+#include "../../common/Dto/vehicle.h"
+#include "../../common/queue.h"
 
 GameRoom::GameRoom(const std::string& roomName, int hostId, int maxPlayers):
         roomName(roomName),

@@ -1,40 +1,40 @@
 target_sources(taller_server
     PRIVATE
     # .cpp files
-    acceptor.cpp
+    network/acceptor.cpp
     vehicle_specs.yaml
     vehicle.cpp
     server_main.cpp
-    server.cpp
-    server_protocol.cpp
-    server_input_handler.cpp
+    network/server.cpp
+    network/server_protocol.cpp
+    network/server_input_handler.cpp
     YamlParser.cpp
-    client_handler.cpp
-    lobby.cpp
-    receiver.cpp
-    sender.cpp
-    game_monitor.cpp
-    game_room.cpp
-    gameloop.cpp
+    network/client_handler.cpp
+    network/lobby.cpp
+    network/receiver.cpp
+    network/sender.cpp
+    network/game_monitor.cpp
+    network/game_room.cpp
+    network/gameloop.cpp
     PUBLIC
     building.h
-    acceptor.h
+    network/acceptor.h
     vehicle.h
     constants.h
     vehicleDTO.h
     spawn.h
     YamlParser.h
     VehicleSpec.h
-    client_handler.h
-    client_state.h
-    command_dispatcher.h
-    receiver.h
-    sender.h
-    game_monitor.h
-    game_room.h
-    gameloop.h
-    server_protocol.h
-    server_input_handler.h
-    lobby.h
-    server.h
+    network/client_handler.h
+    network/client_state.h
+    network/command_dispatcher.h
+    network/receiver.h
+    network/sender.h
+    network/game_monitor.h
+    network/game_room.h
+    network/gameloop.h
+    network/server_protocol.h
+    network/server_input_handler.h
+    network/lobby.h
+    network/server.h
     )

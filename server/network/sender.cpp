@@ -5,7 +5,7 @@
 
 #include <sys/socket.h>
 
-#include "../common/common_codes.h"
+#include "../../common/common_codes.h"
 
 Sender::Sender(ServerProtocol& serverProtocol, Queue<std::shared_ptr<Dto>>& clientQueue):
         clientQueue(clientQueue), protocol(serverProtocol) {}

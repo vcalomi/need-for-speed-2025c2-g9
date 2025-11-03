@@ -2,7 +2,7 @@
 
 #include <string>
 
-#include "../common/queue.h"
+#include "../../common/queue.h"
 
 Server::Server(const std::string& port):
         gameMonitor(), acceptor(port, gameMonitor), inputHandler() {}

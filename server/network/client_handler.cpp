@@ -4,9 +4,9 @@
 
 #include <sys/socket.h>
 
-#include "../common/queue.h"
-#include "../common/socket.h"
-#include "../common/thread.h"
+#include "../../common/queue.h"
+#include "../../common/socket.h"
+#include "../../common/thread.h"
 
 #include "receiver.h"
 

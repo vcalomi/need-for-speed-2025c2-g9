@@ -1,6 +1,6 @@
 #include <iostream>
 
-#include "server.h"
+#include "network/server.h"
 
 #define NUMBER_ARG 2
 #define MSG_ERROR_STDIN "Command line: <port>"

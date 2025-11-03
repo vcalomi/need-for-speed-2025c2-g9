@@ -6,9 +6,9 @@
 #include <memory>
 #include <thread>
 
-#include "../common/Dto/dto.h"
-#include "../common/queue.h"
-#include "../common/thread.h"
+#include "../../common/Dto/dto.h"
+#include "../../common/queue.h"
+#include "../../common/thread.h"
 
 #include "command_dispatcher.h"
 #include "game_monitor.h"

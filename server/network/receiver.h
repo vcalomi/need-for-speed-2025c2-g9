@@ -4,12 +4,12 @@
 
 #include <optional>
 
-#include "../common/Dto/dto.h"
-#include "../common/client_command.h"
-#include "../common/queue.h"
-#include "../common/socket.h"
-#include "../common/socket_closed.h"
-#include "../common/thread.h"
+#include "../../common/Dto/dto.h"
+#include "../../common/client_command.h"
+#include "../../common/queue.h"
+#include "../../common/socket.h"
+#include "../../common/socket_closed.h"
+#include "../../common/thread.h"
 
 #include "server_protocol.h"
 
