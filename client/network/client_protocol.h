@@ -6,11 +6,11 @@
 #include <string>
 #include <vector>
 
-#include "../common/Dto/vehicle.h"
-#include "../common/common_codes.h"
-#include "../common/common_protocol.h"
-#include "../common/serializer/serializer.h"
-#include "../common/socket.h"
+#include "../../common/Dto/vehicle.h"
+#include "../../common/common_codes.h"
+#include "../../common/common_protocol.h"
+#include "../../common/serializer/serializer.h"
+#include "../../common/socket.h"
 
 class ClientProtocol {
 private:

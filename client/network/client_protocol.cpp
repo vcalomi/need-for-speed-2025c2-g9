@@ -4,8 +4,8 @@
 
 #include <arpa/inet.h>
 
-#include "../common/common_codes.h"
-#include "../common/serializer/vehicle_serializer.h"
+#include "../../common/common_codes.h"
+#include "../../common/serializer/vehicle_serializer.h"
 
 ClientProtocol::ClientProtocol(const std::string& hostname, const std::string& port):
         socket(hostname.c_str(), port.c_str()), protocol(), serializers() {

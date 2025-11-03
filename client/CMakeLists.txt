@@ -10,10 +10,10 @@ target_sources(taller_client
     PRIVATE
     # .cpp files
     client_main.cpp
-    client.cpp
-    client_protocol.cpp
-    client_receiver.cpp
-    client_sender.cpp
+    network/client.cpp
+    network/client_protocol.cpp
+    network/client_receiver.cpp
+    network/client_sender.cpp
     ../common/socket.cpp
     ../common/resolver.cpp
     ../common/liberror.cpp
@@ -33,11 +33,11 @@ target_sources(taller_client
 
     PUBLIC
     # .h files
-    client.h
-    client_protocol.h
-    client_receiver.h
-    client_sender.h
-    client_input_handler.h
+    network/client.h
+    network/client_protocol.h
+    network/client_receiver.h
+    network/client_sender.h
+    network/client_input_handler.h
     ../common/socket.h
     ../common/resolver.h
     ../common/liberror.h

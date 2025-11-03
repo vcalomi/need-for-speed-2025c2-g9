@@ -2,8 +2,7 @@
 #include <iostream>
 
 #include "lobby/mainwindow.h"
-
-#include "client.h"
+#include "network/client.h"
 
 #define NUMBER_ARG 3
 #define MSG_ERROR_STDIN "Command line: <hostname> <port>"

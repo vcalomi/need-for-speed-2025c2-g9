@@ -5,7 +5,7 @@
 #include <string>
 #include <utility>
 
-#include "../common/thread.h"
+#include "../../common/thread.h"
 
 class ClientInputHandler: public Thread {
 private:

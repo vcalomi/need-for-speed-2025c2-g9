@@ -4,8 +4,8 @@
 #include <string>
 #include <vector>
 
-#include "../common/Dto/dto.h"
-#include "../common/queue.h"
+#include "../../common/Dto/dto.h"
+#include "../../common/queue.h"
 
 #include "client_protocol.h"
 #include "client_receiver.h"

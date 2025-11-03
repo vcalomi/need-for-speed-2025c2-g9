@@ -7,7 +7,7 @@
 #include <QVector>
 #include <memory>
 
-#include "../client_protocol.h"
+#include "../network/client_protocol.h"
 
 #include "car.h"
 #include "player_info.h"
