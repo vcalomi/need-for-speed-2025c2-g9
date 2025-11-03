@@ -1,9 +1,11 @@
 target_sources(taller_server
     PRIVATE
     # .cpp files
+    acceptor.cpp
     vehicle_specs.yaml
     vehicle.cpp
     server_main.cpp
+    server.cpp
     server_protocol.cpp
     server_input_handler.cpp
     YamlParser.cpp
@@ -15,14 +17,17 @@ target_sources(taller_server
     game_room.cpp
     gameloop.cpp
     PUBLIC
+    building.h
+    acceptor.h
     vehicle.h
     constants.h
     vehicleDTO.h
-    # .h files
     spawn.h
     YamlParser.h
     VehicleSpec.h
     client_handler.h
+    client_state.h
+    command_dispatcher.h
     receiver.h
     sender.h
     game_monitor.h
@@ -31,4 +36,5 @@ target_sources(taller_server
     server_protocol.h
     server_input_handler.h
     lobby.h
+    server.h
     )

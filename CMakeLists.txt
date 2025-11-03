@@ -209,6 +209,8 @@ if(TALLER_SERVER)
     # links
     target_link_libraries(taller_server PRIVATE
         taller_common
+        yaml-cpp 
+        SDL2::SDL2
         box2d
     )
 

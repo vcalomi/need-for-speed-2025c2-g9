@@ -30,7 +30,7 @@ Vehicle::Vehicle(b2WorldId worldId, VehicleSpec spec, Spawn spawn, int player_id
 void Vehicle::accelerate() {
 
     const float F = spec_.engine_force_N;
-    b2Vec2 forward = b2Body_GetWorldVector(body_, (b2Vec2){0.0f, 1.0f});
+    b2Vec2 forward = b2Body_GetWorldVector(body_, b2Vec2{0.0f, 1.0f});
     b2Vec2 force = { forward.x * F, forward.y * F };
 
     b2Body_ApplyForceToCenter(body_, force, true);
@@ -39,7 +39,7 @@ void Vehicle::accelerate() {
 void Vehicle::brake(){
 
     const float F = spec_.brake_force_N;
-    b2Vec2 forward = b2Body_GetWorldVector(body_, (b2Vec2){0.0f, -1.0f});
+    b2Vec2 forward = b2Body_GetWorldVector(body_, b2Vec2{0.0f, -1.0f});
     b2Vec2 force = { forward.x * F, forward.y * F };
 
     b2Body_ApplyForceToCenter(body_, force, true);
@@ -48,7 +48,7 @@ void Vehicle::brake(){
 void Vehicle::turn(TurnDir dir) {
     if (dir == TurnDir::None) return;
     b2Vec2 v = b2Body_GetLinearVelocity(body_);
-    b2Vec2 fwd = b2Body_GetWorldVector(body_, (b2Vec2){0.0f, 1.0f});
+    b2Vec2 fwd = b2Body_GetWorldVector(body_, b2Vec2{0.0f, 1.0f});
     float v_forward = v.x * fwd.x + v.y * fwd.y; // m/s
     if (v_forward <= MIN_SPEED_STEER) return;
     float steer = (dir == TurnDir::Left) ? 1.0f : -1.0f;
