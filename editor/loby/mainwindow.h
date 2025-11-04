@@ -13,11 +13,11 @@ class MainWindow: public QMainWindow {
     Q_OBJECT
 
 public:
-    MainWindow(QWidget* parent = nullptr);
+    explicit MainWindow(QWidget* parent = nullptr);
     ~MainWindow();
 
-//  protected:
-    //void resizeEvent(QResizeEvent *event) override;
+    //  protected:
+    // void resizeEvent(QResizeEvent *event) override;
 
 private:
     Ui::Loby* ui;

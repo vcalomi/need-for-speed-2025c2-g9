@@ -1,13 +1,14 @@
 #include "mainwindow.h"
 
-#include "./ui_mainwindow.h"
 #include <QDir>
-#include <QPixmap>
-#include <QPalette>
 #include <QFontDatabase>
-#include <QMessageBox>
-#include <QScreen>
 #include <QGuiApplication>
+#include <QMessageBox>
+#include <QPalette>
+#include <QPixmap>
+#include <QScreen>
+
+#include "./ui_mainwindow.h"
 
 MainWindow::MainWindow(QWidget* parent): QMainWindow(parent), ui(new Ui::Loby) {
     ui->setupUi(this);
@@ -81,7 +82,8 @@ MainWindow::MainWindow(QWidget* parent): QMainWindow(parent), ui(new Ui::Loby) {
         QString host = ui->hostInput->text();
         QString port = ui->portInput->text();
         if (host.isEmpty() || port.isEmpty()) {
-            QMessageBox::warning(this, "Error de conexión", "Por favor ingrese Host y Puerto antes de conectarse.");
+            QMessageBox::warning(this, "Error de conexión",
+                                 "Por favor ingrese Host y Puerto antes de conectarse.");
             return;
         }
         qDebug() << "Conectando a " << host << ":" << port;
@@ -89,9 +91,6 @@ MainWindow::MainWindow(QWidget* parent): QMainWindow(parent), ui(new Ui::Loby) {
 
     QRect screenGeometry = QGuiApplication::primaryScreen()->geometry();
     this->move(screenGeometry.center() - this->rect().center());
-
-
 }
 
 MainWindow::~MainWindow() { delete ui; }
-

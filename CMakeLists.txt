@@ -35,7 +35,6 @@ add_subdirectory(common/)
 find_package(Threads REQUIRED)
 target_link_libraries(taller_common PRIVATE Threads::Threads)
 
-
 # set compiler warnings to the targets
 include(cmake/CompilerWarnings.cmake)
 set_project_warnings(taller_common ${TALLER_MAKE_WARNINGS_AS_ERRORS} FALSE)
@@ -57,6 +56,7 @@ target_include_directories(taller_common PUBLIC .)
 # HEY!! TODO XXX: add more dependendies (either for client, server or editor)
 if(TALLER_CLIENT OR TALLER_EDITOR)
     include(FetchContent)
+
     FetchContent_Declare(
         SDL2
         GIT_REPOSITORY https://github.com/libsdl-org/SDL.git
@@ -242,7 +242,6 @@ if(TALLER_EDITOR)
     # Link the taller_common lib target
     target_link_libraries(taller_editor taller_common SDL2pp::SDL2pp)
 endif()
-
 
 # Testing section
 # ---------------

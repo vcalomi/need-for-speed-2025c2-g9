@@ -1,0 +1,17 @@
+SPRITE,ESQUINA_X,ESQUINA_Y,WIDTH,HEIGHT
+CamionetaRojaSur,167,304,26,39
+CamionetaRojaNorte,167,345,26,39
+CamionetaRojaEste,0,311,39,26
+CamionetaRojaOeste,1,351,39,26
+CamionetaRojaSureste20,40,307,40,36
+CamionetaRojaSuroeste20,280,307,40,36
+CamionetaRojaNoroeste20,40,345,40,36
+CamionetaRojaNoreste20,280,345,40,36
+CamionetaRojaSureste45,80,304,40,40
+CamionetaRojaSuroeste45,240,304,40,40
+CamionetaRojaNoroeste45,80,344,40,40
+CamionetaRojaNoreste45,240,344,40,40
+CamionetaRojaSuroeste75,201,304,36,40
+CamionetaRojaSureste75,123,304,36,40
+CamionetaRojaNoreste75,203,344,36,40
+CamionetaRojaNoroeste75,121,344,36,40
