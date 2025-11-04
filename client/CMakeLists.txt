@@ -31,6 +31,22 @@ target_sources(taller_client
     # --- .qrc (si tenés recursos de Qt) ---
     lobby/assets/resources.qrc
 
+    # Core
+    core/audio_manager.cpp
+    core/engine.cpp
+    core/game.cpp
+    core/resource_loader.cpp
+    # Graphics
+    graphics/renderer_system.cpp
+    graphics/spritesheet.cpp
+    # Input
+    input/input_system.cpp
+    # Network
+    network/mock_server.cpp
+    # World
+    world/player.cpp
+    world/world.cpp
+
     PUBLIC
     # .h files
     network/client.h
@@ -51,6 +67,23 @@ target_sources(taller_client
     lobby/styles.h
     lobby/player_info.h
     lobby/car.h
+
+    # Core
+    core/audio_manager.h
+    core/engine.h
+    core/game.h
+    core/map.h
+    core/resource_loader.h
+    # Graphics
+    graphics/renderer_system.h
+    graphics/spritesheet.h
+    # Input
+    input/input_system.h
+    # Network
+    network/mock_server.h
+    # World
+    world/player.h
+    world/world.h
     )
 
   target_link_libraries(taller_client PRIVATE 

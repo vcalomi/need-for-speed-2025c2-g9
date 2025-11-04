@@ -3,16 +3,16 @@
 #include <algorithm>
 #include <cstdint>
 #include <cstring>
+#include <iostream>
 #include <vector>
 
 #include <netinet/in.h>
 
-#include "../../common/common_codes.h"
-#include "../physics/LevelCreator.h"
-#include <iostream>
-#include "../YamlParser.h"
 #include "../../common/Dto/vehicle.h"
-#include "../constants.h" 
+#include "../../common/common_codes.h"
+#include "../YamlParser.h"
+#include "../constants.h"
+#include "../physics/LevelCreator.h"
 
 
 using Clock = std::chrono::steady_clock;
@@ -29,12 +29,13 @@ broadcaster_(broadcaster), setup("../server/physics/Levels" , "../server/vehicle
 
 void GameLoop::run() {
     try {
-
+        std::cout << "gameloop incializado"
+                  << "\n";
         while (should_keep_running()) {
-            processCommands();
             simulateGame();
+            processCommands();
 
-            std::this_thread::sleep_for(Milliseconds(250));
+            std::this_thread::sleep_for(std::chrono::milliseconds(100));
         }
     } catch (const ClosedQueue& e) {
         return;
@@ -45,7 +46,7 @@ void GameLoop::processCommands() {
     std::shared_ptr<Dto> command;
     while (gameLoopQueue.try_pop(command)) {
         uint8_t command_code = command->return_code();
-        std::cout << "El codigo del comando popeado es" << (int)command_code << "/n";
+        std::cout << "El codigo del comando popeado es" << (int)command_code << "\n";
     }
 }
 

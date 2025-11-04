@@ -13,17 +13,15 @@ std::unordered_map<std::string, VehicleSpec> YamlParser::parse(const std::string
         for (auto it = vehiclesNode.begin(); it != vehiclesNode.end(); ++it) {
             std::string name = it->first.as<std::string>();
             YAML::Node v = it->second;
-            
-            VehicleSpec vehicle{
-                v["width_m"].as<float>(),       v["height_m"].as<float>(),
-                v["density"].as<float>(),       v["engine_force_N"].as<float>(),
-                v["brake_force_N"].as<float>(), v["steer_torque"].as<float>(),
-                v["friction"].as<float>(),      v["restitution"].as<float>()
-            };
+
+            VehicleSpec vehicle{v["width_m"].as<float>(),       v["height_m"].as<float>(),
+                                v["density"].as<float>(),       v["engine_force_N"].as<float>(),
+                                v["brake_force_N"].as<float>(), v["steer_torque"].as<float>(),
+                                v["friction"].as<float>(),      v["restitution"].as<float>()};
 
             vehicles[name] = vehicle;
         }
-        
+
         return vehicles;
 
     } catch (const YAML::Exception& e) {
