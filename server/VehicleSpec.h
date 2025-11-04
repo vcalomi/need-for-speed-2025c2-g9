@@ -2,7 +2,7 @@
 #include "constants.h"
 
 struct VehicleSpec {
-    //VehicleType name;
+    // VehicleType name;
     float width_m;
     float height_m;
     float density;

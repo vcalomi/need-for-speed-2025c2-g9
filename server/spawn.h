@@ -1,6 +1,6 @@
 #pragma once
 
-struct Spawn{
+struct Spawn {
     float x;
     float y;
     float angle;

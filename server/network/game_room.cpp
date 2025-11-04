@@ -13,7 +13,7 @@ GameRoom::GameRoom(const std::string& roomName, int hostId, int maxPlayers):
         state(RoomState::WAITING_FOR_PLAYERS),
         gameQueue(),
         broadcaster(),
-        gameLoop(gameQueue, chosenCars , broadcaster){}
+        gameLoop(gameQueue, chosenCars, broadcaster, maxPlayers) {}
 
 bool GameRoom::addPlayer(int clientId, Queue<std::shared_ptr<Dto>>& senderQueue) {
     std::lock_guard<std::mutex> lock(mtx);
@@ -35,19 +35,21 @@ bool GameRoom::startGame() {
 
     state = RoomState::IN_RACE;
 
-    uint8_t idx = 0;
-    for (const auto& entry: players) {
-        uint8_t id = static_cast<uint8_t>(entry.first % 255);
-        auto dto = std::make_shared<VehicleDto>(id, 1.0f + idx, 0.0f, 0.0f);
-        {}
-        std::cout << "CREATED VehicleDto: id=" << (int)dto->id << " x=" << dto->x << " y=" << dto->y
-                  << std::endl;
+    // uint8_t idx = 0;
+    // for (const auto& entry: players) {
+    //     uint8_t id = static_cast<uint8_t>(entry.first % 255);
+    //     auto dto = std::make_shared<VehicleDto>(id, 1.0f + idx, 0.0f, 0.0f);
+    //     {}
+    //     std::cout << "CREATED VehicleDto: id=" << (int)dto->id << " x=" << dto->x << " y=" <<
+    //     dto->y
+    //               << std::endl;
 
-        broadcaster.broadcast(dto);
-        idx++;
-    }
+    //     broadcaster.broadcast(dto);
+    //     idx++;
+    // }
 
     gameLoop.start();
+    std::cout << "GameLoop is alive: " << gameLoop.is_alive() << std::endl;
     return true;
 }
 
@@ -61,12 +63,18 @@ bool GameRoom::chooseCar(int clientId, const CarConfig& car) {
     return true;
 }
 
-// void removePlayer(int clientId) {
-
-// }
+void GameRoom::removePlayer(int clientId) {
+    std::lock_guard<std::mutex> lock(mtx);
+    auto it = players.find(clientId);
+    if (it != players.end()) {
+        broadcaster.removeQueue(it->second);
+        players.erase(it);
+    }
+}
 
 bool GameRoom::canJoin() const {
-    return state == RoomState::WAITING_FOR_PLAYERS && static_cast<int>(players.size()) < maxPlayers_;
+    return state == RoomState::WAITING_FOR_PLAYERS &&
+           static_cast<int>(players.size()) < maxPlayers_;
 }
 
 bool GameRoom::isHost(int clientId) const { return hostId == clientId; }
@@ -88,5 +96,18 @@ bool GameRoom::isInRace() {
     return state == RoomState::IN_RACE;
 }
 
-GameRoom::~GameRoom() {}
+GameRoom::~GameRoom() {
+    try {
+        gameLoop.stop();
+    } catch (...) {}
+    try {
+        gameQueue.close();
+    } catch (...) {}
+    if (gameLoop.is_alive()) {
+        gameLoop.join();
+    }
+    for (const auto& entry: players) {
+        broadcaster.removeQueue(entry.second);
+    }
+}
 #include <memory>

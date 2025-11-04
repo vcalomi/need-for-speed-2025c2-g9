@@ -17,10 +17,12 @@ private:
     Queue<std::shared_ptr<Dto>>& gameLoopQueue;
     std::map<int, CarConfig>& chosenCars_;
     Broadcaster& broadcaster_;
+    int maxPlayers;
 
 public:
     explicit GameLoop(Queue<std::shared_ptr<Dto>>& gameLoopQueue,
-                      std::map<int, CarConfig>& chosenCars, Broadcaster& broadcaster);
+                      std::map<int, CarConfig>& chosenCars, Broadcaster& broadcaster,
+                      int maxPlayers);
 
     void run() override;
     void processCommands();

@@ -9,9 +9,9 @@
 
 #include "../../common/Dto/dto.h"
 #include "../../common/broadcaster.h"
+#include "../../common/car_config.h"
 #include "../../common/client_command.h"
 #include "../../common/queue.h"
-#include "../../common/car_config.h"
 
 #include "gameloop.h"
 

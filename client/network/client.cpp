@@ -4,6 +4,8 @@
 #include <sstream>
 #include <string>
 
+#include "../core/game.h"
+
 #include "client_input_handler.h"
 
 Client::Client(ClientProtocol& protocol):
@@ -21,12 +23,9 @@ void Client::run() {
         sender.start();
         receiver.start();
         std::cout << "Client: Game communication started" << std::endl;
-        // if (receiver.is_alive())
-        //     receiver.join();
-        // if (sender.is_alive())
-        //     sender.join();
-        // input.stop();
-        // input.join();
+        Game game(*this);
+        game.Run();
+        input.join();
     } catch (const std::exception& e) {
         std::cerr << "Client fatal error: " << e.what() << std::endl;
     }

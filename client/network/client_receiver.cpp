@@ -13,6 +13,7 @@ ClientReceiver::ClientReceiver(ClientProtocol& clientProtocol, Queue<std::shared
 void ClientReceiver::run() {
     try {
         while (should_keep_running() && !protocol.isClientConnected()) {
+            std::cout << "ClientReceiver: Waiting to receive DTO..." << std::endl;
             std::shared_ptr<Dto> dto = protocol.receiveDTO();
             ActionCode code = static_cast<ActionCode>(dto->return_code());
 

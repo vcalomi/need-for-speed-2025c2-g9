@@ -1,7 +1,6 @@
 #include <QApplication>
 #include <iostream>
 
-#include "core/game.h"
 #include "lobby/mainwindow.h"
 #include "network/client.h"
 
@@ -33,8 +32,6 @@ int main(int argc, char* argv[]) {
             ClientProtocol gameProtocol(hostname, port);
             Client client(gameProtocol);
             client.run();
-            Game game(client);
-            game.Run();
         }
 
         return 0;
