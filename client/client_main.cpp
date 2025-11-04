@@ -29,8 +29,7 @@ int main(int argc, char* argv[]) {
         // 2. Si el juego inició, ejecutar Client
         if (game_started) {
             std::cout << "Game started! Launching game client..." << std::endl;
-            ClientProtocol gameProtocol(hostname, port);
-            Client client(gameProtocol);
+            Client client(protocol);
             client.run();
         }
 
