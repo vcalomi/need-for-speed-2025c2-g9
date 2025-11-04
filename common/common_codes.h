@@ -20,7 +20,14 @@ enum class ActionCode : uint8_t {
     SEND_ERROR_MSG = 0x10,
     SEND_CARS = 0x11,
     LIST_PLAYERS = 0x12,
-    LIST_STATE = 0x13
+    LIST_STATE = 0x13,
+
+    // Comandos del server/cliente
+    INPUT_NORTH = 0x14,
+    INPUT_SOUTH = 0x15,
+    INPUT_EAST = 0x16,
+    INPUT_WEST = 0x17
+
 };
 
 #endif

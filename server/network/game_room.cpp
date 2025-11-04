@@ -9,11 +9,11 @@
 GameRoom::GameRoom(const std::string& roomName, int hostId, int maxPlayers):
         roomName(roomName),
         hostId(hostId),
+        maxPlayers_(maxPlayers),
         state(RoomState::WAITING_FOR_PLAYERS),
         gameQueue(),
         broadcaster(),
-        maxPlayers(maxPlayers) {}
-// gameLoop(gameQueue) {}
+        gameLoop(gameQueue, chosenCars , broadcaster){}
 
 bool GameRoom::addPlayer(int clientId, Queue<std::shared_ptr<Dto>>& senderQueue) {
     std::lock_guard<std::mutex> lock(mtx);
@@ -46,7 +46,8 @@ bool GameRoom::startGame() {
         broadcaster.broadcast(dto);
         idx++;
     }
-    // gameLoop.start();
+
+    gameLoop.start();
     return true;
 }
 
@@ -65,7 +66,7 @@ bool GameRoom::chooseCar(int clientId, const CarConfig& car) {
 // }
 
 bool GameRoom::canJoin() const {
-    return state == RoomState::WAITING_FOR_PLAYERS && static_cast<int>(players.size()) < maxPlayers;
+    return state == RoomState::WAITING_FOR_PLAYERS && static_cast<int>(players.size()) < maxPlayers_;
 }
 
 bool GameRoom::isHost(int clientId) const { return hostId == clientId; }

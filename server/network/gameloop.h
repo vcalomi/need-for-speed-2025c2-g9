@@ -8,27 +8,22 @@
 #include "../../common/common_codes.h"
 #include "../../common/queue.h"
 #include "../../common/thread.h"
-
-#include "game_room.h"
-
-/*
-    Maneja el juego
-    FALTA JOIN
-*/
+#include "../../common/broadcaster.h"
+#include "../../common/car_config.h"
 
 class GameLoop: public Thread {
 private:
-    // std::map<int, CarConfig>& cars;
-    Queue<Dto>& gameLoopQueue;
+    Queue<std::shared_ptr<Dto>>& gameLoopQueue;
+    std::map<int, CarConfig>& chosenCars_;
+    Broadcaster& broadcaster_;
 
 public:
-    explicit GameLoop(Queue<Dto>& gameLoopQueue);
+    explicit GameLoop( Queue<std::shared_ptr<Dto>>& gameLoopQueue, std::map<int, CarConfig>& chosenCars, Broadcaster& broadcaster);
+
     void run() override;
     void processCommands();
     void simulateGame();
 
-    // logica del juego
-    // checkpoints
     ~GameLoop();
 };
 

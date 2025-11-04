@@ -4,7 +4,7 @@
 #include <iostream>
 #include "../YamlParser.h"
 #include "../vehicle.h"
-#include "../constants.h"   // TurnDir si lo declaraste ahí
+#include "../constants.h"   
 
 constexpr float PPM = 50.0f;
 constexpr int   WIN_W = 1500;

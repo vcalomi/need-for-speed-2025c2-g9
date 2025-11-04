@@ -11,6 +11,7 @@
 #include "../../common/broadcaster.h"
 #include "../../common/client_command.h"
 #include "../../common/queue.h"
+#include "../../common/car_config.h"
 
 #include "gameloop.h"
 
@@ -28,13 +29,13 @@ private:
     // clientId y su queue
     std::map<int, Queue<std::shared_ptr<Dto>>*> players;
     std::map<int, CarConfig> chosenCars;
+    int maxPlayers_;
     RoomState state;
+
     Queue<std::shared_ptr<Dto>> gameQueue;  // Para comandos de juego
-    // GameLoop gameLoop;
-    // ConfigCarrera config;
-    // GameLoop& gameLoop;
     Broadcaster broadcaster;
-    int maxPlayers;
+    GameLoop gameLoop;
+
 
 public:
     GameRoom(const std::string& roomName, int hostId, int maxPlayers);
@@ -49,7 +50,7 @@ public:
     Queue<std::shared_ptr<Dto>>& getGameQueue();
     std::vector<int> getPlayerIds();
     bool isInRace();
-    int getMaxPlayers() const { return maxPlayers; }
+    int getMaxPlayers() const { return maxPlayers_; }
     ~GameRoom();
 };
 

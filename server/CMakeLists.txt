@@ -17,7 +17,6 @@ target_sources(taller_server
     network/game_room.cpp
     network/gameloop.cpp
     PUBLIC
-    building.h
     network/acceptor.h
     vehicle.h
     constants.h
