@@ -3,7 +3,7 @@
 #include "LevelCreator.h"
 #include <iostream>
 #include "../YamlParser.h"
-#include "../vehicle.h"
+#include "vehicle.h"
 #include "../constants.h"   
 
 constexpr float PPM = 50.0f;
@@ -14,7 +14,7 @@ constexpr float CAM_SPEED_PX = 600.0f;   // velocidad de cámara en píxeles/seg
 int main() {
     // --- init specs ----
     YamlParser parser;
-    auto mapa_config = parser.parse("../server/vehicle_specs.yaml");
+    auto mapa_config = parser.parse("../server/vehicles_specs/vehicle_specs.yaml");
     VehicleSpec ferrari_spec = mapa_config["ferrari_F40"];
 
     // --- Init SDL ---
@@ -33,7 +33,7 @@ int main() {
     b2WorldId world = b2CreateWorld(&wdef);
 
     // --- Cargar niveles y colisiones ---
-    const char* kDir = "../server/physics/Levels";
+    const char* kDir = "./Levels";
     LevelCreator lc;
     lc.processDirectoryLevel(kDir);
     lc.createLevelCollision(world, lc.levels());
@@ -54,7 +54,7 @@ int main() {
     // --- Cámara / zoom (zoom fijo = 1.0) ---
     float camX_px = 65.0f;
     float camY_px = 11.0f;
-    const float zoom = 1.0f;
+    const float zoom = 5.0f;
 
     bool running = true;
     SDL_Event e;

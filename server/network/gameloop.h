@@ -10,12 +10,15 @@
 #include "../../common/thread.h"
 #include "../../common/broadcaster.h"
 #include "../../common/car_config.h"
+#include "../LevelSetup.h"
+
 
 class GameLoop: public Thread {
 private:
     Queue<std::shared_ptr<Dto>>& gameLoopQueue;
     std::map<int, CarConfig>& chosenCars_;
     Broadcaster& broadcaster_;
+    LevelSetup setup;
 
 public:
     explicit GameLoop( Queue<std::shared_ptr<Dto>>& gameLoopQueue, std::map<int, CarConfig>& chosenCars, Broadcaster& broadcaster);

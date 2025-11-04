@@ -1,7 +1,8 @@
+#pragma once
 #include <string>
 #include <unordered_map>
 
-#include "./VehicleSpec.h"
+#include "VehicleSpec.h"
 
 class YamlParser {
 public:

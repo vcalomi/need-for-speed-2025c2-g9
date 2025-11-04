@@ -1,9 +1,10 @@
 target_sources(taller_server
     PRIVATE
     # .cpp files
+    physics/LevelCreator.cpp
+    physics/vehicle.cpp
     network/acceptor.cpp
-    vehicle_specs.yaml
-    vehicle.cpp
+    vehicles_specs/vehicle_specs.yaml
     server_main.cpp
     network/server.cpp
     network/server_protocol.cpp
@@ -16,12 +17,12 @@ target_sources(taller_server
     network/game_monitor.cpp
     network/game_room.cpp
     network/gameloop.cpp
+    LevelSetup.cpp
     PUBLIC
+    LevelSetup.h
     network/acceptor.h
-    vehicle.h
     constants.h
     vehicleDTO.h
-    spawn.h
     YamlParser.h
     VehicleSpec.h
     network/client_handler.h
@@ -36,4 +37,7 @@ target_sources(taller_server
     network/server_input_handler.h
     network/lobby.h
     network/server.h
+    physics/LevelCreator.h
+    physics/spawn.h
+    physics/vehicle.h
     )

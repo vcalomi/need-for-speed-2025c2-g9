@@ -22,7 +22,10 @@ using Seconds = std::chrono::seconds;
 GameLoop::GameLoop(Queue<std::shared_ptr<Dto>>& gameLoopQueue, std::map<int, CarConfig>& chosenCars, Broadcaster& broadcaster): 
 gameLoopQueue(gameLoopQueue), 
 chosenCars_(chosenCars),
-broadcaster_(broadcaster){}
+broadcaster_(broadcaster), setup("../server/physics/Levels" , "../server/vehicles_specs/vehicle_specs.yaml", chosenCars){
+    
+
+}
 
 void GameLoop::run() {
     try {
@@ -48,10 +51,14 @@ void GameLoop::processCommands() {
 
 
 void GameLoop::simulateGame() { 
-    auto vehicle = std::make_shared<VehicleDto>(1, 1.0f, 1.0f, 0.0f);
-    broadcaster_.broadcast(vehicle);
 
-    std::cout << "mandando pos vehicle /n";
+    for (auto& [player_id, vehicle] : setup.getVehicleMap()) {
+        float x, y, angle;
+        vehicle->getPosition(x, y, angle);
+        auto dto = std::make_shared<VehicleDto>(player_id, x, y, angle);
+        broadcaster_.broadcast(dto);
+        std::cout << "mandando pos vehicle /n";
+    }
 }
 
 GameLoop::~GameLoop() {}

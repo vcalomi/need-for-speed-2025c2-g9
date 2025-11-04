@@ -194,11 +194,11 @@ if(TALLER_SERVER)
     add_executable(taller_server)
 
     add_executable(physics_sandbox
-        #server/physics/physics_sandbox.cpp
         server/physics/main.cpp
         server/physics/LevelCreator.cpp    # <-- AÑADIDO
         server/YamlParser.cpp
-        server/vehicle.cpp
+        server/physics/vehicle.cpp
+        server/LevelSetup.cpp
     )
 
     add_dependencies(taller_server taller_common)
@@ -212,13 +212,15 @@ if(TALLER_SERVER)
         yaml-cpp 
         SDL2::SDL2
         box2d
+        nlohmann_json::nlohmann_json
     )
 
     target_link_libraries(physics_sandbox PRIVATE
         box2d
         SDL2::SDL2
         yaml-cpp
-        nlohmann_json::nlohmann_json               # <-- AÑADIDO
+        nlohmann_json::nlohmann_json
+                       # <-- AÑADIDO
     )
 endif()
 

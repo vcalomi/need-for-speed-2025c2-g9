@@ -1,7 +1,5 @@
-#include "./YamlParser.h"
-
+#include "YamlParser.h"
 #include <iostream>
-
 #include <yaml-cpp/yaml.h>
 
 

@@ -6,7 +6,7 @@
 #include <iostream>
 #include <SDL.h>
 #include <box2d/box2d.h>
-#include "../spawn.h"
+#include "spawn.h"
 
 class LevelCreator {
     public: 

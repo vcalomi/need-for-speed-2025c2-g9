@@ -14,7 +14,6 @@
 #include "../../common/car_config.h"
 
 #include "gameloop.h"
-
 /*
     Maneja el estado y los jugadores de cada sala
 */
