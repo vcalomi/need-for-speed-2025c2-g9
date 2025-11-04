@@ -1,8 +1,10 @@
 #pragma once
+#include <memory>
 #include <string>
 
 #include "../graphics/renderer_system.h"
 #include "../input/input_system.h"
+#include "../network/client.h"
 #include "../network/mock_server.h"
 #include "../world/world.h"
 #include "./audio_manager.h"
@@ -12,10 +14,11 @@
 
 class Game {
 public:
-    Game();
+    explicit Game(Client& client);
     void Run();
 
 private:
+    Client& client_;
     Engine engine_;
     AudioManager audioManager_;
     ResourceLoader resources_;
@@ -25,5 +28,5 @@ private:
     Map map_;
     MockServer mockServer_;
 
-    void ProcessServerMessage(const std::string& msg);
+    void processDto(const std::shared_ptr<Dto>& dto);
 };

@@ -25,6 +25,8 @@ public:
     void run();
     void stop();
     ~Client();
+    Queue<std::shared_ptr<Dto>>& getRecvQueue() { return recvQueue; }
+    Queue<std::shared_ptr<Dto>>& getSenderQueue() { return senderQueue; }
 };
 
 #endif

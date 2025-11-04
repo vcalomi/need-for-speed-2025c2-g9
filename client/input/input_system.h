@@ -1,9 +1,11 @@
 #pragma once
 #include <SDL2/SDL.h>
 
+#include "../../common/Dto/dto.h"
+
 
 class InputSystem {
 public:
     void PollEvents(bool& running);
-    uint8_t GetInputByte() const;
+    Dto GetInputByte() const;
 };

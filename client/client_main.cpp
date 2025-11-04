@@ -1,6 +1,7 @@
 #include <QApplication>
 #include <iostream>
 
+#include "core/game.h"
 #include "lobby/mainwindow.h"
 #include "network/client.h"
 
@@ -29,8 +30,11 @@ int main(int argc, char* argv[]) {
         // 2. Si el juego inició, ejecutar Client
         if (game_started) {
             std::cout << "Game started! Launching game client..." << std::endl;
-            Client client(protocol);
+            ClientProtocol gameProtocol(hostname, port);
+            Client client(gameProtocol);
             client.run();
+            Game game(client);
+            game.Run();
         }
 
         return 0;

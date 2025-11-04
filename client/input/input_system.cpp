@@ -1,9 +1,6 @@
 #include "./input_system.h"
 
-#define INPUT_FORWARD 0x01
-#define INPUT_BACKWARD 0x02
-#define INPUT_LEFT 0x04
-#define INPUT_RIGHT 0x08
+#include "../../common/common_codes.h"
 
 void InputSystem::PollEvents(bool& running) {
     SDL_Event e;
@@ -13,18 +10,18 @@ void InputSystem::PollEvents(bool& running) {
     }
 }
 
-uint8_t InputSystem::GetInputByte() const {
+Dto InputSystem::GetInputByte() const {
     const Uint8* keys = SDL_GetKeyboardState(NULL);
-    uint8_t inputByte = 0;
 
     if (keys[SDL_SCANCODE_W])
-        inputByte |= INPUT_FORWARD;
+        return Dto(static_cast<uint8_t>(ActionCode::INPUT_NORTH));
     if (keys[SDL_SCANCODE_S])
-        inputByte |= INPUT_BACKWARD;
+        return Dto(static_cast<uint8_t>(ActionCode::INPUT_SOUTH));
     if (keys[SDL_SCANCODE_A])
-        inputByte |= INPUT_LEFT;
+        return Dto(static_cast<uint8_t>(ActionCode::INPUT_WEST));
     if (keys[SDL_SCANCODE_D])
-        inputByte |= INPUT_RIGHT;
+        return Dto(static_cast<uint8_t>(ActionCode::INPUT_EAST));
 
-    return inputByte;
+    // Ninguna tecla presionada: no se envía nada
+    return Dto(0);
 }

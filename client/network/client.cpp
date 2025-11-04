@@ -21,12 +21,12 @@ void Client::run() {
         sender.start();
         receiver.start();
         std::cout << "Client: Game communication started" << std::endl;
-        if (receiver.is_alive())
-            receiver.join();
-        if (sender.is_alive())
-            sender.join();
-        input.stop();
-        input.join();
+        // if (receiver.is_alive())
+        //     receiver.join();
+        // if (sender.is_alive())
+        //     sender.join();
+        // input.stop();
+        // input.join();
     } catch (const std::exception& e) {
         std::cerr << "Client fatal error: " << e.what() << std::endl;
     }

@@ -2,7 +2,11 @@
 
 #include <sstream>
 
-Game::Game():
+#include "../../common/Dto/dto.h"
+#include "../../common/Dto/vehicle.h"
+
+Game::Game(Client& client):
+        client_(client),
         engine_(),
         audioManager_(),
         resources_(engine_.GetRenderer()),
@@ -20,49 +24,52 @@ Game::Game():
     audioManager_.PlayBackgroundMusic("../client/assets/need-for-speed/music/background.wav");
 }
 
-void Game::ProcessServerMessage(const std::string& msg) {
-    std::istringstream ss(msg);
-    std::string type;
-    ss >> type;
-
-    if (type == "UPDATE") {
-        std::string id;
-        float x, y, angle;
-        ss >> id >> x >> y >> angle;
-        world_.UpdateFromServer(id, x, y, angle);
-    }
-
-    if (type == "COLLISION") {
-        std::string id1, id2;
-        ss >> id1 >> id2;
-        world_.OnCollision(id1, id2);
+void Game::processDto(const std::shared_ptr<Dto>& dto) {
+    ActionCode code = static_cast<ActionCode>(dto->return_code());
+    switch (code) {
+        case ActionCode::SEND_CARS: {
+            auto vehicleDto = std::dynamic_pointer_cast<VehicleDto>(dto);
+            if (vehicleDto) {
+                std::cout << "Procesando vehículo id=" << (int)vehicleDto->id << " pos("
+                          << vehicleDto->x << ", " << vehicleDto->y
+                          << ") rot=" << vehicleDto->rotation << std::endl;
+                // acá podrías actualizar el estado del juego (ej: mundo.updateCar(vehicleDto))
+                world_.UpdateFromServer(std::to_string(vehicleDto->id), vehicleDto->x,
+                                        vehicleDto->y, vehicleDto->rotation);
+            }
+            break;
+        }
+        default:
+            std::cout << "DTO no manejado, code=" << (int)code << std::endl;
+            break;
     }
 }
 
 
 void Game::Run() {
     bool running = true;
-    Uint64 prevTicks = SDL_GetTicks64();
+    // Uint64 prevTicks = SDL_GetTicks64();
 
     while (running) {
-        Uint64 currentTicks = SDL_GetTicks64();
-        float delta = (currentTicks - prevTicks) / 1000.f;
-        prevTicks = currentTicks;
+        // Uint64 currentTicks = SDL_GetTicks64();
+        // float delta = (currentTicks - prevTicks) / 1000.f;
+        // prevTicks = currentTicks;
 
         // --- INPUT ---
         inputSystem_.PollEvents(running);
-        uint8_t inputByte = inputSystem_.GetInputByte();
-
-        // Enviamos el input al servidor simulado (mock)
-        mockServer_.ReceiveInput(inputByte);
+        Dto input = inputSystem_.GetInputByte();
+        if (input.return_code() != 0) {
+            client_.getSenderQueue().try_push(std::make_shared<Dto>(input));
+            std::cout << "Input enviado: " << +input.return_code() << std::endl;
+        }
 
         // --- SIMULACIÓN SERVIDOR ---
-        mockServer_.Update(delta);
+        // mockServer_.Update(delta);
 
         // --- MENSAJES DEL SERVIDOR ---
-        while (mockServer_.HasMessage()) {
-            std::string msg = mockServer_.PopMessage();
-            ProcessServerMessage(msg);
+        std::shared_ptr<Dto> dto = nullptr;
+        while (client_.getRecvQueue().try_pop(dto)) {
+            processDto(dto);
         }
 
         // --- RENDERIZADO ---
@@ -70,4 +77,5 @@ void Game::Run() {
 
         SDL_Delay(16);
     }
+    client_.stop();
 }
