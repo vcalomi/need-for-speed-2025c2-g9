@@ -26,7 +26,7 @@ void Game::processDto(const std::shared_ptr<Dto>& dto) {
             if (playerDto) {
                 std::cout << "Procesando jugador id=" << (int)playerDto->id << std::endl;
                 if (!world_.HasPlayer(playerDto->id)) {
-                    world_.AddPlayer(playerDto->id, playerDto->carType, false);
+                    world_.AddPlayer(playerDto->id, playerDto->Type, false);
                     std::cout << "Jugador agregado al mundo, id=" << (int)playerDto->id
                               << std::endl;
                 }

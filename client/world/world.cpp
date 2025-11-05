@@ -4,7 +4,7 @@
 
 World::World(): localId_(-1) {}
 
-void World::AddPlayer(const int id, uint8_t carType, bool isLocal) {
+void World::AddPlayer(const int id, VehicleTipe carType, bool isLocal) {
     float spawnDistance = 3.0f;
     float angle = id * 0.5f;
     float defaultX = std::cos(angle) * spawnDistance;

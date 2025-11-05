@@ -2,12 +2,13 @@
 #include <map>
 #include <string>
 
+#include "../../common/common_codes.h"
 #include "./player.h"
 
 class World {
 public:
     World();
-    void AddPlayer(const int id, uint8_t carType, bool isLocal);
+    void AddPlayer(const int id, VehicleTipe carType, bool isLocal);
     Player& GetLocalPlayer();
     bool HasPlayer(const int id) const;
     const std::map<int, Player>& GetPlayers() const;

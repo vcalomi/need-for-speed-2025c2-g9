@@ -32,8 +32,8 @@ enum class ActionCode : uint8_t {
     SEND_PLAYER_MOVE = 0x19
 };
 
-enum class VehicleTipe: uint8_t {
-    //Identificador de vehiculo
+enum class VehicleTipe : uint8_t {
+    // Identificador de vehiculo
     FIAT_600 = 0x40,
     FERRARI_F40 = 0x41,
     PORSCHE_911 = 0x42,
