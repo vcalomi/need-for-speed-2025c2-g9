@@ -41,8 +41,6 @@ target_sources(taller_client
     graphics/spritesheet.cpp
     # Input
     input/input_system.cpp
-    # Network
-    network/mock_server.cpp
     # World
     world/player.cpp
     world/world.cpp
@@ -79,8 +77,6 @@ target_sources(taller_client
     graphics/spritesheet.h
     # Input
     input/input_system.h
-    # Network
-    network/mock_server.h
     # World
     world/player.h
     world/world.h
