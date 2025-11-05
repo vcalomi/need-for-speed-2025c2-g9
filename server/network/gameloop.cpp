@@ -8,12 +8,13 @@
 
 #include <netinet/in.h>
 
+#include "../../common/Dto/player.h"
 #include "../../common/Dto/vehicle.h"
 #include "../../common/common_codes.h"
 #include "../YamlParser.h"
 #include "../constants.h"
 #include "../physics/LevelCreator.h"
-
+#include "../../common/vehicle_type_utils.h"
 
 using Clock = std::chrono::steady_clock;
 using Milliseconds = std::chrono::milliseconds;
@@ -31,6 +32,7 @@ void GameLoop::run() {
         setup.emplace("../server/physics/Levels",
               "../server/vehicles_specs/vehicle_specs.yaml",
               chosenCars_);
+        sendInitialPlayersCars();
         while (should_keep_running()) {
             simulateGame();
             processCommands();
@@ -41,6 +43,24 @@ void GameLoop::run() {
         return;
     }
 }
+
+void GameLoop::sendInitialPlayersCars() {
+    for (const auto& [playerId, cfg] : chosenCars_) {
+        VehicleTipe vt;
+        try {
+            vt = toVehicleTipe(cfg.carType);
+        } catch (const std::exception& e) {
+            std::cerr << "[sendInitialPlayersCars] jugador " << playerId
+                    << " tiene carType inválido: " << cfg.carType
+                    << " (" << e.what() << ")\n";
+            continue;
+        }
+
+        auto dto = std::make_shared<PlayerDto>(static_cast<uint8_t>(playerId), vt);
+        broadcaster_.broadcast(dto);
+    }
+}
+
 
 void GameLoop::processCommands() {
     std::shared_ptr<Dto> command;

@@ -30,7 +30,8 @@ public:
     void run() override;
     void processCommands();
     void simulateGame();
-
+    void sendInitialPlayersCars();
+        
     ~GameLoop();
 };
 
