@@ -24,14 +24,13 @@ GameLoop::GameLoop(Queue<std::shared_ptr<Dto>>& gameLoopQueue, std::map<int, Car
         gameLoopQueue(gameLoopQueue),
         chosenCars_(chosenCars),
         broadcaster_(broadcaster),
-        setup("../server/physics/Levels", "../server/vehicles_specs/vehicle_specs.yaml",
-              chosenCars),
         maxPlayers(maxPlayers) {}
 
 void GameLoop::run() {
     try {
-        std::cout << "gameloop incializado"
-                  << "\n";
+        setup.emplace("../server/physics/Levels",
+              "../server/vehicles_specs/vehicle_specs.yaml",
+              chosenCars_);
         while (should_keep_running()) {
             simulateGame();
             processCommands();
@@ -54,7 +53,7 @@ void GameLoop::processCommands() {
 
 void GameLoop::simulateGame() {
 
-    for (auto& [player_id, vehicle]: setup.getVehicleMap()) {
+    for (auto& [player_id, vehicle]: setup.value().getVehicleMap()) {
         float x, y, angle;
         vehicle->getPosition(x, y, angle);
         auto dto = std::make_shared<VehicleDto>(player_id, x, y, angle);

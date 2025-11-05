@@ -12,7 +12,6 @@ Vehicle::Vehicle(b2WorldId worldId, VehicleSpec spec, Spawn spawn, int player_id
     bodyDef.angularDamping = 3.0f;
 
     body_ = b2CreateBody(world_id_, &bodyDef);
-
     b2Polygon boxShape = b2MakeBox(spec_.width_m * 0.5f, spec_.height_m * 0.5f);
 
     b2ShapeDef shapeDef = b2DefaultShapeDef();

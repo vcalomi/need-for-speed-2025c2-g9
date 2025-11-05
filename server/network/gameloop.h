@@ -12,20 +12,20 @@
 #include "../../common/queue.h"
 #include "../../common/thread.h"
 #include "../LevelSetup.h"
-
+#include <optional>
 
 class GameLoop: public Thread {
 private:
     Queue<std::shared_ptr<Dto>>& gameLoopQueue;
     std::map<int, CarConfig>& chosenCars_;
     Broadcaster& broadcaster_;
-    LevelSetup setup;
+    std::optional<LevelSetup> setup;
     int maxPlayers;
 
 public:
-    explicit GameLoop(Queue<std::shared_ptr<Dto>>& gameLoopQueue,
-                      std::map<int, CarConfig>& chosenCars, Broadcaster& broadcaster,
-                      int maxPlayers);
+    explicit GameLoop(Queue<std::shared_ptr<Dto>>& gameLoopQueue, std::map<int, CarConfig>& chosenCars, 
+                Broadcaster& broadcaster,
+                int maxPlayers);
 
     void run() override;
     void processCommands();

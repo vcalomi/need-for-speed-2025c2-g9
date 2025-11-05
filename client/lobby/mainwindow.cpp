@@ -75,7 +75,7 @@ MainWindow::MainWindow(ClientProtocol& protocol, bool& game_started_ref, QWidget
             Car(CarType::FERRARI_F40, "Ferrari F40", ":/ferrari.png"),
             Car(CarType::PORSCHE_911, "Porsche 911", ":/porsche.png"),
             Car(CarType::SEDAN, "Sedan", ":/sedan.png"),
-            Car(CarType::SHEEP_4X4, "Sheep 4x4", ":/jeep_4x4.png"),
+            Car(CarType::JEEP_4X4, "Jeep 4x4", ":/jeep_4x4.png"),
             Car(CarType::FORD_F100, "Ford F100", ":/ford_f100.png"),
             Car(CarType::TRUCK, "Truck", ":/truck.png")};
 
@@ -163,28 +163,27 @@ MainWindow::MainWindow(ClientProtocol& protocol, bool& game_started_ref, QWidget
         player.selectedCar = selectedCar.getType();
         try {
             QString key;
-            // SI NO COINCIDE CON LOS NOMBRES DE LOS AUTOS CAMBIAR LAS KEYS
             switch (selectedCar.getType()) {
                 case CarType::FIAT_600:
-                    key = "FIAT_600";
+                    key = "fiat_600";
                     break;
                 case CarType::FERRARI_F40:
-                    key = "FERRARI_F40";
+                    key = "ferrari_F40";
                     break;
                 case CarType::PORSCHE_911:
-                    key = "PORSCHE_911";
+                    key = "porsche_911";
                     break;
                 case CarType::SEDAN:
-                    key = "SEDAN";
+                    key = "sedan";
                     break;
-                case CarType::SHEEP_4X4:
-                    key = "SHEEP_4X4";
+                case CarType::JEEP_4X4:
+                    key = "jeep";
                     break;
                 case CarType::FORD_F100:
-                    key = "FORD_F100";
+                    key = "f100";
                     break;
                 case CarType::TRUCK:
-                    key = "TRUCK";
+                    key = "truck";
                     break;
             }
             this->protocol.sendChooseCar(key.toStdString());

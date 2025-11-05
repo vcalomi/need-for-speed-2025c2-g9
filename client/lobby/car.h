@@ -3,7 +3,7 @@
 
 #include <QString>
 
-enum class CarType { FIAT_600, FERRARI_F40, PORSCHE_911, SEDAN, SHEEP_4X4, FORD_F100, TRUCK };
+enum class CarType { FIAT_600, FERRARI_F40, PORSCHE_911, SEDAN, JEEP_4X4, FORD_F100, TRUCK };
 
 class Car {
 public:
