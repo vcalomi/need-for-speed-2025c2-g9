@@ -7,7 +7,7 @@
 
 class Player {
 public:
-    Player(const int id, const std::string& carType, float x, float y);
+    Player(const int id, uint8_t carType, float x, float y);
 
     void UpdateFromNetwork(float x, float y, float angle);
 
@@ -19,7 +19,7 @@ public:
 
 private:
     int id_;
-    std::string carType_;
+    uint8_t carType_;
     std::string currentSprite_;
     float x_;
     float y_;

@@ -7,7 +7,7 @@
 class World {
 public:
     World();
-    void AddPlayer(const int id, const std::string& carType, float x, float y, bool isLocal);
+    void AddPlayer(const int id, uint8_t carType, bool isLocal);
     Player& GetLocalPlayer();
     bool HasPlayer(const int id) const;
     const std::map<int, Player>& GetPlayers() const;

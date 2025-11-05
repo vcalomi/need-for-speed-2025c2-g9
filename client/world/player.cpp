@@ -4,7 +4,7 @@
 
 using SDL2pp::Renderer;
 
-Player::Player(const int id, const std::string& carType, float x, float y):
+Player::Player(const int id, uint8_t carType, float x, float y):
         id_(id), carType_(carType), currentSprite_(carType + "Norte"), x_(x), y_(y), angle_(0.0f) {}
 
 void Player::UpdateFromNetwork(float x, float y, float angle) {
