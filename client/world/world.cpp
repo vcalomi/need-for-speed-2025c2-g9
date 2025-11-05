@@ -4,8 +4,12 @@
 
 World::World(): localId_(-1) {}
 
-void World::AddPlayer(const int id, const std::string& carType, float x, float y, bool isLocal) {
-    players_.emplace(id, Player(id, carType, x, y));
+void World::AddPlayer(const int id, uint8_t carType, bool isLocal) {
+    float spawnDistance = 3.0f;
+    float angle = id * 0.5f;
+    float defaultX = std::cos(angle) * spawnDistance;
+    float defaultY = std::sin(angle) * spawnDistance;
+    players_.emplace(id, Player(id, carType, defaultX, defaultY));
     if (isLocal)
         localId_ = id;
 }
