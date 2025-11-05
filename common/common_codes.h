@@ -23,11 +23,13 @@ enum class ActionCode : uint8_t {
     LIST_STATE = 0x13,
 
     // Comandos del server/cliente
-    INPUT_NORTH = 0x14,
-    INPUT_SOUTH = 0x15,
-    INPUT_EAST = 0x16,
-    INPUT_WEST = 0x17
+    TURN_RIGHT = 0x14,
+    TURN_LEFT = 0x15,
+    ACCELERATE = 0x16,
+    BRAKE = 0x17,
 
+    SEND_PLAYER = 0x18,
+    SEND_PLAYER_MOVE = 0x19
 };
 
 

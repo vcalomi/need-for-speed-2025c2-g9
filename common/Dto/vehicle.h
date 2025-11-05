@@ -7,7 +7,6 @@
 class VehicleDto: public Dto {
 public:
     uint8_t id;
-    // VehicleType type;
     float x;
     float y;
     float rotation;
