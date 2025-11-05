@@ -2,8 +2,9 @@
 
 #include <cmath>
 
-void World::AddPlayer(const std::string& id, const std::string& carType, float x, float y,
-                      bool isLocal) {
+World::World(): localId_(-1) {}
+
+void World::AddPlayer(const int id, const std::string& carType, float x, float y, bool isLocal) {
     players_.emplace(id, Player(id, carType, x, y));
     if (isLocal)
         localId_ = id;
@@ -11,9 +12,11 @@ void World::AddPlayer(const std::string& id, const std::string& carType, float x
 
 Player& World::GetLocalPlayer() { return players_.at(localId_); }
 
-const std::map<std::string, Player>& World::GetPlayers() const { return players_; }
+const std::map<int, Player>& World::GetPlayers() const { return players_; }
 
-void World::UpdateFromServer(const std::string& id, float x, float y, float angle) {
+bool World::HasPlayer(const int id) const { return players_.find(id) != players_.end(); }
+
+void World::UpdateFromServer(const int id, float x, float y, float angle) {
     auto it = players_.find(id);
     if (it == players_.end()) {
         std::cerr << "[World] Warning: received update for unknown player ID " << id << "\n";
@@ -26,6 +29,6 @@ void World::UpdateFromServer(const std::string& id, float x, float y, float angl
     player.UpdateFromNetwork(x, y, angle);
 }
 
-void World::OnCollision(const std::string& id1, const std::string& id2) {
+void World::OnCollision(const int id1, const int id2) {
     std::cout << "💥 Collision between " << id1 << " and " << id2 << std::endl;
 }

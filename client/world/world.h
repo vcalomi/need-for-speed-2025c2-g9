@@ -6,14 +6,15 @@
 
 class World {
 public:
-    void AddPlayer(const std::string& id, const std::string& carType, float x, float y,
-                   bool isLocal);
+    World();
+    void AddPlayer(const int id, const std::string& carType, float x, float y, bool isLocal);
     Player& GetLocalPlayer();
-    const std::map<std::string, Player>& GetPlayers() const;
-    void UpdateFromServer(const std::string& id, float x, float y, float angle);
-    void OnCollision(const std::string& id1, const std::string& id2);
+    bool HasPlayer(const int id) const;
+    const std::map<int, Player>& GetPlayers() const;
+    void UpdateFromServer(const int id, float x, float y, float angle);
+    void OnCollision(const int id1, const int id2);
 
 private:
-    std::map<std::string, Player> players_;
-    std::string localId_;
+    std::map<int, Player> players_;
+    int localId_;
 };

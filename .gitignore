@@ -40,3 +40,4 @@ tags.*
 *.vscode/
 .idea/
 *.DS_Store
+.vscode/
