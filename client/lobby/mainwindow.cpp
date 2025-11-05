@@ -93,33 +93,34 @@ MainWindow::MainWindow(ClientProtocol& protocol, bool& game_started_ref, QWidget
             return;
         }
         QMessageBox::information(this, "Connected", "Successfully connected to server");
-        Navigation::goToPage(ui->page_username, ui->stackedWidget, this);
+        // Navigation::goToPage(ui->page_username, ui->stackedWidget, this);
+        Navigation::goToPage(ui->page_menu, ui->stackedWidget, this);
     });
 
     // Username
     connect(ui->btnConfirmUsername, &QPushButton::clicked, this, [this]() {
-        QString name = ui->input_username->text().trimmed();
+        // QString name = ui->input_username->text().trimmed();
 
-        if (name.isEmpty()) {
-            QMessageBox::warning(this, "Username", "Please enter a valid username.");
-            return;
-        }
+        // if (name.isEmpty()) {
+        //     QMessageBox::warning(this, "Username", "Please enter a valid username.");
+        //     return;
+        // }
 
-        player.username = name;
-        try {
-            this->protocol.sendUsername(player.username.toStdString());
-            this->protocol.sendListRooms();
-            auto rooms = this->protocol.receiveRoomList();
-            allRooms.clear();
-            for (const auto& r: rooms) allRooms << QString::fromStdString(r);
-            showPage(0);
-        } catch (const std::exception& e) {
-            QMessageBox::critical(this, "Error", QString("Server error: %1").arg(e.what()));
-            return;
-        }
+        // player.username = name;
+        // try {
+        //     this->protocol.sendUsername(player.username.toStdString());
+        //     this->protocol.sendListRooms();
+        //     auto rooms = this->protocol.receiveRoomList();
+        //     allRooms.clear();
+        //     for (const auto& r: rooms) allRooms << QString::fromStdString(r);
+        //     showPage(0);
+        // } catch (const std::exception& e) {
+        //     QMessageBox::critical(this, "Error", QString("Server error: %1").arg(e.what()));
+        //     return;
+        // }
 
-        // Ir a la pantalla de salas dispo
-        Navigation::goToPage(ui->page_rooms, ui->stackedWidget, this);
+        // // Ir a la pantalla de salas dispo
+        // Navigation::goToPage(ui->page_rooms, ui->stackedWidget, this);
     });
 
 
@@ -132,8 +133,10 @@ MainWindow::MainWindow(ClientProtocol& protocol, bool& game_started_ref, QWidget
     connect(ui->btnPrevRooms, &QPushButton::clicked, this, &MainWindow::showPrevRoom);
 
     // Otros botones
-    connect(ui->btnContinueRooms, &QPushButton::clicked, this,
-            [this]() { Navigation::goToPage(ui->page_menu, ui->stackedWidget, this); });
+    connect(ui->btnContinueRooms, &QPushButton::clicked, this, [this]() {
+        // Navigation::goToPage(ui->page_menu, ui->stackedWidget, this);
+        Navigation::goToPage(ui->page_join, ui->stackedWidget, this);
+    });
 
     connect(ui->btnContinue, &QPushButton::clicked, this, &MainWindow::handleContinueToWait);
     connect(ui->btnConfirmJoin, &QPushButton::clicked, this, &MainWindow::handleConfirmJoin);
@@ -210,9 +213,31 @@ void MainWindow::handleBackToMenu() {
     Navigation::goToPage(ui->page_menu, ui->stackedWidget, this);
 }
 
+// void MainWindow::handleJoinGame() {
+//     player.isHost = false;
+//     Navigation::goToPage(ui->page_join, ui->stackedWidget, this);
+// }
+
 void MainWindow::handleJoinGame() {
     player.isHost = false;
-    Navigation::goToPage(ui->page_join, ui->stackedWidget, this);
+
+    try {
+        // Pedir al servidor la lista de salas disponibles
+        this->protocol.sendListRooms();
+        auto rooms = this->protocol.receiveRoomList();
+
+        allRooms.clear();
+        for (const auto& r: rooms) allRooms << QString::fromStdString(r);
+
+        // Mostrar la primera página de salas disponibles
+        showPage(0);
+
+        // Navegar a la página de salas
+        Navigation::goToPage(ui->page_rooms, ui->stackedWidget, this);
+    } catch (const std::exception& e) {
+        QMessageBox::critical(this, "Error", QString("Failed to load rooms: %1").arg(e.what()));
+        return;
+    }
 }
 
 void MainWindow::handleCreateGame() {
@@ -400,23 +425,21 @@ void MainWindow::setupBackgroundMusic() {
     audioOutput = new QAudioOutput(this);
     backgroundMusic->setAudioOutput(audioOutput);
 
-    // USA LA RUTA LOCAL QUE SÍ FUNCIONÓ
-    QString localPath =
-            "/home/mora/taller/need-for-speed-2025c2-g9/client/lobby/assets/music/derezzed.mp3";
-    QUrl musicUrl = QUrl::fromLocalFile(localPath);
+    QUrl musicUrl("qrc:/derezzed.mp3");
     backgroundMusic->setSource(musicUrl);
 
-    audioOutput->setVolume(30);  // Volumen bajo
+    audioOutput->setVolume(0.2);  // volumen bajo (0.0–1.0)
 
     connect(backgroundMusic, &QMediaPlayer::mediaStatusChanged,
             [this](QMediaPlayer::MediaStatus status) {
                 if (status == QMediaPlayer::EndOfMedia) {
-                    backgroundMusic->play();  // Loop
+                    backgroundMusic->play();  // loop
                 }
             });
 
     backgroundMusic->play();
 }
+
 
 MainWindow::~MainWindow() {
     // Detener música al cerrar
