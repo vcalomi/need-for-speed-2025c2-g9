@@ -16,3 +16,7 @@ const Rect& SpriteSheet::GetSprite(const std::string& name) const {
         throw std::runtime_error("Sprite not found: " + name);
     return it->second;
 }
+
+bool SpriteSheet::HasSprite(const std::string& name) const {
+    return sprites_.find(name) != sprites_.end();
+}

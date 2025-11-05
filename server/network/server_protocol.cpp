@@ -5,11 +5,14 @@
 #include <vector>
 
 #include "../../common/common_codes.h"
+#include "../../common/serializer/player_serializer.h"
 #include "../../common/serializer/vehicle_serializer.h"
 
 ServerProtocol::ServerProtocol(Socket& socket): socket(socket), protocol() {
     serializers[static_cast<uint8_t>(ActionCode::SEND_CARS)] =
             std::make_unique<VehicleSerializer>();
+    serializers[static_cast<uint8_t>(ActionCode::SEND_PLAYER)] =
+            std::make_unique<PlayerSerializer>();
 }
 
 void ServerProtocol::sendMsg(ActionCode code) { protocol.sendAction(socket, code); }

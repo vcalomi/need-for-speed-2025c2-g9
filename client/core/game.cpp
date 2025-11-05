@@ -6,6 +6,8 @@
 #include "../../common/Dto/player.h"
 #include "../../common/Dto/vehicle.h"
 
+#include "camera.h"
+
 Game::Game(Client& client):
         client_(client),
         engine_(),
@@ -26,7 +28,7 @@ void Game::processDto(const std::shared_ptr<Dto>& dto) {
             if (playerDto) {
                 std::cout << "Procesando jugador id=" << (int)playerDto->id << std::endl;
                 if (!world_.HasPlayer(playerDto->id)) {
-                    world_.AddPlayer(playerDto->id, playerDto->Type, false);
+                    world_.AddPlayer(playerDto->id, playerDto->Type, true);
                     std::cout << "Jugador agregado al mundo, id=" << (int)playerDto->id
                               << std::endl;
                 }
@@ -53,7 +55,16 @@ void Game::processDto(const std::shared_ptr<Dto>& dto) {
 
 void Game::Run() {
     bool running = true;
+    Camera camera;
+
+    std::shared_ptr<Dto> player = nullptr;
+    client_.getRecvQueue().try_pop(player);
+    processDto(player);
+
     while (running) {
+
+        camera.x = world_.GetLocalPlayer().GetX() - (800 / 2);
+        camera.y = world_.GetLocalPlayer().GetY() - (600 / 2);
 
         // --- INPUT ---
         inputSystem_.PollEvents(running);
@@ -68,10 +79,11 @@ void Game::Run() {
         while (client_.getRecvQueue().try_pop(dto)) {
             processDto(dto);
         }
+        std::cout << "Mensajes del servidor procesados" << std::endl;
 
         // --- RENDERIZADO ---
-        rendererSystem_.Render(world_, map_);
-
+        rendererSystem_.Render(world_, map_, camera);
+        std::cout << "Renderizado completo" << std::endl;
         SDL_Delay(16);
     }
     client_.stop();

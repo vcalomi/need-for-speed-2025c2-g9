@@ -16,6 +16,7 @@ public:
 
     void AddSprite(const std::string& name, const Rect& area);
     const Rect& GetSprite(const std::string& name) const;
+    bool HasSprite(const std::string& name) const;
 
 private:
     Texture texture_;

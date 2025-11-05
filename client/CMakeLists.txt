@@ -72,6 +72,7 @@ target_sources(taller_client
     core/game.h
     core/map.h
     core/resource_loader.h
+    core/camera.h
     # Graphics
     graphics/renderer_system.h
     graphics/spritesheet.h
