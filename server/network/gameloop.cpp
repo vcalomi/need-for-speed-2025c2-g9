@@ -19,15 +19,14 @@ using Clock = std::chrono::steady_clock;
 using Milliseconds = std::chrono::milliseconds;
 using Seconds = std::chrono::seconds;
 
-GameLoop::GameLoop(Queue<std::shared_ptr<Dto>>& gameLoopQueue, std::map<int, CarConfig>& chosenCars, Broadcaster& broadcaster, int maxPlayers): 
-gameLoopQueue(gameLoopQueue), 
-chosenCars_(chosenCars),
-broadcaster_(broadcaster), 
-setup("../server/physics/Levels" , "../server/vehicles_specs/vehicle_specs.yaml", chosenCars), 
-maxPlayers(maxPlayers){
-    
-
-}
+GameLoop::GameLoop(Queue<std::shared_ptr<Dto>>& gameLoopQueue, std::map<int, CarConfig>& chosenCars,
+                   Broadcaster& broadcaster, int maxPlayers):
+        gameLoopQueue(gameLoopQueue),
+        chosenCars_(chosenCars),
+        broadcaster_(broadcaster),
+        setup("../server/physics/Levels", "../server/vehicles_specs/vehicle_specs.yaml",
+              chosenCars),
+        maxPlayers(maxPlayers) {}
 
 void GameLoop::run() {
     try {
@@ -53,9 +52,9 @@ void GameLoop::processCommands() {
 }
 
 
-void GameLoop::simulateGame() { 
+void GameLoop::simulateGame() {
 
-    for (auto& [player_id, vehicle] : setup.getVehicleMap()) {
+    for (auto& [player_id, vehicle]: setup.getVehicleMap()) {
         float x, y, angle;
         vehicle->getPosition(x, y, angle);
         auto dto = std::make_shared<VehicleDto>(player_id, x, y, angle);

@@ -86,8 +86,6 @@ MainWindow::MainWindow(ClientProtocol& protocol, bool& game_started_ref, QWidget
     Navigation::goToPage(ui->page_connection, ui->stackedWidget, this);
 
     connect(ui->connectButton, &QPushButton::clicked, this, [this]() {
-        // Verificar que el socket NO esté cerrado (isClientConnected==true significa socket
-        // cerrado)
         if (this->protocol.isClientConnected()) {
             QMessageBox::critical(this, "Connection failed", "Connection is not available");
             return;
@@ -164,8 +162,38 @@ MainWindow::MainWindow(ClientProtocol& protocol, bool& game_started_ref, QWidget
 
         player.selectedCar = selectedCar.getType();
         try {
-            this->protocol.sendChooseCar(selectedCar.getName().toStdString());
-            // Opcional: podríamos esperar CHOOSE_CAR_OK con receiveActionCode()
+            QString key;
+            // SI NO COINCIDE CON LOS NOMBRES DE LOS AUTOS CAMBIAR LAS KEYS
+            switch (selectedCar.getType()) {
+                case CarType::FIAT_600:
+                    key = "FIAT_600";
+                    break;
+                case CarType::FERRARI_F40:
+                    key = "FERRARI_F40";
+                    break;
+                case CarType::PORSCHE_911:
+                    key = "PORSCHE_911";
+                    break;
+                case CarType::SEDAN:
+                    key = "SEDAN";
+                    break;
+                case CarType::SHEEP_4X4:
+                    key = "SHEEP_4X4";
+                    break;
+                case CarType::FORD_F100:
+                    key = "FORD_F100";
+                    break;
+                case CarType::TRUCK:
+                    key = "TRUCK";
+                    break;
+            }
+            this->protocol.sendChooseCar(key.toStdString());
+
+            ActionCode response = this->protocol.receiveActionCode();
+            if (response != ActionCode::CHOOSE_CAR_OK) {
+                QMessageBox::warning(this, "Choose Car", "Failed to select car on server.");
+                return;
+            }
         } catch (const std::exception& e) {
             QMessageBox::warning(this, "Choose Car",
                                  QString("Failed to send car: %1").arg(e.what()));

@@ -77,9 +77,11 @@ void Lobby::handleStartGame() {
 }
 
 void Lobby::handleChooseCar() {
-    std::string carType = protocol.receiveRoomName();
+    std::string carName = protocol.receiveRoomName();
+    std::cout << "[Lobby] CHOOSE_CAR received: clientId=" << clientId << " carType='" << carName
+              << "'" << std::endl;
     CarConfig car{};
-    car.carType = carType;
+    car.carType = carName;
     if (gameMonitor.chooseCarByClientId(clientId, car)) {
         protocol.sendMsg({ActionCode::CHOOSE_CAR_OK});
     } else {

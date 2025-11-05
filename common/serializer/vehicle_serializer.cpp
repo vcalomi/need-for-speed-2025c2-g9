@@ -7,7 +7,6 @@
 #include <netinet/in.h>
 
 
-
 std::vector<uint8_t> VehicleSerializer::serialize(const Dto& dto) const {
     const VehicleDto& vehicleDto = static_cast<const VehicleDto&>(dto);
     std::vector<uint8_t> buffer(13);
@@ -44,5 +43,5 @@ std::shared_ptr<Dto> VehicleSerializer::deserialize(const std::vector<uint8_t>& 
     float x = readFloat();
     float y = readFloat();
     float rotation = readFloat();
-    return std::make_shared<VehicleDto>(id,x, y, rotation);
+    return std::make_shared<VehicleDto>(id, x, y, rotation);
 }

@@ -1,6 +1,7 @@
 #ifndef CLIENT_PROTOCOL_H
 #define CLIENT_PROTOCOL_H
 
+#include <cstdint>
 #include <map>
 #include <memory>
 #include <string>

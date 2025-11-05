@@ -5,12 +5,6 @@
 
 struct CarConfig {
     std::string carType;
-    //std::string modelName;
-    //float speed;
-    //float acceleration;
-    //float health;
-    //float mass;
-    //float maxHandling;
 };
 
 #endif
