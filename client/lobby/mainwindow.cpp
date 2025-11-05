@@ -93,34 +93,33 @@ MainWindow::MainWindow(ClientProtocol& protocol, bool& game_started_ref, QWidget
             return;
         }
         QMessageBox::information(this, "Connected", "Successfully connected to server");
-        // Navigation::goToPage(ui->page_username, ui->stackedWidget, this);
-        Navigation::goToPage(ui->page_menu, ui->stackedWidget, this);
+        Navigation::goToPage(ui->page_username, ui->stackedWidget, this);
     });
 
     // Username
     connect(ui->btnConfirmUsername, &QPushButton::clicked, this, [this]() {
-        // QString name = ui->input_username->text().trimmed();
+        QString name = ui->input_username->text().trimmed();
 
-        // if (name.isEmpty()) {
-        //     QMessageBox::warning(this, "Username", "Please enter a valid username.");
-        //     return;
-        // }
+        if (name.isEmpty()) {
+            QMessageBox::warning(this, "Username", "Please enter a valid username.");
+            return;
+        }
 
-        // player.username = name;
-        // try {
-        //     this->protocol.sendUsername(player.username.toStdString());
-        //     this->protocol.sendListRooms();
-        //     auto rooms = this->protocol.receiveRoomList();
-        //     allRooms.clear();
-        //     for (const auto& r: rooms) allRooms << QString::fromStdString(r);
-        //     showPage(0);
-        // } catch (const std::exception& e) {
-        //     QMessageBox::critical(this, "Error", QString("Server error: %1").arg(e.what()));
-        //     return;
-        // }
+        player.username = name;
+        try {
+            this->protocol.sendUsername(player.username.toStdString());
+            this->protocol.sendListRooms();
+            auto rooms = this->protocol.receiveRoomList();
+            allRooms.clear();
+            for (const auto& r: rooms) allRooms << QString::fromStdString(r);
+            showPage(0);
+        } catch (const std::exception& e) {
+            QMessageBox::critical(this, "Error", QString("Server error: %1").arg(e.what()));
+            return;
+        }
 
         // // Ir a la pantalla de salas dispo
-        // Navigation::goToPage(ui->page_rooms, ui->stackedWidget, this);
+        Navigation::goToPage(ui->page_menu, ui->stackedWidget, this);
     });
 
 
