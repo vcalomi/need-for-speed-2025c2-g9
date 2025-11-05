@@ -1,5 +1,6 @@
 #include "./input_system.h"
 
+#include "../../common/Dto/player_move.h"
 #include "../../common/common_codes.h"
 
 void InputSystem::PollEvents(bool& running) {
@@ -10,17 +11,21 @@ void InputSystem::PollEvents(bool& running) {
     }
 }
 
-Dto InputSystem::GetInputByte() const {
+Dto InputSystem::GetInputByte(int playerId) const {
     const Uint8* keys = SDL_GetKeyboardState(NULL);
 
     if (keys[SDL_SCANCODE_W])
-        return Dto(static_cast<uint8_t>(ActionCode::INPUT_NORTH));
+        return PlayerMoveDto(static_cast<uint8_t>(playerId),
+                             (static_cast<uint8_t>(ActionCode::ACCELERATE)));
     if (keys[SDL_SCANCODE_S])
-        return Dto(static_cast<uint8_t>(ActionCode::INPUT_SOUTH));
+        return PlayerMoveDto(static_cast<uint8_t>(playerId),
+                             (static_cast<uint8_t>(ActionCode::BRAKE)));
     if (keys[SDL_SCANCODE_A])
-        return Dto(static_cast<uint8_t>(ActionCode::INPUT_WEST));
+        return PlayerMoveDto(static_cast<uint8_t>(playerId),
+                             (static_cast<uint8_t>(ActionCode::TURN_LEFT)));
     if (keys[SDL_SCANCODE_D])
-        return Dto(static_cast<uint8_t>(ActionCode::INPUT_EAST));
+        return PlayerMoveDto(static_cast<uint8_t>(playerId),
+                             (static_cast<uint8_t>(ActionCode::TURN_RIGHT)));
 
     // Ninguna tecla presionada: no se envía nada
     return Dto(0);

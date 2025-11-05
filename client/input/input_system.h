@@ -7,5 +7,5 @@
 class InputSystem {
 public:
     void PollEvents(bool& running);
-    Dto GetInputByte() const;
+    Dto GetInputByte(int playerId) const;
 };
