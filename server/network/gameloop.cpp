@@ -78,7 +78,7 @@ void GameLoop::simulateGame() {
         vehicle->getPosition(x, y, angle);
         auto dto = std::make_shared<VehicleDto>(player_id, x, y, angle);
         broadcaster_.broadcast(dto);
-        std::cout << "mandando pos vehicle /n";
+        //std::cout << "mandando pos vehicle /n";
     }
 }
 
