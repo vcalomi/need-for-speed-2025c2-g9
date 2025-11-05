@@ -11,6 +11,8 @@ target_sources(taller_common
     serializer/vehicle_serializer.cpp
     Dto/dto.cpp
     Dto/vehicle.cpp
+    Dto/player.cpp
+    Dto/player_move.cpp
     PUBLIC
     # .h files
     liberror.h
@@ -25,4 +27,6 @@ target_sources(taller_common
     serializer/vehicle_serializer.h
     Dto/dto.h
     Dto/vehicle.h
+    Dto/player.h
+    Dto/player_move.h
 )
