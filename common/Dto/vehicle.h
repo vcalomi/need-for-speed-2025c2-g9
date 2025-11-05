@@ -3,7 +3,7 @@
 #include <string>
 
 #include "dto.h"
-
+#include "../common_codes.h"
 class VehicleDto: public Dto {
 public:
     uint8_t id;
