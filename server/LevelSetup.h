@@ -25,6 +25,7 @@ public:
 
     void buildVehicles();
     void step(float fixed_dt = 1.0f / 60.0f, int subSteps = 4);
+    
     const std::unordered_map<int, std::unique_ptr<Vehicle>>& getVehicleMap() const {
         return player_vehicle_map_;
     }

@@ -21,6 +21,8 @@ private:
     Broadcaster& broadcaster_;
     std::optional<LevelSetup> setup;
     int maxPlayers;
+    void handlerProcessCommand(std::shared_ptr<Dto> dto);
+    Vehicle* getVehicleByPlayer(int player_id);
 
 public:
     explicit GameLoop(Queue<std::shared_ptr<Dto>>& gameLoopQueue, std::map<int, CarConfig>& chosenCars, 
@@ -31,6 +33,7 @@ public:
     void processCommands();
     void simulateGame();
     void sendInitialPlayersCars();
+
         
     ~GameLoop();
 };

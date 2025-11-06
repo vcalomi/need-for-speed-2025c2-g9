@@ -10,6 +10,7 @@ target_sources(taller_common
     serializer/serializer.cpp
     serializer/vehicle_serializer.cpp
     serializer/player_serializer.cpp
+    serializer/player_move_serializer.cpp
     Dto/dto.cpp
     Dto/vehicle.cpp
     Dto/player.cpp
@@ -27,6 +28,7 @@ target_sources(taller_common
     serializer/serializer.h
     serializer/vehicle_serializer.h
     serializer/player_serializer.h
+    serializer/player_move_serializer.h
     Dto/dto.h
     Dto/vehicle.h
     Dto/player.h
