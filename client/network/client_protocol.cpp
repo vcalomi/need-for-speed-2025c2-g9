@@ -5,17 +5,19 @@
 #include <arpa/inet.h>
 
 #include "../../common/common_codes.h"
-#include "../../common/serializer/vehicle_serializer.h"
+#include "../../common/serializer/player_move_serializer.h"
 #include "../../common/serializer/player_serializer.h"
+#include "../../common/serializer/vehicle_serializer.h"
 
 ClientProtocol::ClientProtocol(const std::string& hostname, const std::string& port):
         socket(hostname.c_str(), port.c_str()), protocol(), serializers() {
     serializers[static_cast<uint8_t>(ActionCode::SEND_CARS)] =
             std::make_unique<VehicleSerializer>();
 
-     serializers[static_cast<uint8_t>(ActionCode::SEND_PLAYER)] =
+    serializers[static_cast<uint8_t>(ActionCode::SEND_PLAYER)] =
             std::make_unique<PlayerSerializer>();
-
+    serializers[static_cast<uint8_t>(ActionCode::SEND_PLAYER_MOVE)] =
+            std::make_unique<PlayerMoveSerializer>();
 }
 
 void ClientProtocol::sendUsername(const std::string& username) {
