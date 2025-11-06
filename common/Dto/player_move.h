@@ -9,6 +9,7 @@ public:
     uint8_t id;
     uint8_t move;
     PlayerMoveDto(uint8_t id, uint8_t move);
+    PlayerMoveDto(const PlayerMoveDto&) = default;
 };
 
 #endif
