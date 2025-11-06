@@ -30,12 +30,19 @@ std::string Player::VehicleTipeToString(VehicleTipe type) const {
     }
 }
 
-void Player::UpdateFromNetwork(float x, float y, float angle) {
+void Player::UpdateFromNetwork(float x, float y, float angleRad) {
     x_ = x;
     y_ = y;
-    angle_ = angle;
-    currentSprite_ = GetSpriteForAngle(angle_);
+
+    float angleDeg = (angleRad * 180.0f / static_cast<float>(M_PI)) + 90.0f;
+
+    while (angleDeg < 0) angleDeg += 360;
+    while (angleDeg >= 360) angleDeg -= 360;
+
+    angle_ = angleDeg;
+    currentSprite_ = GetSpriteForAngle(angleDeg);
 }
+
 
 std::string Player::GetSpriteForAngle(float angleDeg) const {
     auto vehicleType = VehicleTipeToString(carType_);
