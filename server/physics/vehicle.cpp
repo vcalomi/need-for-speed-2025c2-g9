@@ -1,5 +1,6 @@
 #include "vehicle.h"
 
+float PPM = 50.0f;
 
 Vehicle::Vehicle(b2WorldId worldId, VehicleSpec spec, Spawn spawn, int player_id):
         world_id_(worldId), spec_(spec), spawn_(spawn), vehicle_id_(player_id) {
@@ -54,8 +55,8 @@ void Vehicle::turn(TurnDir dir) {
 
 void Vehicle::getPosition(float& x, float& y, float& angle) const {
     b2Transform xf = b2Body_GetTransform(body_);
-    x = xf.p.x;
-    y = xf.p.y;
+    x = xf.p.x * PPM;
+    y = xf.p.y * PPM;
     angle = b2Rot_GetAngle(xf.q);
 }
 

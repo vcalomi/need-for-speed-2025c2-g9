@@ -4,7 +4,6 @@
 
 #include "../VehicleSpec.h"
 #include "../constants.h"
-
 #include "spawn.h"
 
 class Vehicle {

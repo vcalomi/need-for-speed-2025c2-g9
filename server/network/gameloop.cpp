@@ -38,7 +38,8 @@ void GameLoop::run() {
         while (should_keep_running()) {
             processCommands();
             simulateGame();
-            setup->step((1.0f / 60.0f), 8);
+            
+            setup->step((1.0f / 60.0f), 4);
             std::this_thread::sleep_for(std::chrono::milliseconds(GAME_TICK_MS));
         }
     } catch (const ClosedQueue& e) {
