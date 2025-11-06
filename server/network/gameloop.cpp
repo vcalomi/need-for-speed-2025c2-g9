@@ -17,6 +17,8 @@
 #include "../constants.h"
 #include "../physics/LevelCreator.h"
 
+#define GAME_TICK_MS 16
+
 using Clock = std::chrono::steady_clock;
 using Milliseconds = std::chrono::milliseconds;
 using Seconds = std::chrono::seconds;
@@ -34,10 +36,10 @@ void GameLoop::run() {
                       chosenCars_);
         sendInitialPlayersCars();
         while (should_keep_running()) {
-            simulateGame();
             processCommands();
-
-            std::this_thread::sleep_for(std::chrono::milliseconds(100));
+            simulateGame();
+            setup->step((1.0f / 60.0f), 8);
+            std::this_thread::sleep_for(std::chrono::milliseconds(GAME_TICK_MS));
         }
     } catch (const ClosedQueue& e) {
         return;
@@ -65,6 +67,8 @@ void GameLoop::simulateGame() {
     for (auto& [player_id, vehicle]: setup.value().getVehicleMap()) {
         float x, y, angle;
         vehicle->getPosition(x, y, angle);
+        std::cout << "[GameLoop] Vehicle of player " << player_id << " is at (" << x << ", " << y
+                  << ") angle " << angle << "\n";
         auto dto = std::make_shared<VehicleDto>(player_id, x, y, angle);
         broadcaster_.broadcast(dto);
         // std::cout << "mandando pos vehicle /n";
