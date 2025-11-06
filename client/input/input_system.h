@@ -1,11 +1,11 @@
 #pragma once
 #include <SDL2/SDL.h>
 
-#include "../../common/Dto/dto.h"
+#include "../../common/Dto/player_move.h"
 
 
 class InputSystem {
 public:
     void PollEvents(bool& running);
-    Dto GetInputByte(int playerId) const;
+    PlayerMoveDto GetInputByte(int playerId) const;
 };

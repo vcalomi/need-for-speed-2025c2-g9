@@ -11,7 +11,7 @@ void InputSystem::PollEvents(bool& running) {
     }
 }
 
-Dto InputSystem::GetInputByte(int playerId) const {
+PlayerMoveDto InputSystem::GetInputByte(int playerId) const {
     const Uint8* keys = SDL_GetKeyboardState(NULL);
 
     if (keys[SDL_SCANCODE_W])
@@ -28,5 +28,5 @@ Dto InputSystem::GetInputByte(int playerId) const {
                              (static_cast<uint8_t>(ActionCode::TURN_RIGHT)));
 
     // Ninguna tecla presionada: no se envía nada
-    return Dto(0);
+    return PlayerMoveDto(static_cast<uint8_t>(playerId), (static_cast<uint8_t>(ActionCode::IDLE)));
 }
