@@ -4,6 +4,7 @@
 
 #include "../../common/Dto/dto.h"
 #include "../../common/Dto/player.h"
+#include "../../common/Dto/player_move.h"
 #include "../../common/Dto/vehicle.h"
 
 #include "camera.h"
@@ -68,10 +69,10 @@ void Game::Run() {
 
         // --- INPUT ---
         inputSystem_.PollEvents(running);
-        Dto input = inputSystem_.GetInputByte(this->world_.GetLocalPlayer().GetId());
-        if (input.return_code() != 0) {
-            client_.getSenderQueue().try_push(std::make_shared<Dto>(input));
-            std::cout << "Input enviado: " << +input.return_code() << std::endl;
+        PlayerMoveDto input = inputSystem_.GetInputByte(this->world_.GetLocalPlayer().GetId());
+        if (static_cast<ActionCode>(input.move) != ActionCode::IDLE) {
+            client_.getSenderQueue().try_push(std::make_shared<PlayerMoveDto>(input));
+            std::cout << "Input enviado: " << static_cast<int>(input.move) << std::endl;
         }
 
         // --- MENSAJES DEL SERVIDOR ---
@@ -79,11 +80,9 @@ void Game::Run() {
         while (client_.getRecvQueue().try_pop(dto)) {
             processDto(dto);
         }
-        std::cout << "Mensajes del servidor procesados" << std::endl;
 
         // --- RENDERIZADO ---
         rendererSystem_.Render(world_, map_, camera);
-        std::cout << "Renderizado completo" << std::endl;
         SDL_Delay(16);
     }
     client_.stop();
