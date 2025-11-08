@@ -220,6 +220,7 @@ if(TALLER_SERVER)
         SDL2::SDL2
         yaml-cpp
         nlohmann_json::nlohmann_json
+        SDL2_image::SDL2_image 
                        # <-- AÑADIDO
     )
 endif()

@@ -14,9 +14,6 @@ using json = nlohmann::json;
 using Matrix = LevelCreator::Matrix;
 using Matrix_vector = std::vector<std::vector<int>>;
 
-constexpr float PPM = 4.0f;     // píxeles por metro
-constexpr int TILE_SIZE_PX = 2;  // cada tile mide 2 píxeles en LDtk
-
 
 float tileIdToAngle(int tileId) {
     switch (tileId) {

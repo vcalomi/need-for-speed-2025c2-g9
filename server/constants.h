@@ -1,7 +1,8 @@
 #pragma once
 
 const float MIN_SPEED_STEER = 0.05f;
-
+const float PPM = 4.0f;
+const int TILE_SIZE_PX = 4;
 
 enum TurnDir { Left = -1, None = 0, Right = 1 };
 
