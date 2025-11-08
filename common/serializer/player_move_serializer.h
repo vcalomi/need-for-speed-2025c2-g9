@@ -4,6 +4,8 @@
 #include "../Dto/player_move.h"
 
 #include "serializer.h"
+#include <memory>
+#include <vector>
 
 class PlayerMoveSerializer: public Serializer {
 private:
@@ -17,5 +19,4 @@ public:
 };
 
 #endif
-#include <memory>
-#include <vector>
+

@@ -2,9 +2,9 @@
 #define PLAYER_DTO_H
 #include <string>
 
+#include "dto.h"
 #include "../common_codes.h"
 
-#include "dto.h"
 
 class PlayerDto: public Dto {
 public:
@@ -14,3 +14,4 @@ public:
 };
 
 #endif
+
