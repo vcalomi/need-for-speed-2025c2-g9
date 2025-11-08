@@ -24,10 +24,11 @@ class MainWindow: public QMainWindow {
 
 public:
     // Constructor principal (cliente con red y estado)
-    //explicit MainWindow(ClientProtocol& protocol, bool& game_started_ref, QWidget* parent = nullptr);
+    // explicit MainWindow(ClientProtocol& protocol, bool& game_started_ref, QWidget* parent =
+    // nullptr);
     // Constructor único: si isDummy = true, entra en modo UI sin red
-    explicit MainWindow(ClientProtocol& protocol, bool& game_started_ref,
-                        QWidget* parent = nullptr, bool isDummy = false);
+    explicit MainWindow(ClientProtocol& protocol, bool& game_started_ref, QWidget* parent = nullptr,
+                        bool isDummy = false);
     ~MainWindow();
     static MainWindow* createDummy(QWidget* parent = nullptr);
 
@@ -51,8 +52,8 @@ private:
     ClientProtocol& protocol;  // conexión TCP al servidor
     bool& game_started;
 
-    bool isDummy = false; // agrego
-    
+    bool isDummy = false;  // agrego
+
     QTimer* waitTimer;
     QTimer* refreshTimer;
     QMediaPlayer* backgroundMusic;

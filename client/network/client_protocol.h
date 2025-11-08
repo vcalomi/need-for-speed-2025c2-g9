@@ -21,7 +21,7 @@ private:
     bool dummyMode = false;
 
 public:
-    ClientProtocol(); 
+    ClientProtocol();
     ClientProtocol(const std::string& hostname, const std::string& port);
 
     bool isDummy() const { return dummyMode; }  // para verificar si es modo dummy

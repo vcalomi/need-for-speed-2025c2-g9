@@ -43,7 +43,7 @@ private:
     void chk_skt_or_fail() const;
 
 public:
-    Socket() = default; // permitir construcción vacía
+    Socket() = default;  // permitir construcción vacía
     /*
      * Constructores para `Socket` tanto para conectarse a un servidor
      * (`Socket::Socket(const char*, const char*)`) como para ser usado

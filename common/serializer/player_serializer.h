@@ -1,11 +1,12 @@
 #ifndef PLAYER_SERIALIZER_H
 #define PLAYER_SERIALIZER_H
 
+#include <memory>
+#include <vector>
+
 #include "../Dto/player.h"
 
 #include "serializer.h"
-#include <memory>
-#include <vector>
 
 class PlayerSerializer: public Serializer {
 private:
@@ -19,4 +20,3 @@ public:
 };
 
 #endif
-

@@ -1,11 +1,12 @@
 #ifndef PLAYER_MOVE_SERIALIZER_H
 #define PLAYER_MOVE_SERIALIZER_H
 
+#include <memory>
+#include <vector>
+
 #include "../Dto/player_move.h"
 
 #include "serializer.h"
-#include <memory>
-#include <vector>
 
 class PlayerMoveSerializer: public Serializer {
 private:
@@ -19,4 +20,3 @@ public:
 };
 
 #endif
-

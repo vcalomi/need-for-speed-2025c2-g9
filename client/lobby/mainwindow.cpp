@@ -56,15 +56,15 @@ MainWindow* MainWindow::createDummy(QWidget* parent) {
 }
 
 
-MainWindow::MainWindow(ClientProtocol& protocol, bool& game_started_ref, QWidget* parent, bool isDummy):
+MainWindow::MainWindow(ClientProtocol& protocol, bool& game_started_ref, QWidget* parent,
+                       bool isDummy):
         QMainWindow(parent),
         ui(new Ui::Lobby),
         protocol(protocol),
         game_started(game_started_ref),
-        isDummy(isDummy), // guardar el flag
+        isDummy(isDummy),  // guardar el flag
         waitTimer(nullptr),
-        refreshTimer(nullptr) 
-    {
+        refreshTimer(nullptr) {
     ui->setupUi(this);
 
     if (isDummy) {
@@ -234,7 +234,8 @@ MainWindow::MainWindow(ClientProtocol& protocol, bool& game_started_ref, QWidget
 }
 
 void MainWindow::showPage(int page) {
-    if (isDummy) return;
+    if (isDummy)
+        return;
 
     ui->listRooms->clear();
     try {
@@ -266,7 +267,8 @@ void MainWindow::handleBackToMenu() {
 }
 
 void MainWindow::handleJoinGame() {
-    if (isDummy) return;
+    if (isDummy)
+        return;
 
     player.isHost = false;
 
@@ -349,7 +351,8 @@ void MainWindow::handleCreateButton() {
 }
 
 void MainWindow::handleContinueToWait() {
-    if (isDummy) return;
+    if (isDummy)
+        return;
 
     player.maxPlayers = ui->comboMaxPlayers->currentText().toUInt();
     try {
@@ -385,7 +388,8 @@ void MainWindow::handleContinueToWait() {
 }
 
 void MainWindow::handleConfirmJoin() {
-    if (isDummy) return;
+    if (isDummy)
+        return;
 
     QString code = ui->inputCode->text().trimmed();
     if (code.isEmpty()) {
@@ -430,7 +434,8 @@ void MainWindow::updateLobbyStatus() {
 }
 
 void MainWindow::handleRefreshPlayers() {
-    if (isDummy) return;
+    if (isDummy)
+        return;
 
     if (inFlight)
         return;
@@ -466,7 +471,8 @@ void MainWindow::updateCarImage() {
 }
 
 void MainWindow::handleStartGame() {
-    if (isDummy) return;
+    if (isDummy)
+        return;
 
     game_started = true;
     try {

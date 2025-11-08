@@ -10,11 +10,10 @@
 #include "../../common/serializer/vehicle_serializer.h"
 
 // Constructor DUMMY: no se conecta a nada
-ClientProtocol::ClientProtocol()
-    : socket(),              // no pasa host ni port
-      protocol(),
-      serializers()
-{
+ClientProtocol::ClientProtocol():
+        socket(),  // no pasa host ni port
+        protocol(),
+        serializers() {
     // NO se conecta a nada
 }
 
