@@ -10,6 +10,4 @@ std::shared_ptr<Dto> Serializer::deserialize(const std::vector<uint8_t>& buffer)
     throw std::runtime_error("Serializer::deserialize not implemented");
 }
 
-int Serializer::getSize() const { throw std::runtime_error("Serializer::getSize not implemented"); }
-
 Serializer::~Serializer() = default;

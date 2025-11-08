@@ -22,14 +22,15 @@ int main(int argc, char* argv[]) {
         ClientProtocol protocol(hostname, port);
         // 1. Ejecutar Lobby
         bool game_started = false;
-        MainWindow lobby(protocol, std::ref(game_started));
+        std::string username;
+        MainWindow lobby(protocol, std::ref(game_started), std::ref(username));
         lobby.show();
         app.exec();
 
         // 2. Si el juego inició, ejecutar Client
         if (game_started) {
             std::cout << "Game started! Launching game client..." << std::endl;
-            Client client(protocol);
+            Client client(protocol, username);
             client.run();
         }
 

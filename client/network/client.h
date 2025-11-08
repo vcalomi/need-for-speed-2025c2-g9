@@ -14,6 +14,7 @@
 class Client {
 private:
     ClientProtocol& clientProtocol;
+    std::string username;
     bool connected;
     Queue<std::shared_ptr<Dto>> recvQueue;
     Queue<std::shared_ptr<Dto>> senderQueue;
@@ -21,7 +22,7 @@ private:
     ClientReceiver receiver;
 
 public:
-    explicit Client(ClientProtocol& protocol);
+    explicit Client(ClientProtocol& protocol, const std::string& username);
     void run();
     void stop();
     ~Client();

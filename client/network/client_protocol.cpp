@@ -69,8 +69,8 @@ std::shared_ptr<Dto> ClientProtocol::receiveDTO() {
         std::cerr << "Error: Unknown DTO code received: " << (int)dtoCode << std::endl;
         throw std::runtime_error("Unknown DTO code: " + std::to_string((int)dtoCode));
     }
-
-    std::vector<uint8_t> buffer(it->second->getSize());
+    uint32_t buffer_size = protocol.receiveUint32(socket);
+    std::vector<uint8_t> buffer(buffer_size);
     socket.recvall(buffer.data(), buffer.size());
 
     return it->second->deserialize(buffer);
@@ -85,6 +85,8 @@ void ClientProtocol::sendDTO(std::shared_ptr<Dto> dto) {
                                  std::to_string(dtoCode));
     }
     auto buffer = it->second->serialize(*dto);
+    uint32_t buffer_size = buffer.size();
+    protocol.sendUint32(socket, buffer_size);
     socket.sendall(buffer.data(), buffer.size());
 }
 

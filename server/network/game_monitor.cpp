@@ -137,7 +137,13 @@ bool GameMonitor::setUsername(int clientId, const std::string& username) {
             return false;
         }
     }
+
     clientUsernames[clientId] = username;
+    if (clientToRoom.count(clientId)) {
+        auto room = clientToRoom[clientId];
+        return room->setPlayerUsername(clientId, username);
+    }
+
     return true;
 }
 

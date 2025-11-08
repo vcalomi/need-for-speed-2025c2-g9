@@ -9,15 +9,19 @@
 
 std::vector<uint8_t> VehicleSerializer::serialize(const Dto& dto) const {
     const VehicleDto& vehicleDto = static_cast<const VehicleDto&>(dto);
-    std::vector<uint8_t> buffer(sizeof(uint8_t) + 3 * sizeof(float));
+    size_t username_len = vehicleDto.username.length();
+    std::vector<uint8_t> buffer(1 + username_len + 3 * sizeof(float));
     size_t pos = 0;
+
+    buffer[pos++] = static_cast<uint8_t>(username_len);
+    for (char c: vehicleDto.username) {
+        buffer[pos++] = static_cast<uint8_t>(c);
+    }
 
     auto writeFloat = [&](float value) {
         std::memcpy(&buffer[pos], &value, sizeof(float));
         pos += sizeof(float);
     };
-
-    buffer[pos++] = vehicleDto.id;
     writeFloat(vehicleDto.x);
     writeFloat(vehicleDto.y);
     writeFloat(vehicleDto.rotation);
@@ -35,10 +39,15 @@ std::shared_ptr<Dto> VehicleSerializer::deserialize(const std::vector<uint8_t>& 
         return value;
     };
 
-    uint8_t id = buffer[pos++];
+    uint8_t username_len = buffer[pos++];
+    std::string username;
+    for (int i = 0; i < username_len && pos < buffer.size(); i++) {
+        username += static_cast<char>(buffer[pos++]);
+    }
+
     float x = readFloat();
     float y = readFloat();
     float rotation = readFloat();
 
-    return std::make_shared<VehicleDto>(id, x, y, rotation);
+    return std::make_shared<VehicleDto>(username, x, y, rotation);
 }

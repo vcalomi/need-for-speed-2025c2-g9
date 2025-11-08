@@ -23,7 +23,8 @@ class MainWindow: public QMainWindow {
     Q_OBJECT
 
 public:
-    MainWindow(ClientProtocol& protocol, bool& game_started_ref, QWidget* parent = nullptr);
+    MainWindow(ClientProtocol& protocol, bool& game_started_ref, std::string& username,
+               QWidget* parent = nullptr);
     ~MainWindow();
 
 private slots:
@@ -45,6 +46,7 @@ private:
     PlayerInfo player;
     ClientProtocol& protocol;  // conexión TCP al servidor
     bool& game_started;
+    std::string& username;
     QTimer* waitTimer;
     QTimer* refreshTimer;
     QMediaPlayer* backgroundMusic;

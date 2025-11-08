@@ -49,11 +49,13 @@ void MainWindow::onWaitTimerTickJoin() {
     inFlight = false;
 }
 
-MainWindow::MainWindow(ClientProtocol& protocol, bool& game_started_ref, QWidget* parent):
+MainWindow::MainWindow(ClientProtocol& protocol, bool& game_started_ref, std::string& username_ref,
+                       QWidget* parent):
         QMainWindow(parent),
         ui(new Ui::Lobby),
         protocol(protocol),
         game_started(game_started_ref),
+        username(username_ref),
         waitTimer(nullptr),
         refreshTimer(nullptr) {
     ui->setupUi(this);
@@ -111,6 +113,7 @@ MainWindow::MainWindow(ClientProtocol& protocol, bool& game_started_ref, QWidget
                 QMessageBox::warning(this, "Username", "Username is already in use. Try another.");
                 return;
             }
+            username = name.toStdString();
             this->protocol.sendListRooms();
             auto rooms = this->protocol.receiveRoomList();
             allRooms.clear();

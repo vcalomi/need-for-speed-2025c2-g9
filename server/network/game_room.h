@@ -27,6 +27,7 @@ private:
     int hostId;
     // clientId y su queue
     std::map<int, Queue<std::shared_ptr<Dto>>*> players;
+    std::map<int, std::string> playerUsernames;
     std::map<int, CarConfig> chosenCars;
     int maxPlayers_;
     RoomState state;
@@ -50,6 +51,7 @@ public:
     std::vector<int> getPlayerIds();
     bool isInRace();
     int getMaxPlayers() const { return maxPlayers_; }
+    bool setPlayerUsername(int clientId, const std::string& username);
     ~GameRoom();
 };
 

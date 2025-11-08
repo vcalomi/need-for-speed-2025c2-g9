@@ -8,8 +8,9 @@
 
 #include "client_input_handler.h"
 
-Client::Client(ClientProtocol& protocol):
+Client::Client(ClientProtocol& protocol, const std::string& username):
         clientProtocol(protocol),
+        username(username),
         connected(true),
         recvQueue(),
         senderQueue(),
@@ -23,7 +24,7 @@ void Client::run() {
         sender.start();
         receiver.start();
         std::cout << "Client: Game communication started" << std::endl;
-        Game game(*this);
+        Game game(*this, username);
         game.Run();
         input.join();
     } catch (const std::exception& e) {
