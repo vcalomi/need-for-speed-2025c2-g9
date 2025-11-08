@@ -27,10 +27,12 @@ void Game::processDto(const std::shared_ptr<Dto>& dto) {
         case ActionCode::SEND_PLAYER: {
             auto playerDto = std::dynamic_pointer_cast<PlayerDto>(dto);
             if (playerDto) {
-                std::cout << "Procesando jugador id=" << (int)playerDto->id << std::endl;
-                if (!world_.HasPlayer(playerDto->id)) {
-                    world_.AddPlayer(playerDto->id, playerDto->Type, true);
-                    std::cout << "Jugador agregado al mundo, id=" << (int)playerDto->id
+                std::cout << "Procesando jugador username=" << playerDto->username << std::endl;
+                auto playerUsername = playerDto->username;
+                if (!world_.HasPlayer(playerUsername)) {
+                    world_.AddPlayer(playerUsername, playerDto->Type,
+                                     playerUsername == client_.getUsername());
+                    std::cout << "Jugador agregado al mundo, username=" << playerUsername
                               << std::endl;
                 }
             }
@@ -39,10 +41,10 @@ void Game::processDto(const std::shared_ptr<Dto>& dto) {
         case ActionCode::SEND_CARS: {
             auto vehicleDto = std::dynamic_pointer_cast<VehicleDto>(dto);
             if (vehicleDto) {
-                std::cout << "Procesando vehículo id=" << (int)vehicleDto->id << " pos("
-                          << vehicleDto->x << ", " << vehicleDto->y
+                std::cout << "Procesando vehículo username=" << vehicleDto->get_username()
+                          << " pos(" << vehicleDto->x << ", " << vehicleDto->y
                           << ") rot=" << vehicleDto->rotation << std::endl;
-                world_.UpdateFromServer(vehicleDto->id, vehicleDto->x, vehicleDto->y,
+                world_.UpdateFromServer(vehicleDto->get_username(), vehicleDto->x, vehicleDto->y,
                                         vehicleDto->rotation);
             }
             break;
@@ -72,7 +74,8 @@ void Game::Run() {
 
         // --- INPUT ---
         inputSystem_.PollEvents(running);
-        PlayerMoveDto input = inputSystem_.GetInputByte(this->world_.GetLocalPlayer().GetId());
+        PlayerMoveDto input =
+                inputSystem_.GetInputByte(this->world_.GetLocalPlayer().GetUsername());
         if (static_cast<ActionCode>(input.move) != ActionCode::IDLE) {
             client_.getSenderQueue().try_push(std::make_shared<PlayerMoveDto>(input));
         }

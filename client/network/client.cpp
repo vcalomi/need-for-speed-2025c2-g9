@@ -24,7 +24,7 @@ void Client::run() {
         sender.start();
         receiver.start();
         std::cout << "Client: Game communication started" << std::endl;
-        Game game(*this, username);
+        Game game(*this);
         game.Run();
         input.join();
     } catch (const std::exception& e) {

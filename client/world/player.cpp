@@ -4,8 +4,8 @@
 
 using SDL2pp::Renderer;
 
-Player::Player(const int id, VehicleTipe carType, float x, float y):
-        id_(id), carType_(carType), x_(x), y_(y), angle_(0.0f) {
+Player::Player(std::string username, VehicleTipe carType, float x, float y):
+        username_(username), carType_(carType), x_(x), y_(y), angle_(0.0f) {
     currentSprite_ = VehicleTipeToString(carType) + "Norte";
 }
 

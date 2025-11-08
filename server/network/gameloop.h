@@ -4,6 +4,7 @@
 #include <map>
 #include <memory>
 #include <optional>
+#include <string>
 #include <vector>
 
 #include "../../common/Dto/dto.h"
@@ -23,7 +24,7 @@ private:
     std::optional<LevelSetup> setup;
     int maxPlayers;
     void handlerProcessCommand(std::shared_ptr<Dto> dto);
-    Vehicle* getVehicleByPlayer(int player_id);
+    Vehicle* getVehicleByPlayer(const std::string& username);
 
 public:
     explicit GameLoop(Queue<std::shared_ptr<Dto>>& gameLoopQueue,

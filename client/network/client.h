@@ -28,6 +28,7 @@ public:
     ~Client();
     Queue<std::shared_ptr<Dto>>& getRecvQueue() { return recvQueue; }
     Queue<std::shared_ptr<Dto>>& getSenderQueue() { return senderQueue; }
+    std::string getUsername() const { return username; }
 };
 
 #endif

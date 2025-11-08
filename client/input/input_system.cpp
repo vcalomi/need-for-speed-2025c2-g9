@@ -11,22 +11,18 @@ void InputSystem::PollEvents(bool& running) {
     }
 }
 
-PlayerMoveDto InputSystem::GetInputByte(int playerId) const {
+PlayerMoveDto InputSystem::GetInputByte(std::string username) const {
     const Uint8* keys = SDL_GetKeyboardState(NULL);
 
     if (keys[SDL_SCANCODE_W])
-        return PlayerMoveDto(static_cast<uint8_t>(playerId),
-                             (static_cast<uint8_t>(ActionCode::ACCELERATE)));
+        return PlayerMoveDto(username, (static_cast<uint8_t>(ActionCode::ACCELERATE)));
     if (keys[SDL_SCANCODE_S])
-        return PlayerMoveDto(static_cast<uint8_t>(playerId),
-                             (static_cast<uint8_t>(ActionCode::BRAKE)));
+        return PlayerMoveDto(username, (static_cast<uint8_t>(ActionCode::BRAKE)));
     if (keys[SDL_SCANCODE_A])
-        return PlayerMoveDto(static_cast<uint8_t>(playerId),
-                             (static_cast<uint8_t>(ActionCode::TURN_RIGHT)));
+        return PlayerMoveDto(username, (static_cast<uint8_t>(ActionCode::TURN_RIGHT)));
     if (keys[SDL_SCANCODE_D])
-        return PlayerMoveDto(static_cast<uint8_t>(playerId),
-                             (static_cast<uint8_t>(ActionCode::TURN_LEFT)));
+        return PlayerMoveDto(username, (static_cast<uint8_t>(ActionCode::TURN_LEFT)));
 
     // Ninguna tecla presionada: no se envía nada
-    return PlayerMoveDto(static_cast<uint8_t>(playerId), (static_cast<uint8_t>(ActionCode::IDLE)));
+    return PlayerMoveDto(username, (static_cast<uint8_t>(ActionCode::IDLE)));
 }
