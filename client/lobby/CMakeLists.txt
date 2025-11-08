@@ -20,7 +20,10 @@ find_package(Qt6Multimedia REQUIRED)
 
 # find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets)
 
-find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets)
+find_package(Qt6 REQUIRED COMPONENTS Widgets)
+
+# --------------------------
+set(QT_VERSION_MAJOR 6)
 
 set(PROJECT_SOURCES
         main.cpp
@@ -29,8 +32,8 @@ set(PROJECT_SOURCES
         mainwindow.ui
 
         # --- CLIENTE ---
-        ../client_protocol.cpp
-        ../client_receiver.cpp
+        ../network/client_protocol.cpp
+        ../network/client_receiver.cpp
 
         # --- COMÚN ---
         ../../common/socket.cpp
@@ -43,15 +46,21 @@ set(PROJECT_SOURCES
         # --- SERIALIZERS ---
         ../../common/serializer/serializer.cpp
         ../../common/serializer/vehicle_serializer.cpp
+        ../../common/serializer/player_serializer.cpp
+        ../../common/serializer/player_move_serializer.cpp
 
         # --- DTOs ---
         ../../common/Dto/dto.cpp
+        ../../common/Dto/player.cpp
+        ../../common/Dto/player_move.cpp
         ../../common/Dto/vehicle.cpp
 )
 
-qt_add_resources(APP_RESOURCES "client/lobby/assets/resources.qrc")
+# qt_add_resources(APP_RESOURCES "client/lobby/assets/resources.qrc")
+set(APP_RESOURCES assets/resources.qrc)
 
-if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
+# if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
+if(DEFINED QT_VERSION_MAJOR AND QT_VERSION_MAJOR GREATER_EQUAL 6)
     qt_add_executable(loby
         MANUAL_FINALIZATION
         ${PROJECT_SOURCES}
@@ -90,7 +99,9 @@ target_link_libraries(loby PRIVATE
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.
 # If you are developing for iOS or macOS you should consider setting an
 # explicit, fixed bundle identifier manually though.
-if(${QT_VERSION} VERSION_LESS 6.1.0)
+
+# if(${QT_VERSION} VERSION_LESS 6.1.0)
+if(DEFINED QT_VERSION AND QT_VERSION VERSION_LESS 6.1.0)
   set(BUNDLE_ID_OPTION MACOSX_BUNDLE_GUI_IDENTIFIER com.example.loby)
 endif()
 set_target_properties(loby PROPERTIES

@@ -23,9 +23,19 @@ class MainWindow: public QMainWindow {
     Q_OBJECT
 
 public:
+<<<<<<< HEAD
     MainWindow(ClientProtocol& protocol, bool& game_started_ref, std::string& username,
                QWidget* parent = nullptr);
+=======
+    // Constructor principal (cliente con red y estado)
+    // explicit MainWindow(ClientProtocol& protocol, bool& game_started_ref, QWidget* parent =
+    // nullptr);
+    // Constructor único: si isDummy = true, entra en modo UI sin red
+    explicit MainWindow(ClientProtocol& protocol, bool& game_started_ref, QWidget* parent = nullptr,
+                        bool isDummy = false);
+>>>>>>> aa782b3318be457f650d45bfa17c085ebae88c7c
     ~MainWindow();
+    static MainWindow* createDummy(QWidget* parent = nullptr);
 
 private slots:
     void handleJoinGame();
@@ -47,6 +57,9 @@ private:
     ClientProtocol& protocol;  // conexión TCP al servidor
     bool& game_started;
     std::string& username;
+
+    bool isDummy = false;  // agrego
+
     QTimer* waitTimer;
     QTimer* refreshTimer;
     QMediaPlayer* backgroundMusic;

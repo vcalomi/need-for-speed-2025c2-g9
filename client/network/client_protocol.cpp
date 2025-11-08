@@ -9,6 +9,14 @@
 #include "../../common/serializer/player_serializer.h"
 #include "../../common/serializer/vehicle_serializer.h"
 
+// Constructor DUMMY: no se conecta a nada
+ClientProtocol::ClientProtocol():
+        socket(),  // no pasa host ni port
+        protocol(),
+        serializers() {
+    // NO se conecta a nada
+}
+
 ClientProtocol::ClientProtocol(const std::string& hostname, const std::string& port):
         socket(hostname.c_str(), port.c_str()), protocol(), serializers() {
     serializers[static_cast<uint8_t>(ActionCode::SEND_CARS)] =

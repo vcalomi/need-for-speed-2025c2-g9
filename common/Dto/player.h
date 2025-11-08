@@ -6,6 +6,7 @@
 
 #include "dto.h"
 
+
 class PlayerDto: public Dto {
 public:
     std::string username;

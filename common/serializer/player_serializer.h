@@ -1,6 +1,9 @@
 #ifndef PLAYER_SERIALIZER_H
 #define PLAYER_SERIALIZER_H
 
+#include <memory>
+#include <vector>
+
 #include "../Dto/player.h"
 
 #include "serializer.h"
@@ -14,5 +17,3 @@ public:
 };
 
 #endif
-#include <memory>
-#include <vector>

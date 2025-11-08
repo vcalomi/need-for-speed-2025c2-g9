@@ -49,6 +49,12 @@ void MainWindow::onWaitTimerTickJoin() {
     inFlight = false;
 }
 
+MainWindow* MainWindow::createDummy(QWidget* parent) {
+    static ClientProtocol dummyProtocol;  // usa el constructor dummy
+    static bool dummyGameStarted = false;
+    return new MainWindow(dummyProtocol, dummyGameStarted, parent, true);
+}
+
 MainWindow::MainWindow(ClientProtocol& protocol, bool& game_started_ref, std::string& username_ref,
                        QWidget* parent):
         QMainWindow(parent),
@@ -59,6 +65,15 @@ MainWindow::MainWindow(ClientProtocol& protocol, bool& game_started_ref, std::st
         waitTimer(nullptr),
         refreshTimer(nullptr) {
     ui->setupUi(this);
+
+    if (isDummy) {
+        setWindowTitle("Lobby (UI Preview)");
+        ui->connectButton->setEnabled(false);
+        ui->btnCreate->setEnabled(true);
+        ui->btnJoin->setEnabled(true);
+        ui->stackedWidget->setCurrentWidget(ui->page_menu);
+        return;
+    }
 
     // Música de fondo
     setupBackgroundMusic();
@@ -106,6 +121,7 @@ MainWindow::MainWindow(ClientProtocol& protocol, bool& game_started_ref, std::st
         }
 
         player.username = name;
+
         try {
             this->protocol.sendUsername(player.username.toStdString());
             ActionCode resp = this->protocol.receiveActionCode();
@@ -218,6 +234,9 @@ MainWindow::MainWindow(ClientProtocol& protocol, bool& game_started_ref, std::st
 }
 
 void MainWindow::showPage(int page) {
+    if (isDummy)
+        return;
+
     ui->listRooms->clear();
     try {
         this->protocol.sendListRooms();
@@ -247,12 +266,10 @@ void MainWindow::handleBackToMenu() {
     Navigation::goToPage(ui->page_menu, ui->stackedWidget, this);
 }
 
-// void MainWindow::handleJoinGame() {
-//     player.isHost = false;
-//     Navigation::goToPage(ui->page_join, ui->stackedWidget, this);
-// }
-
 void MainWindow::handleJoinGame() {
+    if (isDummy)
+        return;
+
     player.isHost = false;
 
     try {
@@ -334,6 +351,9 @@ void MainWindow::handleCreateButton() {
 }
 
 void MainWindow::handleContinueToWait() {
+    if (isDummy)
+        return;
+
     player.maxPlayers = ui->comboMaxPlayers->currentText().toUInt();
     try {
         this->protocol.sendCreateRoom(player.roomCode.toStdString(), player.maxPlayers);
@@ -368,6 +388,9 @@ void MainWindow::handleContinueToWait() {
 }
 
 void MainWindow::handleConfirmJoin() {
+    if (isDummy)
+        return;
+
     QString code = ui->inputCode->text().trimmed();
     if (code.isEmpty()) {
         QMessageBox::warning(this, "Join Game", "Please enter a room code.");
@@ -411,6 +434,9 @@ void MainWindow::updateLobbyStatus() {
 }
 
 void MainWindow::handleRefreshPlayers() {
+    if (isDummy)
+        return;
+
     if (inFlight)
         return;
     inFlight = true;
@@ -445,6 +471,9 @@ void MainWindow::updateCarImage() {
 }
 
 void MainWindow::handleStartGame() {
+    if (isDummy)
+        return;
+
     game_started = true;
     try {
         this->protocol.sendStartGame();

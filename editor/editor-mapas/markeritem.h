@@ -39,12 +39,12 @@ public:
                 break;
             case MarkerKind::Start:
                 p->setBrush(Qt::green);
-                p->drawEllipse(-6, -6, 12, 12);
+                p->drawEllipse(-10, -10, 20, 20);
                 p->drawText(QRectF(-6, -6, 16, 16), Qt::AlignCenter, "S");
                 break;
             case MarkerKind::Finish:
                 p->setBrush(Qt::white);
-                p->drawEllipse(-6, -6, 12, 12);
+                p->drawEllipse(-10, -10, 20, 20);
                 p->drawText(QRectF(-6, -6, 16, 16), Qt::AlignCenter, "F");
                 break;
         }

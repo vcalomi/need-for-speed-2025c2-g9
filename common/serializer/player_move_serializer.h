@@ -1,6 +1,9 @@
 #ifndef PLAYER_MOVE_SERIALIZER_H
 #define PLAYER_MOVE_SERIALIZER_H
 
+#include <memory>
+#include <vector>
+
 #include "../Dto/player_move.h"
 
 #include "serializer.h"
@@ -13,5 +16,3 @@ public:
 };
 
 #endif
-#include <memory>
-#include <vector>
