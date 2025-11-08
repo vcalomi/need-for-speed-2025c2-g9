@@ -11,6 +11,7 @@ public:
     void AddPlayer(const int id, VehicleTipe carType, bool isLocal);
     Player& GetLocalPlayer();
     bool HasPlayer(const int id) const;
+    bool HasPlayers() const;
     const std::map<int, Player>& GetPlayers() const;
     void UpdateFromServer(const int id, float x, float y, float angle);
     void OnCollision(const int id1, const int id2);

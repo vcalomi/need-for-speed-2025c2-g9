@@ -14,6 +14,8 @@ void World::AddPlayer(const int id, VehicleTipe carType, bool isLocal) {
         localId_ = id;
 }
 
+bool World::HasPlayers() const { return !players_.empty(); }
+
 Player& World::GetLocalPlayer() { return players_.at(localId_); }
 
 const std::map<int, Player>& World::GetPlayers() const { return players_; }

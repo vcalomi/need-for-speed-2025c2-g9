@@ -17,7 +17,7 @@ Game::Game(Client& client):
         world_(),
         inputSystem_(),
         rendererSystem_(engine_.GetRenderer(), resources_.GetCarSprites()),
-        map_(engine_.GetRenderer(), "../client/assets/need-for-speed/cities/san_andreas.png") {
+        map_(engine_.GetRenderer(), "../client/assets/need-for-speed/cities/liberty_city.png") {
     audioManager_.PlayBackgroundMusic("../client/assets/need-for-speed/music/background.wav");
 }
 
@@ -58,9 +58,12 @@ void Game::Run() {
     bool running = true;
     Camera camera;
 
-    std::shared_ptr<Dto> player = nullptr;
-    client_.getRecvQueue().try_pop(player);
-    processDto(player);
+    while (world_.HasPlayers() == false) {
+        std::shared_ptr<Dto> dto = nullptr;
+        while (client_.getRecvQueue().try_pop(dto)) {
+            processDto(dto);
+        }
+    }
 
     while (running) {
 
