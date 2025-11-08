@@ -130,9 +130,15 @@ std::vector<std::string> GameMonitor::getPlayersInRoomByClient(int clientId) {
     return result;
 }
 
-void GameMonitor::setUsername(int clientId, const std::string& username) {
+bool GameMonitor::setUsername(int clientId, const std::string& username) {
     std::lock_guard<std::mutex> lock(mtx);
+    for (const auto& [id, name]: clientUsernames) {
+        if (name == username && id != clientId) {
+            return false;
+        }
+    }
     clientUsernames[clientId] = username;
+    return true;
 }
 
 std::string GameMonitor::getUsername(int clientId) const {

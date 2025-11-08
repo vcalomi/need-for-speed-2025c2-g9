@@ -91,7 +91,12 @@ void Lobby::handleChooseCar() {
 
 void Lobby::handleSendUsername() {
     std::string username = protocol.receiveRoomName();
-    gameMonitor.setUsername(clientId, username);
+    bool ok = gameMonitor.setUsername(clientId, username);
+    if (ok) {
+        protocol.sendMsg({ActionCode::USERNAME_OK});
+    } else {
+        protocol.sendMsg({ActionCode::SEND_ERROR_MSG});
+    }
 }
 
 void Lobby::handleListPlayers() {

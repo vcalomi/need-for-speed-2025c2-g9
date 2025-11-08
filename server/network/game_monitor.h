@@ -36,7 +36,7 @@ public:
     Queue<std::shared_ptr<Dto>>& getGameQueueForClient(int clientId);
     bool chooseCarByClientId(int clientId, const CarConfig& car);
     std::vector<std::string> getPlayersInRoomByClient(int clientId);
-    void setUsername(int clientId, const std::string& username);
+    bool setUsername(int clientId, const std::string& username);
     std::string getUsername(int clientId) const;
     bool isGameStartedByClient(int clientId);
     void registerStartNotifier(int clientId,

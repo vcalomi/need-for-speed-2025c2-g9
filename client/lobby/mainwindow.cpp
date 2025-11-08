@@ -106,6 +106,11 @@ MainWindow::MainWindow(ClientProtocol& protocol, bool& game_started_ref, QWidget
         player.username = name;
         try {
             this->protocol.sendUsername(player.username.toStdString());
+            ActionCode resp = this->protocol.receiveActionCode();
+            if (resp != ActionCode::USERNAME_OK) {
+                QMessageBox::warning(this, "Username", "Username is already in use. Try another.");
+                return;
+            }
             this->protocol.sendListRooms();
             auto rooms = this->protocol.receiveRoomList();
             allRooms.clear();
