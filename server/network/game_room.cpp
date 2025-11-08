@@ -4,6 +4,7 @@
 #include <iostream>
 
 #include "../../common/Dto/vehicle.h"
+#include "../../common/common_codes.h"
 #include "../../common/queue.h"
 
 GameRoom::GameRoom(const std::string& roomName, int hostId, int maxPlayers):
@@ -31,6 +32,14 @@ bool GameRoom::startGame() {
 
     if (state != RoomState::WAITING_FOR_PLAYERS || players.size() < 1) {
         return false;
+    }
+
+    for (const auto& [id, queue]: players) {
+        if (chosenCars.find(id) == chosenCars.end()) {
+            CarConfig defaultCar{};
+            defaultCar.carType = "fiat_600";
+            chosenCars[id] = defaultCar;
+        }
     }
 
     state = RoomState::IN_RACE;
