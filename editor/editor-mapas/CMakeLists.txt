@@ -17,14 +17,17 @@ set(PROJECT_SOURCES
         main.cpp
         mainwindow.cpp
         mainwindow.h
-        mainwindow.ui
+        mapview.cpp
+        mapview.h
+        markeritem.h
+        yamlhandler.cpp
+        yamlhandler.h
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     qt_add_executable(editor-mapas
         MANUAL_FINALIZATION
         ${PROJECT_SOURCES}
-        yamlhandler.h yamlhandler.cpp
         resources.qrc
     )
 # Define target properties for Android with Qt 6 as:

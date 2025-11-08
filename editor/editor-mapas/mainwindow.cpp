@@ -1,112 +1,117 @@
 #include "mainwindow.h"
 
-#include <QGraphicsLineItem>
+#include <QDebug>
 #include <QMessageBox>
-#include <QMouseEvent>
-#include <QPixmap>
+#include <QShortcut>
 
+#include "markeritem.h"
 #include "ui_mainwindow.h"
 #include "yamlhandler.h"
 
 MainWindow::MainWindow(QWidget* parent):
-        QMainWindow(parent), ui(new Ui::MainWindow), scene(new QGraphicsScene(this)) {
+        QMainWindow(parent), ui(new Ui::MainWindow), view(nullptr) {
 
     ui->setupUi(this);
-    ui->graphicsViewMap->setScene(scene);
+    showMaximized();
+
+    view = new MapView(this);
+    ui->horizontalLayout->replaceWidget(ui->graphicsViewMap, view);
+    ui->graphicsViewMap->deleteLater();
+
     ui->comboCity->addItems({"Liberty City", "San Andreas", "Vice City"});
+
+    // Botones
+    connect(ui->loadMapBtn, &QPushButton::clicked, this, &MainWindow::on_loadMapBtn_clicked);
+    connect(ui->saveMapBtn, &QPushButton::clicked, this, &MainWindow::on_saveMapBtn_clicked);
+    connect(ui->cleanBtn, &QPushButton::clicked, this, &MainWindow::on_cleanBtn_clicked);
+
+    connect(ui->selectToolBtn, &QPushButton::clicked, this, &MainWindow::toolSelect);
+    connect(ui->checkpointToolBtn, &QPushButton::clicked, this, &MainWindow::toolCheckpoint);
+    connect(ui->hintToolBtn, &QPushButton::clicked, this, &MainWindow::toolHint);
+    connect(ui->spawnToolBtn, &QPushButton::clicked, this, &MainWindow::toolSpawn);
+    connect(ui->startToolBtn, &QPushButton::clicked, this, &MainWindow::toolStart);
+    connect(ui->finishToolBtn, &QPushButton::clicked, this, &MainWindow::toolFinish);
+
+    connect(ui->zoomInBtn, &QPushButton::clicked, view, &MapView::zoomIn);
+    connect(ui->zoomOutBtn, &QPushButton::clicked, view, &MapView::zoomOut);
+    connect(ui->resetZoomBtn, &QPushButton::clicked, view, &MapView::resetZoom);
+
+    // Atajo Ctrl+Z
+    new QShortcut(QKeySequence(Qt::CTRL | Qt::Key_Z), this, SLOT(onUndo()));
+
+    // Conexión para undo/redo
+    connect(view, &MapView::itemAdded, this, [this](QGraphicsItem* it) {
+        history.push({Command::Add, it});
+    });
+    connect(view, &MapView::itemRemoved, this, [this](QGraphicsItem* it) {
+        history.push({Command::Remove, it});
+    });
 }
 
 MainWindow::~MainWindow() { delete ui; }
 
-void MainWindow::on_loadMapBtn_clicked() {
-    QString city = ui->comboCity->currentText();
-    QString mapPath;
+QString MainWindow::currentCityId() const {
+    const QString c = ui->comboCity->currentText();
+    if (c == "Liberty City")
+        return "liberty_city";
+    if (c == "San Andreas")
+        return "san_andreas";
+    return "vice_city";
+}
 
+QPixmap MainWindow::mapForCity(const QString& city) const {
     if (city == "Liberty City")
-        mapPath = ":/images/liberty_city.png";
-    else if (city == "San Andreas")
-        mapPath = ":/images/san_andreas.png";
-    else
-        mapPath = ":/images/vice_city.png";
+        return QPixmap(":/images/liberty_city.png");
+    if (city == "San Andreas")
+        return QPixmap(":/images/san_andreas.png");
+    return QPixmap(":/images/vice_city.png");
+}
 
-    // Cargar imagen desde recursos
-    QPixmap pixmap(mapPath);
-    if (pixmap.isNull()) {
-        qDebug() << "No se pudo cargar el mapa:" << mapPath;
+void MainWindow::on_loadMapBtn_clicked() {
+    QPixmap pm = mapForCity(ui->comboCity->currentText());
+    if (pm.isNull()) {
+        QMessageBox::warning(this, "Error", "Could not load the selected map image.");
         return;
     }
 
-    scene->clear();
-
-    QGraphicsPixmapItem* background = scene->addPixmap(pixmap);
-    background->setZValue(-1);
-
-    currentMapSize = pixmap.size();  // Guardamos el tamaño del mapa cargado
-
-    ui->graphicsViewMap->fitInView(background, Qt::KeepAspectRatio);
-}
-
-void MainWindow::mousePressEvent(QMouseEvent* event) {
-    // Verificamos si el click fue dentro del graphicsView
-    if (!ui->graphicsViewMap->rect().contains(
-                ui->graphicsViewMap->mapFromGlobal(event->globalPos())))
-        return;
-
-    // Convertir posición de click a coordenadas de escena
-    QPointF scenePos =
-            ui->graphicsViewMap->mapToScene(ui->graphicsViewMap->mapFromGlobal(event->globalPos()));
-
-    // Normalizar (0 a 1) según el tamaño actual del mapa
-    if (currentMapSize.isEmpty())
-        return;
-
-    QPointF normalized(scenePos.x() / currentMapSize.width(),
-                       scenePos.y() / currentMapSize.height());
-
-    checkpoints.append(normalized);
-
-    // Dibujar el checkpoint en coordenadas reales (desnormalizadas)
-    QPointF realPos(normalized.x() * currentMapSize.width(),
-                    normalized.y() * currentMapSize.height());
-    drawCheckpoint(realPos, checkpoints.size());
-
-    if (checkpoints.size() > 1) {
-        QPointF prev(checkpoints[checkpoints.size() - 2].x() * currentMapSize.width(),
-                     checkpoints[checkpoints.size() - 2].y() * currentMapSize.height());
-        drawLine(prev, realPos);
-    }
-}
-
-
-void MainWindow::drawCheckpoint(const QPointF& p, int id) {
-    int size = 10;
-    auto* circle = scene->addEllipse(p.x() - size / 2, p.y() - size / 2, size, size, QPen(Qt::red),
-                                     QBrush(Qt::red));
-    auto* label = scene->addText(QString::number(id));
-    label->setDefaultTextColor(Qt::white);
-    label->setPos(p.x() + 8, p.y() - 8);
-}
-
-void MainWindow::drawLine(const QPointF& from, const QPointF& to) {
-    scene->addLine(QLineF(from, to), QPen(Qt::yellow, 2));
-}
-
-void MainWindow::on_cleanBtn_clicked() {
-    scene->clear();
-    checkpoints.clear();
+    view->clearAll();
+    view->loadMap(pm);
+    history.clear();
 }
 
 void MainWindow::on_saveMapBtn_clicked() {
-    if (checkpoints.isEmpty()) {
-        QMessageBox::warning(this, "Error", "No hay checkpoints para guardar.");
-        return;
-    }
-
-    QString filename = YamlHandler::getSaveFilename();
-    if (filename.isEmpty())
+    QString fname = YamlHandler::getSaveFilename();
+    if (fname.isEmpty())
         return;
 
-    YamlHandler::save(filename, checkpoints, ui->comboCity->currentText(), currentMapSize);
-
-    QMessageBox::information(this, "Guardado", "Recorrido guardado exitosamente.");
+    YamlHandler::saveSceneAsTrack(fname, view->scenePtr(), view->mapPixelSize(), currentCityId());
+    QMessageBox::information(this, "Saved", "Track saved successfully.");
 }
+
+void MainWindow::on_cleanBtn_clicked() {
+    view->clearAll();
+    history.clear();
+}
+
+void MainWindow::onUndo() {
+    if (history.isEmpty())
+        return;
+    auto cmd = history.pop();
+    if (cmd.type == Command::Add) {
+        if (cmd.item) {
+            view->scenePtr()->removeItem(cmd.item);
+            delete cmd.item;
+        }
+    } else if (cmd.type == Command::Remove) {
+        if (cmd.item)
+            view->scenePtr()->addItem(cmd.item);
+    }
+}
+
+void MainWindow::toolSelect() { view->setTool(MapView::Tool::Select); }
+void MainWindow::toolCheckpoint() { view->setTool(MapView::Tool::PlaceCheckpoint); }
+void MainWindow::toolHint() { view->setTool(MapView::Tool::PlaceHint); }
+void MainWindow::toolSpawn() { view->setTool(MapView::Tool::PlaceSpawn); }
+void MainWindow::toolStart() { view->setTool(MapView::Tool::PlaceStart); }
+void MainWindow::toolFinish() { view->setTool(MapView::Tool::PlaceFinish); }
+void MainWindow::toolErase() { view->setTool(MapView::Tool::Erase); }
