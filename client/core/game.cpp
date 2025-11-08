@@ -1,6 +1,7 @@
 #include "./game.h"
 
 #include <sstream>
+#include <string>
 
 #include "../../common/Dto/dto.h"
 #include "../../common/Dto/player.h"

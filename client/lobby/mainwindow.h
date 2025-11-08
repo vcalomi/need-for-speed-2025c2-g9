@@ -24,13 +24,14 @@ class MainWindow: public QMainWindow {
 
 public:
     MainWindow(ClientProtocol& protocol, bool& game_started_ref, std::string& username,
-               QWidget* parent = nullptr);
+               QWidget* parent = nullptr, bool isDummy = false);
     // Constructor principal (cliente con red y estado)
     // explicit MainWindow(ClientProtocol& protocol, bool& game_started_ref, QWidget* parent =
     // nullptr);
     // Constructor único: si isDummy = true, entra en modo UI sin red
-    explicit MainWindow(ClientProtocol& protocol, bool& game_started_ref, QWidget* parent = nullptr,
-                        bool isDummy = false);
+    // explicit MainWindow(ClientProtocol& protocol, bool& game_started_ref, QWidget* parent =
+    // nullptr,
+    //                     bool isDummy = false);
     ~MainWindow();
     static MainWindow* createDummy(QWidget* parent = nullptr);
 

@@ -52,15 +52,17 @@ void MainWindow::onWaitTimerTickJoin() {
 MainWindow* MainWindow::createDummy(QWidget* parent) {
     static ClientProtocol dummyProtocol;  // usa el constructor dummy
     static bool dummyGameStarted = false;
-    return new MainWindow(dummyProtocol, dummyGameStarted, parent, true);
+    static std::string dummyUsername = "DummyUser";
+    return new MainWindow(dummyProtocol, dummyGameStarted, dummyUsername, parent, true);
 }
 
 MainWindow::MainWindow(ClientProtocol& protocol, bool& game_started_ref, std::string& username_ref,
-                       QWidget* parent):
+                       QWidget* parent, bool isDummy):
         QMainWindow(parent),
         ui(new Ui::Lobby),
         protocol(protocol),
         game_started(game_started_ref),
+        isDummy(isDummy),
         username(username_ref),
         waitTimer(nullptr),
         refreshTimer(nullptr) {
