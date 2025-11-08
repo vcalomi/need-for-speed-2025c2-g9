@@ -1,0 +1,27 @@
+track_id: track
+track_name: track
+city_id: liberty_city
+laps: 1
+checkpoints:
+  - id: 1
+    position: [0.43209867451336842, 0.57950673004320941]
+    hints:
+      []
+  - id: 2
+    position: [0.46059337056887606, 0.58204101603465208]
+    hints:
+      []
+  - id: 3
+    position: [0.48908806662438364, 0.58415292102752092]
+    hints:
+      []
+  - id: 4
+    position: [0.51290452899913619, 0.58415292102752092]
+    hints:
+      []
+  - id: 5
+    position: [0.53842216725779968, 0.58288577803179964]
+    hints:
+      []
+player_spawns:
+  []

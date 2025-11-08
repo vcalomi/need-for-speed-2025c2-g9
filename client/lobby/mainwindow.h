@@ -45,6 +45,9 @@ private slots:
     void handleRefreshPlayers();
     void updateLobbyStatus();
     void setupBackgroundMusic();
+    void openEditorMap();
+    void handleOpenMapsPage();  // Abre la página con la lista de recorridos
+    void handleSelectMaps();    // Selecciona y pasa a page_create
 
 private:
     Ui::Lobby* ui;
@@ -65,6 +68,7 @@ private:
     QVector<Car> cars;
     int currentCarIndex = 0;
     bool inFlight = false;  // serializa lecturas del protocolo en wait
+    QStringList selectedMaps;
 
     QString generateRoomCode();
     void loadRooms();

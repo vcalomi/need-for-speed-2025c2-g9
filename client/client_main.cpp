@@ -23,7 +23,7 @@ int main(int argc, char* argv[]) {
         // 1. Ejecutar Lobby
         bool game_started = false;
         MainWindow lobby(protocol, std::ref(game_started));
-        lobby.show();
+        lobby.showMaximized();
         app.exec();
 
         // 2. Si el juego inició, ejecutar Client

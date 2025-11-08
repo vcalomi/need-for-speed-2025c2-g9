@@ -36,7 +36,7 @@ QPushButton:hover {
 </string>
       </property>
       <property name="currentIndex">
-       <number>7</number>
+       <number>8</number>
       </property>
       <widget class="QWidget" name="page_connection">
        <widget class="QPushButton" name="connectButton">
@@ -374,6 +374,19 @@ QPushButton:pressed { background-color: #cc5200; }
         </property>
         <property name="text">
          <string>Join Game</string>
+        </property>
+       </widget>
+       <widget class="QPushButton" name="btnMap">
+        <property name="geometry">
+         <rect>
+          <x>480</x>
+          <y>450</y>
+          <width>251</width>
+          <height>61</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Create race tracks</string>
         </property>
        </widget>
       </widget>
@@ -819,13 +832,13 @@ QPushButton:pressed { background-color: #cc5200; }
     font-size: 18px;
 }
 
-#btnChooseCar:hover {
+#btnBackToLobby:hover {
 	color: #053356;
 	font-weight: bold;
     background-color: #00BFFF; /* azul eléctrico */
 }
 
-#btnChooseCar:pressed {
+#btnBackToLobby:pressed {
     background-color: #137ec2;
 }
 </string>
@@ -944,6 +957,44 @@ QPushButton:pressed { background-color: #cc5200; }
         </property>
         <property name="alignment">
          <set>Qt::AlignCenter</set>
+        </property>
+       </widget>
+      </widget>
+      <widget class="QWidget" name="page_maps">
+       <widget class="QListWidget" name="listMaps">
+        <property name="geometry">
+         <rect>
+          <x>350</x>
+          <y>170</y>
+          <width>581</width>
+          <height>441</height>
+         </rect>
+        </property>
+       </widget>
+       <widget class="QScrollBar" name="verticalScrollBar">
+        <property name="geometry">
+         <rect>
+          <x>910</x>
+          <y>170</y>
+          <width>20</width>
+          <height>441</height>
+         </rect>
+        </property>
+        <property name="orientation">
+         <enum>Qt::Vertical</enum>
+        </property>
+       </widget>
+       <widget class="QPushButton" name="btnSelectMaps">
+        <property name="geometry">
+         <rect>
+          <x>530</x>
+          <y>630</y>
+          <width>231</width>
+          <height>51</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Select and back to menu</string>
         </property>
        </widget>
       </widget>

@@ -1,9 +1,12 @@
 #include "mainwindow.h"
 
+#include <QDebug>
 #include <QDir>
 #include <QFile>
+#include <QFileInfoList>
 #include <QGraphicsDropShadowEffect>
 #include <QMessageBox>
+#include <QProcess>
 #include <QRandomGenerator>
 #include <QScreen>
 #include <QStandardItem>
@@ -146,8 +149,11 @@ MainWindow::MainWindow(ClientProtocol& protocol, bool& game_started_ref, QWidget
 
 
     // Botones del menú principal
-    connect(ui->btnCreate, &QPushButton::clicked, this, &MainWindow::handleCreateButton);
+    connect(ui->btnCreate, &QPushButton::clicked, this, &MainWindow::handleOpenMapsPage);
     connect(ui->btnJoin, &QPushButton::clicked, this, &MainWindow::handleJoinGame);
+    connect(ui->btnMap, &QPushButton::clicked, this, &MainWindow::openEditorMap);
+
+    connect(ui->btnSelectMaps, &QPushButton::clicked, this, &MainWindow::handleSelectMaps);
 
     // Paginación salas disponibles
     connect(ui->btnNextRooms, &QPushButton::clicked, this, &MainWindow::showNextRoom);
@@ -232,6 +238,94 @@ MainWindow::MainWindow(ClientProtocol& protocol, bool& game_started_ref, QWidget
     QRect screenGeometry = QGuiApplication::primaryScreen()->geometry();
     this->move(screenGeometry.center() - this->rect().center());
 }
+
+void MainWindow::openEditorMap() {
+    // Ruta absoluta correcta al ejecutable del editor
+    QString editorPath = QDir::cleanPath(
+            QDir::currentPath() + "/../editor/editor-mapas/build/Desktop-Debug/editor-mapas");
+
+    qDebug() << "Intentando abrir el editor en:" << editorPath;
+
+    if (!QFile::exists(editorPath)) {
+        QMessageBox::warning(this, "Error",
+                             "No se encontró el ejecutable del editor:\n" + editorPath);
+        return;
+    }
+
+    // Crear proceso
+    QProcess* editorProcess = new QProcess(this);
+    editorProcess->setProgram(editorPath);
+
+    connect(editorProcess, QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished), this,
+            [this, editorProcess](int, QProcess::ExitStatus) {
+                editorProcess->deleteLater();
+                Navigation::goToPage(ui->page_menu, ui->stackedWidget, this);
+            });
+
+    editorProcess->start();
+
+    if (!editorProcess->waitForStarted(2000)) {
+        QMessageBox::warning(this, "Error", "No se pudo abrir el editor de mapas.");
+        delete editorProcess;
+    }
+}
+
+
+void MainWindow::handleOpenMapsPage() {
+    // Ruta absoluta correcta desde el lobby hasta los mapas
+
+    QString mapsPath = QDir::cleanPath(QDir::currentPath() + "/../editor/editor-mapas/maps");
+
+    qDebug() << "Buscando mapas en:" << mapsPath;
+
+    QDir dir(mapsPath);
+    if (!dir.exists()) {
+        QMessageBox::warning(this, "Error", "No se encontró la carpeta de mapas:\n" + mapsPath);
+        return;
+    }
+
+    ui->listMaps->clear();
+
+    dir.setFilter(QDir::Files | QDir::NoDotAndDotDot);
+
+    QFileInfoList mapFiles = dir.entryInfoList();
+
+    if (mapFiles.isEmpty()) {
+        ui->listMaps->addItem("No se encontraron recorridos disponibles.");
+    } else {
+        for (const QFileInfo& info: mapFiles) {
+            QListWidgetItem* item = new QListWidgetItem(info.baseName());
+            item->setCheckState(Qt::Unchecked);
+            item->setData(Qt::UserRole, info.absoluteFilePath());
+            ui->listMaps->addItem(item);
+        }
+    }
+
+    // Mostrar la página de mapas
+    Navigation::goToPage(ui->page_maps, ui->stackedWidget, this);
+}
+
+
+void MainWindow::handleSelectMaps() {
+    QStringList selectedMaps;
+
+    for (int i = 0; i < ui->listMaps->count(); ++i) {
+        QListWidgetItem* item = ui->listMaps->item(i);
+        if (item->checkState() == Qt::Checked) {
+            selectedMaps << item->text();
+        }
+    }
+
+    if (selectedMaps.isEmpty()) {
+        QMessageBox::warning(this, "Selección vacía", "Debes seleccionar al menos un recorrido.");
+        return;
+    }
+
+    qDebug() << "Mapas seleccionados:" << selectedMaps;
+
+    handleCreateButton();
+}
+
 
 void MainWindow::showPage(int page) {
     if (isDummy)
