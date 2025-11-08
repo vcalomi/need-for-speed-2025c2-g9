@@ -9,7 +9,7 @@
 #include "LevelCreator.h"
 #include "vehicle.h"
 
-constexpr float PPM = 50.0f;
+constexpr float PPM = 4.0f;
 constexpr int WIN_W = 1500;
 constexpr int WIN_H = 1500;
 constexpr float CAM_SPEED_PX = 600.0f;  // velocidad de cámara en píxeles/seg

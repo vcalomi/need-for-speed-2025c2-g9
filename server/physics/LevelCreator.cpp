@@ -14,7 +14,7 @@ using json = nlohmann::json;
 using Matrix = LevelCreator::Matrix;
 using Matrix_vector = std::vector<std::vector<int>>;
 
-constexpr float PPM = 50.0f;     // píxeles por metro
+constexpr float PPM = 4.0f;     // píxeles por metro
 constexpr int TILE_SIZE_PX = 2;  // cada tile mide 2 píxeles en LDtk
 
 
@@ -170,32 +170,54 @@ static void createTileCollider(b2WorldId world, float x_px, float y_px, float si
 }
 
 void LevelCreator::createLevelCollision(b2WorldId world, const std::vector<Matrix>& levels) {
-    const int tile_px = TILE_SIZE_PX;
-    const int level_px = 192 * tile_px;
+    const int tile_px = TILE_SIZE_PX; // 2 px
+
+    // POR LAS DUDAS: si no hay niveles, salimos
+    if (levels.empty()) {
+        std::cerr << "[ERROR] createLevelCollision: levels vacío\n";
+        return;
+    }
 
     for (int lvl = 0; lvl < 4; ++lvl) {
-        if (levels[lvl].empty())
+        // evitar out-of-range si levels tiene menos de 4
+        if (lvl >= (int)levels.size())
             continue;
 
-        int offset_x_px = (lvl % 2) * level_px;
-        int offset_y_px = (lvl / 2) * level_px;
+        const Matrix& M = levels[lvl];
+        if (M.empty())
+            continue;
 
-        const Matrix_vector& M = levels[lvl];
-        int h = M.size();
-        int w = M[0].size();
+        const int h = (int)M.size();
+        const int w = (int)M[0].size();
+        if (w == 0)
+            continue;
+
+        // tamaño REAL de este chunk según el JSON
+        const int chunk_w_px = w * tile_px; // para vos: 580 * 2 = 1160
+        const int chunk_h_px = h * tile_px; //           584 * 2 = 1168
+
+        // posición del chunk en la grilla 2x2
+        const int offset_x_px = (lvl % 2) * chunk_w_px;
+        const int offset_y_px = (lvl / 2) * chunk_h_px;
 
         for (int y = 0; y < h; ++y) {
+            // por seguridad, si alguna fila viene chueca
+            if ((int)M[y].size() != w)
+                continue;
+
             for (int x = 0; x < w; ++x) {
                 int v = M[y][x];
                 if (v == 0)
-                    continue;  // sin colisión
+                    continue; // sin colisión
 
-                float world_x_px = offset_x_px + x * tile_px + tile_px / 2.0f;
-                float world_y_px = offset_y_px + y * tile_px + tile_px / 2.0f;
+                const float world_x_px =
+                    offset_x_px + x * tile_px + tile_px * 0.5f;
+                const float world_y_px =
+                    offset_y_px + y * tile_px + tile_px * 0.5f;
 
                 if (v == 3 || v == 4 || v == 5 || v == 6) {
                     spawn_points.push_back(
-                            Spawn{world_x_px / PPM, world_y_px / PPM, tileIdToAngle(v)});
+                        Spawn{world_x_px / PPM, world_y_px / PPM, tileIdToAngle(v)});
                     continue;
                 }
 

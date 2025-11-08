@@ -22,10 +22,10 @@ PlayerMoveDto InputSystem::GetInputByte(int playerId) const {
                              (static_cast<uint8_t>(ActionCode::BRAKE)));
     if (keys[SDL_SCANCODE_A])
         return PlayerMoveDto(static_cast<uint8_t>(playerId),
-                             (static_cast<uint8_t>(ActionCode::TURN_LEFT)));
+                             (static_cast<uint8_t>(ActionCode::TURN_RIGHT)));
     if (keys[SDL_SCANCODE_D])
         return PlayerMoveDto(static_cast<uint8_t>(playerId),
-                             (static_cast<uint8_t>(ActionCode::TURN_RIGHT)));
+                             (static_cast<uint8_t>(ActionCode::TURN_LEFT)));
 
     // Ninguna tecla presionada: no se envía nada
     return PlayerMoveDto(static_cast<uint8_t>(playerId), (static_cast<uint8_t>(ActionCode::IDLE)));
