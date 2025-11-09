@@ -1,5 +1,7 @@
 #include "./renderer_system.h"
 
+#define HALF_DIVISOR 2.0f
+
 RendererSystem::RendererSystem(SDL2pp::Renderer& renderer, SpriteSheet& cars):
         renderer_(renderer), cars_(cars) {}
 
@@ -12,7 +14,6 @@ void RendererSystem::Render(const World& world, Map& map, const Camera& camera) 
 
 void RendererSystem::DrawPlayer(const Player& player, const Camera& camera) {
     std::string spriteName = player.GetSpriteForAngle(player.GetAngle());
-    std::cout <<  camera.x;
     if (!cars_.HasSprite(spriteName)) {
         std::cerr << "[Renderer] Sprite '" << spriteName << "' not found, skipping draw\n";
         return;
@@ -20,9 +21,8 @@ void RendererSystem::DrawPlayer(const Player& player, const Camera& camera) {
 
     const Rect& src = cars_.GetSprite(spriteName);
 
-    // Convertir coordenadas del jugador al sistema visible (restando cámara)
-    float drawX = player.GetX();
-    float drawY = player.GetY();
+    float drawX = player.GetX() - camera.x - src.GetW() / HALF_DIVISOR;
+    float drawY = player.GetY() - camera.y - src.GetH() / HALF_DIVISOR;
 
     Rect dest(drawX, drawY, src.GetW(), src.GetH());
     renderer_.Copy(cars_.GetTexture(), src, dest);
