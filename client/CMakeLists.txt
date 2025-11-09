@@ -36,6 +36,7 @@ target_sources(taller_client
     core/engine.cpp
     core/game.cpp
     core/resource_loader.cpp
+    core/camera.cpp
     # Graphics
     graphics/renderer_system.cpp
     graphics/spritesheet.cpp
