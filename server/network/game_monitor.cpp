@@ -23,6 +23,11 @@ bool GameMonitor::createGameRoom(const std::string& roomName, int hostId,
     activeGames[roomName] = newRoom;
     clientToRoom[hostId] = newRoom;
     newRoom->addPlayer(hostId, hostQueue);
+    auto it = clientUsernames.find(hostId);
+    if (it != clientUsernames.end()) {
+        newRoom->setPlayerUsername(hostId, it->second);
+    }
+
     return true;
 }
 
@@ -41,6 +46,11 @@ bool GameMonitor::joinGameRoom(const std::string& roomName, int clientId,
 
     room->addPlayer(clientId, clientQueue);
     clientToRoom[clientId] = room;
+    auto it = clientUsernames.find(clientId);
+    if (it != clientUsernames.end()) {
+        room->setPlayerUsername(clientId, it->second);
+    }
+
     return true;
 }
 
