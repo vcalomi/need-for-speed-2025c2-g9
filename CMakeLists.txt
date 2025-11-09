@@ -54,7 +54,7 @@ target_include_directories(taller_common PUBLIC .)
 
 # Install libSDL2 and libSDL2pp (for client or editor)
 # HEY!! TODO XXX: add more dependendies (either for client, server or editor)
-if(TALLER_CLIENT OR TALLER_EDITOR)
+if(TALLER_CLIENT OR TALLER_EDITOR OR TALLER_SERVER)
     include(FetchContent)
 
     FetchContent_Declare(
@@ -218,6 +218,7 @@ if(TALLER_SERVER)
     target_link_libraries(physics_sandbox PRIVATE
         box2d
         SDL2::SDL2
+        SDL2pp::SDL2pp
         yaml-cpp
         nlohmann_json::nlohmann_json
         SDL2_image::SDL2_image 
