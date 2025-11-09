@@ -21,8 +21,8 @@ void RendererSystem::DrawPlayer(const Player& player, const Camera& camera) {
 
     const Rect& src = cars_.GetSprite(spriteName);
 
-    float drawX = player.GetX() - camera.x - src.GetW() / HALF_DIVISOR;
-    float drawY = player.GetY() - camera.y - src.GetH() / HALF_DIVISOR;
+    float drawX = player.GetX() - camera.getX() - src.GetW() / HALF_DIVISOR;
+    float drawY = player.GetY() - camera.getY() - src.GetH() / HALF_DIVISOR;
 
     Rect dest(drawX, drawY, src.GetW(), src.GetH());
     renderer_.Copy(cars_.GetTexture(), src, dest);
