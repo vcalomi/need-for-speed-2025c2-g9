@@ -10,6 +10,8 @@ public:
     World();
     void AddPlayer(std::string username, VehicleTipe carType, bool isLocal);
     Player& GetLocalPlayer();
+    float GetLocalPlayerX() const;
+    float GetLocalPlayerY() const;
     bool HasPlayer(std::string username) const;
     bool HasPlayers() const;
     const std::map<std::string, Player>& GetPlayers() const;

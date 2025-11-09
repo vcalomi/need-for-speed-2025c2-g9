@@ -40,3 +40,19 @@ void World::UpdateFromServer(std::string username, float x, float y, float angle
 void World::OnCollision(std::string username1, std::string username2) {
     std::cout << "💥 Collision between " << username1 << " and " << username2 << std::endl;
 }
+
+float World::GetLocalPlayerX() const {
+    auto it = players_.find(localUsername_);
+    if (it != players_.end()) {
+        return it->second.GetX();
+    }
+    return 0.0f;  // Valor por defecto si no se encuentra el jugador local
+}
+
+float World::GetLocalPlayerY() const {
+    auto it = players_.find(localUsername_);
+    if (it != players_.end()) {
+        return it->second.GetY();
+    }
+    return 0.0f;  // Valor por defecto si no se encuentra el jugador local
+}
