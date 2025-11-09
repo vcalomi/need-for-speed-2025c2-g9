@@ -62,8 +62,8 @@ MainWindow::MainWindow(ClientProtocol& protocol, bool& game_started_ref, std::st
         ui(new Ui::Lobby),
         protocol(protocol),
         game_started(game_started_ref),
-        isDummy(isDummy),
         username(username_ref),
+        isDummy(isDummy),
         waitTimer(nullptr),
         refreshTimer(nullptr) {
     ui->setupUi(this);
