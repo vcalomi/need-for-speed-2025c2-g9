@@ -49,7 +49,7 @@ bool GameRoom::startGame() {
     for (const auto& [id, queue]: players) {
         if (chosenCars.find(id) == chosenCars.end()) {
             CarConfig defaultCar{};
-            defaultCar.carType = "fiat_600";
+            defaultCar.carType = "jeep";
             chosenCars[id] = defaultCar;
         }
     }
