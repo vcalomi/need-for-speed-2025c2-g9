@@ -59,7 +59,7 @@ void Game::processDto(const std::shared_ptr<Dto>& dto) {
 
 void Game::Run() {
     bool running = true;
-    Camera camera;
+    Camera camera(engine_.getWindowWidth(), engine_.getWindowHeight());
 
     while (world_.HasPlayers() == false) {
         std::shared_ptr<Dto> dto = nullptr;
@@ -69,9 +69,6 @@ void Game::Run() {
     }
 
     while (running) {
-
-        camera.x = world_.GetLocalPlayer().GetX() - (800 / 2);
-        camera.y = world_.GetLocalPlayer().GetY() - (600 / 2);
 
         // --- INPUT ---
         inputSystem_.PollEvents(running);
@@ -86,6 +83,10 @@ void Game::Run() {
         while (client_.getRecvQueue().try_pop(dto)) {
             processDto(dto);
         }
+
+        // CAMERA UPDATE
+        camera.Follow(world_.GetLocalPlayerX(), world_.GetLocalPlayerY(), map_.GetWidth(),
+                      map_.GetHeight());
 
         // --- RENDERIZADO ---
         rendererSystem_.Render(world_, map_, camera);
