@@ -42,10 +42,10 @@ void Game::processDto(const std::shared_ptr<Dto>& dto) {
         case ActionCode::SEND_CARS: {
             auto vehicleDto = std::dynamic_pointer_cast<VehicleDto>(dto);
             if (vehicleDto) {
-                std::cout << "Procesando vehículo username=" << vehicleDto->get_username()
-                          << " pos(" << vehicleDto->x << ", " << vehicleDto->y
+                std::cout << "Procesando vehículo username=" << vehicleDto->username << " pos("
+                          << vehicleDto->x << ", " << vehicleDto->y
                           << ") rot=" << vehicleDto->rotation << std::endl;
-                world_.UpdateFromServer(vehicleDto->get_username(), vehicleDto->x, vehicleDto->y,
+                world_.UpdateFromServer(vehicleDto->username, vehicleDto->x, vehicleDto->y,
                                         vehicleDto->rotation);
             }
             break;
