@@ -5,6 +5,8 @@ class Engine {
 public:
     Engine();
     SDL2pp::Renderer& GetRenderer();
+    int getWindowWidth();
+    int getWindowHeight();
 
 private:
     SDL2pp::SDL sdl_;

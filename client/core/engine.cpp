@@ -13,3 +13,7 @@ Engine::Engine():
         renderer_(window_, -1, SDL_RENDERER_ACCELERATED) {}
 
 Renderer& Engine::GetRenderer() { return renderer_; }
+
+int Engine::getWindowWidth() { return WINDOW_WIDTH; }
+
+int Engine::getWindowHeight() { return WINDOW_HEIGHT; }
