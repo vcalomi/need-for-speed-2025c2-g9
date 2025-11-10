@@ -12,7 +12,7 @@ public:
             texture_(renderer, path), width_(texture_.GetWidth()), height_(texture_.GetHeight()) {}
 
     void Render(SDL2pp::Renderer& renderer, const Camera& camera) {
-        SDL2pp::Rect dst(-camera.x, -camera.y, width_, height_);
+        SDL2pp::Rect dst(-camera.getX(), -camera.getY(), width_, height_);
         renderer.Copy(texture_, SDL2pp::NullOpt, dst);
     }
 
