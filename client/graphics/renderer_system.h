@@ -6,6 +6,8 @@
 
 #include "../core/camera.h"
 #include "../core/map.h"
+#include "../events/event.h"
+#include "../events/player_events.h"
 #include "../graphics/spritesheet.h"
 #include "../ui/minimap.h"
 #include "../world/world.h"
@@ -14,7 +16,7 @@
 
 class RendererSystem {
 public:
-    RendererSystem(SDL2pp::Renderer& renderer, SpriteSheet& cars);
+    RendererSystem(SDL2pp::Renderer& renderer, SpriteSheet& cars, World& world, EventBus& eventBus);
     ~RendererSystem();
 
     void Render(const World& world, Map& map, const Camera& camera, Minimap& minimap);
@@ -24,6 +26,8 @@ public:
 private:
     SDL2pp::Renderer& renderer_;
     SpriteSheet& cars_;
+    World& world_;
+    EventBus& eventBus_;
     TTF_Font* font_ = nullptr;
     ParticleSystem particleSystem_;
 

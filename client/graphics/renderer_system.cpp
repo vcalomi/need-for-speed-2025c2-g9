@@ -6,14 +6,28 @@
 
 #define HALF_DIVISOR 2.0f
 
-RendererSystem::RendererSystem(SDL2pp::Renderer& renderer, SpriteSheet& cars):
-        renderer_(renderer), cars_(cars), particleSystem_(renderer) {
+RendererSystem::RendererSystem(SDL2pp::Renderer& renderer, SpriteSheet& cars, World& world,
+                               EventBus& eventBus):
+        renderer_(renderer),
+        cars_(cars),
+        world_(world),
+        eventBus_(eventBus),
+        particleSystem_(renderer) {
     font_ = TTF_OpenFont("../client/lobby/assets/Tektur-SemiBold.ttf", 14);
     if (!font_) {
         std::cerr << "[RendererSystem] Failed to load font: " << TTF_GetError() << std::endl;
     } else {
         std::cout << "[RendererSystem] Font loaded successfully.\n";
     }
+
+    // 🔔 Suscribirse automáticamente a eventos de movimiento
+    eventBus_.Subscribe<PlayerMoveEvent>([this](const PlayerMoveEvent& e) {
+        if (e.move == ActionCode::ACCELERATE) {
+            std::cout << "[RendererSystem] Player " << e.username
+                      << " accelerated — spawning particles\n";
+            this->SpawnParticlesFor(this->world_, e.username);
+        }
+    });
 }
 
 RendererSystem::~RendererSystem() {
