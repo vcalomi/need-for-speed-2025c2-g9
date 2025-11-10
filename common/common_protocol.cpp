@@ -52,4 +52,15 @@ std::string CommonProtocol::receiveString(Socket& socket) {
     return std::string(buffer.data(), length);
 }
 
+uint32_t CommonProtocol::receiveUint32(Socket& socket) {
+    uint32_t num;
+    socket.recvall(&num, sizeof(num));
+    return ntohl(num);
+}
+
+void CommonProtocol::sendUint32(Socket& socket, uint32_t number) {
+    uint32_t parsed = htonl(number);
+    socket.sendall(&parsed, sizeof(parsed));
+}
+
 CommonProtocol::~CommonProtocol() {}

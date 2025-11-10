@@ -14,7 +14,7 @@ GameRoom::GameRoom(const std::string& roomName, int hostId, int maxPlayers):
         state(RoomState::WAITING_FOR_PLAYERS),
         gameQueue(),
         broadcaster(),
-        gameLoop(gameQueue, chosenCars, broadcaster, maxPlayers) {}
+        gameLoop(gameQueue, chosenCars, playerUsernames, broadcaster, maxPlayers) {}
 
 bool GameRoom::addPlayer(int clientId, Queue<std::shared_ptr<Dto>>& senderQueue) {
     std::lock_guard<std::mutex> lock(mtx);
@@ -24,6 +24,18 @@ bool GameRoom::addPlayer(int clientId, Queue<std::shared_ptr<Dto>>& senderQueue)
 
     players[clientId] = &senderQueue;
     broadcaster.addQueue(&senderQueue);
+    return true;
+}
+
+bool GameRoom::setPlayerUsername(int clientId, const std::string& username) {
+    std::lock_guard<std::mutex> lock(mtx);
+    for (const auto& [id, existingUsername]: playerUsernames) {
+        if (existingUsername == username && id != clientId) {
+            return false;
+        }
+    }
+
+    playerUsernames[clientId] = username;
     return true;
 }
 
@@ -37,25 +49,12 @@ bool GameRoom::startGame() {
     for (const auto& [id, queue]: players) {
         if (chosenCars.find(id) == chosenCars.end()) {
             CarConfig defaultCar{};
-            defaultCar.carType = "fiat_600";
+            defaultCar.carType = "jeep";
             chosenCars[id] = defaultCar;
         }
     }
 
     state = RoomState::IN_RACE;
-
-    // uint8_t idx = 0;
-    // for (const auto& entry: players) {
-    //     uint8_t id = static_cast<uint8_t>(entry.first % 255);
-    //     auto dto = std::make_shared<VehicleDto>(id, 1.0f + idx, 0.0f, 0.0f);
-    //     {}
-    //     std::cout << "CREATED VehicleDto: id=" << (int)dto->id << " x=" << dto->x << " y=" <<
-    //     dto->y
-    //               << std::endl;
-
-    //     broadcaster.broadcast(dto);
-    //     idx++;
-    // }
 
     gameLoop.start();
     std::cout << "GameLoop is alive: " << gameLoop.is_alive() << std::endl;
@@ -79,6 +78,7 @@ void GameRoom::removePlayer(int clientId) {
         broadcaster.removeQueue(it->second);
         players.erase(it);
     }
+    playerUsernames.erase(clientId);
 }
 
 bool GameRoom::canJoin() const {

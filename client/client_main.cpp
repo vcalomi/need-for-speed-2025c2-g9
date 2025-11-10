@@ -4,6 +4,8 @@
 #include "lobby/mainwindow.h"
 #include "network/client.h"
 
+extern void qInitResources_resources();
+
 #define NUMBER_ARG 3
 #define MSG_ERROR_STDIN "Command line: <hostname> <port>"
 #define ARG_INDEX_HOSTNAME 1
@@ -18,18 +20,20 @@ int main(int argc, char* argv[]) {
     std::string port = std::string(argv[ARG_INDEX_PORT]);
 
     try {
+        qInitResources_resources();
         QApplication app(argc, argv);
         ClientProtocol protocol(hostname, port);
         // 1. Ejecutar Lobby
         bool game_started = false;
-        MainWindow lobby(protocol, std::ref(game_started));
+        std::string username;
+        MainWindow lobby(protocol, std::ref(game_started), std::ref(username));
         lobby.showMaximized();
         app.exec();
 
         // 2. Si el juego inició, ejecutar Client
         if (game_started) {
             std::cout << "Game started! Launching game client..." << std::endl;
-            Client client(protocol);
+            Client client(protocol, username);
             client.run();
         }
 

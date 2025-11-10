@@ -12,16 +12,14 @@ public:
             texture_(renderer, path), width_(texture_.GetWidth()), height_(texture_.GetHeight()) {}
 
     void Render(SDL2pp::Renderer& renderer, const Camera& camera) {
-        int camX = std::max(0, std::min(static_cast<int>(camera.x), width_ - camera.w));
-        int camY = std::max(0, std::min(static_cast<int>(camera.y), height_ - camera.h));
-
-        SDL2pp::Rect src(camX, camY, camera.w, camera.h);
-        SDL2pp::Rect dest(0, 0, camera.w, camera.h);
-        renderer.Copy(texture_, src, dest);
+        SDL2pp::Rect dst(-camera.getX(), -camera.getY(), width_, height_);
+        renderer.Copy(texture_, SDL2pp::NullOpt, dst);
     }
+
 
     int GetWidth() const { return width_; }
     int GetHeight() const { return height_; }
+    const SDL2pp::Texture& GetTexture() const { return texture_; }
 
 private:
     SDL2pp::Texture texture_;

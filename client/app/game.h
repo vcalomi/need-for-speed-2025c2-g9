@@ -2,14 +2,17 @@
 #include <memory>
 #include <string>
 
-#include "../graphics/renderer_system.h"
-#include "../input/input_system.h"
+#include "../events/event.h"
 #include "../network/client.h"
+#include "../resources/resource_loader.h"
+#include "../systems/audio_system.h"
+#include "../systems/dto_handler_system.h"
+#include "../systems/input_system.h"
+#include "../systems/network_system.h"
+#include "../systems/renderer_system.h"
+#include "../world/map.h"
 #include "../world/world.h"
-#include "./audio_manager.h"
 #include "./engine.h"
-#include "./map.h"
-#include "./resource_loader.h"
 
 class Game {
 public:
@@ -19,12 +22,15 @@ public:
 private:
     Client& client_;
     Engine engine_;
-    AudioManager audioManager_;
+    AudioSystem audioSystem_;
     ResourceLoader resources_;
+    EventBus eventBus_;
     World world_;
     InputSystem inputSystem_;
     RendererSystem rendererSystem_;
+    NetworkSystem networkSystem_;
     Map map_;
+    DtoHandlerSystem dtoHandlerSystem_;
 
     void processDto(const std::shared_ptr<Dto>& dto);
 };

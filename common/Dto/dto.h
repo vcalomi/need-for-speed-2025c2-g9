@@ -11,13 +11,13 @@ const char VACIO[] = "";
 class Dto {
 private:
     uint8_t code;
-    uint8_t id_cliente;
+    std::string username;
 
 public:
     Dto();
     explicit Dto(uint8_t code);
-    explicit Dto(uint8_t code, uint8_t id);
-    uint8_t get_cliente_id();
+    explicit Dto(uint8_t code, const std::string& username);
+    std::string get_username();
     virtual ~Dto();
     uint8_t return_code() const;
 };

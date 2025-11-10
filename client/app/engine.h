@@ -1,10 +1,14 @@
 #pragma once
+#include <SDL2/SDL_ttf.h>
 #include <SDL2pp/SDL2pp.hh>
 
 class Engine {
 public:
     Engine();
     SDL2pp::Renderer& GetRenderer();
+    int getWindowWidth();
+    int getWindowHeight();
+    ~Engine();
 
 private:
     SDL2pp::SDL sdl_;

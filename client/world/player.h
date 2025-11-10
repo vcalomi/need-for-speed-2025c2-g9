@@ -8,19 +8,19 @@
 
 class Player {
 public:
-    Player(const int id, VehicleTipe carType, float x, float y);
+    Player(std::string username, VehicleTipe carType, float x, float y);
 
     void UpdateFromNetwork(float x, float y, float angle);
 
     float GetX() const { return x_; }
     float GetY() const { return y_; }
     float GetAngle() const { return angle_; }
-    int GetId() const { return id_; }
+    std::string GetUsername() const { return username_; }
     std::string GetSpriteForAngle(float angle) const;
     std::string VehicleTipeToString(VehicleTipe type) const;
 
 private:
-    int id_;
+    std::string username_;
     VehicleTipe carType_;
     std::string currentSprite_;
     float x_;

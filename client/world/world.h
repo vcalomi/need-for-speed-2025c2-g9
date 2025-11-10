@@ -8,14 +8,18 @@
 class World {
 public:
     World();
-    void AddPlayer(const int id, VehicleTipe carType, bool isLocal);
-    Player& GetLocalPlayer();
-    bool HasPlayer(const int id) const;
-    const std::map<int, Player>& GetPlayers() const;
-    void UpdateFromServer(const int id, float x, float y, float angle);
-    void OnCollision(const int id1, const int id2);
+    void AddPlayer(std::string username, VehicleTipe carType, bool isLocal);
+    const Player& GetLocalPlayer() const;
+    float GetLocalPlayerX() const;
+    float GetLocalPlayerY() const;
+    bool HasPlayer(std::string username) const;
+    bool HasPlayers() const;
+    const std::map<std::string, Player>& GetPlayers() const;
+    void UpdateFromServer(std::string username, float x, float y, float angle);
+    void OnCollision(std::string username1, std::string username2);
+    const Player& GetPlayer(const std::string& username) const;
 
 private:
-    std::map<int, Player> players_;
-    int localId_;
+    std::map<std::string, Player> players_;
+    std::string localUsername_;
 };

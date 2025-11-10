@@ -24,9 +24,11 @@ using Milliseconds = std::chrono::milliseconds;
 using Seconds = std::chrono::seconds;
 
 GameLoop::GameLoop(Queue<std::shared_ptr<Dto>>& gameLoopQueue, std::map<int, CarConfig>& chosenCars,
-                   Broadcaster& broadcaster, int maxPlayers):
+                   std::map<int, std::string>& playerUsernames, Broadcaster& broadcaster,
+                   int maxPlayers):
         gameLoopQueue(gameLoopQueue),
         chosenCars_(chosenCars),
+        playerUsernames_(playerUsernames),
         broadcaster_(broadcaster),
         maxPlayers(maxPlayers) {}
 
@@ -38,7 +40,7 @@ void GameLoop::run() {
         while (should_keep_running()) {
             processCommands();
             simulateGame();
-            
+
             setup->step((1.0f / 60.0f), 4);
             std::this_thread::sleep_for(std::chrono::milliseconds(GAME_TICK_MS));
         }
@@ -58,7 +60,9 @@ void GameLoop::sendInitialPlayersCars() {
             continue;
         }
 
-        auto dto = std::make_shared<PlayerDto>(static_cast<uint8_t>(playerId), vt);
+        std::string username = playerUsernames_.at(playerId);
+
+        auto dto = std::make_shared<PlayerDto>(username, vt);
         broadcaster_.broadcast(dto);
     }
 }
@@ -68,9 +72,10 @@ void GameLoop::simulateGame() {
     for (auto& [player_id, vehicle]: setup.value().getVehicleMap()) {
         float x, y, angle;
         vehicle->getPosition(x, y, angle);
-        std::cout << "[GameLoop] Vehicle of player " << player_id << " is at (" << x << ", " << y
+        std::string username = playerUsernames_.at(player_id);
+        std::cout << "[GameLoop] Vehicle of player " << username << " is at (" << x << ", " << y
                   << ") angle " << angle << "\n";
-        auto dto = std::make_shared<VehicleDto>(player_id, x, y, angle);
+        auto dto = std::make_shared<VehicleDto>(username, x, y, angle);
         broadcaster_.broadcast(dto);
         // std::cout << "mandando pos vehicle /n";
     }
@@ -84,14 +89,27 @@ void GameLoop::processCommands() {
     }
 }
 
-Vehicle* GameLoop::getVehicleByPlayer(int player_id) {
+Vehicle* GameLoop::getVehicleByPlayer(const std::string& username) {
+    int foundId = -1;
+
+    for (const auto& [id, name]: playerUsernames_) {
+        if (name == username) {
+            foundId = id;
+            break;
+        }
+    }
+
+    if (foundId == -1)
+        return nullptr;
+
     const auto& map = setup->getVehicleMap();
-    auto it = map.find(player_id);
+    auto it = map.find(foundId);
     return (it == map.end()) ? nullptr : it->second.get();
 }
 
+
 void GameLoop::handlerProcessCommand(std::shared_ptr<Dto> command) {
-    Vehicle* vehicle = getVehicleByPlayer(command->get_cliente_id());
+    Vehicle* vehicle = getVehicleByPlayer(command->get_username());
 
     switch (static_cast<ActionCode>(command->return_code())) {
         case ActionCode::SEND_PLAYER_MOVE: {

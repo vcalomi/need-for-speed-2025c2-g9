@@ -7,7 +7,7 @@
 
 #include <SDL.h>
 #include <box2d/box2d.h>
-
+#include "../constants.h"
 #include "spawn.h"
 
 class LevelCreator {

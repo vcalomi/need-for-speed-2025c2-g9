@@ -4,12 +4,13 @@
 #include <sstream>
 #include <string>
 
-#include "../core/game.h"
+#include "../app/game.h"
 
 #include "client_input_handler.h"
 
-Client::Client(ClientProtocol& protocol):
+Client::Client(ClientProtocol& protocol, const std::string& username):
         clientProtocol(protocol),
+        username(username),
         connected(true),
         recvQueue(),
         senderQueue(),

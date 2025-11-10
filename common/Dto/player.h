@@ -9,9 +9,9 @@
 
 class PlayerDto: public Dto {
 public:
-    uint8_t id;
+    std::string username;
     VehicleTipe Type;
-    PlayerDto(uint8_t id, VehicleTipe Type);
+    PlayerDto(const std::string& username, VehicleTipe Type);
 };
 
 #endif

@@ -1,6 +1,5 @@
 #include "vehicle.h"
 
-float PPM = 4.0f;
 
 Vehicle::Vehicle(b2WorldId worldId, VehicleSpec spec, Spawn spawn, int player_id):
         world_id_(worldId), spec_(spec), spawn_(spawn), vehicle_id_(player_id) {

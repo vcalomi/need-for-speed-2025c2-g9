@@ -11,7 +11,6 @@ class Serializer {
 public:
     virtual std::vector<uint8_t> serialize(const Dto& dto) const;
     virtual std::shared_ptr<Dto> deserialize(const std::vector<uint8_t>& buffer) const;
-    virtual int getSize() const;
     virtual ~Serializer();
 };
 

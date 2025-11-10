@@ -55,17 +55,18 @@ void MainWindow::onWaitTimerTickJoin() {
 MainWindow* MainWindow::createDummy(QWidget* parent) {
     static ClientProtocol dummyProtocol;  // usa el constructor dummy
     static bool dummyGameStarted = false;
-    return new MainWindow(dummyProtocol, dummyGameStarted, parent, true);
+    static std::string dummyUsername = "DummyUser";
+    return new MainWindow(dummyProtocol, dummyGameStarted, dummyUsername, parent, true);
 }
 
-
-MainWindow::MainWindow(ClientProtocol& protocol, bool& game_started_ref, QWidget* parent,
-                       bool isDummy):
+MainWindow::MainWindow(ClientProtocol& protocol, bool& game_started_ref, std::string& username_ref,
+                       QWidget* parent, bool isDummy):
         QMainWindow(parent),
         ui(new Ui::Lobby),
         protocol(protocol),
         game_started(game_started_ref),
-        isDummy(isDummy),  // guardar el flag
+        username(username_ref),
+        isDummy(isDummy),
         waitTimer(nullptr),
         refreshTimer(nullptr) {
     ui->setupUi(this);
@@ -133,6 +134,7 @@ MainWindow::MainWindow(ClientProtocol& protocol, bool& game_started_ref, QWidget
                 QMessageBox::warning(this, "Username", "Username is already in use. Try another.");
                 return;
             }
+            username = name.toStdString();
             this->protocol.sendListRooms();
             auto rooms = this->protocol.receiveRoomList();
             allRooms.clear();
