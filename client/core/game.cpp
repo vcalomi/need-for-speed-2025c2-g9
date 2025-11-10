@@ -7,6 +7,7 @@
 #include "../../common/Dto/player.h"
 #include "../../common/Dto/player_move.h"
 #include "../../common/Dto/vehicle.h"
+#include "../ui/minimap.h"
 
 #include "camera.h"
 
@@ -60,6 +61,7 @@ void Game::processDto(const std::shared_ptr<Dto>& dto) {
 void Game::Run() {
     bool running = true;
     Camera camera(engine_.getWindowWidth(), engine_.getWindowHeight());
+    Minimap minimap(engine_.GetRenderer(), map_, 100, 100);
 
     while (world_.HasPlayers() == false) {
         std::shared_ptr<Dto> dto = nullptr;
@@ -89,7 +91,7 @@ void Game::Run() {
                       map_.GetHeight());
 
         // --- RENDERIZADO ---
-        rendererSystem_.Render(world_, map_, camera);
+        rendererSystem_.Render(world_, map_, camera, minimap);
         SDL_Delay(16);
     }
     client_.stop();
