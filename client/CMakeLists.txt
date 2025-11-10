@@ -45,6 +45,9 @@ target_sources(taller_client
     # World
     world/player.cpp
     world/world.cpp
+    # UI
+    ui/minimap.cpp
+    
 
     PUBLIC
     # .h files
@@ -82,6 +85,9 @@ target_sources(taller_client
     # World
     world/player.h
     world/world.h
+
+    # UI
+    ui/minimap.h
     )
 
   target_link_libraries(taller_client PRIVATE 
