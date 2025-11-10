@@ -19,6 +19,7 @@ public:
 
     int GetWidth() const { return width_; }
     int GetHeight() const { return height_; }
+    const SDL2pp::Texture& GetTexture() const { return texture_; }
 
 private:
     SDL2pp::Texture texture_;
