@@ -40,6 +40,7 @@ target_sources(taller_client
     # Graphics
     graphics/renderer_system.cpp
     graphics/spritesheet.cpp
+    graphics/particle_system.cpp
     # Input
     input/input_system.cpp
     # World
@@ -80,6 +81,7 @@ target_sources(taller_client
     # Graphics
     graphics/renderer_system.h
     graphics/spritesheet.h
+    graphics/particle_system.h
     # Input
     input/input_system.h
     # World
