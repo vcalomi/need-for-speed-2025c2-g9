@@ -98,6 +98,12 @@ if(TALLER_CLIENT OR TALLER_EDITOR OR TALLER_SERVER)
         OVERRIDE_FIND_PACKAGE
         URL https://github.com/libSDL2pp/libSDL2pp/archive/cc198c9a5657048bee67ece82de620b2d5661084.zip
     )
+    # yaml-cpp
+    FetchContent_Declare(
+        yaml-cpp
+        GIT_REPOSITORY https://github.com/jbeder/yaml-cpp.git
+        GIT_TAG        master
+    )
 
     set(SDL2PP_WITH_IMAGE ON CACHE BOOL "Enable SDL2_image support in SDL2pp" FORCE)
     set(SDL2PP_WITH_TTF ON CACHE BOOL "Enable SDL2_ttf support in SDL2pp" FORCE)
@@ -107,7 +113,7 @@ if(TALLER_CLIENT OR TALLER_EDITOR OR TALLER_SERVER)
 
     
 
-    FetchContent_MakeAvailable(SDL2 SDL2_image SDL2_mixer SDL2_ttf libSDL2pp)
+    FetchContent_MakeAvailable(SDL2 SDL2_image SDL2_mixer SDL2_ttf libSDL2pp yaml-cpp)
 
     if (NOT TARGET SDL2_image::SDL2_image)
         add_library(SDL2_image::SDL2_image ALIAS SDL2_image)
@@ -184,6 +190,7 @@ if(TALLER_CLIENT)
             taller_common
             SDL2pp::SDL2pp
             Qt${QT_VERSION_MAJOR}::Widgets
+            yaml-cpp
     )
 endif()
 
