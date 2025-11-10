@@ -1,0 +1,84 @@
+sprites:
+  jeep:
+    sheet_path: "./assets/need-for-speed/cars/cars.png"
+    frames:
+      Sur:
+        x: 167
+        y: 304
+        w: 26
+        h: 39
+      Norte:
+        x: 167
+        y: 345
+        w: 26
+        h: 39
+      Este:
+        x: 0
+        y: 311
+        w: 39
+        h: 26
+      Oeste:
+        x: 1
+        y: 351
+        w: 39
+        h: 26
+      Sureste20:
+        x: 40
+        y: 307
+        w: 40
+        h: 36
+      Suroeste20:
+        x: 280
+        y: 307
+        w: 40
+        h: 36
+      Noreste20:
+        x: 280
+        y: 345
+        w: 40
+        h: 36
+      Noroeste20:
+        x: 40
+        y: 345
+        w: 40
+        h: 36
+      Sureste45:
+        x: 80
+        y: 304
+        w: 40
+        h: 40
+      Suroeste45:
+        x: 240
+        y: 304
+        w: 40
+        h: 40
+      Noreste45:
+        x: 240
+        y: 344
+        w: 40
+        h: 40
+      Noroeste45:
+        x: 80
+        y: 344
+        w: 40
+        h: 40
+      Sureste75:
+        x: 123
+        y: 304
+        w: 36
+        h: 40
+      Suroeste75:
+        x: 201
+        y: 304
+        w: 36
+        h: 40
+      Noreste75:
+        x: 203
+        y: 344
+        w: 36
+        h: 40
+      Noroeste75:
+        x: 121
+        y: 344
+        w: 36
+        h: 40
