@@ -9,6 +9,7 @@
 #include <utility>
 
 #include <nlohmann/json.hpp>
+#include "EntityTags.h"
 
 using json = nlohmann::json;
 using Matrix = LevelCreator::Matrix;
