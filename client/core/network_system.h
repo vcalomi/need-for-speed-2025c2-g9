@@ -7,8 +7,9 @@
 
 class NetworkSystem {
 public:
-    explicit NetworkSystem(Client& client, EventBus& bus);
+    NetworkSystem(Client& client, EventBus& eventBus);
 
 private:
     Client& client_;
+    EventBus& eventBus_;
 };
