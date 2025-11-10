@@ -10,6 +10,8 @@
 #include "../ui/minimap.h"
 #include "../world/world.h"
 
+#include "particle_system.h"
+
 class RendererSystem {
 public:
     RendererSystem(SDL2pp::Renderer& renderer, SpriteSheet& cars);
@@ -22,6 +24,7 @@ private:
     SDL2pp::Renderer& renderer_;
     SpriteSheet& cars_;
     TTF_Font* font_ = nullptr;
+    ParticleSystem particleSystem_;
 
     void DrawTextAbove(TTF_Font* font, const std::string& text, float drawX, float drawY,
                        const Rect& src);

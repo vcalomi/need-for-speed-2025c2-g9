@@ -7,7 +7,7 @@
 #define HALF_DIVISOR 2.0f
 
 RendererSystem::RendererSystem(SDL2pp::Renderer& renderer, SpriteSheet& cars):
-        renderer_(renderer), cars_(cars) {
+        renderer_(renderer), cars_(cars), particleSystem_(renderer) {
     font_ = TTF_OpenFont("../client/lobby/assets/Tektur-SemiBold.ttf", 14);
     if (!font_) {
         std::cerr << "[RendererSystem] Failed to load font: " << TTF_GetError() << std::endl;
