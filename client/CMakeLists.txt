@@ -37,6 +37,7 @@ target_sources(taller_client
     core/game.cpp
     core/resource_loader.cpp
     core/camera.cpp
+    core/network_system.cpp
     # Graphics
     graphics/renderer_system.cpp
     graphics/spritesheet.cpp
@@ -78,6 +79,7 @@ target_sources(taller_client
     core/map.h
     core/resource_loader.h
     core/camera.h
+    core/network_system.h
     # Graphics
     graphics/renderer_system.h
     graphics/spritesheet.h
@@ -90,6 +92,10 @@ target_sources(taller_client
 
     # UI
     ui/minimap.h
+
+    # Events
+    events/event.h
+    events/player_events.h
     )
 
   target_link_libraries(taller_client PRIVATE 
