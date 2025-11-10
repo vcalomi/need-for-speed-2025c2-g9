@@ -23,12 +23,12 @@ private:
     Engine engine_;
     AudioManager audioManager_;
     ResourceLoader resources_;
+    EventBus eventBus_;
     World world_;
     InputSystem inputSystem_;
     RendererSystem rendererSystem_;
-    Map map_;
-    EventBus eventBus_;
     NetworkSystem networkSystem_;
+    Map map_;
 
     void processDto(const std::shared_ptr<Dto>& dto);
 };

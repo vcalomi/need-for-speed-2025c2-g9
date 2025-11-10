@@ -17,16 +17,12 @@ Game::Game(Client& client):
         engine_(),
         audioManager_(),
         resources_(engine_.GetRenderer()),
+        eventBus_(),
         world_(),
         inputSystem_(),
-        rendererSystem_(engine_.GetRenderer(), resources_.GetCarSprites()),
-        map_(engine_.GetRenderer(), "../client/assets/need-for-speed/cities/liberty_city.png"),
-        networkSystem_(client_, eventBus_) {
-    eventBus_.Subscribe<PlayerMoveEvent>([this](const PlayerMoveEvent& e) {
-        if (e.move == ActionCode::ACCELERATE) {
-            rendererSystem_.SpawnParticlesFor(this->world_, e.username);
-        }
-    });
+        rendererSystem_(engine_.GetRenderer(), resources_.GetCarSprites(), world_, eventBus_),
+        networkSystem_(client_, eventBus_),
+        map_(engine_.GetRenderer(), "../client/assets/need-for-speed/cities/liberty_city.png") {
     audioManager_.PlayBackgroundMusic("../client/assets/need-for-speed/music/background.wav");
 }
 
