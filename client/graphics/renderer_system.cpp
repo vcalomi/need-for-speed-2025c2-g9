@@ -29,6 +29,8 @@ void RendererSystem::Render(const World& world, Map& map, const Camera& camera, 
     for (const auto& [id, player]: world.GetPlayers()) {
         DrawPlayer(player, camera);
     }
+    particleSystem_.Update(0.016f);
+    particleSystem_.Render();
     minimap.Render(world, camera);
     renderer_.Present();
 }
@@ -73,4 +75,10 @@ void RendererSystem::DrawTextAbove(TTF_Font* font, const std::string& text, floa
     }
 
     SDL_FreeSurface(textSurface);
+}
+
+void RendererSystem::SpawnParticlesFor(const World& world, const std::string& username) {
+    std::cout << "[RendererSystem] Spawning particles for player: " << username << std::endl;
+    const auto player = world.GetPlayer(username);
+    particleSystem_.Emit(player.GetX(), player.GetY(), 8);
 }

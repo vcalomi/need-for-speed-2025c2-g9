@@ -19,6 +19,7 @@ public:
 
     void Render(const World& world, Map& map, const Camera& camera, Minimap& minimap);
     void DrawPlayer(const Player& player, const Camera& camera);
+    void SpawnParticlesFor(const World& world, const std::string& username);
 
 private:
     SDL2pp::Renderer& renderer_;
