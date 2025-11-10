@@ -24,3 +24,7 @@ void Camera::Follow(float targetX, float targetY, int mapW, int mapH) {
     // Limitar dentro del mapa
     Clamp(mapW, mapH);
 }
+
+int Camera::GetViewportWidth() const { return viewportWidth; }
+
+int Camera::GetViewportHeight() const { return viewportHeight; }

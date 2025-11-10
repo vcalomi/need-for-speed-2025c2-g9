@@ -9,6 +9,8 @@ public:
     void Follow(float targetX, float targetY, int mapW, int mapH);
     void SetPosition(float newX, float newY);
     void Clamp(int mapW, int mapH);
+    int GetViewportWidth() const;
+    int GetViewportHeight() const;
 
 private:
     int viewportWidth;
