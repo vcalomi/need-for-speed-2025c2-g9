@@ -9,7 +9,7 @@ class World {
 public:
     World();
     void AddPlayer(std::string username, VehicleTipe carType, bool isLocal);
-    Player& GetLocalPlayer();
+    const Player& GetLocalPlayer() const;
     float GetLocalPlayerX() const;
     float GetLocalPlayerY() const;
     bool HasPlayer(std::string username) const;
