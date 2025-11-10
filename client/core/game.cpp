@@ -7,6 +7,7 @@
 #include "../../common/Dto/player.h"
 #include "../../common/Dto/player_move.h"
 #include "../../common/Dto/vehicle.h"
+#include "../events/player_events.h"
 #include "../ui/minimap.h"
 
 #include "camera.h"
@@ -19,7 +20,13 @@ Game::Game(Client& client):
         world_(),
         inputSystem_(),
         rendererSystem_(engine_.GetRenderer(), resources_.GetCarSprites()),
-        map_(engine_.GetRenderer(), "../client/assets/need-for-speed/cities/liberty_city.png") {
+        map_(engine_.GetRenderer(), "../client/assets/need-for-speed/cities/liberty_city.png"),
+        networkSystem_(client_, eventBus_) {
+    eventBus_.Subscribe<PlayerMoveEvent>([this](const PlayerMoveEvent& e) {
+        if (e.move == ActionCode::ACCELERATE) {
+            rendererSystem_.SpawnParticlesFor(this->world_, e.username);
+        }
+    });
     audioManager_.PlayBackgroundMusic("../client/assets/need-for-speed/music/background.wav");
 }
 
@@ -77,7 +84,8 @@ void Game::Run() {
         PlayerMoveDto input =
                 inputSystem_.GetInputByte(this->world_.GetLocalPlayer().GetUsername());
         if (static_cast<ActionCode>(input.move) != ActionCode::IDLE) {
-            client_.getSenderQueue().try_push(std::make_shared<PlayerMoveDto>(input));
+            eventBus_.Publish(PlayerMoveEvent(this->world_.GetLocalPlayer().GetUsername(),
+                                              static_cast<ActionCode>(input.move)));
         }
 
         // --- MENSAJES DEL SERVIDOR ---
