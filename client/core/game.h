@@ -8,6 +8,7 @@
 #include "../network/client.h"
 #include "../world/world.h"
 #include "./audio_manager.h"
+#include "./dto_handler_system.h"
 #include "./engine.h"
 #include "./map.h"
 #include "./network_system.h"
@@ -29,6 +30,7 @@ private:
     RendererSystem rendererSystem_;
     NetworkSystem networkSystem_;
     Map map_;
+    DtoHandlerSystem dtoHandlerSystem_;
 
     void processDto(const std::shared_ptr<Dto>& dto);
 };

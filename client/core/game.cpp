@@ -22,42 +22,9 @@ Game::Game(Client& client):
         inputSystem_(),
         rendererSystem_(engine_.GetRenderer(), resources_.GetCarSprites(), world_, eventBus_),
         networkSystem_(client_, eventBus_),
-        map_(engine_.GetRenderer(), "../client/assets/need-for-speed/cities/liberty_city.png") {
+        map_(engine_.GetRenderer(), "../client/assets/need-for-speed/cities/liberty_city.png"),
+        dtoHandlerSystem_(world_, client_) {
     audioManager_.PlayBackgroundMusic("../client/assets/need-for-speed/music/background.wav");
-}
-
-void Game::processDto(const std::shared_ptr<Dto>& dto) {
-    ActionCode code = static_cast<ActionCode>(dto->return_code());
-    switch (code) {
-        case ActionCode::SEND_PLAYER: {
-            auto playerDto = std::dynamic_pointer_cast<PlayerDto>(dto);
-            if (playerDto) {
-                std::cout << "Procesando jugador username=" << playerDto->username << std::endl;
-                auto playerUsername = playerDto->username;
-                if (!world_.HasPlayer(playerUsername)) {
-                    world_.AddPlayer(playerUsername, playerDto->Type,
-                                     playerUsername == client_.getUsername());
-                    std::cout << "Jugador agregado al mundo, username=" << playerUsername
-                              << std::endl;
-                }
-            }
-            break;
-        }
-        case ActionCode::SEND_CARS: {
-            auto vehicleDto = std::dynamic_pointer_cast<VehicleDto>(dto);
-            if (vehicleDto) {
-                std::cout << "Procesando vehículo username=" << vehicleDto->username << " pos("
-                          << vehicleDto->x << ", " << vehicleDto->y
-                          << ") rot=" << vehicleDto->rotation << std::endl;
-                world_.UpdateFromServer(vehicleDto->username, vehicleDto->x, vehicleDto->y,
-                                        vehicleDto->rotation);
-            }
-            break;
-        }
-        default:
-            std::cout << "DTO no manejado, code=" << (int)code << std::endl;
-            break;
-    }
 }
 
 
@@ -69,7 +36,7 @@ void Game::Run() {
     while (world_.HasPlayers() == false) {
         std::shared_ptr<Dto> dto = nullptr;
         while (client_.getRecvQueue().try_pop(dto)) {
-            processDto(dto);
+            dtoHandlerSystem_.Process(dto);
         }
     }
 
@@ -87,7 +54,7 @@ void Game::Run() {
         // --- MENSAJES DEL SERVIDOR ---
         std::shared_ptr<Dto> dto = nullptr;
         while (client_.getRecvQueue().try_pop(dto)) {
-            processDto(dto);
+            dtoHandlerSystem_.Process(dto);
         }
 
         // CAMERA UPDATE
