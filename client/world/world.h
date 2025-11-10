@@ -17,6 +17,7 @@ public:
     const std::map<std::string, Player>& GetPlayers() const;
     void UpdateFromServer(std::string username, float x, float y, float angle);
     void OnCollision(std::string username1, std::string username2);
+    const Player& GetPlayer(const std::string& username) const;
 
 private:
     std::map<std::string, Player> players_;

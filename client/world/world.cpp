@@ -56,3 +56,5 @@ float World::GetLocalPlayerY() const {
     }
     return 0.0f;  // Valor por defecto si no se encuentra el jugador local
 }
+
+const Player& World::GetPlayer(const std::string& username) const { return players_.at(username); }
