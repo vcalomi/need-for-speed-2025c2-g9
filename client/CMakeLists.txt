@@ -38,6 +38,7 @@ target_sources(taller_client
     core/resource_loader.cpp
     core/camera.cpp
     core/network_system.cpp
+    core/dto_handler_system.cpp
     # Graphics
     graphics/renderer_system.cpp
     graphics/spritesheet.cpp
@@ -80,6 +81,7 @@ target_sources(taller_client
     core/resource_loader.h
     core/camera.h
     core/network_system.h
+    core/dto_handler_system.h
     # Graphics
     graphics/renderer_system.h
     graphics/spritesheet.h
