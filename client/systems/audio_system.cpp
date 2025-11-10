@@ -1,4 +1,4 @@
-#include "./audio_manager.h"
+#include "./audio_system.h"
 
 #include <iostream>
 
@@ -8,11 +8,11 @@
 
 using SDL2pp::Mixer;
 
-AudioManager::AudioManager(): audioEnabled_(true) {
+AudioSystem::AudioSystem(): audioEnabled_(true) {
 #ifdef __linux__
     // Detectar si estamos dentro de WSL
     if (std::getenv("WSL_DISTRO_NAME")) {
-        std::cerr << "[AudioManager] Detected WSL environment. Audio disabled.\n";
+        std::cerr << "[AudioSystem] Detected WSL environment. Audio disabled.\n";
         audioEnabled_ = false;
         return;  // No inicializamos SDL_mixer
     }
@@ -23,15 +23,15 @@ AudioManager::AudioManager(): audioEnabled_(true) {
                                          CHUNK_SIZE);
         mixer_->SetMusicVolume(STARTING_VOLUME);
     } catch (const SDL2pp::Exception& e) {
-        std::cerr << "[AudioManager] Failed to initialize audio: " << e.GetSDLFunction() << " - "
+        std::cerr << "[AudioSystem] Failed to initialize audio: " << e.GetSDLFunction() << " - "
                   << e.GetSDLError() << "\n";
         audioEnabled_ = false;
     }
 }
 
-Mixer* AudioManager::GetMixer() { return audioEnabled_ ? mixer_.get() : nullptr; }
+Mixer* AudioSystem::GetMixer() { return audioEnabled_ ? mixer_.get() : nullptr; }
 
-void AudioManager::PlayBackgroundMusic(const std::string& filepath, int loops) {
+void AudioSystem::PlayBackgroundMusic(const std::string& filepath, int loops) {
     if (!audioEnabled_)
         return;
 
@@ -39,17 +39,17 @@ void AudioManager::PlayBackgroundMusic(const std::string& filepath, int loops) {
         backgroundMusic_ = std::make_unique<SDL2pp::Music>(filepath);
         mixer_->PlayMusic(*backgroundMusic_, loops);
     } catch (const SDL2pp::Exception& e) {
-        std::cerr << "[AudioManager] Error playing music: " << e.GetSDLFunction() << " - "
+        std::cerr << "[AudioSystem] Error playing music: " << e.GetSDLFunction() << " - "
                   << e.GetSDLError() << "\n";
     }
 }
 
-void AudioManager::StopBackgroundMusic() {
+void AudioSystem::StopBackgroundMusic() {
     if (audioEnabled_)
         mixer_->HaltMusic();
 }
 
-void AudioManager::PlaySoundEffect(const std::string& filepath, int loops) {
+void AudioSystem::PlaySoundEffect(const std::string& filepath, int loops) {
     if (!audioEnabled_)
         return;
 
@@ -57,7 +57,7 @@ void AudioManager::PlaySoundEffect(const std::string& filepath, int loops) {
         SDL2pp::Chunk sound(filepath);
         mixer_->PlayChannel(-1, sound, loops);
     } catch (const SDL2pp::Exception& e) {
-        std::cerr << "[AudioManager] Error playing sound effect: " << e.GetSDLFunction() << " - "
+        std::cerr << "[AudioSystem] Error playing sound effect: " << e.GetSDLFunction() << " - "
                   << e.GetSDLError() << "\n";
     }
 }

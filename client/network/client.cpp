@@ -4,7 +4,7 @@
 #include <sstream>
 #include <string>
 
-#include "../core/game.h"
+#include "../app/game.h"
 
 #include "client_input_handler.h"
 

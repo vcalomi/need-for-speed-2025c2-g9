@@ -8,13 +8,22 @@
 #include <QPushButton>
 
 void UIStyles::applyGlobalStyle() {
-    // Fuente global
+    // Cargar fuente global
     int fontId = QFontDatabase::addApplicationFont(":/Tektur-SemiBold.ttf");
-    QString fontFamily = QFontDatabase::applicationFontFamilies(fontId).at(0);
-    QFont tekturFont(fontFamily, 12);
-    qApp->setFont(tekturFont);
+    if (fontId == -1) {
+        qWarning() << "[UIStyles] Failed to load font Tektur-SemiBold.ttf";
+    } else {
+        QStringList families = QFontDatabase::applicationFontFamilies(fontId);
+        if (!families.isEmpty()) {
+            QFont tekturFont(families.at(0), 12);
+            qApp->setFont(tekturFont);
+            qDebug() << "[UIStyles] Loaded font family:" << families.at(0);
+        } else {
+            qWarning() << "[UIStyles] Font loaded but no families found.";
+        }
+    }
 
-    // --- Estilo global (sin box-shadow, solo colores y bordes) ---
+    // --- Estilo global ---
     qApp->setStyleSheet(R"(
         QLineEdit {
             background: #2c2c2c;
@@ -37,13 +46,8 @@ void UIStyles::applyGlobalStyle() {
             font-weight: bold;
         }
 
-        QPushButton:hover {
-            background-color: #ffa31a;
-        }
-
-        QPushButton:pressed {
-            background-color: #cc5200;
-        }
+        QPushButton:hover { background-color: #ffa31a; }
+        QPushButton:pressed { background-color: #cc5200; }
 
         QComboBox {
             background-color: rgba(0, 0, 0, 0.6);
@@ -56,22 +60,21 @@ void UIStyles::applyGlobalStyle() {
         }
     )");
 
-    // --- Aplicar sombras globales a ciertos widgets ---
+    // --- Aplicar sombras globales ---
     const QList<QWidget*> widgets = qApp->allWidgets();
     for (QWidget* w: widgets) {
-        // Sombra para botones
         if (auto btn = qobject_cast<QPushButton*>(w)) {
-            auto* btnShadow = new QGraphicsDropShadowEffect(btn);
-            btnShadow->setBlurRadius(20);
-            btnShadow->setOffset(0, 0);
-            btnShadow->setColor(QColor("#ff6600"));
-            btn->setGraphicsEffect(btnShadow);
+            auto* shadow = new QGraphicsDropShadowEffect(btn);
+            shadow->setBlurRadius(20);
+            shadow->setOffset(0, 0);
+            shadow->setColor(QColor("#ff6600"));
+            btn->setGraphicsEffect(shadow);
         } else if (auto edit = qobject_cast<QLineEdit*>(w)) {
-            auto* editShadow = new QGraphicsDropShadowEffect(edit);
-            editShadow->setBlurRadius(15);
-            editShadow->setOffset(0, 0);
-            editShadow->setColor(QColor("#ff6600"));
-            edit->setGraphicsEffect(editShadow);
+            auto* shadow = new QGraphicsDropShadowEffect(edit);
+            shadow->setBlurRadius(15);
+            shadow->setOffset(0, 0);
+            shadow->setColor(QColor("#ff6600"));
+            edit->setGraphicsEffect(shadow);
         }
     }
 }

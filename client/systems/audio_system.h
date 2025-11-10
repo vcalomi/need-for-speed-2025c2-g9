@@ -4,14 +4,14 @@
 
 #include <SDL2pp/SDL2pp.hh>
 
-class AudioManager {
+class AudioSystem {
 private:
     std::unique_ptr<SDL2pp::Mixer> mixer_;
     std::unique_ptr<SDL2pp::Music> backgroundMusic_;
     bool audioEnabled_;
 
 public:
-    AudioManager();
+    AudioSystem();
 
     SDL2pp::Mixer* GetMixer();
     void PlayBackgroundMusic(const std::string& filepath, int loops = -1);

@@ -1,13 +1,11 @@
 #include "./resource_loader.h"
 
-#include <cctype>  // para toupper
+#include <cctype>
 #include <iostream>
 
 #include <yaml-cpp/yaml.h>
 
-ResourceLoader::ResourceLoader(SDL2pp::Renderer& renderer)
-        // ✅ ahora cargamos la textura real (imagen PNG)
-        :
+ResourceLoader::ResourceLoader(SDL2pp::Renderer& renderer):
         carSprites_(renderer, "../client/assets/need-for-speed/cars/cars.png") {
 
     LoadCarSprites();
@@ -16,8 +14,7 @@ ResourceLoader::ResourceLoader(SDL2pp::Renderer& renderer)
 
 void ResourceLoader::LoadCarSprites() {
     try {
-        // ✅ ruta al YAML con las posiciones
-        YAML::Node config = YAML::LoadFile("../client/cars.yaml");
+        YAML::Node config = YAML::LoadFile("./client/resources/static/cars.yaml");
 
         YAML::Node sprites = config["sprites"];
         if (!sprites) {
@@ -25,7 +22,6 @@ void ResourceLoader::LoadCarSprites() {
             return;
         }
 
-        // ✅ iterar todos los vehículos
         for (auto itVeh = sprites.begin(); itVeh != sprites.end(); ++itVeh) {
             std::string vehicle = itVeh->first.as<std::string>();  // ej. "jeep"
             YAML::Node frames = itVeh->second["frames"];
@@ -36,9 +32,9 @@ void ResourceLoader::LoadCarSprites() {
                 continue;
             }
 
-            // ✅ recorrer cada frame del vehículo
             for (auto itFrame = frames.begin(); itFrame != frames.end(); ++itFrame) {
-                std::string frameName = itFrame->first.as<std::string>();  // ej. "Sur"
+                std::string frameName = itFrame->first.as<std::string>();
+
                 auto f = itFrame->second;
 
                 int x = f["x"].as<int>();
@@ -46,9 +42,8 @@ void ResourceLoader::LoadCarSprites() {
                 int w = f["w"].as<int>();
                 int h = f["h"].as<int>();
 
-                // ✅ formatear nombre tipo "JeepSur", "JeepNorte", etc.
                 std::string spriteKey = vehicle;
-                spriteKey[0] = std::toupper(spriteKey[0]);  // mayúscula inicial
+                spriteKey[0] = std::toupper(spriteKey[0]);
                 spriteKey += frameName;
 
                 carSprites_.AddSprite(spriteKey, SDL2pp::Rect(x, y, w, h));

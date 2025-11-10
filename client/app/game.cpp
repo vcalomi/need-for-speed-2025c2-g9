@@ -9,13 +9,12 @@
 #include "../../common/Dto/vehicle.h"
 #include "../events/player_events.h"
 #include "../ui/minimap.h"
-
-#include "camera.h"
+#include "../world/camera.h"
 
 Game::Game(Client& client):
         client_(client),
         engine_(),
-        audioManager_(),
+        audioSystem_(),
         resources_(engine_.GetRenderer()),
         eventBus_(),
         world_(),
@@ -24,7 +23,7 @@ Game::Game(Client& client):
         networkSystem_(client_, eventBus_),
         map_(engine_.GetRenderer(), "../client/assets/need-for-speed/cities/liberty_city.png"),
         dtoHandlerSystem_(world_, client_) {
-    audioManager_.PlayBackgroundMusic("../client/assets/need-for-speed/music/background.wav");
+    audioSystem_.PlayBackgroundMusic("../client/assets/need-for-speed/music/background.wav");
 }
 
 

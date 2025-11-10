@@ -1,8 +1,8 @@
 #pragma once
 #include <SDL2pp/SDL2pp.hh>
 
-#include "../core/camera.h"
-#include "../core/map.h"
+#include "../world/camera.h"
+#include "../world/map.h"
 #include "../world/world.h"
 
 class Minimap {

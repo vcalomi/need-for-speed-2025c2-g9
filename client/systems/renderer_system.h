@@ -4,15 +4,14 @@
 #include <SDL2/SDL_ttf.h>
 #include <SDL2pp/SDL2pp.hh>
 
-#include "../core/camera.h"
-#include "../core/map.h"
 #include "../events/event.h"
 #include "../events/player_events.h"
+#include "../graphics/particle_system.h"
 #include "../graphics/spritesheet.h"
 #include "../ui/minimap.h"
+#include "../world/camera.h"
+#include "../world/map.h"
 #include "../world/world.h"
-
-#include "particle_system.h"
 
 class RendererSystem {
 public:

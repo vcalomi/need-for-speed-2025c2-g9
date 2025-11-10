@@ -4,6 +4,8 @@
 #include "lobby/mainwindow.h"
 #include "network/client.h"
 
+extern void qInitResources_resources();
+
 #define NUMBER_ARG 3
 #define MSG_ERROR_STDIN "Command line: <hostname> <port>"
 #define ARG_INDEX_HOSTNAME 1
@@ -18,6 +20,7 @@ int main(int argc, char* argv[]) {
     std::string port = std::string(argv[ARG_INDEX_PORT]);
 
     try {
+        qInitResources_resources();
         QApplication app(argc, argv);
         ClientProtocol protocol(hostname, port);
         // 1. Ejecutar Lobby
