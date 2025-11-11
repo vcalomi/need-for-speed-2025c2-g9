@@ -82,3 +82,86 @@ sprites:
         y: 344
         w: 36
         h: 40
+  fiat_600:
+    sheet_path: "./assets/need-for-speed/cars/cars.png"
+    frames:
+      Sur: 
+        x: 133
+        y: 2
+        w: 21
+        h: 28
+      Norte:
+        x: 133
+        y: 34
+        w: 21
+        h: 28
+      Este: 
+        x: 2
+        y: 5
+        w: 28
+        h: 22
+      Oeste: 
+        x: 2
+        y: 37
+        w: 28
+        h: 22
+      Sureste20: 
+        x: 98
+        y: 1
+        w: 25
+        h: 30
+      Suroeste20: 
+        x: 164
+        y: 1
+        w: 25
+        h: 30
+      Noreste20: 
+        x: 163
+        y: 33
+        w: 25
+        h: 30
+      Noroeste20: 
+        x: 100
+        y: 33
+        w: 25
+        h: 30
+      Sureste45: 
+        x: 65
+        y: 2
+        w: 29
+        h: 29
+      Suroeste45: 
+        x: 194
+        y: 2
+        w: 29
+        h: 29
+      Noreste45: 
+        x: 193
+        y: 33
+        w: 29
+        h: 29
+      Noroeste45: 
+        x: 66
+        y: 33
+        w: 29
+        h: 29
+      Sureste75: 
+        x: 225
+        y: 3
+        w: 31
+        h: 25
+      Suroeste75: 
+        x: 32
+        y: 3
+        w: 31
+        h: 25
+      Noreste75: 
+        x: 224
+        y: 36
+        w: 31
+        h: 25
+      Noroeste75: 
+        x: 33
+        y: 36
+        w: 31
+        h: 25
