@@ -1,6 +1,7 @@
 #include "./dto_handler_system.h"
 
-#include "../events/checkpoints_event.h"
+#include "../../common/Dto/checkpoint.h"
+#include "../events/checkpoint_event.h"
 #include "../events/player_events.h"
 
 DtoHandlerSystem::DtoHandlerSystem(World& world, Client& client, EventBus& eventBus):
@@ -10,7 +11,8 @@ void DtoHandlerSystem::Process(const std::shared_ptr<Dto>& dto) {
     if (!dto)
         return;
 
-    Event event;
+    std::shared_ptr<Event> event;
+
 
     ActionCode code = static_cast<ActionCode>(dto->return_code());
     switch (code) {
@@ -41,21 +43,23 @@ void DtoHandlerSystem::Process(const std::shared_ptr<Dto>& dto) {
             world_.UpdateFromServer(vehicleDto->username, vehicleDto->x, vehicleDto->y,
                                     vehicleDto->rotation);
 
-            event = PlayerStateUpdatedEvent(vehicleDto->username, vehicleDto->x, vehicleDto->y,
-                                            vehicleDto->rotation, vehicleDto->isAccelerating,
-                                            vehicleDto->isBraking);
+            event = std::make_shared<PlayerStateUpdatedEvent>(
+                    vehicleDto->username, vehicleDto->x, vehicleDto->y, vehicleDto->rotation,
+                    vehicleDto->isAccelerating, vehicleDto->isBraking);
 
 
             break;
         }
         case ActionCode::SEND_CHECKPOINTS: {
-            auto checkpointsDto = std::dynamic_pointer_cast<CheckpointsDto>(dto);
-            if (!checkpointsDto)
+            auto checkpointDto = std::dynamic_pointer_cast<CheckpointDto>(dto);
+            if (!checkpointDto)
                 return;
 
-            event = CheckPointsEvent(checkpointsDto->id, checkpointsDto->x, checkpointsDto->y);
-            std::cout << "[DtoHandler] Checkpoints received: " << checkpointsDto->checkpoints.size()
-                      << " checkpoints." << std::endl;
+            event = std::make_shared<CheckPointEvent>(checkpointDto->id, checkpointDto->x,
+                                                      checkpointDto->y);
+            // std::cout << "[DtoHandler] Checkpoint received: " <<
+            // checkpointsDto->checkpoints.size()
+            //           << " checkpoints." << std::endl;
             break;
         }
 
@@ -64,5 +68,7 @@ void DtoHandlerSystem::Process(const std::shared_ptr<Dto>& dto) {
             break;
     }
 
-    eventBus_.Publish(event);
+    if (event) {
+        eventBus_.Publish(*event);
+    }
 }
