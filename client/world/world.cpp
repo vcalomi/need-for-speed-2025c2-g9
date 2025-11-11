@@ -2,7 +2,19 @@
 
 #include <cmath>
 
-World::World() {}
+#include "../events/checkpoint_event.h"
+
+World::World(EventBus& eventBus): eventBus_(eventBus) {
+    eventBus_.Subscribe<CheckPointEvent>([this](const CheckPointEvent& e) {
+        // std::cout << "[World] Received CheckPointEvent with " << e.checkpoints.size()
+        //           << " checkpoints." << std::endl;
+        Checkpoint newCheckpoint;
+        newCheckpoint.id = e.id;
+        newCheckpoint.x = e.x;
+        newCheckpoint.y = e.y;
+        checkpoints_.push_back(newCheckpoint);
+    });
+}
 
 void World::AddPlayer(std::string username, VehicleTipe carType, bool isLocal) {
     float spawnDistance = 3.0f;
@@ -58,3 +70,5 @@ float World::GetLocalPlayerY() const {
 }
 
 const Player& World::GetPlayer(const std::string& username) const { return players_.at(username); }
+
+const std::vector<Checkpoint>& World::GetCheckpoints() const { return checkpoints_; }
