@@ -1,6 +1,9 @@
 #include "./dto_handler_system.h"
 
-DtoHandlerSystem::DtoHandlerSystem(World& world, Client& client): world_(world), client_(client) {}
+#include "../events/player_events.h"
+
+DtoHandlerSystem::DtoHandlerSystem(World& world, Client& client, EventBus& eventBus):
+        world_(world), client_(client), eventBus_(eventBus) {}
 
 void DtoHandlerSystem::Process(const std::shared_ptr<Dto>& dto) {
     if (!dto)
@@ -34,6 +37,11 @@ void DtoHandlerSystem::Process(const std::shared_ptr<Dto>& dto) {
 
             world_.UpdateFromServer(vehicleDto->username, vehicleDto->x, vehicleDto->y,
                                     vehicleDto->rotation);
+
+            PlayerStateUpdatedEvent e(vehicleDto->username, vehicleDto->x, vehicleDto->y,
+                                      vehicleDto->rotation);
+            eventBus_.Publish(e);
+
             break;
         }
 

@@ -16,3 +16,18 @@ struct PlayerMoveEvent: public Event {
     std::string GetType() const override { return Type(); }
     static std::string Type() { return "PlayerMoveEvent"; }
 };
+
+#pragma once
+
+struct PlayerStateUpdatedEvent: public Event {
+    std::string username;
+    float x;
+    float y;
+    float angle;
+
+    PlayerStateUpdatedEvent(std::string username, float x, float y, float angle):
+            username(std::move(username)), x(x), y(y), angle(angle) {}
+
+    std::string GetType() const override { return Type(); }
+    static std::string Type() { return "PlayerStateUpdatedEvent"; }
+};

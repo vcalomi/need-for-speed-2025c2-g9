@@ -20,13 +20,9 @@ RendererSystem::RendererSystem(SDL2pp::Renderer& renderer, SpriteSheet& cars, Wo
         std::cout << "[RendererSystem] Font loaded successfully.\n";
     }
 
-    // 🔔 Suscribirse automáticamente a eventos de movimiento
-    eventBus_.Subscribe<PlayerMoveEvent>([this](const PlayerMoveEvent& e) {
-        if (e.move == ActionCode::ACCELERATE) {
-            std::cout << "[RendererSystem] Player " << e.username
-                      << " accelerated — spawning particles\n";
-            this->SpawnParticlesFor(this->world_, e.username);
-        }
+    eventBus_.Subscribe<PlayerStateUpdatedEvent>([this](const PlayerStateUpdatedEvent& e) {
+        std::cout << "[RendererSystem] Received PlayerStateUpdatedEvent for player: " << e.username
+                  << std::endl;
     });
 }
 
