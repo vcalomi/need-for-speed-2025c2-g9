@@ -1,16 +1,15 @@
 #include "LevelSetup.h"
-#include "./physics/EntityTags.h"
+
 #include <memory>
 #include <string>
 #include <utility>
 #include <vector>
 
-LevelSetup::LevelSetup(const std::string& level_json_path, 
-                    const std::string& vehicle_specs_path,
-                    const std::map<int, CarConfig>& chosenCars):
-       chosenCarsRef_(chosenCars), 
-       config_map_(YamlParser{}.parse(vehicle_specs_path)) 
-{
+#include "./physics/EntityTags.h"
+
+LevelSetup::LevelSetup(const std::string& level_json_path, const std::string& vehicle_specs_path,
+                       const std::map<int, CarConfig>& chosenCars):
+        chosenCarsRef_(chosenCars), config_map_(YamlParser{}.parse(vehicle_specs_path)) {
 
     // Create empty world
     b2WorldDef wdef = b2DefaultWorldDef();
@@ -22,12 +21,13 @@ LevelSetup::LevelSetup(const std::string& level_json_path,
     levelCreator_.createLevelCollision(world_, levelCreator_.levels());
 
     spawns_ = levelCreator_.getSpawnPoints();
+    checkpoints_ = levelCreator_.get_checkpoints();
     buildVehicles();
 }
 
 void LevelSetup::buildVehicles() {
     std::cout << "[LevelSetup] chosenCars.size=" << chosenCarsRef_.size() << '\n';
-    for (const auto& [id, cfg] : chosenCarsRef_) {
+    for (const auto& [id, cfg]: chosenCarsRef_) {
         std::cout << "  " << id << " -> " << cfg.carType << '\n';
     }
 
@@ -43,7 +43,7 @@ void LevelSetup::buildVehicles() {
     std::shuffle(shuffled.begin(), shuffled.end(), rng_);
 
     size_t i = 0;
-    for (const auto& [player_id, cfg] : chosenCarsRef_) {
+    for (const auto& [player_id, cfg]: chosenCarsRef_) {
         if (i >= shuffled.size()) {
             std::cerr << "[LevelSetup] WARNING: faltan spawns para jugadores.\n";
             break;
@@ -60,7 +60,7 @@ void LevelSetup::buildVehicles() {
 
         FixtureTag* tag = makeTag(vehicle_tags_, EntityKind::Vehicle, player_id);
         v->setFixtureTag(tag);
-        
+
         player_vehicle_map_.emplace(player_id, std::move(v));
     }
 }
