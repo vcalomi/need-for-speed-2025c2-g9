@@ -9,6 +9,13 @@
 #include <box2d/box2d.h>
 #include "../constants.h"
 #include "spawn.h"
+#include "EntityTags.h"
+
+struct CheckpointInfo {
+    float x_px;
+    float y_px;
+    int index;
+};
 
 class LevelCreator {
 public:
@@ -21,10 +28,15 @@ public:
 
     void drawDebugTiles(SDL_Renderer* r, float camX_px, float camY_px, float zoom);
     const std::vector<Spawn>& getSpawnPoints() const { return spawn_points; }
-
+    void drawDebugCheckpoints(SDL_Renderer* r, float camX_px, float camY_px, float zoom);
+    const std::vector<CheckpointInfo>& get_checkpoints() const  { return checkpoints_;}
 private:
     std::vector<Matrix> levels_matrices_{4};  // 4 slots
     std::vector<SDL_FRect> debug_tile_rects_;
     std::vector<Spawn> spawn_points;
     void addDebugTileRect(float cx_px, float cy_px, float size_px);
+
+    std::vector<FixtureTag> checkpoint_tags_;
+
+    std::vector<CheckpointInfo> checkpoints_;
 };

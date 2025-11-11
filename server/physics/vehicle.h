@@ -3,6 +3,7 @@
 #include <box2d/box2d.h>
 
 #include "../VehicleSpec.h"
+#include "EntityTags.h"
 #include "../constants.h"
 #include "spawn.h"
 
@@ -18,6 +19,7 @@ public:
     float width() const noexcept { return spec_.width_m; }
     float height() const noexcept { return spec_.height_m; }
     void draw(SDL_Renderer* r, float camX_px, float camY_px, float zoom, float ppm) const;
+    void setFixtureTag(FixtureTag* tag);
 
 private:
     b2WorldId world_id_;

@@ -1,5 +1,5 @@
 #include "LevelSetup.h"
-
+#include "./physics/EntityTags.h"
 #include <memory>
 #include <string>
 #include <utility>
@@ -57,6 +57,10 @@ void LevelSetup::buildVehicles() {
         const Spawn& spawn = shuffled[i++];
 
         auto v = std::make_unique<Vehicle>(world_, spec, spawn, player_id);
+
+        FixtureTag* tag = makeTag(vehicle_tags_, EntityKind::Vehicle, player_id);
+        v->setFixtureTag(tag);
+        
         player_vehicle_map_.emplace(player_id, std::move(v));
     }
 }

@@ -36,6 +36,7 @@ public:
     void processCommands();
     void simulateGame();
     void sendInitialPlayersCars();
+    void sendCheckpoints();
 
 
     ~GameLoop();

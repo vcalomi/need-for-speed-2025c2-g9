@@ -2,14 +2,12 @@
 
 #include <algorithm>
 #include <cctype>
-#include <fstream>
-#include <iostream>
 #include <optional>
 #include <system_error>
 #include <utility>
 
 #include <nlohmann/json.hpp>
-#include "EntityTags.h"
+
 
 using json = nlohmann::json;
 using Matrix = LevelCreator::Matrix;
@@ -219,6 +217,35 @@ void LevelCreator::createLevelCollision(b2WorldId world, const std::vector<Matri
                     continue;
                 }
 
+                if (v >= 7) {
+                    const int checkpointIndex = v - 7;  // 7->0, 8->1, etc.
+
+                    const float cx_m = world_x_px / PPM;
+                    const float cy_m = world_y_px / PPM;
+                    const float radius_m = 16.0f / PPM;   
+
+                    b2BodyDef bodyDef = b2DefaultBodyDef();
+                    bodyDef.type = b2_staticBody;
+                    bodyDef.position = {cx_m, cy_m};
+                    b2BodyId body = b2CreateBody(world, &bodyDef);
+
+
+                    b2Circle circle{};
+                    circle.center = {0.0f, 0.0f};
+                    circle.radius = radius_m;
+
+                    b2ShapeDef shapeDef = b2DefaultShapeDef();
+                    shapeDef.isSensor = true;
+
+                    FixtureTag* tag = makeTag(checkpoint_tags_, EntityKind::Checkpoint, checkpointIndex);
+                    shapeDef.userData = tag;
+
+                    b2CreateCircleShape(body, &shapeDef, &circle);
+
+                    checkpoints_.push_back(CheckpointInfo{world_x_px, world_y_px, checkpointIndex});
+
+                    continue; 
+                }
                 createTileCollider(world, world_x_px, world_y_px, tile_px);
                 addDebugTileRect(world_x_px, world_y_px, tile_px);
             }
@@ -226,4 +253,41 @@ void LevelCreator::createLevelCollision(b2WorldId world, const std::vector<Matri
     }
 
     std::cout << "[INFO] colisiones creadas\n";
+}
+
+void LevelCreator::drawDebugCheckpoints(SDL_Renderer* r,
+                                        float camX_px,
+                                        float camY_px,
+                                        float zoom)
+{
+    SDL_SetRenderDrawBlendMode(r, SDL_BLENDMODE_BLEND);
+    SDL_SetRenderDrawColor(r, 0, 0, 255, 200);  // azul semitransparente
+
+    const int SEGMENTS = 24;
+    const float radius_px = CHECKPOINT_RADIUS_PX;  
+
+    for (const auto& cp : checkpoints_) {
+        const float cx_px = cp.x_px;
+        const float cy_px = cp.y_px;
+        const float cx = (cx_px - camX_px) * zoom;
+        const float cy = (cy_px - camY_px) * zoom;
+        const float rad = radius_px * zoom;
+
+        float prev_x = cx + rad;
+        float prev_y = cy;
+
+        for (int i = 1; i <= SEGMENTS; ++i) {
+            float theta = (2.0f * 3.14159265358979323846f * i) / SEGMENTS;
+            float x = cx + rad * std::cos(theta);
+            float y = cy + rad * std::sin(theta);
+            SDL_RenderDrawLineF(r, prev_x, prev_y, x, y);
+            prev_x = x;
+            prev_y = y;
+        }
+
+        // opcional: número del checkpoint
+        SDL_SetRenderDrawColor(r, 255, 255, 255, 220);
+        SDL_FRect rect = {cx - 2, cy - 2, 4, 4};
+        SDL_RenderFillRectF(r, &rect);
+    }
 }

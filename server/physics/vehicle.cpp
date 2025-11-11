@@ -87,3 +87,7 @@ void Vehicle::draw(SDL_Renderer* r, float camX_px, float camY_px, float zoom, fl
         SDL_RenderDrawLineF(r, A.x, A.y, B.x, B.y);
     }
 }
+
+void Vehicle::setFixtureTag(FixtureTag* tag) {
+    b2Body_SetUserData(body_, tag);
+}

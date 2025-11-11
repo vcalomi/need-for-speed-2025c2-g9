@@ -30,6 +30,9 @@ public:
         return player_vehicle_map_;
     }
 
+    const std::vector<CheckpointInfo>& getCheckpoints() const  { return checkpoints_;}
+
+
 private:
     void create_vehicles();
     const std::map<int, CarConfig>& chosenCarsRef_; 
@@ -37,6 +40,8 @@ private:
     b2WorldId world_{b2_nullWorldId};
     LevelCreator levelCreator_;
     std::vector<Spawn> spawns_;
+    std::vector<CheckpointInfo> checkpoints_;
     std::unordered_map<int, std::unique_ptr<Vehicle>> player_vehicle_map_;
     std::mt19937 rng_;
+    std::vector<FixtureTag> vehicle_tags_;
 };

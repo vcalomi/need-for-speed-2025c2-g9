@@ -57,6 +57,9 @@ int main() {
     Uint64 last = SDL_GetPerformanceCounter();
 
     float vehicle_x, vehicle_y, vehicle_angle;
+    std::vector<CheckpointInfo> checkpoints = lc.get_checkpoints();
+
+    std::cout << "Total checkpoints: " << checkpoints.size() << '\n';
 
     // --- Loop principal ---
     while (running) {
@@ -107,7 +110,7 @@ int main() {
 
         // Colisiones
         lc.drawDebugTiles(renderer.Get(), camX_px, camY_px, zoom);
-
+        lc.drawDebugCheckpoints(renderer.Get(), camX_px, camY_px, zoom);
         // Auto
         vehicle.draw(renderer.Get(), camX_px, camY_px, zoom, PPM);
 

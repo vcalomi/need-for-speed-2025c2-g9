@@ -4,19 +4,19 @@ vehicles:
     width_m: 10.20
     height_m: 10.40
     density: 1200.0
-    engine_force_N: 6500.0
-    brake_force_N: 8000.0
-    steer_torque: 5.0
+    engine_force_N: 1000.0
+    brake_force_N: 800.0
+    steer_torque: 2.5
     friction: 1.0
     restitution: 1.0
   
   ferrari_F40:
-    width_m: 5.0
-    height_m: 10.0
+    width_m: 2.5
+    height_m: 5.0
     density: 1.0
-    engine_force_N: 5000.0
-    brake_force_N: 2000.0
-    steer_torque: 3000.0
+    engine_force_N: 2000.0
+    brake_force_N: 1000.0
+    steer_torque: 1000.0
     friction: 1.0
     restitution: 1.0
   

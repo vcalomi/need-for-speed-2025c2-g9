@@ -9,4 +9,5 @@ target_sources(taller_server
     LevelCreator.h
     spawn.h
     vehicle.h
+    EntityTags.h
     )
