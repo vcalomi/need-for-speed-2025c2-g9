@@ -5,6 +5,7 @@
 #include <vector>
 
 #include "../../common/common_codes.h"
+#include "../../common/serializer/checkpoint_serializer.h"
 #include "../../common/serializer/player_move_serializer.h"
 #include "../../common/serializer/player_serializer.h"
 #include "../../common/serializer/vehicle_serializer.h"
@@ -16,6 +17,8 @@ ServerProtocol::ServerProtocol(Socket& socket): socket(socket), protocol() {
             std::make_unique<PlayerSerializer>();
     serializers[static_cast<uint8_t>(ActionCode::SEND_PLAYER_MOVE)] =
             std::make_unique<PlayerMoveSerializer>();
+    serializers[static_cast<uint8_t>(ActionCode::SEND_CHECKPOINTS)] =
+            std::make_unique<CheckpointSerializer>();
 }
 
 void ServerProtocol::sendMsg(ActionCode code) { protocol.sendAction(socket, code); }

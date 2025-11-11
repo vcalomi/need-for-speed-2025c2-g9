@@ -11,10 +11,12 @@ target_sources(taller_common
     serializer/vehicle_serializer.cpp
     serializer/player_serializer.cpp
     serializer/player_move_serializer.cpp
+    serializer/checkpoint_serializer.cpp
     Dto/dto.cpp
     Dto/vehicle.cpp
     Dto/player.cpp
     Dto/player_move.cpp
+    Dto/checkpoint.cpp
     PUBLIC
     # .h files
     liberror.h
@@ -29,9 +31,11 @@ target_sources(taller_common
     serializer/vehicle_serializer.h
     serializer/player_serializer.h
     serializer/player_move_serializer.h
+    serializer/checkpoint_serializer.h
     Dto/dto.h
     Dto/vehicle.h
     Dto/player.h
     Dto/player_move.h
+    Dto/checkpoint.h
     vehicle_type_utils.h
 )
