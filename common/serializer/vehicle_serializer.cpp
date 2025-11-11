@@ -10,7 +10,7 @@
 std::vector<uint8_t> VehicleSerializer::serialize(const Dto& dto) const {
     const VehicleDto& vehicleDto = static_cast<const VehicleDto&>(dto);
     size_t username_len = vehicleDto.username.length();
-    std::vector<uint8_t> buffer(1 + username_len + 3 * sizeof(float));
+    std::vector<uint8_t> buffer(1 + username_len + 3 * sizeof(float) + 2);
     size_t pos = 0;
 
     buffer[pos++] = static_cast<uint8_t>(username_len);
@@ -25,7 +25,8 @@ std::vector<uint8_t> VehicleSerializer::serialize(const Dto& dto) const {
     writeFloat(vehicleDto.x);
     writeFloat(vehicleDto.y);
     writeFloat(vehicleDto.rotation);
-
+    buffer[pos++] = vehicleDto.isAccelerating ? 1 : 0;
+    buffer[pos++] = vehicleDto.isBraking ? 1 : 0;
     return buffer;
 }
 
@@ -48,6 +49,7 @@ std::shared_ptr<Dto> VehicleSerializer::deserialize(const std::vector<uint8_t>& 
     float x = readFloat();
     float y = readFloat();
     float rotation = readFloat();
-
-    return std::make_shared<VehicleDto>(username, x, y, rotation);
+    bool isAccelerating = buffer[pos++] != 0;
+    bool isBraking = buffer[pos++] != 0;
+    return std::make_shared<VehicleDto>(username, x, y, rotation, isAccelerating, isBraking);
 }
