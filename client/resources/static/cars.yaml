@@ -1,167 +1,582 @@
 sprites:
-  jeep:
-    sheet_path: "./assets/need-for-speed/cars/cars.png"
-    frames:
-      Sur:
-        x: 167
-        y: 304
-        w: 26
-        h: 39
-      Norte:
-        x: 167
-        y: 345
-        w: 26
-        h: 39
-      Este:
-        x: 0
-        y: 311
-        w: 39
-        h: 26
-      Oeste:
-        x: 1
-        y: 351
-        w: 39
-        h: 26
-      Sureste20:
-        x: 40
-        y: 307
-        w: 40
-        h: 36
-      Suroeste20:
-        x: 280
-        y: 307
-        w: 40
-        h: 36
-      Noreste20:
-        x: 280
-        y: 345
-        w: 40
-        h: 36
-      Noroeste20:
-        x: 40
-        y: 345
-        w: 40
-        h: 36
-      Sureste45:
-        x: 80
-        y: 304
-        w: 40
-        h: 40
-      Suroeste45:
-        x: 240
-        y: 304
-        w: 40
-        h: 40
-      Noreste45:
-        x: 240
-        y: 344
-        w: 40
-        h: 40
-      Noroeste45:
-        x: 80
-        y: 344
-        w: 40
-        h: 40
-      Sureste75:
-        x: 123
-        y: 304
-        w: 36
-        h: 40
-      Suroeste75:
-        x: 201
-        y: 304
-        w: 36
-        h: 40
-      Noreste75:
-        x: 203
-        y: 344
-        w: 36
-        h: 40
-      Noroeste75:
-        x: 121
-        y: 344
-        w: 36
-        h: 40
   fiat_600:
-    sheet_path: "./assets/need-for-speed/cars/cars.png"
+    sheet_path: ./assets/need-for-speed/cars/cars.png
     frames:
-      Sur: 
-        x: 133
-        y: 2
-        w: 21
-        h: 28
-      Norte:
-        x: 133
-        y: 34
-        w: 21
-        h: 28
-      Este: 
+      Este:
         x: 2
         y: 5
         w: 28
         h: 22
-      Oeste: 
-        x: 2
-        y: 37
-        w: 28
-        h: 22
-      Sureste20: 
-        x: 98
-        y: 1
-        w: 25
-        h: 30
-      Suroeste20: 
-        x: 164
-        y: 1
-        w: 25
-        h: 30
-      Noreste20: 
-        x: 163
-        y: 33
-        w: 25
-        h: 30
-      Noroeste20: 
-        x: 100
-        y: 33
-        w: 25
-        h: 30
-      Sureste45: 
-        x: 65
-        y: 2
-        w: 29
-        h: 29
-      Suroeste45: 
-        x: 194
-        y: 2
-        w: 29
-        h: 29
-      Noreste45: 
-        x: 193
-        y: 33
-        w: 29
-        h: 29
-      Noroeste45: 
-        x: 66
-        y: 33
-        w: 29
-        h: 29
-      Sureste75: 
-        x: 225
-        y: 3
-        w: 31
-        h: 25
-      Suroeste75: 
+      Sureste25:
         x: 32
         y: 3
         w: 31
         h: 25
-      Noreste75: 
-        x: 224
-        y: 36
+      Sureste45:
+        x: 65
+        y: 2
+        w: 29
+        h: 29
+      Sureste75:
+        x: 99
+        y: 1
+        w: 25
+        h: 30
+      Sur:
+        x: 133
+        y: 2
+        w: 22
+        h: 28
+      Suroeste75:
+        x: 164
+        y: 1
+        w: 25
+        h: 30
+      Suroeste45:
+        x: 194
+        y: 2
+        w: 29
+        h: 29
+      Suroeste25:
+        x: 225
+        y: 3
         w: 31
         h: 25
-      Noroeste75: 
+      Oeste:
+        x: 2
+        y: 37
+        w: 28
+        h: 22
+      Noroeste25:
         x: 33
         y: 36
         w: 31
         h: 25
+      Noroeste45:
+        x: 66
+        y: 33
+        w: 29
+        h: 29
+      Noroeste75:
+        x: 100
+        y: 33
+        w: 25
+        h: 30
+      Norte:
+        x: 133
+        y: 34
+        w: 22
+        h: 28
+      Noreste75:
+        x: 163
+        y: 33
+        w: 25
+        h: 30
+      Noreste45:
+        x: 193
+        y: 33
+        w: 29
+        h: 29
+      Noreste25:
+        x: 224
+        y: 36
+        w: 31
+        h: 25
+  ferrari_F40:
+    sheet_path: ./assets/need-for-speed/cars/cars.png
+    frames:
+      Este:
+        x: 214
+        y: 74
+        w: 40
+        h: 24
+      Sureste25:
+        x: 255
+        y: 70
+        w: 40
+        h: 31
+      Sureste45:
+        x: 295
+        y: 68
+        w: 37
+        h: 37
+      Sureste75:
+        x: 338
+        y: 66
+        w: 30
+        h: 40
+      Sur:
+        x: 382
+        y: 66
+        w: 24
+        h: 40
+      Suroeste75:
+        x: 420
+        y: 66
+        w: 30
+        h: 40
+      Suroeste45:
+        x: 456
+        y: 68
+        w: 37
+        h: 37
+      Suroeste25:
+        x: 494
+        y: 71
+        w: 40
+        h: 31
+      Oeste:
+        x: 214
+        y: 114
+        w: 40
+        h: 24
+      Noroeste25:
+        x: 255
+        y: 109
+        w: 40
+        h: 31
+      Noroeste45:
+        x: 296
+        y: 107
+        w: 37
+        h: 37
+      Noroeste75:
+        x: 340
+        y: 106
+        w: 30
+        h: 40
+      Norte:
+        x: 381
+        y: 110
+        w: 24
+        h: 40
+      Noreste75:
+        x: 418
+        y: 106
+        w: 30
+        h: 40
+      Noreste45:
+        x: 455
+        y: 107
+        w: 37
+        h: 37
+      Noreste25:
+        x: 494
+        y: 110
+        w: 40
+        h: 31
+  porsche_911:
+    sheet_path: ./assets/need-for-speed/cars/cars.png
+    frames:
+      Este:
+        x: 3
+        y: 155
+        w: 40
+        h: 22
+      Sureste25:
+        x: 45
+        y: 152
+        w: 39
+        h: 30
+      Sureste45:
+        x: 85
+        y: 148
+        w: 35
+        h: 35
+      Sureste75:
+        x: 129
+        y: 146
+        w: 30
+        h: 39
+      Sur:
+        x: 172
+        y: 145
+        w: 22
+        h: 40
+      Suroeste75:
+        x: 207
+        y: 146
+        w: 30
+        h: 39
+      Suroeste45:
+        x: 246
+        y: 148
+        w: 35
+        h: 35
+      Suroeste25:
+        x: 284
+        y: 152
+        w: 39
+        h: 30
+      Oeste:
+        x: 3
+        y: 195
+        w: 40
+        h: 22
+      Noroeste25:
+        x: 44
+        y: 190
+        w: 39
+        h: 30
+      Noroeste45:
+        x: 86
+        y: 189
+        w: 35
+        h: 35
+      Noroeste75:
+        x: 127
+        y: 187
+        w: 30
+        h: 39
+      Norte:
+        x: 172
+        y: 186
+        w: 22
+        h: 40
+      Noreste75:
+        x: 209
+        y: 187
+        w: 30
+        h: 39
+      Noreste45:
+        x: 245
+        y: 189
+        w: 35
+        h: 35
+      Noreste25:
+        x: 283
+        y: 190
+        w: 39
+        h: 30
+  sedan:
+    sheet_path: ./assets/need-for-speed/cars/cars.png
+    frames:
+      Este:
+        x: 1
+        y: 239
+        w: 40
+        h: 24
+      Sureste25:
+        x: 43
+        y: 238
+        w: 40
+        h: 31
+      Sureste45:
+        x: 83
+        y: 232
+        w: 36
+        h: 37
+      Sureste75:
+        x: 126
+        y: 231
+        w: 31
+        h: 40
+      Sur:
+        x: 170
+        y: 230
+        w: 24
+        h: 40
+      Suroeste75:
+        x: 205
+        y: 231
+        w: 31
+        h: 40
+      Suroeste45:
+        x: 243
+        y: 232
+        w: 37
+        h: 37
+      Suroeste25:
+        x: 281
+        y: 236
+        w: 40
+        h: 31
+      Oeste:
+        x: 1
+        y: 279
+        w: 40
+        h: 24
+      Noroeste25:
+        x: 43
+        y: 277
+        w: 40
+        h: 31
+      Noroeste45:
+        x: 83
+        y: 273
+        w: 37
+        h: 37
+      Noroeste75:
+        x: 125
+        y: 271
+        w: 31
+        h: 40
+      Norte:
+        x: 169
+        y: 271
+        w: 24
+        h: 40
+      Noreste75:
+        x: 206
+        y: 271
+        w: 31
+        h: 40
+      Noreste45:
+        x: 242
+        y: 273
+        w: 37
+        h: 37
+      Noreste25:
+        x: 281
+        y: 275
+        w: 40
+        h: 31
+  jeep:
+    sheet_path: ./assets/need-for-speed/cars/cars.png
+    frames:
+      Este:
+        x: 0
+        y: 322
+        w: 35
+        h: 26
+      Sureste25:
+        x: 36
+        y: 318
+        w: 40
+        h: 36
+      Sureste45:
+        x: 76
+        y: 315
+        w: 40
+        h: 40
+      Sureste75:
+        x: 119
+        y: 315
+        w: 36
+        h: 40
+      Sur:
+        x: 163
+        y: 315
+        w: 26
+        h: 39
+      Suroeste75:
+        x: 197
+        y: 315
+        w: 36
+        h: 40
+      Suroeste45:
+        x: 236
+        y: 315
+        w: 40
+        h: 40
+      Suroeste25:
+        x: 276
+        y: 318
+        w: 40
+        h: 36
+      Oeste:
+        x: 4
+        y: 365
+        w: 39
+        h: 26
+      Noroeste25:
+        x: 46
+        y: 358
+        w: 40
+        h: 36
+      Noroeste45:
+        x: 86
+        y: 358
+        w: 40
+        h: 40
+      Noroeste75:
+        x: 124
+        y: 358
+        w: 36
+        h: 40
+      Norte:
+        x: 170
+        y: 359
+        w: 26
+        h: 39
+      Noreste75:
+        x: 206
+        y: 358
+        w: 36
+        h: 40
+      Noreste45:
+        x: 243
+        y: 358
+        w: 40
+        h: 40
+      Noreste25:
+        x: 283
+        y: 359
+        w: 40
+        h: 36
+  f100:
+    sheet_path: ./assets/need-for-speed/cars/cars.png
+    frames:
+      Este:
+        x: 16
+        y: 419
+        w: 40
+        h: 22
+      Sureste25:
+        x: 64
+        y: 415
+        w: 40
+        h: 32
+      Sureste45:
+        x: 105
+        y: 411
+        w: 38
+        h: 38
+      Sureste75:
+        x: 149
+        y: 410
+        w: 32
+        h: 40
+      Sur:
+        x: 195
+        y: 415
+        w: 22
+        h: 40
+      Suroeste75:
+        x: 238
+        y: 412
+        w: 32
+        h: 40
+      Suroeste45:
+        x: 276
+        y: 413
+        w: 38
+        h: 38
+      Suroeste25:
+        x: 315
+        y: 417
+        w: 40
+        h: 32
+      Oeste:
+        x: 16
+        y: 459
+        w: 40
+        h: 22
+      Noroeste25:
+        x: 64
+        y: 453
+        w: 40
+        h: 32
+      Noroeste45:
+        x: 105
+        y: 451
+        w: 38
+        h: 38
+      Noroeste75:
+        x: 147
+        y: 450
+        w: 32
+        h: 40
+      Norte:
+        x: 196
+        y: 457
+        w: 22
+        h: 40
+      Noreste75:
+        x: 240
+        y: 452
+        w: 32
+        h: 40
+      Noreste45:
+        x: 276
+        y: 453
+        w: 38
+        h: 38
+      Noreste25:
+        x: 315
+        y: 455
+        w: 40
+        h: 32
+  truck:
+    sheet_path: ./assets/need-for-speed/cars/cars.png
+    frames:
+      Este:
+        x: 5
+        y: 530
+        w: 48
+        h: 20
+      Sureste25:
+        x: 54
+        y: 524
+        w: 48
+        h: 35
+      Sureste45:
+        x: 102
+        y: 517
+        w: 45
+        h: 45
+      Sureste75:
+        x: 154
+        y: 517
+        w: 35
+        h: 48
+      Sur:
+        x: 210
+        y: 514
+        w: 20
+        h: 48
+      Suroeste75:
+        x: 253
+        y: 517
+        w: 35
+        h: 48
+      Suroeste45:
+        x: 295
+        y: 517
+        w: 45
+        h: 45
+      Suroeste25:
+        x: 341
+        y: 522
+        w: 48
+        h: 35
+      Oeste:
+        x: 5
+        y: 580
+        w: 48
+        h: 20
+      Noroeste25:
+        x: 54
+        y: 575
+        w: 48
+        h: 35
+      Noroeste45:
+        x: 103
+        y: 568
+        w: 45
+        h: 45
+      Noroeste75:
+        x: 160
+        y: 568
+        w: 35
+        h: 48
+      Norte:
+        x: 210
+        y: 565
+        w: 20
+        h: 48
+      Noreste75:
+        x: 247
+        y: 567
+        w: 35
+        h: 48
+      Noreste45:
+        x: 294
+        y: 568
+        w: 45
+        h: 45
+      Noreste25:
+        x: 341
+        y: 573
+        w: 48
+        h: 35
