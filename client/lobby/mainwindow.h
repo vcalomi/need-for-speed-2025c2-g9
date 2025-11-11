@@ -11,7 +11,16 @@
 #include "../network/client_protocol.h"
 
 #include "car.h"
+#include "lobby_api.h"
+#include "lobby_service.h"
 #include "player_info.h"
+
+// class LobbyApi;
+// class LobbyService;
+class RoomsPager;
+class WaitRoomController;
+class CarSelectionController;
+class BackgroundMusic;
 
 
 QT_BEGIN_NAMESPACE
@@ -24,17 +33,9 @@ class MainWindow: public QMainWindow {
     Q_OBJECT
 
 public:
-    MainWindow(ClientProtocol& protocol, bool& game_started_ref, std::string& username,
-               QWidget* parent = nullptr, bool isDummy = false);
-    // Constructor principal (cliente con red y estado)
-    // explicit MainWindow(ClientProtocol& protocol, bool& game_started_ref, QWidget* parent =
-    // nullptr);
-    // Constructor único: si isDummy = true, entra en modo UI sin red
-    // explicit MainWindow(ClientProtocol& protocol, bool& game_started_ref, QWidget* parent =
-    // nullptr,
-    //                     bool isDummy = false);
+    explicit MainWindow(ClientProtocol& protocol, bool& game_started_ref, std::string& username_ref,
+                        QWidget* parent = nullptr);
     ~MainWindow();
-    static MainWindow* createDummy(QWidget* parent = nullptr);
 
 private slots:
     void handleJoinGame();
@@ -60,9 +61,6 @@ private:
     bool& game_started;
     std::string& username;
 
-    bool isDummy = false;  // agrego
-
-    QTimer* waitTimer;
     QTimer* refreshTimer;
     QMediaPlayer* backgroundMusic;
     QAudioOutput* audioOutput;
@@ -70,9 +68,6 @@ private:
     static constexpr int PAGE_SIZE = 10;  // cantidad de salas por página
     int currentPage = 0;
     QStringList allRooms;
-    QVector<Car> cars;
-    int currentCarIndex = 0;
-    bool inFlight = false;  // serializa lecturas del protocolo en wait
     QStringList selectedMaps;
 
     QString generateRoomCode();
@@ -83,5 +78,13 @@ private:
     void connectToServer();  // función privada que usará el botón
     void onWaitTimerTickHost();
     void onWaitTimerTickJoin();
+
+    // Controladores
+    std::unique_ptr<LobbyApi> lobbyApi;
+    std::unique_ptr<LobbyService> lobbySvc;
+    std::unique_ptr<RoomsPager> roomsPager;
+    std::unique_ptr<WaitRoomController> waitCtrl;
+    std::unique_ptr<CarSelectionController> carCtrl;
+    std::unique_ptr<BackgroundMusic> music;
 };
 #endif  // MAINWINDOW_H

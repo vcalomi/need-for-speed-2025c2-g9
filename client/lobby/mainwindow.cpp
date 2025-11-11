@@ -16,90 +16,69 @@
 #include <QtMath>
 #include <string>
 
+#include "background_music.h"
+#include "car_selection_controller.h"
+#include "lobby_service.h"
 #include "navigation.h"
 #include "player_info.h"
 #include "room_manager.h"
+#include "rooms_pager.h"
 #include "styles.h"
 #include "ui_mainwindow.h"
+#include "wait_room_controller.h"
 
 void MainWindow::onWaitTimerTickHost() {
-    if (inFlight)
-        return;
-    inFlight = true;
+    // if (inFlight)
+    //     return;
+    // inFlight = true;
     try {
-        this->protocol.sendListState();
-        auto v = this->protocol.receiveRoomList();
-        if (!v.empty() && v[0] == std::string("started")) {
+        if (this->lobbySvc->pollState().started) {
             game_started = true;
             this->close();
         }
     } catch (...) {}
-    inFlight = false;
+    // inFlight = false;
 }
 
 void MainWindow::onWaitTimerTickJoin() {
-    if (inFlight)
-        return;
-    inFlight = true;
+    // if (inFlight)
+    //     return;
+    // inFlight = true;
     try {
-        this->protocol.sendListState();
-        auto v = this->protocol.receiveRoomList();
-        if (!v.empty() && v[0] == std::string("started")) {
+        if (this->lobbySvc->pollState().started) {
             game_started = true;
             this->close();
         }
     } catch (...) {}
-    inFlight = false;
-}
-
-MainWindow* MainWindow::createDummy(QWidget* parent) {
-    static ClientProtocol dummyProtocol;  // usa el constructor dummy
-    static bool dummyGameStarted = false;
-    static std::string dummyUsername = "DummyUser";
-    return new MainWindow(dummyProtocol, dummyGameStarted, dummyUsername, parent, true);
+    // inFlight = false;
 }
 
 MainWindow::MainWindow(ClientProtocol& protocol, bool& game_started_ref, std::string& username_ref,
-                       QWidget* parent, bool isDummy):
+                       QWidget* parent):
         QMainWindow(parent),
         ui(new Ui::Lobby),
         protocol(protocol),
+        lobbyApi(std::make_unique<LobbyApi>(this->protocol)),
+        lobbySvc(std::make_unique<LobbyService>(*lobbyApi)),
+        roomsPager(nullptr),
+        waitCtrl(nullptr),
+        carCtrl(nullptr),
+        music(nullptr),
         game_started(game_started_ref),
         username(username_ref),
-        isDummy(isDummy),
-        waitTimer(nullptr),
         refreshTimer(nullptr) {
     ui->setupUi(this);
 
-    if (isDummy) {
-        setWindowTitle("Lobby (UI Preview)");
-        ui->connectButton->setEnabled(false);
-        ui->btnCreate->setEnabled(true);
-        ui->btnJoin->setEnabled(true);
-        ui->stackedWidget->setCurrentWidget(ui->page_menu);
-        return;
-    }
+    // Instanciar controladores
+    roomsPager = std::make_unique<RoomsPager>(*lobbySvc, ui);
+    waitCtrl = std::make_unique<WaitRoomController>(*lobbySvc, ui, this);
+    carCtrl = std::make_unique<CarSelectionController>(*lobbySvc, ui);
 
-    // Música de fondo
-    setupBackgroundMusic();
+    carCtrl->initCars();
+    music = std::make_unique<BackgroundMusic>(this);
 
-    connect(backgroundMusic, &QMediaPlayer::mediaStatusChanged,
-            [this](QMediaPlayer::MediaStatus status) {
-                if (status == QMediaPlayer::EndOfMedia) {
-                    backgroundMusic->play();
-                }
-            });
-
-    backgroundMusic->play();
-
+    music->start();
     game_started = false;
-    cars = {Car(CarType::FIAT_600, "Fiat 600", ":/fiat_600.png"),
-            Car(CarType::FERRARI_F40, "Ferrari F40", ":/ferrari.png"),
-            Car(CarType::PORSCHE_911, "Porsche 911", ":/porsche.png"),
-            Car(CarType::SEDAN, "Sedan", ":/sedan.png"),
-            Car(CarType::JEEP_4X4, "Jeep 4x4", ":/jeep_4x4.png"),
-            Car(CarType::FORD_F100, "Ford F100", ":/ford_f100.png"),
-            Car(CarType::TRUCK, "Truck", ":/truck.png")};
 
     // Estilos y fuente global
     UIStyles::applyGlobalStyle();
@@ -128,24 +107,21 @@ MainWindow::MainWindow(ClientProtocol& protocol, bool& game_started_ref, std::st
         player.username = name;
 
         try {
-            this->protocol.sendUsername(player.username.toStdString());
-            ActionCode resp = this->protocol.receiveActionCode();
-            if (resp != ActionCode::USERNAME_OK) {
+            if (!this->lobbySvc->login(player.username)) {
                 QMessageBox::warning(this, "Username", "Username is already in use. Try another.");
                 return;
             }
             username = name.toStdString();
-            this->protocol.sendListRooms();
-            auto rooms = this->protocol.receiveRoomList();
+            auto rooms = this->lobbySvc->listRooms();
             allRooms.clear();
-            for (const auto& r: rooms) allRooms << QString::fromStdString(r);
+            for (const auto& r: rooms) allRooms << r;
             showPage(0);
         } catch (const std::exception& e) {
             QMessageBox::critical(this, "Error", QString("Server error: %1").arg(e.what()));
             return;
         }
 
-        // // Ir a la pantalla de salas dispo
+        // Ir a la pantalla de salas dispo
         Navigation::goToPage(ui->page_menu, ui->stackedWidget, this);
     });
 
@@ -158,14 +134,12 @@ MainWindow::MainWindow(ClientProtocol& protocol, bool& game_started_ref, std::st
     connect(ui->btnSelectMaps, &QPushButton::clicked, this, &MainWindow::handleSelectMaps);
 
     // Paginación salas disponibles
-    connect(ui->btnNextRooms, &QPushButton::clicked, this, &MainWindow::showNextRoom);
-    connect(ui->btnPrevRooms, &QPushButton::clicked, this, &MainWindow::showPrevRoom);
+    connect(ui->btnNextRooms, &QPushButton::clicked, this, [this] { roomsPager->showNext(); });
+    connect(ui->btnPrevRooms, &QPushButton::clicked, this, [this] { roomsPager->showPrev(); });
 
     // Otros botones
-    connect(ui->btnContinueRooms, &QPushButton::clicked, this, [this]() {
-        // Navigation::goToPage(ui->page_menu, ui->stackedWidget, this);
-        Navigation::goToPage(ui->page_join, ui->stackedWidget, this);
-    });
+    connect(ui->btnContinueRooms, &QPushButton::clicked, this,
+            [this]() { Navigation::goToPage(ui->page_join, ui->stackedWidget, this); });
 
     connect(ui->btnContinue, &QPushButton::clicked, this, &MainWindow::handleContinueToWait);
     connect(ui->btnConfirmJoin, &QPushButton::clicked, this, &MainWindow::handleConfirmJoin);
@@ -176,52 +150,17 @@ MainWindow::MainWindow(ClientProtocol& protocol, bool& game_started_ref, std::st
 
     connect(ui->btnChooseCar, &QPushButton::clicked, this, [this]() {
         ui->stackedWidget->setCurrentWidget(ui->page_car);
-        updateCarImage();  // para mostrar el primer auto
+        carCtrl->updateImage();
     });
-
 
     // Elegir  autos con el carrousel
-    connect(ui->btnNextCar, &QPushButton::clicked, this, [this]() {
-        currentCarIndex = (currentCarIndex + 1) % cars.size();
-        updateCarImage();
-    });
-    connect(ui->btnPrevCar, &QPushButton::clicked, this, [this]() {
-        currentCarIndex = (currentCarIndex - 1 + cars.size()) % cars.size();
-        updateCarImage();
-    });
+    connect(ui->btnNextCar, &QPushButton::clicked, this, [this]() { carCtrl->next(); });
+    connect(ui->btnPrevCar, &QPushButton::clicked, this, [this]() { carCtrl->prev(); });
+
     connect(ui->btnBackToLobby, &QPushButton::clicked, this, [this]() {
-        const Car& selectedCar = cars[currentCarIndex];
-
-        player.selectedCar = selectedCar.getType();
+        player.selectedCar = carCtrl->currentCarType();
         try {
-            QString key;
-            switch (selectedCar.getType()) {
-                case CarType::FIAT_600:
-                    key = "fiat_600";
-                    break;
-                case CarType::FERRARI_F40:
-                    key = "ferrari_F40";
-                    break;
-                case CarType::PORSCHE_911:
-                    key = "porsche_911";
-                    break;
-                case CarType::SEDAN:
-                    key = "sedan";
-                    break;
-                case CarType::JEEP_4X4:
-                    key = "jeep";
-                    break;
-                case CarType::FORD_F100:
-                    key = "f100";
-                    break;
-                case CarType::TRUCK:
-                    key = "truck";
-                    break;
-            }
-            this->protocol.sendChooseCar(key.toStdString());
-
-            ActionCode response = this->protocol.receiveActionCode();
-            if (response != ActionCode::CHOOSE_CAR_OK) {
+            if (!carCtrl->submitSelectedCar()) {
                 QMessageBox::warning(this, "Choose Car", "Failed to select car on server.");
                 return;
             }
@@ -231,6 +170,7 @@ MainWindow::MainWindow(ClientProtocol& protocol, bool& game_started_ref, std::st
         }
         ui->stackedWidget->setCurrentWidget(ui->page_wait);
     });
+
     connect(ui->btnBackToLobby, &QPushButton::clicked, this,
             [this]() { ui->stackedWidget->setCurrentWidget(ui->page_wait); });
     refreshTimer = new QTimer(this);
@@ -272,10 +212,8 @@ void MainWindow::openEditorMap() {
     }
 }
 
-
 void MainWindow::handleOpenMapsPage() {
-    // Ruta absoluta correcta desde el lobby hasta los mapas
-
+    // Ruta absoluta desde el lobby hasta los mapas
     QString mapsPath = QDir::cleanPath(QDir::currentPath() + "/../editor/editor-mapas/maps");
 
     qDebug() << "Buscando mapas en:" << mapsPath;
@@ -287,9 +225,7 @@ void MainWindow::handleOpenMapsPage() {
     }
 
     ui->listMaps->clear();
-
     dir.setFilter(QDir::Files | QDir::NoDotAndDotDot);
-
     QFileInfoList mapFiles = dir.entryInfoList();
 
     if (mapFiles.isEmpty()) {
@@ -302,44 +238,33 @@ void MainWindow::handleOpenMapsPage() {
             ui->listMaps->addItem(item);
         }
     }
-
     // Mostrar la página de mapas
     Navigation::goToPage(ui->page_maps, ui->stackedWidget, this);
 }
 
-
 void MainWindow::handleSelectMaps() {
     QStringList selectedMaps;
-
     for (int i = 0; i < ui->listMaps->count(); ++i) {
         QListWidgetItem* item = ui->listMaps->item(i);
         if (item->checkState() == Qt::Checked) {
             selectedMaps << item->text();
         }
     }
-
     if (selectedMaps.isEmpty()) {
         QMessageBox::warning(this, "Selección vacía", "Debes seleccionar al menos un recorrido.");
         return;
     }
-
     qDebug() << "Mapas seleccionados:" << selectedMaps;
-
     handleCreateButton();
 }
 
-
 void MainWindow::showPage(int page) {
-    if (isDummy)
-        return;
-
     ui->listRooms->clear();
     try {
-        this->protocol.sendListRooms();
-        auto rooms = this->protocol.receiveRoomList();
+        auto rooms = this->lobbySvc->listRooms();
         if (!rooms.empty()) {
             allRooms.clear();
-            for (const auto& r: rooms) allRooms << QString::fromStdString(r);
+            for (const auto& r: rooms) allRooms << r;
         }
     } catch (const std::exception& e) {}
     int totalPages = qMax(1, qCeil(allRooms.size() / static_cast<double>(PAGE_SIZE)));
@@ -363,20 +288,13 @@ void MainWindow::handleBackToMenu() {
 }
 
 void MainWindow::handleJoinGame() {
-    if (isDummy)
-        return;
-
     player.isHost = false;
 
     try {
         // Pedir al servidor la lista de salas disponibles
-        this->protocol.sendListRooms();
-        auto rooms = this->protocol.receiveRoomList();
-
+        auto rooms = this->lobbySvc->listRooms();
         allRooms.clear();
-        for (const auto& r: rooms) allRooms << QString::fromStdString(r);
-
-        // Mostrar la primera página de salas disponibles
+        for (const auto& r: rooms) allRooms << r;
         showPage(0);
 
         // Navegar a la página de salas
@@ -442,19 +360,13 @@ void MainWindow::handleCreateButton() {
 
     // Valores reales
     for (int i = 2; i <= 8; i++) ui->comboMaxPlayers->addItem(QString::number(i));
-
     ui->comboMaxPlayers->setCurrentIndex(0);
 }
 
 void MainWindow::handleContinueToWait() {
-    if (isDummy)
-        return;
-
     player.maxPlayers = ui->comboMaxPlayers->currentText().toUInt();
     try {
-        this->protocol.sendCreateRoom(player.roomCode.toStdString(), player.maxPlayers);
-        ActionCode resp = this->protocol.receiveActionCode();
-        if (resp != ActionCode::ROOM_CREATED) {
+        if (!this->lobbySvc->createRoom(player.roomCode, player.maxPlayers)) {
             QMessageBox::critical(this, "Create Room", "Failed to create room on server.");
             return;
         }
@@ -469,34 +381,24 @@ void MainWindow::handleContinueToWait() {
 
     player.currentPlayers = 1;
     updateLobbyStatus();
-
     ui->btnStartGame->setVisible(true);
-    ui->btnRefresh->setVisible(true);
 
-    if (!waitTimer) {
-        waitTimer = new QTimer(this);
-    }
-    // Reestablecer conexión de manera robusta
-    QObject::disconnect(waitTimer, nullptr, this, nullptr);
-    connect(waitTimer, &QTimer::timeout, this, &MainWindow::onWaitTimerTickHost,
-            Qt::UniqueConnection);
-    waitTimer->start(1000);
+    QObject::disconnect(waitCtrl.get(), nullptr, this, nullptr);
+    connect(waitCtrl.get(), &WaitRoomController::gameStarted, this, [this] {
+        game_started = true;
+        this->close();
+    });
+    waitCtrl->startHost();
 }
 
 void MainWindow::handleConfirmJoin() {
-    if (isDummy)
-        return;
-
     QString code = ui->inputCode->text().trimmed();
     if (code.isEmpty()) {
         QMessageBox::warning(this, "Join Game", "Please enter a room code.");
         return;
     }
-
     try {
-        this->protocol.sendJoinRoom(code.toStdString());
-        ActionCode resp = this->protocol.receiveActionCode();
-        if (resp != ActionCode::JOIN_OK) {
+        if (!this->lobbySvc->joinRoom(code)) {
             QMessageBox::critical(this, "Join Game", "Failed to join room on server.");
             return;
         }
@@ -510,16 +412,14 @@ void MainWindow::handleConfirmJoin() {
     ui->labelRoomCode->setText("ROOM CODE: " + code);
     Navigation::goToPage(ui->page_wait, ui->stackedWidget, this);
 
+    // Iniciar controlador de espera
+    QObject::disconnect(waitCtrl.get(), nullptr, this, nullptr);
+    connect(waitCtrl.get(), &WaitRoomController::gameStarted, this, [this] {
+        game_started = true;
+        this->close();
+    });
+    waitCtrl->startGuest();
     ui->listPlayers->clear();
-
-    if (!waitTimer) {
-        waitTimer = new QTimer(this);
-    }
-    QObject::disconnect(waitTimer, nullptr, this, nullptr);
-    connect(waitTimer, &QTimer::timeout, this, &MainWindow::onWaitTimerTickJoin,
-            Qt::UniqueConnection);
-    waitTimer->start(1000);
-
     ui->btnStartGame->setVisible(false);
     ui->btnRefresh->setVisible(true);
 }
@@ -529,47 +429,11 @@ void MainWindow::updateLobbyStatus() {
     ui->labelLobbyStatus->setText(text);
 }
 
-void MainWindow::handleRefreshPlayers() {
-    if (isDummy)
-        return;
+void MainWindow::handleRefreshPlayers() { waitCtrl->refreshOnce(); }
 
-    if (inFlight)
-        return;
-    inFlight = true;
-    try {
-        this->protocol.sendListPlayers();
-        auto players = this->protocol.receiveRoomList();
-        ui->listPlayers->clear();
-
-        if (!players.empty() && players[0].find("maxPlayers:") == 0) {
-            QString maxPlayersStr = QString::fromStdString(players[0]).remove("maxPlayers:");
-            player.maxPlayers = maxPlayersStr.toUInt();
-            players.erase(players.begin());
-        }
-        for (const auto& p: players) {
-            ui->listPlayers->addItem(QString::fromStdString(p));
-        }
-        player.currentPlayers = static_cast<unsigned>(players.size());
-        updateLobbyStatus();
-    } catch (const std::exception& e) {
-        QMessageBox::warning(this, "Refresh Players",
-                             QString("Failed to refresh: %1").arg(e.what()));
-    }
-    inFlight = false;
-}
-
-void MainWindow::updateCarImage() {
-    const Car& currentCar = cars[currentCarIndex];
-    QPixmap pixmap(currentCar.getImagePath());
-
-    ui->labelCarImage->setPixmap(
-            pixmap.scaled(550, 350, Qt::KeepAspectRatio, Qt::SmoothTransformation));
-}
+void MainWindow::updateCarImage() { carCtrl->updateImage(); }
 
 void MainWindow::handleStartGame() {
-    if (isDummy)
-        return;
-
     game_started = true;
     try {
         this->protocol.sendStartGame();
@@ -579,31 +443,10 @@ void MainWindow::handleStartGame() {
     this->close();
 }
 
-void MainWindow::setupBackgroundMusic() {
-    backgroundMusic = new QMediaPlayer(this);
-    audioOutput = new QAudioOutput(this);
-    backgroundMusic->setAudioOutput(audioOutput);
-
-    QUrl musicUrl("qrc:/derezzed.mp3");
-    backgroundMusic->setSource(musicUrl);
-
-    audioOutput->setVolume(0.2);  // volumen bajo (0.0–1.0)
-
-    connect(backgroundMusic, &QMediaPlayer::mediaStatusChanged,
-            [this](QMediaPlayer::MediaStatus status) {
-                if (status == QMediaPlayer::EndOfMedia) {
-                    backgroundMusic->play();  // loop
-                }
-            });
-
-    backgroundMusic->play();
-}
-
+void MainWindow::setupBackgroundMusic() {}
 
 MainWindow::~MainWindow() {
-    // Detener música al cerrar
-    if (backgroundMusic) {
-        backgroundMusic->stop();
-    }
+    if (music)
+        music->stop();
     delete ui;
 }

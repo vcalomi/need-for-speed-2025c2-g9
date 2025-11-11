@@ -5,6 +5,12 @@ add_library(lobby
     navigation.cpp
     room_manager.cpp
     styles.cpp
+    lobby_api.h lobby_api.cpp
+    lobby_service.h lobby_service.cpp
+    rooms_pager.h rooms_pager.cpp
+    wait_room_controller.h wait_room_controller.cpp
+    car_selection_controller.h car_selection_controller.cpp
+    background_music.h background_music.cpp
 )
 
 qt_add_resources(lobby_resources assets/resources.qrc)
