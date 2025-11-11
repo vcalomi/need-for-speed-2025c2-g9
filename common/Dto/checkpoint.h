@@ -5,19 +5,13 @@
 
 #include "dto.h"
 
-struct Checkpoint {
+class CheckpointDto: public Dto {
+public:
     int id;
     float x;
     float y;
 
-    Checkpoint(int id, float x, float y): id(id), x(x), y(y) {}
-};
-
-class CheckpointDto: public Dto {
-public:
-    std::vector<Checkpoint> checkpoints;
-
-    CheckpointDto(const std::vector<Checkpoint>& checkpoints);
+    CheckpointDto(int id, float x, float y);
 };
 
 #endif

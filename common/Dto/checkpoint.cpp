@@ -2,5 +2,5 @@
 
 #include "../common_codes.h"
 
-CheckpointDto::CheckpointDto(const std::vector<Checkpoint>& checkpoints):
-        Dto(uint8_t(ActionCode::SEND_CHECKPOINTS)), checkpoints(checkpoints) {}
+CheckpointDto::CheckpointDto(int id, float x, float y):
+        Dto(uint8_t(ActionCode::SEND_CHECKPOINTS)), id(id), x(x), y(y) {}
