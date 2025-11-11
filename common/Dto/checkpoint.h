@@ -6,10 +6,11 @@
 #include "dto.h"
 
 struct Checkpoint {
+    int id;
     float x;
     float y;
 
-    Checkpoint(float x, float y): x(x), y(y) {}
+    Checkpoint(int id, float x, float y): id(id), x(x), y(y) {}
 };
 
 class CheckpointDto: public Dto {
