@@ -1,5 +1,6 @@
 #include "./dto_handler_system.h"
 
+#include "../events/checkpoints_event.h"
 #include "../events/player_events.h"
 
 DtoHandlerSystem::DtoHandlerSystem(World& world, Client& client, EventBus& eventBus):
@@ -8,6 +9,8 @@ DtoHandlerSystem::DtoHandlerSystem(World& world, Client& client, EventBus& event
 void DtoHandlerSystem::Process(const std::shared_ptr<Dto>& dto) {
     if (!dto)
         return;
+
+    Event event;
 
     ActionCode code = static_cast<ActionCode>(dto->return_code());
     switch (code) {
@@ -38,11 +41,21 @@ void DtoHandlerSystem::Process(const std::shared_ptr<Dto>& dto) {
             world_.UpdateFromServer(vehicleDto->username, vehicleDto->x, vehicleDto->y,
                                     vehicleDto->rotation);
 
-            PlayerStateUpdatedEvent e(vehicleDto->username, vehicleDto->x, vehicleDto->y,
-                                      vehicleDto->rotation, vehicleDto->isAccelerating,
-                                      vehicleDto->isBraking);
-            eventBus_.Publish(e);
+            event = PlayerStateUpdatedEvent(vehicleDto->username, vehicleDto->x, vehicleDto->y,
+                                            vehicleDto->rotation, vehicleDto->isAccelerating,
+                                            vehicleDto->isBraking);
 
+
+            break;
+        }
+        case ActionCode::SEND_CHECKPOINTS: {
+            auto checkpointsDto = std::dynamic_pointer_cast<CheckpointsDto>(dto);
+            if (!checkpointsDto)
+                return;
+
+            event = CheckPointsEvent(checkpointsDto->id, checkpointsDto->x, checkpointsDto->y);
+            std::cout << "[DtoHandler] Checkpoints received: " << checkpointsDto->checkpoints.size()
+                      << " checkpoints." << std::endl;
             break;
         }
 
@@ -50,4 +63,6 @@ void DtoHandlerSystem::Process(const std::shared_ptr<Dto>& dto) {
             std::cout << "[DtoHandler] Unhandled DTO code=" << (int)code << std::endl;
             break;
     }
+
+    eventBus_.Publish(event);
 }
