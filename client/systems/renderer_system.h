@@ -21,6 +21,7 @@ public:
     void Render(const World& world, Map& map, const Camera& camera, Minimap& minimap);
     void DrawPlayer(const Player& player, const Camera& camera);
     void SpawnParticlesFor(const World& world, const std::string& username);
+    void DrawCheckpoints(const World& world, const Camera& camera);
 
 private:
     SDL2pp::Renderer& renderer_;
@@ -32,4 +33,6 @@ private:
 
     void DrawTextAbove(TTF_Font* font, const std::string& text, float drawX, float drawY,
                        const Rect& src);
+
+    void DrawCircle(SDL_Renderer* renderer, int x0, int y0, int radius);
 };
