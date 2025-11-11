@@ -39,7 +39,8 @@ void DtoHandlerSystem::Process(const std::shared_ptr<Dto>& dto) {
                                     vehicleDto->rotation);
 
             PlayerStateUpdatedEvent e(vehicleDto->username, vehicleDto->x, vehicleDto->y,
-                                      vehicleDto->rotation);
+                                      vehicleDto->rotation, vehicleDto->isAccelerating,
+                                      vehicleDto->isBraking);
             eventBus_.Publish(e);
 
             break;

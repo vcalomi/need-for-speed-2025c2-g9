@@ -22,7 +22,11 @@ RendererSystem::RendererSystem(SDL2pp::Renderer& renderer, SpriteSheet& cars, Wo
 
     eventBus_.Subscribe<PlayerStateUpdatedEvent>([this](const PlayerStateUpdatedEvent& e) {
         std::cout << "[RendererSystem] Received PlayerStateUpdatedEvent for player: " << e.username
+                  << " isAccelerating=" << e.isAccelerating << " isBraking=" << e.isBraking
                   << std::endl;
+        if (e.isBraking || e.isAccelerating) {
+            SpawnParticlesFor(world_, e.username);
+        }
     });
 }
 
