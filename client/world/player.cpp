@@ -12,11 +12,11 @@ Player::Player(std::string username, VehicleTipe carType, float x, float y):
 std::string Player::VehicleTipeToString(VehicleTipe type) const {
     switch (type) {
         case VehicleTipe::FIAT_600:
-            return "Fiat600";
+            return "Fiat_600";
         case VehicleTipe::FERRARI_F40:
-            return "FerrariF40";
+            return "Ferrari_F40";
         case VehicleTipe::PORSCHE_911:
-            return "Porsche911";
+            return "Porsche_911";
         case VehicleTipe::SEDAN:
             return "Sedan";
         case VehicleTipe::JEEP:

@@ -23,7 +23,7 @@ void ResourceLoader::LoadCarSprites() {
         }
 
         for (auto itVeh = sprites.begin(); itVeh != sprites.end(); ++itVeh) {
-            std::string vehicle = itVeh->first.as<std::string>();  // ej. "jeep"
+            std::string vehicle = itVeh->first.as<std::string>();
             YAML::Node frames = itVeh->second["frames"];
 
             if (!frames) {
