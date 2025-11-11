@@ -52,7 +52,7 @@ std::string Player::GetSpriteForAngle(float angleDeg) const {
     if (angleDeg >= 345 || angleDeg < 15)
         return vehicleType + "Este";
     if (angleDeg < 35)
-        return vehicleType + "Sureste20";
+        return vehicleType + "Sureste25";
     if (angleDeg < 60)
         return vehicleType + "Sureste45";
     if (angleDeg < 80)
@@ -64,11 +64,11 @@ std::string Player::GetSpriteForAngle(float angleDeg) const {
     if (angleDeg < 150)
         return vehicleType + "Suroeste45";
     if (angleDeg < 170)
-        return vehicleType + "Suroeste20";
+        return vehicleType + "Suroeste25";
     if (angleDeg < 200)
         return vehicleType + "Oeste";
     if (angleDeg < 215)
-        return vehicleType + "Noroeste20";
+        return vehicleType + "Noroeste25";
     if (angleDeg < 240)
         return vehicleType + "Noroeste45";
     if (angleDeg < 260)
@@ -80,6 +80,6 @@ std::string Player::GetSpriteForAngle(float angleDeg) const {
     if (angleDeg < 330)
         return vehicleType + "Noreste45";
     if (angleDeg < 345)
-        return vehicleType + "Noreste20";
+        return vehicleType + "Noreste25";
     return vehicleType + "Sur";
 }
