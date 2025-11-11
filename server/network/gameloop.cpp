@@ -8,12 +8,12 @@
 
 #include <netinet/in.h>
 
+#include "../../common/Dto/checkpoint.h"
 #include "../../common/Dto/player.h"
 #include "../../common/Dto/player_move.h"
 #include "../../common/Dto/vehicle.h"
 #include "../../common/common_codes.h"
 #include "../../common/vehicle_type_utils.h"
-#include "../../common/Dto/checkpoint.h"
 #include "../YamlParser.h"
 #include "../constants.h"
 #include "../physics/LevelCreator.h"
@@ -37,8 +37,8 @@ void GameLoop::run() {
     try {
         setup.emplace("../server/physics/Levels", "../server/vehicles_specs/vehicle_specs.yaml",
                       chosenCars_);
-        sendInitialPlayersCars();
         sendCheckpoints();
+        sendInitialPlayersCars();
         while (should_keep_running()) {
             processCommands();
             simulateGame();
@@ -51,8 +51,8 @@ void GameLoop::run() {
     }
 }
 
-void GameLoop::sendCheckpoints(){
-    for(const auto&[x_px, y_px, index]: setup->getCheckpoints()) {
+void GameLoop::sendCheckpoints() {
+    for (const auto& [x_px, y_px, index]: setup->getCheckpoints()) {
         auto dto = std::make_shared<CheckpointDto>(x_px, y_px, index);
         broadcaster_.broadcast(dto);
     }
