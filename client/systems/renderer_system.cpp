@@ -41,7 +41,14 @@ RendererSystem::~RendererSystem() {
 void RendererSystem::Render(const World& world, Map& map, const Camera& camera, Minimap& minimap) {
     renderer_.Clear();
     map.Render(renderer_, camera);
-    checkpointRenderer_.Draw(world.GetCheckpoints(), camera);
+    if (!world.HasPlayers()) {
+        renderer_.Present();
+        return;
+    }
+    const auto& localPlayer = world.GetLocalPlayer();
+    const auto& activeCp = world.GetActiveCheckpointFor(localPlayer.GetUsername());
+    const auto passed = world.GetPassedCheckpointIdsFor(localPlayer.GetUsername());
+    checkpointRenderer_.Draw(world.GetCheckpoints(), activeCp, passed, camera);
     for (const auto& [id, player]: world.GetPlayers()) {
         playerRenderer_.Draw(player, camera);
     }

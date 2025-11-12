@@ -36,33 +36,47 @@ void CheckpointRenderer::DrawCircle(int x0, int y0, int radius) {
     }
 }
 
-void CheckpointRenderer::DrawAnimated(int x, int y, int baseRadius) {
+void CheckpointRenderer::DrawAnimated(int x, int y, int baseRadius, SDL_Color color) {
     Uint32 ticks = SDL_GetTicks();
 
     float pulse = std::sin(ticks * 0.005f) * 2.0f;
     int radius = baseRadius + static_cast<int>(pulse);
-    Uint8 intensity = 150 + static_cast<Uint8>(105 * (std::sin(ticks * 0.005f) * 0.5f + 0.5f));
+    Uint8 alpha = color.a;
 
     renderer_.SetDrawBlendMode(SDL_BLENDMODE_BLEND);
 
-    renderer_.SetDrawColor(intensity, intensity, intensity, 60);
+    // Halo exterior semitransparente
+    renderer_.SetDrawColor(color.r, color.g, color.b, alpha / 3);
     DrawCircle(x, y, radius + 4);
 
-    renderer_.SetDrawColor(255, 255, 255, 255);
+    // Contorno principal
+    renderer_.SetDrawColor(color.r, color.g, color.b, alpha);
     DrawCircle(x, y, radius);
 
-    renderer_.SetDrawColor(intensity, intensity, intensity, 200);
+    // Centro brillante
+    SDL_SetRenderDrawColor(renderer_.Get(), color.r, color.g, color.b, std::min(255, alpha + 50));
     SDL_Rect center = {x - 2, y - 2, 4, 4};
     SDL_RenderFillRect(renderer_.Get(), &center);
 }
 
-void CheckpointRenderer::Draw(const std::vector<Checkpoint>& checkpoints, const Camera& camera) {
-    if (checkpoints.empty())
-        return;
+
+void CheckpointRenderer::Draw(const std::vector<Checkpoint>& checkpoints,
+                              const Checkpoint& activeCheckpoint,
+                              const std::set<int>& passedCheckpointIds, const Camera& camera) {
 
     for (const auto& cp: checkpoints) {
         float drawX = cp.x - camera.getX();
         float drawY = cp.y - camera.getY();
-        DrawAnimated(static_cast<int>(drawX), static_cast<int>(drawY), 16);
+
+        if (passedCheckpointIds.count(cp.id)) {
+            SDL_Color passed = {0, 255, 0, 100};
+            DrawAnimated(drawX, drawY, 14, passed);
+        } else if (cp.id == activeCheckpoint.id) {
+            SDL_Color active = {255, 255, 255, 255};
+            DrawAnimated(drawX, drawY, 18, active);
+        } else {
+            SDL_Color inactive = {150, 150, 150, 120};
+            DrawAnimated(drawX, drawY, 14, inactive);
+        }
     }
 }
