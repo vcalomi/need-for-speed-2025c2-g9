@@ -31,6 +31,4 @@ private:
     NetworkSystem networkSystem_;
     Map map_;
     DtoHandlerSystem dtoHandlerSystem_;
-
-    void processDto(const std::shared_ptr<Dto>& dto);
 };

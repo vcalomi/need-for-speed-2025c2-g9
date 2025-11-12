@@ -3,16 +3,26 @@
 #include <cmath>
 
 #include "../events/checkpoint_event.h"
+#include "../events/player_events.h"
+#include "../events/player_joined_event.h"
 
 World::World(EventBus& eventBus): eventBus_(eventBus) {
     eventBus_.Subscribe<CheckPointEvent>([this](const CheckPointEvent& e) {
-        // std::cout << "[World] Received CheckPointEvent with " << e.checkpoints.size()
-        //           << " checkpoints." << std::endl;
         Checkpoint newCheckpoint;
         newCheckpoint.id = e.id;
         newCheckpoint.x = e.x;
         newCheckpoint.y = e.y;
         checkpoints_.push_back(newCheckpoint);
+    });
+
+    eventBus_.Subscribe<PlayerJoinedEvent>([this](const PlayerJoinedEvent& e) {
+        if (!HasPlayer(e.username)) {
+            AddPlayer(e.username, e.type, e.isLocal);
+        }
+    });
+
+    eventBus_.Subscribe<PlayerStateUpdatedEvent>([this](const PlayerStateUpdatedEvent& e) {
+        UpdateFromServer(e.username, e.x, e.y, e.angle);
     });
 }
 

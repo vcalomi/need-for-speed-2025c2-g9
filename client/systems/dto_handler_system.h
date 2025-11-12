@@ -12,11 +12,10 @@
 
 class DtoHandlerSystem {
 public:
-    DtoHandlerSystem(World& world, Client& client, EventBus& eventBus);
+    DtoHandlerSystem(Client& client, EventBus& eventBus);
     void Process(const std::shared_ptr<Dto>& dto);
 
 private:
-    World& world_;
     Client& client_;
     EventBus& eventBus_;
 };

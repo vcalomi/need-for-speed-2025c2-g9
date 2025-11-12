@@ -22,7 +22,7 @@ Game::Game(Client& client):
         rendererSystem_(engine_.GetRenderer(), resources_.GetCarSprites(), world_, eventBus_),
         networkSystem_(client_, eventBus_),
         map_(engine_.GetRenderer(), "../client/assets/need-for-speed/cities/liberty_city.png"),
-        dtoHandlerSystem_(world_, client_, eventBus_) {
+        dtoHandlerSystem_(client_, eventBus_) {
     audioSystem_.PlayBackgroundMusic("../client/assets/need-for-speed/music/background.wav");
 }
 

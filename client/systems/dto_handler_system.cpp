@@ -3,9 +3,10 @@
 #include "../../common/Dto/checkpoint.h"
 #include "../events/checkpoint_event.h"
 #include "../events/player_events.h"
+#include "../events/player_joined_event.h"
 
-DtoHandlerSystem::DtoHandlerSystem(World& world, Client& client, EventBus& eventBus):
-        world_(world), client_(client), eventBus_(eventBus) {}
+DtoHandlerSystem::DtoHandlerSystem(Client& client, EventBus& eventBus):
+        client_(client), eventBus_(eventBus) {}
 
 void DtoHandlerSystem::Process(const std::shared_ptr<Dto>& dto) {
     if (!dto)
@@ -24,10 +25,8 @@ void DtoHandlerSystem::Process(const std::shared_ptr<Dto>& dto) {
             const auto& username = playerDto->username;
             std::cout << "[DtoHandler] Received player: " << username << std::endl;
 
-            if (!world_.HasPlayer(username)) {
-                world_.AddPlayer(username, playerDto->Type, username == client_.getUsername());
-                std::cout << "[DtoHandler] Player added: " << username << std::endl;
-            }
+            event = std::make_shared<PlayerJoinedEvent>(username, playerDto->Type,
+                                                        username == client_.getUsername());
             break;
         }
 
@@ -40,9 +39,6 @@ void DtoHandlerSystem::Process(const std::shared_ptr<Dto>& dto) {
                       << vehicleDto->x << ", " << vehicleDto->y << ") rot=" << vehicleDto->rotation
                       << std::endl;
 
-            world_.UpdateFromServer(vehicleDto->username, vehicleDto->x, vehicleDto->y,
-                                    vehicleDto->rotation);
-
             event = std::make_shared<PlayerStateUpdatedEvent>(
                     vehicleDto->username, vehicleDto->x, vehicleDto->y, vehicleDto->rotation,
                     vehicleDto->isAccelerating, vehicleDto->isBraking);
@@ -54,7 +50,7 @@ void DtoHandlerSystem::Process(const std::shared_ptr<Dto>& dto) {
             auto checkpointDto = std::dynamic_pointer_cast<CheckpointDto>(dto);
             if (!checkpointDto)
                 return;
-            std::cout << "[DtoHandler] New checkpoint: " << checkpointDto->id << " pos("
+            std::cout << "[DtoHandler] Checkpoint received: ID " << checkpointDto->id << " pos("
                       << checkpointDto->x << ", " << checkpointDto->y << ")" << std::endl;
 
             event = std::make_shared<CheckPointEvent>(checkpointDto->id, checkpointDto->x,
