@@ -11,8 +11,9 @@ public:
     float rotation;
     bool isAccelerating;
     bool isBraking;
+    bool isAboveBridge;
     VehicleDto(const std::string& username, float x, float y, float v, bool isAccelerating = false,
-               bool isBraking = false);
+               bool isBraking = false, bool isAboveBridge = false);
 };
 
 #endif
