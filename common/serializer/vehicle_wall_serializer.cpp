@@ -11,7 +11,7 @@
 
 std::vector<uint8_t> VehicleWallSerializer::serialize(const Dto& dto) const {
     const VehicleWallDto& vehicleWallDto = static_cast<const VehicleWallDto&>(dto);
-    std::vector<uint8_t> buffer(2 * sizeof(int));
+    std::vector<uint8_t> buffer(sizeof(int));
     size_t pos = 0;
 
     SerializerUtils::writeInt(buffer, pos, vehicleWallDto.vehicle_id);
