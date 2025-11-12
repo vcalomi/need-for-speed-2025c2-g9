@@ -35,5 +35,5 @@ std::shared_ptr<Dto> VehicleSerializer::deserialize(const std::vector<uint8_t>& 
     bool isAccelerating = SerializerUtils::readBool(buffer, pos);
     bool isBraking = SerializerUtils::readBool(buffer, pos);
     bool isAboveBridge = SerializerUtils::readBool(buffer, pos);
-    return std::make_shared<VehicleDto>(username, x, y, rotation, isAccelerating, isBraking);
+    return std::make_shared<VehicleDto>(username, x, y, rotation, isAccelerating, isBraking, isAboveBridge);
 }
