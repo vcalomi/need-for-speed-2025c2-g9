@@ -100,7 +100,7 @@ void RendererSystem::SpawnParticlesFor(const World& world, const std::string& us
     particleSystem_.Emit(player.GetX(), player.GetY(), 8);
 }
 
-void RendererSystem::DrawCircle(SDL_Renderer* renderer, int x0, int y0, int radius) {
+void RendererSystem::DrawCircle(SDL2pp::Renderer& renderer, int x0, int y0, int radius) {
     int x = radius - 1;
     int y = 0;
     int dx = 1;
@@ -108,14 +108,14 @@ void RendererSystem::DrawCircle(SDL_Renderer* renderer, int x0, int y0, int radi
     int err = dx - (radius << 1);
 
     while (x >= y) {
-        SDL_RenderDrawPoint(renderer, x0 + x, y0 + y);
-        SDL_RenderDrawPoint(renderer, x0 + y, y0 + x);
-        SDL_RenderDrawPoint(renderer, x0 - y, y0 + x);
-        SDL_RenderDrawPoint(renderer, x0 - x, y0 + y);
-        SDL_RenderDrawPoint(renderer, x0 - x, y0 - y);
-        SDL_RenderDrawPoint(renderer, x0 - y, y0 - x);
-        SDL_RenderDrawPoint(renderer, x0 + y, y0 - x);
-        SDL_RenderDrawPoint(renderer, x0 + x, y0 - y);
+        renderer.DrawPoint(x0 + x, y0 + y);
+        renderer.DrawPoint(x0 + y, y0 + x);
+        renderer.DrawPoint(x0 - y, y0 + x);
+        renderer.DrawPoint(x0 - x, y0 + y);
+        renderer.DrawPoint(x0 - x, y0 - y);
+        renderer.DrawPoint(x0 - y, y0 - x);
+        renderer.DrawPoint(x0 + y, y0 - x);
+        renderer.DrawPoint(x0 + x, y0 - y);
 
         if (err <= 0) {
             y++;
@@ -130,18 +130,35 @@ void RendererSystem::DrawCircle(SDL_Renderer* renderer, int x0, int y0, int radi
     }
 }
 
+
+void RendererSystem::DrawAnimatedCheckpoint(SDL2pp::Renderer& renderer, float x, float y,
+                                            int baseRadius) {
+    Uint32 ticks = SDL_GetTicks();
+
+    float pulse = std::sin(ticks * 0.005f) * 2.0f;
+    int radius = baseRadius + static_cast<int>(pulse);
+    Uint8 intensity = 150 + static_cast<Uint8>(105 * (std::sin(ticks * 0.005f) * 0.5f + 0.5f));
+
+    renderer.SetDrawBlendMode(SDL_BLENDMODE_BLEND);
+
+    renderer.SetDrawColor(intensity, intensity, intensity, 60);
+    DrawCircle(renderer, static_cast<int>(x), static_cast<int>(y), radius + 4);
+
+    renderer.SetDrawColor(255, 255, 255, 255);
+    DrawCircle(renderer, static_cast<int>(x), static_cast<int>(y), radius);
+
+    renderer.SetDrawColor(intensity, intensity, intensity, 200);
+    SDL_Rect center = {static_cast<int>(x) - 2, static_cast<int>(y) - 2, 4, 4};
+    SDL_RenderFillRect(renderer., &center);
+}
+
 void RendererSystem::DrawCheckpoints(const World& world, const Camera& camera) {
-    if (world.GetCheckpoints().empty()) {
+    if (world.GetCheckpoints().empty())
         return;
-    }
 
-    SDL_SetRenderDrawColor(renderer_.Get(), 0, 255, 0, 255);
-
-    for (const auto& checkpoint: world.GetCheckpoints()) {
-        float drawX = checkpoint.x - camera.getX();
-        float drawY = checkpoint.y - camera.getY();
-
-        int radius = 16;
-        DrawCircle(renderer_.Get(), static_cast<int>(drawX), static_cast<int>(drawY), radius);
+    for (const auto& cp: world.GetCheckpoints()) {
+        float drawX = cp.x - camera.getX();
+        float drawY = cp.y - camera.getY();
+        DrawAnimatedCheckpoint(renderer_, drawX, drawY, 16);
     }
 }

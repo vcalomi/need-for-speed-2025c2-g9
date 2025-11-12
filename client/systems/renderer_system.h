@@ -34,5 +34,6 @@ private:
     void DrawTextAbove(TTF_Font* font, const std::string& text, float drawX, float drawY,
                        const Rect& src);
 
-    void DrawCircle(SDL_Renderer* renderer, int x0, int y0, int radius);
+    void DrawCircle(SDL2pp::Renderer& renderer, int x0, int y0, int radius);
+    void DrawAnimatedCheckpoint(SDL2pp::Renderer& renderer, float x, float y, int baseRadius);
 };
