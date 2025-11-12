@@ -63,6 +63,34 @@ void Minimap::Render(const World& world, const Camera& camera) {
                                         PLAYER_DOT_SIZE, PLAYER_DOT_SIZE));
     }
 
+    // Checkpoints
+    if (!world.GetCheckpoints().empty() && world.HasPlayers()) {
+        const auto& localPlayer = world.GetLocalPlayer();
+        const auto& activeCp = world.GetActiveCheckpointFor(localPlayer.GetUsername());
+        const auto passed = world.GetPassedCheckpointIdsFor(localPlayer.GetUsername());
+
+        for (const auto& cp: world.GetCheckpoints()) {
+            float relX = (cp.x - srcX) * scaleX;
+            float relY = (cp.y - srcY) * scaleY;
+            int dotX = MINIMAP_MARGIN_X + static_cast<int>(relX);
+            int dotY = MINIMAP_MARGIN_Y + static_cast<int>(relY);
+
+            SDL_Color color;
+
+            if (cp.id == activeCp.id) {
+                color = {255, 255, 255, 255};  // activo → blanco brillante
+            } else if (passed.count(cp.id)) {
+                color = {0, 255, 0, 180};  // pasado → verde
+            } else {
+                color = {180, 180, 180, 150};  // pendiente → gris
+            }
+
+            renderer_.SetDrawColor(color.r, color.g, color.b, color.a);
+            renderer_.FillRect(SDL2pp::Rect(dotX - 2, dotY - 2, 4, 4));
+        }
+    }
+
+
     // Camera rectangle
     renderer_.SetDrawColor(CAMERA_RECT_COLOR.r, CAMERA_RECT_COLOR.g, CAMERA_RECT_COLOR.b,
                            CAMERA_RECT_COLOR.a);
