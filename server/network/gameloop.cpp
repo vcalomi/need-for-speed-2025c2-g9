@@ -53,7 +53,8 @@ void GameLoop::run() {
 
 void GameLoop::sendCheckpoints() {
     for (const auto& [x_px, y_px, index]: setup->getCheckpoints()) {
-        auto dto = std::make_shared<CheckpointDto>(x_px, y_px, index);
+        auto dto = std::make_shared<CheckpointDto>(index, x_px, y_px);
+        std::cout << "Enviando dto: " << dto->id << ", " << dto->x << ", " << dto->y << std::endl;
         broadcaster_.broadcast(dto);
     }
 }
