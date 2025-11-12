@@ -5,6 +5,7 @@
 #include <SDL2/SDL_ttf.h>
 
 #include "../events/checkpoint_event.h"
+#include "../ui/checkpoint_indicator.h"
 
 RendererSystem::RendererSystem(SDL2pp::Renderer& renderer, SpriteSheet& cars, World& world,
                                EventBus& eventBus):
@@ -40,6 +41,7 @@ RendererSystem::~RendererSystem() {
 
 void RendererSystem::Render(const World& world, Map& map, const Camera& camera, Minimap& minimap) {
     renderer_.Clear();
+    CheckpointIndicator checkpointIndicator(renderer_);
     map.Render(renderer_, camera);
     if (!world.HasPlayers()) {
         renderer_.Present();
@@ -55,6 +57,7 @@ void RendererSystem::Render(const World& world, Map& map, const Camera& camera, 
     particleRenderer_.Update(0.016f);
     particleRenderer_.Render();
     minimap.Render(world, camera);
+    checkpointIndicator.Draw(camera, localPlayer, activeCp);
     renderer_.Present();
 }
 
