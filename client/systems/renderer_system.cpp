@@ -4,6 +4,8 @@
 
 #include <SDL2/SDL_ttf.h>
 
+#include "../events/checkpoint_event.h"
+
 #define HALF_DIVISOR 2.0f
 
 RendererSystem::RendererSystem(SDL2pp::Renderer& renderer, SpriteSheet& cars, World& world,
@@ -40,6 +42,7 @@ RendererSystem::~RendererSystem() {
 void RendererSystem::Render(const World& world, Map& map, const Camera& camera, Minimap& minimap) {
     renderer_.Clear();
     map.Render(renderer_, camera);
+    DrawCheckpoints(world, camera);
     for (const auto& [id, player]: world.GetPlayers()) {
         DrawPlayer(player, camera);
     }
@@ -135,6 +138,7 @@ void RendererSystem::DrawCheckpoints(const World& world, const Camera& camera) {
     SDL_SetRenderDrawColor(renderer_.Get(), 0, 255, 0, 255);
 
     for (const auto& checkpoint: world.GetCheckpoints()) {
+        std::cout << checkpoint.x << " " << checkpoint.y << std::endl;
         float drawX = checkpoint.x - camera.getX();
         float drawY = checkpoint.y - camera.getY();
 

@@ -54,12 +54,11 @@ void DtoHandlerSystem::Process(const std::shared_ptr<Dto>& dto) {
             auto checkpointDto = std::dynamic_pointer_cast<CheckpointDto>(dto);
             if (!checkpointDto)
                 return;
+            std::cout << "[DtoHandler] New checkpoint: " << checkpointDto->id << " pos("
+                      << checkpointDto->x << ", " << checkpointDto->y << ")" << std::endl;
 
             event = std::make_shared<CheckPointEvent>(checkpointDto->id, checkpointDto->x,
                                                       checkpointDto->y);
-            // std::cout << "[DtoHandler] Checkpoint received: " <<
-            // checkpointsDto->checkpoints.size()
-            //           << " checkpoints." << std::endl;
             break;
         }
 
