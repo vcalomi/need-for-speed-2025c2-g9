@@ -42,7 +42,7 @@ RendererSystem::~RendererSystem() {
 void RendererSystem::Render(const World& world, Map& map, const Camera& camera, Minimap& minimap) {
     renderer_.Clear();
     CheckpointIndicator checkpointIndicator(renderer_);
-    map.Render(renderer_, camera);
+    map.RenderBackground(renderer_, camera);
     if (!world.HasPlayers()) {
         renderer_.Present();
         return;
@@ -56,6 +56,7 @@ void RendererSystem::Render(const World& world, Map& map, const Camera& camera, 
     }
     particleRenderer_.Update(0.016f);
     particleRenderer_.Render();
+    map.RenderForeground(renderer_, camera);
     minimap.Render(world, camera);
     checkpointIndicator.Draw(camera, localPlayer, activeCp);
     renderer_.Present();
