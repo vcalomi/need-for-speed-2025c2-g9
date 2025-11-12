@@ -1,6 +1,8 @@
 add_library(graphics
     spritesheet.cpp
-    particle_system.cpp
+    particle_renderer.cpp
+    player_renderer.cpp
+    checkpoint_renderer.cpp
 )
 
 target_include_directories(graphics

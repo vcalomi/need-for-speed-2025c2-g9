@@ -6,31 +6,30 @@
 
 #include "../events/checkpoint_event.h"
 
-#define HALF_DIVISOR 2.0f
-
 RendererSystem::RendererSystem(SDL2pp::Renderer& renderer, SpriteSheet& cars, World& world,
                                EventBus& eventBus):
         renderer_(renderer),
         cars_(cars),
         world_(world),
         eventBus_(eventBus),
-        particleSystem_(renderer) {
+        particleRenderer_(renderer),
+        checkpointRenderer_(renderer),
+        playerRenderer_(renderer, cars, nullptr) {
+
     font_ = TTF_OpenFont("../client/lobby/assets/Tektur-SemiBold.ttf", 14);
     if (!font_) {
         std::cerr << "[RendererSystem] Failed to load font: " << TTF_GetError() << std::endl;
     } else {
         std::cout << "[RendererSystem] Font loaded successfully.\n";
+        playerRenderer_.SetFont(font_);
     }
 
     eventBus_.Subscribe<PlayerStateUpdatedEvent>([this](const PlayerStateUpdatedEvent& e) {
-        std::cout << "[RendererSystem] Received PlayerStateUpdatedEvent for player: " << e.username
-                  << " isAccelerating=" << e.isAccelerating << " isBraking=" << e.isBraking
-                  << std::endl;
-        if (e.isBraking || e.isAccelerating) {
+        if (e.isBraking || e.isAccelerating)
             SpawnParticlesFor(world_, e.username);
-        }
     });
 }
+
 
 RendererSystem::~RendererSystem() {
     if (font_) {
@@ -42,123 +41,18 @@ RendererSystem::~RendererSystem() {
 void RendererSystem::Render(const World& world, Map& map, const Camera& camera, Minimap& minimap) {
     renderer_.Clear();
     map.Render(renderer_, camera);
-    DrawCheckpoints(world, camera);
+    checkpointRenderer_.Draw(world.GetCheckpoints(), camera);
     for (const auto& [id, player]: world.GetPlayers()) {
-        DrawPlayer(player, camera);
+        playerRenderer_.Draw(player, camera);
     }
-    particleSystem_.Update(0.016f);
-    particleSystem_.Render();
+    particleRenderer_.Update(0.016f);
+    particleRenderer_.Render();
     minimap.Render(world, camera);
     renderer_.Present();
-}
-
-void RendererSystem::DrawPlayer(const Player& player, const Camera& camera) {
-    std::string spriteName = player.GetSpriteForAngle(player.GetAngle());
-    if (!cars_.HasSprite(spriteName)) {
-        std::cerr << "[Renderer] Sprite '" << spriteName << "' not found, skipping draw\n";
-        return;
-    }
-
-    const Rect& src = cars_.GetSprite(spriteName);
-
-    float drawX = player.GetX() - camera.getX() - src.GetW() / HALF_DIVISOR;
-    float drawY = player.GetY() - camera.getY() - src.GetH() / HALF_DIVISOR;
-
-    Rect dest(drawX, drawY, src.GetW(), src.GetH());
-    renderer_.Copy(cars_.GetTexture(), src, dest);
-    DrawTextAbove(font_, player.GetUsername(), drawX, drawY, src);
-}
-
-void RendererSystem::DrawTextAbove(TTF_Font* font, const std::string& text, float drawX,
-                                   float drawY, const Rect& src) {
-    if (!font)
-        return;
-
-    SDL_Color color = {255, 255, 255, 255};
-    SDL_Surface* textSurface = TTF_RenderText_Blended(font, text.c_str(), color);
-    if (!textSurface)
-        return;
-
-    SDL_Texture* textTexture = SDL_CreateTextureFromSurface(renderer_.Get(), textSurface);
-    if (textTexture) {
-        int textW, textH;
-        SDL_QueryTexture(textTexture, nullptr, nullptr, &textW, &textH);
-
-        SDL_Rect textRect = {static_cast<int>(drawX + src.GetW() / 2 - textW / 2),
-                             static_cast<int>(drawY - textH - 5), textW, textH};
-
-        SDL_RenderCopy(renderer_.Get(), textTexture, nullptr, &textRect);
-        SDL_DestroyTexture(textTexture);
-    }
-
-    SDL_FreeSurface(textSurface);
 }
 
 void RendererSystem::SpawnParticlesFor(const World& world, const std::string& username) {
     std::cout << "[RendererSystem] Spawning particles for player: " << username << std::endl;
     const auto player = world.GetPlayer(username);
-    particleSystem_.Emit(player.GetX(), player.GetY(), 8);
-}
-
-void RendererSystem::DrawCircle(SDL2pp::Renderer& renderer, int x0, int y0, int radius) {
-    int x = radius - 1;
-    int y = 0;
-    int dx = 1;
-    int dy = 1;
-    int err = dx - (radius << 1);
-
-    while (x >= y) {
-        renderer.DrawPoint(x0 + x, y0 + y);
-        renderer.DrawPoint(x0 + y, y0 + x);
-        renderer.DrawPoint(x0 - y, y0 + x);
-        renderer.DrawPoint(x0 - x, y0 + y);
-        renderer.DrawPoint(x0 - x, y0 - y);
-        renderer.DrawPoint(x0 - y, y0 - x);
-        renderer.DrawPoint(x0 + y, y0 - x);
-        renderer.DrawPoint(x0 + x, y0 - y);
-
-        if (err <= 0) {
-            y++;
-            err += dy;
-            dy += 2;
-        }
-        if (err > 0) {
-            x--;
-            dx += 2;
-            err += dx - (radius << 1);
-        }
-    }
-}
-
-
-void RendererSystem::DrawAnimatedCheckpoint(SDL2pp::Renderer& renderer, float x, float y,
-                                            int baseRadius) {
-    Uint32 ticks = SDL_GetTicks();
-
-    float pulse = std::sin(ticks * 0.005f) * 2.0f;
-    int radius = baseRadius + static_cast<int>(pulse);
-    Uint8 intensity = 150 + static_cast<Uint8>(105 * (std::sin(ticks * 0.005f) * 0.5f + 0.5f));
-
-    renderer.SetDrawBlendMode(SDL_BLENDMODE_BLEND);
-
-    renderer.SetDrawColor(intensity, intensity, intensity, 60);
-    DrawCircle(renderer, static_cast<int>(x), static_cast<int>(y), radius + 4);
-
-    renderer.SetDrawColor(255, 255, 255, 255);
-    DrawCircle(renderer, static_cast<int>(x), static_cast<int>(y), radius);
-
-    renderer.SetDrawColor(intensity, intensity, intensity, 200);
-    SDL_Rect center = {static_cast<int>(x) - 2, static_cast<int>(y) - 2, 4, 4};
-    SDL_RenderFillRect(renderer., &center);
-}
-
-void RendererSystem::DrawCheckpoints(const World& world, const Camera& camera) {
-    if (world.GetCheckpoints().empty())
-        return;
-
-    for (const auto& cp: world.GetCheckpoints()) {
-        float drawX = cp.x - camera.getX();
-        float drawY = cp.y - camera.getY();
-        DrawAnimatedCheckpoint(renderer_, drawX, drawY, 16);
-    }
+    particleRenderer_.Emit(player.GetX(), player.GetY(), 8);
 }

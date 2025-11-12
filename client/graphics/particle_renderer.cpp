@@ -1,11 +1,11 @@
-#include "./particle_system.h"
+#include "./particle_renderer.h"
 
 #include <cmath>
 #include <cstdlib>
 
-ParticleSystem::ParticleSystem(Renderer& renderer): renderer_(renderer) {}
+ParticleRenderer::ParticleRenderer(Renderer& renderer): renderer_(renderer) {}
 
-void ParticleSystem::Emit(float x, float y, int count) {
+void ParticleRenderer::Emit(float x, float y, int count) {
     for (int i = 0; i < count; ++i) {
         float angle = static_cast<float>((rand() % 360) * M_PI / 180.0);
         float speed = static_cast<float>((rand() % 30) / 10.0f + 10.0f);
@@ -21,7 +21,7 @@ void ParticleSystem::Emit(float x, float y, int count) {
     }
 }
 
-void ParticleSystem::Update(float deltaTime) {
+void ParticleRenderer::Update(float deltaTime) {
     for (auto& p: particles_) {
         p.x += p.vx * deltaTime;
         p.y += p.vy * deltaTime;
@@ -34,7 +34,7 @@ void ParticleSystem::Update(float deltaTime) {
                      particles_.end());
 }
 
-void ParticleSystem::Render() {
+void ParticleRenderer::Render() {
     SDL_SetRenderDrawBlendMode(renderer_.Get(), SDL_BLENDMODE_BLEND);
 
     for (const auto& p: particles_) {

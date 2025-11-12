@@ -12,13 +12,14 @@ struct Particle {
     float alpha;
 };
 
-class ParticleSystem {
+class ParticleRenderer {
 public:
-    explicit ParticleSystem(Renderer& renderer);
+    explicit ParticleRenderer(Renderer& renderer);
 
     void Emit(float x, float y, int count);
     void Update(float deltaTime);
     void Render();
+
 
 private:
     Renderer& renderer_;
