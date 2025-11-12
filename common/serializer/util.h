@@ -66,6 +66,6 @@ inline bool readBool(const std::vector<uint8_t>& buffer, size_t& pos) {
     return readByte(buffer, pos) != 0;
 }
 
-};  // namespace SerializerUtils
+};
 
 #endif

@@ -28,13 +28,9 @@ std::shared_ptr<Dto> VehicleSerializer::deserialize(const std::vector<uint8_t>& 
     size_t pos = 0;
 
     std::string username = SerializerUtils::readString(buffer, pos);
-    ;
     float x = SerializerUtils::readFloat(buffer, pos);
-    ;
     float y = SerializerUtils::readFloat(buffer, pos);
-    ;
     float rotation = SerializerUtils::readFloat(buffer, pos);
-    ;
     bool isAccelerating = SerializerUtils::readBool(buffer, pos);
     bool isBraking = SerializerUtils::readBool(buffer, pos);
     return std::make_shared<VehicleDto>(username, x, y, rotation, isAccelerating, isBraking);

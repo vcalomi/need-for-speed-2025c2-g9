@@ -1,13 +1,13 @@
-#ifndef CHECKPOINT_SERIALIZER_H
-#define CHECKPOINT_SERIALIZER_H
+#ifndef VEHICLE_CHECKPOINT_SERIALIZER_H
+#define VEHICLE_CHECKPOINT_SERIALIZER_H
 
-#include "../Dto/checkpoint.h"
+#include "../Dto/vehicle_checkpoint.h"
 
 #include "serializer.h"
 
-class CheckpointSerializer: public Serializer {
+class VehicleCheckpointSerializer: public Serializer {
 public:
-    CheckpointSerializer() {}
+    VehicleCheckpointSerializer() {}
     std::vector<uint8_t> serialize(const Dto& dto) const override;
     std::shared_ptr<Dto> deserialize(const std::vector<uint8_t>& buffer) const override;
 };

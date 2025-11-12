@@ -9,6 +9,9 @@
 #include "../../common/serializer/player_move_serializer.h"
 #include "../../common/serializer/player_serializer.h"
 #include "../../common/serializer/vehicle_serializer.h"
+#include "../../common/serializer/vehicle_checkpoint_serializer.h"
+#include "../../common/serializer/vehicle_wall_serializer.h"
+#include "../../common/serializer/players_vehicles_serializer.h"
 
 ServerProtocol::ServerProtocol(Socket& socket): socket(socket), protocol() {
     serializers[static_cast<uint8_t>(ActionCode::SEND_CARS)] =
@@ -19,6 +22,12 @@ ServerProtocol::ServerProtocol(Socket& socket): socket(socket), protocol() {
             std::make_unique<PlayerMoveSerializer>();
     serializers[static_cast<uint8_t>(ActionCode::SEND_CHECKPOINTS)] =
             std::make_unique<CheckpointSerializer>();
+    serializers[static_cast<uint8_t>(ActionCode::SEND_VEHICLE_CHECKPOINT)] =
+            std::make_unique<VehicleCheckpointSerializer>();
+    serializers[static_cast<uint8_t>(ActionCode::SEND_PLAYERS_VEHICLES)] =
+            std::make_unique<PlayersVehiclesSerializer>();
+    serializers[static_cast<uint8_t>(ActionCode::SEND_VEHICLE_WALL)] =
+            std::make_unique<VehicleWallSerializer>();   
 }
 
 void ServerProtocol::sendMsg(ActionCode code) { protocol.sendAction(socket, code); }

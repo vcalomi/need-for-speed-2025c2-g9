@@ -32,7 +32,10 @@ enum class ActionCode : uint8_t {
     SEND_PLAYER = 0x19,
     SEND_PLAYER_MOVE = 0x20,
     USERNAME_OK = 0x21,
-    SEND_CHECKPOINTS = 0x22
+    SEND_CHECKPOINTS = 0x22,
+    SEND_VEHICLE_CHECKPOINT = 0x23,
+    SEND_PLAYERS_VEHICLES = 0x24,
+    SEND_VEHICLE_WALL = 0x25
 };
 
 enum class VehicleTipe : uint8_t {
