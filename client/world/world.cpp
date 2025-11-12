@@ -24,6 +24,11 @@ World::World(EventBus& eventBus): eventBus_(eventBus) {
     eventBus_.Subscribe<PlayerStateUpdatedEvent>([this](const PlayerStateUpdatedEvent& e) {
         UpdateFromServer(e.username, e.x, e.y, e.angle);
     });
+
+    // eventBus_.Subscribe<PlayerCheckpointPassedEvent>([this](const PlayerCheckpointPassedEvent& e)
+    // {
+    //     OnPlayerReachedCheckpoint(e.username, e.checkpointId);
+    // });
 }
 
 void World::AddPlayer(std::string username, VehicleTipe carType, bool isLocal) {
@@ -32,6 +37,7 @@ void World::AddPlayer(std::string username, VehicleTipe carType, bool isLocal) {
     float defaultX = std::cos(angle) * spawnDistance;
     float defaultY = std::sin(angle) * spawnDistance;
     players_.emplace(username, Player(username, carType, defaultX, defaultY));
+    playerProgress_[username] = PlayerProgress();
     if (isLocal)
         localUsername_ = username;
 }
@@ -82,3 +88,54 @@ float World::GetLocalPlayerY() const {
 const Player& World::GetPlayer(const std::string& username) const { return players_.at(username); }
 
 const std::vector<Checkpoint>& World::GetCheckpoints() const { return checkpoints_; }
+
+void World::SetCheckpoints(const std::vector<Checkpoint>& checkpoints) {
+    checkpoints_ = checkpoints;
+}
+
+const Checkpoint& World::GetActiveCheckpointFor(const std::string& username) const {
+    return checkpoints_.at(playerProgress_.at(username).currentCheckpointIndex);
+}
+
+const Checkpoint& World::GetNextCheckpointFor(const std::string& username) const {
+    const auto& progress = playerProgress_.at(username);
+    int next = (progress.currentCheckpointIndex + 1) % checkpoints_.size();
+    return checkpoints_.at(next);
+}
+
+void World::OnPlayerReachedCheckpoint(const std::string& username, int checkpointId) {
+    if (checkpoints_.empty())
+        return;
+
+    auto& progress = playerProgress_[username];
+    const auto& current = checkpoints_.at(progress.currentCheckpointIndex);
+
+    if (checkpointId != current.id)
+        return;
+
+    progress.currentCheckpointIndex = (progress.currentCheckpointIndex + 1) % checkpoints_.size();
+
+    if (progress.currentCheckpointIndex == 0) {
+        progress.lapsCompleted++;
+        // eventBus_.Publish(LapCompletedEvent(username, progress.lapsCompleted));
+    } else {
+        const auto& next = checkpoints_.at(progress.currentCheckpointIndex);
+        // eventBus_.Publish(CheckpointActivatedEvent(username, next.id));
+    }
+}
+
+const std::set<int> World::GetPassedCheckpointIdsFor(const std::string& username) const {
+    std::set<int> passed;
+
+    auto it = playerProgress_.find(username);
+    if (it == playerProgress_.end() || checkpoints_.empty())
+        return passed;
+
+    const auto& progress = it->second;
+
+    for (int i = 0; i < progress.currentCheckpointIndex && i < (int)checkpoints_.size(); ++i) {
+        passed.insert(checkpoints_[i].id);
+    }
+
+    return passed;
+}
