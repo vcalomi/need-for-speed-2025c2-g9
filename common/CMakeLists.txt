@@ -38,4 +38,5 @@ target_sources(taller_common
     Dto/player_move.h
     Dto/checkpoint.h
     vehicle_type_utils.h
+    util.h
 )

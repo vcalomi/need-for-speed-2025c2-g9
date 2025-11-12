@@ -6,6 +6,8 @@
 
 #include <netinet/in.h>
 
+#include "util.h"
+
 
 std::vector<uint8_t> VehicleSerializer::serialize(const Dto& dto) const {
     const VehicleDto& vehicleDto = static_cast<const VehicleDto&>(dto);
@@ -13,43 +15,27 @@ std::vector<uint8_t> VehicleSerializer::serialize(const Dto& dto) const {
     std::vector<uint8_t> buffer(1 + username_len + 3 * sizeof(float) + 2);
     size_t pos = 0;
 
-    buffer[pos++] = static_cast<uint8_t>(username_len);
-    for (char c: vehicleDto.username) {
-        buffer[pos++] = static_cast<uint8_t>(c);
-    }
-
-    auto writeFloat = [&](float value) {
-        std::memcpy(&buffer[pos], &value, sizeof(float));
-        pos += sizeof(float);
-    };
-    writeFloat(vehicleDto.x);
-    writeFloat(vehicleDto.y);
-    writeFloat(vehicleDto.rotation);
-    buffer[pos++] = vehicleDto.isAccelerating ? 1 : 0;
-    buffer[pos++] = vehicleDto.isBraking ? 1 : 0;
+    SerializerUtils::writeString(buffer, pos, vehicleDto.username);
+    SerializerUtils::writeFloat(buffer, pos, vehicleDto.x);
+    SerializerUtils::writeFloat(buffer, pos, vehicleDto.y);
+    SerializerUtils::writeFloat(buffer, pos, vehicleDto.rotation);
+    SerializerUtils::writeBool(buffer, pos, vehicleDto.isAccelerating);
+    SerializerUtils::writeBool(buffer, pos, vehicleDto.isBraking);
     return buffer;
 }
 
 std::shared_ptr<Dto> VehicleSerializer::deserialize(const std::vector<uint8_t>& buffer) const {
     size_t pos = 0;
 
-    auto readFloat = [&]() {
-        float value;
-        std::memcpy(&value, &buffer[pos], sizeof(float));
-        pos += sizeof(float);
-        return value;
-    };
-
-    uint8_t username_len = buffer[pos++];
-    std::string username;
-    for (int i = 0; i < username_len && pos < buffer.size(); i++) {
-        username += static_cast<char>(buffer[pos++]);
-    }
-
-    float x = readFloat();
-    float y = readFloat();
-    float rotation = readFloat();
-    bool isAccelerating = buffer[pos++] != 0;
-    bool isBraking = buffer[pos++] != 0;
+    std::string username = SerializerUtils::readString(buffer, pos);
+    ;
+    float x = SerializerUtils::readFloat(buffer, pos);
+    ;
+    float y = SerializerUtils::readFloat(buffer, pos);
+    ;
+    float rotation = SerializerUtils::readFloat(buffer, pos);
+    ;
+    bool isAccelerating = SerializerUtils::readBool(buffer, pos);
+    bool isBraking = SerializerUtils::readBool(buffer, pos);
     return std::make_shared<VehicleDto>(username, x, y, rotation, isAccelerating, isBraking);
 }
