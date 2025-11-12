@@ -5,11 +5,11 @@
 
 #include "dto.h"
 
-class VehicleWallDto: public Dto {
+class VehicleWallCollisionDto: public Dto {
 public:
     int vehicle_id;
 
-    VehicleWallDto(int vehicle_id);
+    VehicleWallCollisionDto(int vehicle_id);
 };
 
 #endif

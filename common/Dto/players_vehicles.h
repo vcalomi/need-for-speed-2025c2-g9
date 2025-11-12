@@ -5,12 +5,12 @@
 
 #include "dto.h"
 
-class PlayersVehiclesDto: public Dto {
+class VehicleCollisionDto: public Dto {
 public:
     int vehicle1_id;
     int vehicle2_id;
 
-    PlayersVehiclesDto(int vehicle1_id, int vehicle2_id);
+    VehicleCollisionDto(int vehicle1_id, int vehicle2_id);
 };
 
 #endif

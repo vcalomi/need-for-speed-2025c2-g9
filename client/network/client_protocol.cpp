@@ -8,10 +8,10 @@
 #include "../../common/serializer/checkpoint_serializer.h"
 #include "../../common/serializer/player_move_serializer.h"
 #include "../../common/serializer/player_serializer.h"
-#include "../../common/serializer/vehicle_serializer.h"
-#include "../../common/serializer/vehicle_checkpoint_serializer.h"
-#include "../../common/serializer/vehicle_wall_serializer.h"
 #include "../../common/serializer/players_vehicles_serializer.h"
+#include "../../common/serializer/vehicle_checkpoint_serializer.h"
+#include "../../common/serializer/vehicle_serializer.h"
+#include "../../common/serializer/vehicle_wall_serializer.h"
 
 // Constructor DUMMY: no se conecta a nada
 ClientProtocol::ClientProtocol():
@@ -34,10 +34,10 @@ ClientProtocol::ClientProtocol(const std::string& hostname, const std::string& p
             std::make_unique<CheckpointSerializer>();
     serializers[static_cast<uint8_t>(ActionCode::SEND_VEHICLE_CHECKPOINT)] =
             std::make_unique<VehicleCheckpointSerializer>();
-    serializers[static_cast<uint8_t>(ActionCode::SEND_PLAYERS_VEHICLES)] =
-            std::make_unique<PlayersVehiclesSerializer>();
-    serializers[static_cast<uint8_t>(ActionCode::SEND_VEHICLE_WALL)] =
-            std::make_unique<VehicleWallSerializer>();   
+    serializers[static_cast<uint8_t>(ActionCode::SEND_VEHICLES_COLLISION)] =
+            std::make_unique<VehicleCollisionSerializer>();
+    serializers[static_cast<uint8_t>(ActionCode::SEND_VEHICLE_WALL_COLLISION)] =
+            std::make_unique<VehicleWallCollisionSerializer>();
 }
 
 void ClientProtocol::sendUsername(const std::string& username) {

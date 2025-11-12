@@ -9,20 +9,21 @@
 
 #include "util.h"
 
-std::vector<uint8_t> PlayersVehiclesSerializer::serialize(const Dto& dto) const {
-    const PlayersVehiclesDto& playersVehiclesDto = static_cast<const PlayersVehiclesDto&>(dto);
+std::vector<uint8_t> VehicleCollisionSerializer::serialize(const Dto& dto) const {
+    const VehicleCollisionDto& vehicleCollisionDto = static_cast<const VehicleCollisionDto&>(dto);
     std::vector<uint8_t> buffer(2 * sizeof(int));
     size_t pos = 0;
 
-    SerializerUtils::writeInt(buffer, pos, playersVehiclesDto.vehicle1_id);
-    SerializerUtils::writeInt(buffer, pos, playersVehiclesDto.vehicle2_id);
+    SerializerUtils::writeInt(buffer, pos, vehicleCollisionDto.vehicle1_id);
+    SerializerUtils::writeInt(buffer, pos, vehicleCollisionDto.vehicle2_id);
     return buffer;
 }
 
-std::shared_ptr<Dto> PlayersVehiclesSerializer::deserialize(const std::vector<uint8_t>& buffer) const {
+std::shared_ptr<Dto> VehicleCollisionSerializer::deserialize(
+        const std::vector<uint8_t>& buffer) const {
     size_t pos = 0;
 
     int vehicle1_id = SerializerUtils::readInt(buffer, pos);
     int vehicle2_id = SerializerUtils::readInt(buffer, pos);
-    return std::make_shared<PlayersVehiclesDto>(vehicle1_id, vehicle2_id);
+    return std::make_shared<VehicleCollisionDto>(vehicle1_id, vehicle2_id);
 }

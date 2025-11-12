@@ -2,5 +2,5 @@
 
 #include "../common_codes.h"
 
-VehicleWallDto::VehicleWallDto(int vehicle_id):
-        Dto(uint8_t(ActionCode::SEND_VEHICLE_WALL)), vehicle_id(vehicle_id) {}
+VehicleWallCollisionDto::VehicleWallCollisionDto(int vehicle_id):
+        Dto(uint8_t(ActionCode::SEND_VEHICLE_WALL_COLLISION)), vehicle_id(vehicle_id) {}

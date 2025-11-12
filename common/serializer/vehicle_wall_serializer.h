@@ -5,9 +5,9 @@
 
 #include "serializer.h"
 
-class VehicleWallSerializer: public Serializer {
+class VehicleWallCollisionSerializer: public Serializer {
 public:
-    VehicleWallSerializer() {}
+    VehicleWallCollisionSerializer() {}
     std::vector<uint8_t> serialize(const Dto& dto) const override;
     std::shared_ptr<Dto> deserialize(const std::vector<uint8_t>& buffer) const override;
 };
