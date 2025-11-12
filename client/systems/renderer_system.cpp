@@ -138,7 +138,6 @@ void RendererSystem::DrawCheckpoints(const World& world, const Camera& camera) {
     SDL_SetRenderDrawColor(renderer_.Get(), 0, 255, 0, 255);
 
     for (const auto& checkpoint: world.GetCheckpoints()) {
-        std::cout << checkpoint.x << " " << checkpoint.y << std::endl;
         float drawX = checkpoint.x - camera.getX();
         float drawY = checkpoint.y - camera.getY();
 
