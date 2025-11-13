@@ -19,14 +19,13 @@ Vehicle::Vehicle(b2WorldId worldId, VehicleSpec spec, Spawn spawn, int player_id
     shapeDef.userData = tag;
     shapeDef.enableContactEvents = true;
     shapeDef.enableSensorEvents = true;
-    // shapeDef.friction    = spec_.friction;
-    // shapeDef.restitution = spec_.restitution;
 
     b2CreatePolygonShape(body_, &shapeDef, &boxShape);
 }
 
 void Vehicle::accelerate() {
 
+    if (!controlsEnabled_) return;
     const float F = spec_.engine_force_N;
     b2Vec2 forward = b2Body_GetWorldVector(body_, b2Vec2{0.0f, 1.0f});
     b2Vec2 force = {forward.x * F, forward.y * F};
@@ -36,6 +35,7 @@ void Vehicle::accelerate() {
 
 void Vehicle::brake() {
 
+    if (!controlsEnabled_) return;
     const float F = spec_.brake_force_N;
     b2Vec2 forward = b2Body_GetWorldVector(body_, b2Vec2{0.0f, -1.0f});
     b2Vec2 force = {forward.x * F, forward.y * F};
@@ -44,6 +44,7 @@ void Vehicle::brake() {
 }
 
 void Vehicle::turn(TurnDir dir) {
+    if (!controlsEnabled_) return;
     if (dir == TurnDir::None)
         return;
     b2Vec2 v = b2Body_GetLinearVelocity(body_);

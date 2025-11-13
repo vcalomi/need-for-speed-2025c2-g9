@@ -137,11 +137,11 @@ void LevelCreator::processDirectoryLevel(const std::string& directory_path) {
 
         auto idxOpt = extract_suffix_index(entry.path());
         if (!idxOpt)
-            continue;  // sin sufijo numérico => salteamos
+            continue;
 
         int idx = *idxOpt;
         if (idx < 0 || idx >= 4)
-            continue;  // fuera del rango 0..3 => salteamos
+            continue; 
 
         Matrix m = BuildLevelMatrix(entry.path());
         if (m.empty())
@@ -156,7 +156,7 @@ void LevelCreator::processDirectoryLevel(const std::string& directory_path) {
 static void createTileCollider(b2WorldId world, float x_px, float y_px, float size_px) {
     b2BodyDef bodyDef = b2DefaultBodyDef();
     bodyDef.type = b2_staticBody;
-    bodyDef.position = {x_px / PPM, y_px / PPM};  // pasar a metros
+    bodyDef.position = {x_px / PPM, y_px / PPM};
 
     b2BodyId body = b2CreateBody(world, &bodyDef);
 
@@ -175,7 +175,6 @@ void LevelCreator::createLevelCollision(b2WorldId world, const std::vector<Matri
     }
 
     for (int lvl = 0; lvl < 4; ++lvl) {
-        // evitar out-of-range si levels tiene menos de 4
         if (lvl >= (int)levels.size())
             continue;
 
@@ -188,16 +187,13 @@ void LevelCreator::createLevelCollision(b2WorldId world, const std::vector<Matri
         if (w == 0)
             continue;
 
-        // tamaño REAL de este chunk según el JSON
-        const int chunk_w_px = w * tile_px; // para vos: 580 * 2 = 1160
-        const int chunk_h_px = h * tile_px; //           584 * 2 = 1168
+        const int chunk_w_px = w * tile_px; 
+        const int chunk_h_px = h * tile_px;
 
-        // posición del chunk en la grilla 2x2
         const int offset_x_px = (lvl % 2) * chunk_w_px;
         const int offset_y_px = (lvl / 2) * chunk_h_px;
 
         for (int y = 0; y < h; ++y) {
-            // por seguridad, si alguna fila viene chueca
             if ((int)M[y].size() != w)
                 continue;
 
@@ -222,7 +218,7 @@ void LevelCreator::createLevelCollision(b2WorldId world, const std::vector<Matri
 
                     const float cx_m = world_x_px / PPM;
                     const float cy_m = world_y_px / PPM;
-                    const float radius_m = 16.0f / PPM;   
+                    const float radius_m = CHECKPOINT_RADIUS_PX / PPM;   
 
                     b2BodyDef bodyDef = b2DefaultBodyDef();
                     bodyDef.type = b2_staticBody;

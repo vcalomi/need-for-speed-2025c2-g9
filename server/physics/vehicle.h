@@ -20,11 +20,17 @@ public:
     float height() const noexcept { return spec_.height_m; }
     void draw(SDL_Renderer* r, float camX_px, float camY_px, float zoom, float ppm) const;
     void setFixtureTag(FixtureTag* tag);
-
+    void disableControl() { controlsEnabled_ = false; }
+    void enableControl() { controlsEnabled_ = true; }
+    void hit_with_wall() { vehicle_hp_ = vehicle_hp_ - 5.0; }
+    void hit_with_car() { vehicle_hp_ = vehicle_hp_ - 10.0; }
+    float getVehicleHp() { return vehicle_hp_; }
 private:
+    bool controlsEnabled_ = true;
     b2WorldId world_id_;
     VehicleSpec spec_;
     Spawn spawn_;
     int vehicle_id_;
     b2BodyId body_;
+    float vehicle_hp_;
 };

@@ -147,15 +147,58 @@ Vehicle* GameLoop::getVehicleByPlayer(const std::string& username) {
     return (it == map.end()) ? nullptr : it->second.get();
 }
 
+void GameLoop::handleRaceProgress(int vehicleId, int checkpointIndex) {
+    auto& prog = raceProgress_[vehicleId];
+
+    if (prog.finished) {
+        return;
+    }
+
+    if (checkpointIndex != prog.nextCheckpoint) {
+        return;
+    }
+
+    auto cpDto = std::make_shared<VehicleCheckpointDto>(
+        playerUsernames_.at(vehicleId),
+        checkpointIndex
+    );
+    broadcaster_.broadcast(cpDto);
+
+    if (checkpointIndex == totalCheckpoints_ - 1) {
+        prog.currentLap++;
+        prog.nextCheckpoint = 0;
+
+        auto lapDto = std::make_shared<LapCompletedDto>(
+            playerUsernames_.at(vehicleId),
+            prog.currentLap
+        );
+        broadcaster_.broadcast(lapDto);
+
+        if (prog.currentLap >= totalLaps_) {
+            prog.finished = true;
+
+            auto finishDto = std::make_shared<RaceFinishedDto>(
+                playerUsernames_.at(vehicleId)
+            );
+            broadcaster_.broadcast(finishDto);
+
+            // getVehicleById(vehicleId)->disableControl();
+        }
+
+    } else {
+        prog.nextCheckpoint++;
+    }
+}
+
+
+
 void GameLoop::processGameEvents() {
     auto events = setup->stepAndDrainEvents(1.0f / 60.0f);
 
     for (auto& event: events) {
         if (auto* vehicle_checkpoint = std::get_if<RawVehicleCheckpoint>(&event)) {
-            auto dto = std::make_shared<VehicleCheckpointDto>(
-                    playerUsernames_.at(vehicle_checkpoint->vehicleId),
-                    vehicle_checkpoint->checkpointIndex);
-            broadcaster_.broadcast(dto);
+            handleRaceProgress(vehicle_checkpoint->vehicleId, vehicle_checkpoint->checkpointIndex);
+            
         } else if (auto* vechicle_vechicle = std::get_if<RawVehicleVehicle>(&event)) {
             auto dto = std::make_shared<VehicleCollisionDto>(
                     playerUsernames_.at(vechicle_vechicle->a),

@@ -15,6 +15,12 @@
 #include "../../common/thread.h"
 #include "../LevelSetup.h"
 
+struct PlayerRaceProgress {
+    int currentLap = 0;       
+    int nextCheckpoint = 0;   
+    bool finished = false;    
+};
+
 class GameLoop: public Thread {
 private:
     Queue<std::shared_ptr<Dto>>& gameLoopQueue;
@@ -25,6 +31,9 @@ private:
     int maxPlayers;
     void handlerProcessCommand(std::shared_ptr<Dto> dto);
     Vehicle* getVehicleByPlayer(const std::string& username);
+
+    std::unordered_map<int, PlayerRaceProgress> raceProgress_; 
+    bool handleRaceProgress();
 
 public:
     explicit GameLoop(Queue<std::shared_ptr<Dto>>& gameLoopQueue,

@@ -33,7 +33,9 @@ public:
     }
 
     const std::vector<CheckpointInfo>& getCheckpoints() const  { return checkpoints_;}
-
+    int totalCheckpoints() const { return static_cast<int>(checkpoints_.size());}
+    int totalLaps() const {return totalLaps_;}
+    
 private:
     void create_vehicles();
     const std::map<int, CarConfig>& chosenCarsRef_; 
@@ -46,4 +48,5 @@ private:
     std::mt19937 rng_;
     std::deque<FixtureTag> vehicle_tags_;
     PhysicsEventCollector collector_;
+    int totalLaps_ = 2;
 };
