@@ -1,45 +1,109 @@
 #include "./particle_renderer.h"
 
+#include <algorithm>
 #include <cmath>
 #include <cstdlib>
 
 ParticleRenderer::ParticleRenderer(Renderer& renderer): renderer_(renderer) {}
 
-void ParticleRenderer::Emit(float x, float y, int count) {
+void ParticleRenderer::Emit(float x, float y, ParticleType type, int count) {
     for (int i = 0; i < count; ++i) {
-        float angle = static_cast<float>((rand() % 360) * M_PI / 180.0);
-        float speed = static_cast<float>((rand() % 30) / 10.0f + 10.0f);
+
+        float angle = static_cast<float>((rand() % 360) * M_PI / 180.0f);
+
+        float baseSpeed = 0.0f;
+        switch (type) {
+            case ParticleType::SMOKE_ACCEL:
+                baseSpeed = 40.0f;
+                break;
+            case ParticleType::SMOKE_BRAKE:
+                baseSpeed = 30.0f;
+                break;
+            case ParticleType::SPARK_WALL:
+                baseSpeed = 120.0f;
+                break;
+            case ParticleType::SPARK_VEHICLE:
+                baseSpeed = 150.0f;
+                break;
+        }
+
+        float speed = baseSpeed + static_cast<float>(rand() % 100) / 10.0f;
 
         Particle p;
         p.x = x;
         p.y = y;
         p.vx = std::cos(angle) * speed;
         p.vy = std::sin(angle) * speed;
-        p.lifetime = 0.5f + static_cast<float>(rand() % 100) / 100.0f;
+
+        switch (type) {
+            case ParticleType::SMOKE_ACCEL:
+                p.r = p.g = p.b = 200;
+                p.size = 3.0f;
+                p.lifetime = 0.6f;
+                break;
+
+            case ParticleType::SMOKE_BRAKE:
+                p.r = p.g = p.b = 80;
+                p.size = 4.0f;
+                p.lifetime = 0.7f;
+                break;
+
+            case ParticleType::SPARK_WALL:
+                p.r = 255;
+                p.g = 200;
+                p.b = 50;
+                p.size = 2.0f;
+                p.lifetime = 0.25f;
+                break;
+
+            case ParticleType::SPARK_VEHICLE:
+                p.r = 255;
+                p.g = 255;
+                p.b = 255;
+                p.size = 2.0f;
+                p.lifetime = 0.3f;
+                break;
+        }
+
+        p.initialLifetime = p.lifetime;
         p.alpha = 255.0f;
+        p.type = type;
+
         particles_.push_back(p);
     }
 }
 
 void ParticleRenderer::Update(float deltaTime) {
     for (auto& p: particles_) {
+
         p.x += p.vx * deltaTime;
         p.y += p.vy * deltaTime;
+
+        if (p.type == ParticleType::SPARK_WALL || p.type == ParticleType::SPARK_VEHICLE) {
+            p.vy += 300.0f * deltaTime;
+        }
+
         p.lifetime -= deltaTime;
-        p.alpha = std::max(0.0f, p.lifetime * 255.0f);
+
+        float t = std::max(p.lifetime / p.initialLifetime, 0.0f);
+        p.alpha = 255.0f * (t * t);
     }
 
     particles_.erase(std::remove_if(particles_.begin(), particles_.end(),
                                     [](const Particle& p) { return p.lifetime <= 0.0f; }),
                      particles_.end());
 }
-
-void ParticleRenderer::Render() {
+void ParticleRenderer::Render(const Camera& camera) {
     SDL_SetRenderDrawBlendMode(renderer_.Get(), SDL_BLENDMODE_BLEND);
 
     for (const auto& p: particles_) {
-        SDL_SetRenderDrawColor(renderer_.Get(), 255, 255, 255, static_cast<Uint8>(p.alpha));
-        SDL_FRect rect = {p.x, p.y, 2, 2};
+
+        float screenX = p.x - camera.getX();
+        float screenY = p.y - camera.getY();
+
+        SDL_SetRenderDrawColor(renderer_.Get(), p.r, p.g, p.b, (Uint8)p.alpha);
+
+        SDL_FRect rect = {screenX, screenY, p.size, p.size};
         SDL_RenderFillRectF(renderer_.Get(), &rect);
     }
 }
