@@ -2,6 +2,7 @@
 
 #include <cmath>
 
+#include "../events/checkpoint_completed_event.h"
 #include "../events/checkpoint_event.h"
 #include "../events/player_events.h"
 #include "../events/player_joined_event.h"
@@ -13,6 +14,9 @@ World::World(EventBus& eventBus): eventBus_(eventBus) {
         newCheckpoint.x = e.x;
         newCheckpoint.y = e.y;
         checkpoints_.push_back(newCheckpoint);
+
+        std::sort(checkpoints_.begin(), checkpoints_.end(),
+                  [](const Checkpoint& a, const Checkpoint& b) { return a.id < b.id; });
     });
 
     eventBus_.Subscribe<PlayerJoinedEvent>([this](const PlayerJoinedEvent& e) {
@@ -25,10 +29,9 @@ World::World(EventBus& eventBus): eventBus_(eventBus) {
         UpdateFromServer(e.username, e.x, e.y, e.angle);
     });
 
-    // eventBus_.Subscribe<PlayerCheckpointPassedEvent>([this](const PlayerCheckpointPassedEvent& e)
-    // {
-    //     OnPlayerReachedCheckpoint(e.username, e.checkpointId);
-    // });
+    eventBus_.Subscribe<CheckPointCompletedEvent>([this](const CheckPointCompletedEvent& e) {
+        OnPlayerReachedCheckpoint(e.username, e.checkpoint_id);
+    });
 }
 
 void World::AddPlayer(std::string username, VehicleTipe carType, bool isLocal) {
@@ -113,16 +116,14 @@ void World::OnPlayerReachedCheckpoint(const std::string& username, int checkpoin
     if (checkpointId != current.id)
         return;
 
-    progress.currentCheckpointIndex = (progress.currentCheckpointIndex + 1) % checkpoints_.size();
+    progress.currentCheckpointIndex++;
 
-    if (progress.currentCheckpointIndex == 0) {
+    if (progress.currentCheckpointIndex >= checkpoints_.size()) {
+        progress.currentCheckpointIndex = 0;
         progress.lapsCompleted++;
-        // eventBus_.Publish(LapCompletedEvent(username, progress.lapsCompleted));
-    } else {
-        const auto& next = checkpoints_.at(progress.currentCheckpointIndex);
-        // eventBus_.Publish(CheckpointActivatedEvent(username, next.id));
     }
 }
+
 
 const std::set<int> World::GetPassedCheckpointIdsFor(const std::string& username) const {
     std::set<int> passed;
