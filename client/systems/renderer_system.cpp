@@ -28,10 +28,11 @@ RendererSystem::RendererSystem(SDL2pp::Renderer& renderer, SpriteSheet& cars, Wo
         playerRenderer_.SetFont(font_);
     }
 
-    eventBus_.Subscribe<PlayerStateUpdatedEvent>([this](const PlayerStateUpdatedEvent& e) {
-        if (e.isBraking)
+    eventBus_.Subscribe<PlayerMoveEvent>([this](const PlayerMoveEvent& e) {
+        auto move_mask = static_cast<uint8_t>(e.move);
+        if (move_mask == static_cast<uint8_t>(MoveMask::BRAKE))
             SpawnParticlesFor(world_, e.username, ParticleType::SMOKE_BRAKE);
-        if (e.isAccelerating)
+        if (move_mask == static_cast<uint8_t>(MoveMask::ACCELERATE))
             SpawnParticlesFor(world_, e.username, ParticleType::SMOKE_ACCEL);
     });
 
