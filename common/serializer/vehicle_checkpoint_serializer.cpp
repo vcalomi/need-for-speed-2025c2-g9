@@ -11,10 +11,11 @@
 
 std::vector<uint8_t> VehicleCheckpointSerializer::serialize(const Dto& dto) const {
     const VehicleCheckpointDto& vehicleCheckpointDto = static_cast<const VehicleCheckpointDto&>(dto);
-    std::vector<uint8_t> buffer(2 * sizeof(int));
+    size_t username_len = vehicleCheckpointDto.username.length();
+    std::vector<uint8_t> buffer(1 + username_len + sizeof(int));
     size_t pos = 0;
 
-    SerializerUtils::writeInt(buffer, pos, vehicleCheckpointDto.vehicleId);
+    SerializerUtils::writeString(buffer, pos, vehicleCheckpointDto.username);
     SerializerUtils::writeInt(buffer, pos, vehicleCheckpointDto.checkpointIndex);
     return buffer;
 }
@@ -22,7 +23,7 @@ std::vector<uint8_t> VehicleCheckpointSerializer::serialize(const Dto& dto) cons
 std::shared_ptr<Dto> VehicleCheckpointSerializer::deserialize(const std::vector<uint8_t>& buffer) const {
     size_t pos = 0;
 
-    int vehicleId = SerializerUtils::readInt(buffer, pos);
+    std::string username = SerializerUtils::readString(buffer, pos);
     int checkpointIndex = SerializerUtils::readInt(buffer, pos);
-    return std::make_shared<VehicleCheckpointDto>(vehicleId, checkpointIndex);
+    return std::make_shared<VehicleCheckpointDto>(username, checkpointIndex);
 }

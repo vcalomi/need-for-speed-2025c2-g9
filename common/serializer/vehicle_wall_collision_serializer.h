@@ -1,7 +1,7 @@
-#ifndef VEHICLE_WALL_SERIALIZER_H
-#define VEHICLE_WALL_SERIALIZER_H
+#ifndef VEHICLE_WALL_COLLISION_SERIALIZER_H
+#define VEHICLE_WALL_COLLISION_SERIALIZER_H
 
-#include "../Dto/vehicle_wall.h"
+#include "../Dto/vehicle_wall_collision.h"
 
 #include "serializer.h"
 

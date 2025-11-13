@@ -8,7 +8,7 @@ class PlayerMoveDto: public Dto {
 public:
     std::string username;
     uint8_t move;
-    PlayerMoveDto(std::string usernmae, uint8_t move);
+    PlayerMoveDto(const std::string& username, uint8_t move);
     PlayerMoveDto(const PlayerMoveDto&) = default;
 };
 

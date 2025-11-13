@@ -7,10 +7,10 @@
 
 class VehicleCheckpointDto: public Dto {
 public:
-    int vehicleId; 
+    std::string username;  
     int checkpointIndex;
 
-    VehicleCheckpointDto(int vehicleId, int checkpointIndex);
+    VehicleCheckpointDto(const std::string& username, int checkpointIndex);
 };
 
 #endif

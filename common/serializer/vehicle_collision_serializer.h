@@ -1,7 +1,7 @@
-#ifndef PLAYERS_VEHICLE_SERIALIZER_H
-#define PLAYERS_VEHICLE_SERIALIZER_H
+#ifndef VEHICLE_COLLISION_SERIALIZER_H
+#define VEHICLE_COLLISION_SERIALIZER_H
 
-#include "../Dto/players_vehicles.h"
+#include "../Dto/vehicle_collision.h"
 
 #include "serializer.h"
 

@@ -2,5 +2,5 @@
 
 #include "../common_codes.h"
 
-VehicleCheckpointDto::VehicleCheckpointDto(int vehicleId, int checkpointIndex):
-        Dto(uint8_t(ActionCode::SEND_VEHICLE_CHECKPOINT)), vehicleId(vehicleId), checkpointIndex(checkpointIndex) {}
+VehicleCheckpointDto::VehicleCheckpointDto(const std::string& username, int checkpointIndex):
+        Dto(uint8_t(ActionCode::SEND_VEHICLE_CHECKPOINT)), username(username), checkpointIndex(checkpointIndex) {}

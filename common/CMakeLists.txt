@@ -13,15 +13,15 @@ target_sources(taller_common
     serializer/player_move_serializer.cpp
     serializer/checkpoint_serializer.cpp
     serializer/vehicle_checkpoint_serializer.cpp
-    serializer/vehicle_wall_serializer.cpp
-    serializer/players_vehicles_serializer.cpp
+    serializer/vehicle_wall_collision_serializer.cpp
+    serializer/vehicle_collision_serializer.cpp
     Dto/dto.cpp
     Dto/vehicle.cpp
     Dto/player.cpp
     Dto/player_move.cpp
     Dto/checkpoint.cpp
-    Dto/vehicle_wall.cpp
-    Dto/players_vehicles.cpp
+    Dto/vehicle_wall_collision.cpp
+    Dto/vehicle_collision.cpp
     Dto/vehicle_checkpoint.cpp
     PUBLIC
     # .h files
@@ -39,8 +39,9 @@ target_sources(taller_common
     serializer/player_move_serializer.h
     serializer/checkpoint_serializer.h
     serializer/vehicle_checkpoint_serializer.h
-    serializer/vehicle_wall_serializer.h
-    serializer/players_vehicles_serializer.h
+    serializer/vehicle_wall_collision_serializer.h
+    serializer/vehicle_collision_serializer.h
+    serializer/serializer_map.h
     Dto/dto.h
     Dto/vehicle.h
     Dto/player.h
@@ -48,7 +49,7 @@ target_sources(taller_common
     Dto/checkpoint.h
     vehicle_type_utils.h
     serializer/util.h
-    Dto/vehicle_wall.h
-    Dto/players_vehicles.h
+    Dto/vehicle_wall_collision.h
+    Dto/vehicle_collision.h
     Dto/vehicle_checkpoint.h
 )

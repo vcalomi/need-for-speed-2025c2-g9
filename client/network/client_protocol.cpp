@@ -5,13 +5,7 @@
 #include <arpa/inet.h>
 
 #include "../../common/common_codes.h"
-#include "../../common/serializer/checkpoint_serializer.h"
-#include "../../common/serializer/player_move_serializer.h"
-#include "../../common/serializer/player_serializer.h"
-#include "../../common/serializer/players_vehicles_serializer.h"
-#include "../../common/serializer/vehicle_checkpoint_serializer.h"
-#include "../../common/serializer/vehicle_serializer.h"
-#include "../../common/serializer/vehicle_wall_serializer.h"
+#include "../../common/serializer/serializer_map.h"
 
 // Constructor DUMMY: no se conecta a nada
 ClientProtocol::ClientProtocol():
@@ -22,23 +16,8 @@ ClientProtocol::ClientProtocol():
 }
 
 ClientProtocol::ClientProtocol(const std::string& hostname, const std::string& port):
-        socket(hostname.c_str(), port.c_str()), protocol(), serializers() {
-    serializers[static_cast<uint8_t>(ActionCode::SEND_CARS)] =
-            std::make_unique<VehicleSerializer>();
-
-    serializers[static_cast<uint8_t>(ActionCode::SEND_PLAYER)] =
-            std::make_unique<PlayerSerializer>();
-    serializers[static_cast<uint8_t>(ActionCode::SEND_PLAYER_MOVE)] =
-            std::make_unique<PlayerMoveSerializer>();
-    serializers[static_cast<uint8_t>(ActionCode::SEND_CHECKPOINTS)] =
-            std::make_unique<CheckpointSerializer>();
-    serializers[static_cast<uint8_t>(ActionCode::SEND_VEHICLE_CHECKPOINT)] =
-            std::make_unique<VehicleCheckpointSerializer>();
-    serializers[static_cast<uint8_t>(ActionCode::SEND_VEHICLES_COLLISION)] =
-            std::make_unique<VehicleCollisionSerializer>();
-    serializers[static_cast<uint8_t>(ActionCode::SEND_VEHICLE_WALL_COLLISION)] =
-            std::make_unique<VehicleWallCollisionSerializer>();
-}
+        socket(hostname.c_str(), port.c_str()), protocol(),
+        serializers(SerializerMap::createSerializerMap()) {}
 
 void ClientProtocol::sendUsername(const std::string& username) {
     protocol.sendAction(socket, ActionCode::SEND_USERNAME);
