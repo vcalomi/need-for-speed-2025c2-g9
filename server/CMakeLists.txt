@@ -3,6 +3,7 @@ target_sources(taller_server
     # .cpp files
     physics/LevelCreator.cpp
     physics/vehicle.cpp
+    physics/PhysicsEventCollector.cpp
     network/acceptor.cpp
     vehicles_specs/vehicle_specs.yaml
     server_main.cpp
@@ -40,4 +41,5 @@ target_sources(taller_server
     physics/LevelCreator.h
     physics/spawn.h
     physics/vehicle.h
+    physics/PhysicsEventCollector.h
     )

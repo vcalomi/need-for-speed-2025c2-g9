@@ -56,13 +56,20 @@ void LevelSetup::buildVehicles() {
         const VehicleSpec& spec = it->second;
         const Spawn& spawn = shuffled[i++];
 
-        auto v = std::make_unique<Vehicle>(world_, spec, spawn, player_id);
-
         FixtureTag* tag = makeTag(vehicle_tags_, EntityKind::Vehicle, player_id);
-        v->setFixtureTag(tag);
+
+        auto v = std::make_unique<Vehicle>(world_, spec, spawn, player_id, tag);
 
         player_vehicle_map_.emplace(player_id, std::move(v));
     }
 }
 
-void LevelSetup::step(float fixed_dt, int subSteps) { b2World_Step(world_, fixed_dt, subSteps); }
+std::vector<RawEvent> LevelSetup::stepAndDrainEvents(float dt) {
+    const float substepDt = dt;
+    const int substeps = 4;
+    b2World_Step(world_, substepDt, substeps);
+
+    collector_.collect(world_);
+
+    return collector_.drain();  
+}

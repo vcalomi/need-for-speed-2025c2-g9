@@ -9,7 +9,7 @@
 
 class Vehicle {
 public:
-    Vehicle(b2WorldId worldId, VehicleSpec spec, Spawn spawn, int player_id);
+    Vehicle(b2WorldId worldId, VehicleSpec spec, Spawn spawn, int player_id, FixtureTag* tag);
 
     void accelerate();
     void brake();

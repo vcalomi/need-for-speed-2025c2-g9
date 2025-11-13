@@ -1,7 +1,7 @@
 #include "vehicle.h"
 
 
-Vehicle::Vehicle(b2WorldId worldId, VehicleSpec spec, Spawn spawn, int player_id):
+Vehicle::Vehicle(b2WorldId worldId, VehicleSpec spec, Spawn spawn, int player_id, FixtureTag* tag):
         world_id_(worldId), spec_(spec), spawn_(spawn), vehicle_id_(player_id) {
 
     b2BodyDef bodyDef = b2DefaultBodyDef();
@@ -16,6 +16,9 @@ Vehicle::Vehicle(b2WorldId worldId, VehicleSpec spec, Spawn spawn, int player_id
 
     b2ShapeDef shapeDef = b2DefaultShapeDef();
     shapeDef.density = spec_.density;
+    shapeDef.userData = tag;
+    shapeDef.enableContactEvents = true;
+    shapeDef.enableSensorEvents = true;
     // shapeDef.friction    = spec_.friction;
     // shapeDef.restitution = spec_.restitution;
 

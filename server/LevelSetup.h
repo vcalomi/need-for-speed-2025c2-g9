@@ -17,6 +17,8 @@
 #include "YamlParser.h"
 #include "constants.h"
 
+#include "./physics/PhysicsEventCollector.h"
+
 class LevelSetup {
 
 public:
@@ -24,14 +26,13 @@ public:
                         const std::map<int, CarConfig>& chosenCars);
 
     void buildVehicles();
-    void step(float fixed_dt = 1.0f / 60.0f, int subSteps = 4);
+    std::vector<RawEvent> stepAndDrainEvents(float dt);
     
     const std::unordered_map<int, std::unique_ptr<Vehicle>>& getVehicleMap() const {
         return player_vehicle_map_;
     }
 
     const std::vector<CheckpointInfo>& getCheckpoints() const  { return checkpoints_;}
-
 
 private:
     void create_vehicles();
@@ -43,5 +44,6 @@ private:
     std::vector<CheckpointInfo> checkpoints_;
     std::unordered_map<int, std::unique_ptr<Vehicle>> player_vehicle_map_;
     std::mt19937 rng_;
-    std::vector<FixtureTag> vehicle_tags_;
+    std::deque<FixtureTag> vehicle_tags_;
+    PhysicsEventCollector collector_;
 };

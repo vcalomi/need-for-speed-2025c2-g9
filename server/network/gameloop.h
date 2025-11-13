@@ -34,9 +34,10 @@ public:
 
     void run() override;
     void processCommands();
-    void simulateGame();
+    void sendVehiclesPositions();
     void sendInitialPlayersCars();
     void sendCheckpoints();
+    void processGameEvents();
 
 
     ~GameLoop();

@@ -206,6 +206,7 @@ if(TALLER_SERVER)
         server/YamlParser.cpp
         server/physics/vehicle.cpp
         server/LevelSetup.cpp
+        server/physics/PhysicsEventCollector.cpp
     )
 
     add_dependencies(taller_server taller_common)

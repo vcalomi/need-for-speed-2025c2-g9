@@ -36,7 +36,7 @@ private:
     std::vector<Spawn> spawn_points;
     void addDebugTileRect(float cx_px, float cy_px, float size_px);
 
-    std::vector<FixtureTag> checkpoint_tags_;
+    std::deque<FixtureTag> checkpoint_tags_;
 
     std::vector<CheckpointInfo> checkpoints_;
 };

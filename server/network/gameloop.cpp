@@ -12,6 +12,9 @@
 #include "../../common/Dto/player.h"
 #include "../../common/Dto/player_move.h"
 #include "../../common/Dto/vehicle.h"
+#include "../../common/Dto/vehicle_checkpoint.h"
+#include "../../common/Dto/vehicle_collision.h"
+#include "../../common/Dto/vehicle_wall_collision.h"
 #include "../../common/common_codes.h"
 #include "../../common/vehicle_type_utils.h"
 #include "../YamlParser.h"
@@ -41,9 +44,8 @@ void GameLoop::run() {
         sendInitialPlayersCars();
         while (should_keep_running()) {
             processCommands();
-            simulateGame();
-
-            setup->step((1.0f / 60.0f), 4);
+            sendVehiclesPositions();
+            processGameEvents();
             std::this_thread::sleep_for(std::chrono::milliseconds(GAME_TICK_MS));
         }
     } catch (const ClosedQueue& e) {
@@ -77,46 +79,12 @@ void GameLoop::sendInitialPlayersCars() {
     }
 }
 
-void GameLoop::simulateGame() {
-
-    for (auto& [player_id, vehicle]: setup.value().getVehicleMap()) {
-        float x, y, angle;
-        vehicle->getPosition(x, y, angle);
-        std::string username = playerUsernames_.at(player_id);
-        std::cout << "[GameLoop] Vehicle of player " << username << " is at (" << x << ", " << y
-                  << ") angle " << angle << "\n";
-        auto dto = std::make_shared<VehicleDto>(username, x, y, angle);
-        broadcaster_.broadcast(dto);
-        // std::cout << "mandando pos vehicle /n";
-    }
-}
-
-
 void GameLoop::processCommands() {
     std::shared_ptr<Dto> command;
     while (gameLoopQueue.try_pop(command)) {
         handlerProcessCommand(command);
     }
 }
-
-Vehicle* GameLoop::getVehicleByPlayer(const std::string& username) {
-    int foundId = -1;
-
-    for (const auto& [id, name]: playerUsernames_) {
-        if (name == username) {
-            foundId = id;
-            break;
-        }
-    }
-
-    if (foundId == -1)
-        return nullptr;
-
-    const auto& map = setup->getVehicleMap();
-    auto it = map.find(foundId);
-    return (it == map.end()) ? nullptr : it->second.get();
-}
-
 
 void GameLoop::handlerProcessCommand(std::shared_ptr<Dto> command) {
     Vehicle* vehicle = getVehicleByPlayer(command->get_username());
@@ -146,6 +114,57 @@ void GameLoop::handlerProcessCommand(std::shared_ptr<Dto> command) {
         default:
             std::cerr << "[GameLoop] unknown command: " << command->return_code() << "\n";
             break;
+    }
+}
+
+void GameLoop::sendVehiclesPositions() {
+
+    for (auto& [player_id, vehicle]: setup.value().getVehicleMap()) {
+        float x, y, angle;
+        vehicle->getPosition(x, y, angle);
+        std::string username = playerUsernames_.at(player_id);
+        std::cout << "[GameLoop] Vehicle of player " << username << " is at (" << x << ", " << y
+                  << ") angle " << angle << "\n";
+        auto dto = std::make_shared<VehicleDto>(username, x, y, angle);
+        broadcaster_.broadcast(dto);
+    }
+}
+
+
+Vehicle* GameLoop::getVehicleByPlayer(const std::string& username) {
+    int foundId = -1;
+
+    for (const auto& [id, name]: playerUsernames_) {
+        if (name == username) {
+            foundId = id;
+            break;
+        }
+    }
+
+    if (foundId == -1)
+        return nullptr;
+
+    const auto& map = setup->getVehicleMap();
+    auto it = map.find(foundId);
+    return (it == map.end()) ? nullptr : it->second.get();
+}
+
+void GameLoop::processGameEvents() {
+    auto events = setup->stepAndDrainEvents(1.0f / 60.0f);
+
+    for (auto& event : events) {
+        if (auto* vehicle_checkpoint = std::get_if<RawVehicleCheckpoint>(&event)) {
+            auto dto = std::make_shared<VehicleCheckpointDto>(playerUsernames_.at(vehicle_checkpoint->vehicleId), vehicle_checkpoint->checkpointIndex);
+            broadcaster_.broadcast(dto);
+        }
+        else if (auto* vechicle_vechicle = std::get_if<RawVehicleVehicle>(&event)) {
+            auto dto = std::make_shared<VehicleCollisionDto>(playerUsernames_.at(vechicle_vechicle->a), playerUsernames_.at(vechicle_vechicle->b));
+            broadcaster_.broadcast(dto);
+        }
+        else if (auto* vehicle_wall = std::get_if<RawVehicleWall>(&event)) {
+            auto dto = std::make_shared<VehicleWallCollisionDto>(playerUsernames_.at(vehicle_wall->vehicleId));
+            broadcaster_.broadcast(dto);
+        }
     }
 }
 

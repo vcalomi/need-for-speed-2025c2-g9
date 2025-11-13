@@ -236,10 +236,10 @@ void LevelCreator::createLevelCollision(b2WorldId world, const std::vector<Matri
 
                     b2ShapeDef shapeDef = b2DefaultShapeDef();
                     shapeDef.isSensor = true;
-
+                    shapeDef.enableSensorEvents = true; 
+                    
                     FixtureTag* tag = makeTag(checkpoint_tags_, EntityKind::Checkpoint, checkpointIndex);
                     shapeDef.userData = tag;
-
                     b2CreateCircleShape(body, &shapeDef, &circle);
 
                     checkpoints_.push_back(CheckpointInfo{world_x_px, world_y_px, checkpointIndex});

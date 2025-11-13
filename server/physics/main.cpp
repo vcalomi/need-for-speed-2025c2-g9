@@ -9,6 +9,9 @@
 #include "LevelCreator.h"
 #include "vehicle.h"
 
+#include "PhysicsEventCollector.h"
+#include "EntityTags.h"
+
 constexpr int WIN_W = 800;
 constexpr int WIN_H = 600;
 
@@ -38,13 +41,20 @@ int main() {
     lc.processDirectoryLevel("../server/physics/Levels");
     lc.createLevelCollision(world, lc.levels());
 
+    PhysicsEventCollector collector;
+
     std::vector<Spawn> spawns = lc.getSpawnPoints();
     Spawn spawn = spawns[0];
 
     YamlParser parser;
     auto mapa_config = parser.parse("../server/vehicles_specs/vehicle_specs.yaml");
     VehicleSpec ferrari_spec = mapa_config["ferrari_F40"];
-    Vehicle vehicle(world, ferrari_spec, spawn, 0);
+
+    std::deque<FixtureTag> vehicle_tags;
+    auto* vtag = makeTag(vehicle_tags, EntityKind::Vehicle, /*playerId=*/0);
+
+    Vehicle vehicle(world, ferrari_spec, spawn, 0, vtag);
+    
 
     // --- Cámara / zoom ---
     float camX_px = 0.0f;
@@ -86,12 +96,28 @@ int main() {
 
         // --- Física ---
         b2World_Step(world, 1.0f / 60.0f, 4);
+        
+        collector.collect(world);
+
+        // Mostrar/usar los eventos y limpiar
+        auto events = collector.drain();
+        
+        for (const auto& ev : events) {
+            if (auto* cp = std::get_if<RawVehicleCheckpoint>(&ev)) {
+                std::cout << "[EV] Vehicle " << cp->vehicleId
+                        << " hit checkpoint " << cp->checkpointIndex << "\n";
+            } else if (auto* vv = std::get_if<RawVehicleVehicle>(&ev)) {
+                std::cout << "[EV] Vehicle " << vv->a << " hit vehicle " << vv->b << "\n";
+            } else if (auto* vw = std::get_if<RawVehicleWall>(&ev)) {
+                std::cout << "[EV] Vehicle " << vw->vehicleId << " hit wall\n";
+            }
+        }
 
         // Obtener posición actual del vehículo
         vehicle.getPosition(vehicle_x, vehicle_y, vehicle_angle);
 
-        std::cout << "Vehículo pos(" << vehicle_x << ", " << vehicle_y
-                  << ") ang=" << vehicle_angle * 180.0f / M_PI << std::endl;
+        //std::cout << "Vehículo pos(" << vehicle_x << ", " << vehicle_y
+                  //<< ") ang=" << vehicle_angle * 180.0f / M_PI << std::endl;
         // --- Cámara sigue al vehículo ---
         camX_px = vehicle_x - WIN_W / 2.0f;
         camY_px = vehicle_y - WIN_H / 2.0f;
