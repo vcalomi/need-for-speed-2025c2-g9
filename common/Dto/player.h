@@ -11,8 +11,8 @@ class PlayerDto: public Dto {
 public:
     std::string username;
     VehicleTipe Type;
-    int car_hp;
-    PlayerDto(const std::string& username, VehicleTipe Type, int car_hp);
+    float car_hp;
+    PlayerDto(const std::string& username, VehicleTipe Type, float car_hp);
 };
 
 #endif

@@ -13,13 +13,13 @@ std::vector<uint8_t> VehicleCollisionSerializer::serialize(const Dto& dto) const
     const VehicleCollisionDto& vehicleCollisionDto = static_cast<const VehicleCollisionDto&>(dto);
     size_t username_len_1 = vehicleCollisionDto.vehicle1_username.length();
     size_t username_len_2 = vehicleCollisionDto.vehicle2_username.length();
-    std::vector<uint8_t> buffer(2 + username_len_1 + username_len_2 + 2 * sizeof(int));
+    std::vector<uint8_t> buffer(2 + username_len_1 + username_len_2 + 2 * sizeof(float));
     size_t pos = 0;
 
     SerializerUtils::writeString(buffer, pos, vehicleCollisionDto.vehicle1_username);
-    SerializerUtils::writeInt(buffer, pos, vehicleCollisionDto.vehicle_1_new_hp);
+    SerializerUtils::writeFloat(buffer, pos, vehicleCollisionDto.vehicle_1_new_hp);
     SerializerUtils::writeString(buffer, pos, vehicleCollisionDto.vehicle2_username);
-    SerializerUtils::writeInt(buffer, pos, vehicleCollisionDto.vehicle_2_new_hp);
+    SerializerUtils::writeFloat(buffer, pos, vehicleCollisionDto.vehicle_2_new_hp);
     return buffer;
 }
 
@@ -28,8 +28,8 @@ std::shared_ptr<Dto> VehicleCollisionSerializer::deserialize(
     size_t pos = 0;
 
     std::string vehicle1_username = SerializerUtils::readString(buffer, pos);
-    int vehicle_1_new_hp = SerializerUtils::readInt(buffer, pos);
+    float vehicle_1_new_hp = SerializerUtils::readFloat(buffer, pos);
     std::string vehicle2_username = SerializerUtils::readString(buffer, pos);
-    int vehicle_2_new_hp = SerializerUtils::readInt(buffer, pos);
+    float vehicle_2_new_hp = SerializerUtils::readFloat(buffer, pos);
     return std::make_shared<VehicleCollisionDto>(vehicle1_username, vehicle_1_new_hp, vehicle2_username, vehicle_2_new_hp);
 }
