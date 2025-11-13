@@ -18,6 +18,7 @@ public:
     std::string GetUsername() const { return username_; }
     std::string GetSpriteForAngle(float angle) const;
     std::string VehicleTipeToString(VehicleTipe type) const;
+    const Sprite& GetCurrentSprite(const SpriteSheet& carSprites) const;
 
 private:
     std::string username_;

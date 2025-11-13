@@ -79,7 +79,27 @@ void RendererSystem::Render(const World& world, Map& map, const Camera& camera, 
 
 void RendererSystem::SpawnParticlesFor(const World& world, const std::string& username,
                                        ParticleType type) {
-    std::cout << "[RendererSystem] Spawning particles for player: " << username << std::endl;
     const auto player = world.GetPlayer(username);
-    particleRenderer_.Emit(player.GetX(), player.GetY(), type, 8);
+
+    const Sprite& sprite = player.GetCurrentSprite(cars_);
+    float angle = player.GetAngle();
+
+    float offset = 0.0f;
+
+    switch (type) {
+        case ParticleType::SMOKE_ACCEL:
+            offset = sprite.backOffset;
+            break;
+
+        case ParticleType::SMOKE_BRAKE:
+            offset = sprite.frontOffset;
+            break;
+
+        case ParticleType::SPARK_WALL:
+        case ParticleType::SPARK_VEHICLE:
+            offset = 0.0f;
+            break;
+    }
+
+    particleRenderer_.Emit(player.GetX(), player.GetY(), angle, offset, type, 8);
 }

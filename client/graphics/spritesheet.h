@@ -8,6 +8,18 @@ using SDL2pp::Rect;
 using SDL2pp::Renderer;
 using SDL2pp::Texture;
 
+
+struct Sprite {
+    Rect area;
+    float width;
+    float height;
+    float halfWidth;
+    float halfHeight;
+    float frontOffset;
+    float backOffset;
+};
+
+
 class SpriteSheet {
 public:
     SpriteSheet(Renderer& renderer, const std::string& path);
@@ -15,10 +27,10 @@ public:
     Texture& GetTexture();
 
     void AddSprite(const std::string& name, const Rect& area);
-    const Rect& GetSprite(const std::string& name) const;
+    const Sprite& GetSprite(const std::string& name) const;
     bool HasSprite(const std::string& name) const;
 
 private:
     Texture texture_;
-    std::map<std::string, SDL2pp::Rect> sprites_;
+    std::map<std::string, Sprite> sprites_;
 };

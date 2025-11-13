@@ -6,10 +6,15 @@
 
 ParticleRenderer::ParticleRenderer(Renderer& renderer): renderer_(renderer) {}
 
-void ParticleRenderer::Emit(float x, float y, ParticleType type, int count) {
+void ParticleRenderer::Emit(float x, float y, float angle, float offset, ParticleType type,
+                            int count) {
+
+    float emitX = x + std::cos(angle) * offset;
+    float emitY = y + std::sin(angle) * offset;
+
     for (int i = 0; i < count; ++i) {
 
-        float angle = static_cast<float>((rand() % 360) * M_PI / 180.0f);
+        float randAngle = static_cast<float>((rand() % 360) * M_PI / 180.0f);
 
         float baseSpeed = 0.0f;
         switch (type) {
@@ -30,10 +35,11 @@ void ParticleRenderer::Emit(float x, float y, ParticleType type, int count) {
         float speed = baseSpeed + static_cast<float>(rand() % 100) / 10.0f;
 
         Particle p;
-        p.x = x;
-        p.y = y;
-        p.vx = std::cos(angle) * speed;
-        p.vy = std::sin(angle) * speed;
+        p.x = emitX;
+        p.y = emitY;
+
+        p.vx = std::cos(randAngle) * speed;
+        p.vy = std::sin(randAngle) * speed;
 
         switch (type) {
             case ParticleType::SMOKE_ACCEL:

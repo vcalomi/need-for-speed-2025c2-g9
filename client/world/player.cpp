@@ -30,6 +30,10 @@ std::string Player::VehicleTipeToString(VehicleTipe type) const {
     }
 }
 
+const Sprite& Player::GetCurrentSprite(const SpriteSheet& carSprites) const {
+    return carSprites.GetSprite(currentSprite_);
+}
+
 void Player::UpdateFromNetwork(float x, float y, float angleRad) {
     x_ = x;
     y_ = y;

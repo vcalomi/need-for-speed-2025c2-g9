@@ -24,7 +24,7 @@ class ParticleRenderer {
 public:
     explicit ParticleRenderer(Renderer& renderer);
 
-    void Emit(float x, float y, ParticleType type, int count);
+    void Emit(float x, float y, float angle, float offset, ParticleType type, int count);
     void Update(float deltaTime);
     void Render(const Camera& camera);
 

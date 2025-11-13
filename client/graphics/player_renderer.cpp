@@ -13,14 +13,14 @@ void PlayerRenderer::Draw(const Player& player, const Camera& camera) {
         return;
     }
 
-    const Rect& src = cars_.GetSprite(spriteName);
+    const Sprite& src = cars_.GetSprite(spriteName);
 
-    float drawX = player.GetX() - camera.getX() - src.GetW() / HALF_DIVISOR;
-    float drawY = player.GetY() - camera.getY() - src.GetH() / HALF_DIVISOR;
+    float drawX = player.GetX() - camera.getX() - src.width / HALF_DIVISOR;
+    float drawY = player.GetY() - camera.getY() - src.height / HALF_DIVISOR;
 
-    Rect dest(drawX, drawY, src.GetW(), src.GetH());
-    renderer_.Copy(cars_.GetTexture(), src, dest);
-    DrawTextAbove(font_, player.GetUsername(), drawX, drawY, src);
+    Rect dest(drawX, drawY, src.width, src.height);
+    renderer_.Copy(cars_.GetTexture(), src.area, dest);
+    DrawTextAbove(font_, player.GetUsername(), drawX, drawY, src.area);
 }
 
 void PlayerRenderer::SetFont(TTF_Font* font) { font_ = font; }
