@@ -2,10 +2,12 @@
 
 #include "../../common/Dto/checkpoint.h"
 #include "../../common/Dto/vehicle_checkpoint.h"
+#include "../../common/Dto/vehicle_wall_collision.h"
 #include "../events/checkpoint_completed_event.h"
 #include "../events/checkpoint_event.h"
 #include "../events/player_events.h"
 #include "../events/player_joined_event.h"
+#include "../events/wall_collision_event.h"
 
 
 DtoHandlerSystem::DtoHandlerSystem(Client& client, EventBus& eventBus):
@@ -70,6 +72,17 @@ void DtoHandlerSystem::Process(const std::shared_ptr<Dto>& dto) {
 
             event = std::make_shared<CheckPointCompletedEvent>(
                     vehicleCheckpointDto->username, vehicleCheckpointDto->checkpointIndex);
+            break;
+        }
+        case ActionCode::SEND_VEHICLE_WALL_COLLISION: {
+            auto wallCollisionDto = std::dynamic_pointer_cast<VehicleWallCollisionDto>(dto);
+            if (!wallCollisionDto)
+                return;
+
+            std::cout << "[DtoHandler] Vehicle Wall Collision: " << wallCollisionDto->username
+                      << std::endl;
+
+            event = std::make_shared<WallCollisionEvent>(wallCollisionDto->username);
             break;
         }
 
