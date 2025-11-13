@@ -11,4 +11,5 @@ struct VehicleSpec {
     float steer_torque;
     float friction;
     float restitution;
+    float health;
 };
