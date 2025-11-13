@@ -23,11 +23,6 @@ enum class ActionCode : uint8_t {
     LIST_STATE = 0x13,
 
     // Comandos del server/cliente
-    TURN_RIGHT = 0x14,
-    TURN_LEFT = 0x15,
-    ACCELERATE = 0x16,
-    BRAKE = 0x17,
-    IDLE = 0x18,
 
     SEND_PLAYER = 0x19,
     SEND_PLAYER_MOVE = 0x20,
