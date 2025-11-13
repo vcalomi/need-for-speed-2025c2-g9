@@ -1,9 +1,12 @@
 #include "./dto_handler_system.h"
 
 #include "../../common/Dto/checkpoint.h"
+#include "../../common/Dto/vehicle_checkpoint.h"
+#include "../events/checkpoint_completed_event.h"
 #include "../events/checkpoint_event.h"
 #include "../events/player_events.h"
 #include "../events/player_joined_event.h"
+
 
 DtoHandlerSystem::DtoHandlerSystem(Client& client, EventBus& eventBus):
         client_(client), eventBus_(eventBus) {}
@@ -55,6 +58,18 @@ void DtoHandlerSystem::Process(const std::shared_ptr<Dto>& dto) {
 
             event = std::make_shared<CheckPointEvent>(checkpointDto->id, checkpointDto->x,
                                                       checkpointDto->y);
+            break;
+        }
+        case ActionCode::SEND_VEHICLE_CHECKPOINT: {
+            auto vehicleCheckpointDto = std::dynamic_pointer_cast<VehicleCheckpointDto>(dto);
+            if (!vehicleCheckpointDto)
+                return;
+
+            std::cout << "[DtoHandler] Vehicle Checkpoint: " << vehicleCheckpointDto->username
+                      << " checkpoint ID " << vehicleCheckpointDto->checkpointIndex << std::endl;
+
+            event = std::make_shared<CheckPointCompletedEvent>(
+                    vehicleCheckpointDto->username, vehicleCheckpointDto->checkpointIndex);
             break;
         }
 
