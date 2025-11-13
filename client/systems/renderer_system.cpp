@@ -4,7 +4,10 @@
 
 #include <SDL2/SDL_ttf.h>
 
+#include "../events/checkpoint_completed_event.h"
 #include "../events/checkpoint_event.h"
+#include "../events/player_collision_event.h"
+#include "../events/wall_collision_event.h"
 #include "../ui/checkpoint_indicator.h"
 
 RendererSystem::RendererSystem(SDL2pp::Renderer& renderer, SpriteSheet& cars, World& world,
@@ -26,8 +29,19 @@ RendererSystem::RendererSystem(SDL2pp::Renderer& renderer, SpriteSheet& cars, Wo
     }
 
     eventBus_.Subscribe<PlayerStateUpdatedEvent>([this](const PlayerStateUpdatedEvent& e) {
-        if (e.isBraking || e.isAccelerating)
-            SpawnParticlesFor(world_, e.username);
+        if (e.isBraking)
+            SpawnParticlesFor(world_, e.username, ParticleType::SMOKE_BRAKE);
+        if (e.isAccelerating)
+            SpawnParticlesFor(world_, e.username, ParticleType::SMOKE_ACCEL);
+    });
+
+    eventBus_.Subscribe<WallCollisionEvent>([this](const WallCollisionEvent& e) {
+        SpawnParticlesFor(world_, e.player1_username, ParticleType::SPARK_WALL);
+    });
+
+    eventBus_.Subscribe<PlayerCollisionEvent>([this](const PlayerCollisionEvent& e) {
+        SpawnParticlesFor(world_, e.player1_username, ParticleType::SPARK_VEHICLE);
+        SpawnParticlesFor(world_, e.player2_username, ParticleType::SPARK_VEHICLE);
     });
 }
 
@@ -55,15 +69,16 @@ void RendererSystem::Render(const World& world, Map& map, const Camera& camera, 
         playerRenderer_.Draw(player, camera);
     }
     particleRenderer_.Update(0.016f);
-    particleRenderer_.Render();
+    particleRenderer_.Render(camera);
     map.RenderForeground(renderer_, camera);
     minimap.Render(world, camera);
     checkpointIndicator.Draw(camera, localPlayer, activeCp);
     renderer_.Present();
 }
 
-void RendererSystem::SpawnParticlesFor(const World& world, const std::string& username) {
+void RendererSystem::SpawnParticlesFor(const World& world, const std::string& username,
+                                       ParticleType type) {
     std::cout << "[RendererSystem] Spawning particles for player: " << username << std::endl;
     const auto player = world.GetPlayer(username);
-    particleRenderer_.Emit(player.GetX(), player.GetY(), 8);
+    particleRenderer_.Emit(player.GetX(), player.GetY(), type, 8);
 }

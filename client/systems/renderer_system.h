@@ -21,7 +21,7 @@ public:
     ~RendererSystem();
 
     void Render(const World& world, Map& map, const Camera& camera, Minimap& minimap);
-    void SpawnParticlesFor(const World& world, const std::string& username);
+    void SpawnParticlesFor(const World& world, const std::string& username, ParticleType type);
 
 private:
     SDL2pp::Renderer& renderer_;
