@@ -35,7 +35,6 @@ inline void writeBool(std::vector<uint8_t>& buffer, size_t& pos, bool value) {
     writeByte(buffer, pos, value ? 1 : 0);
 }
 
-// Funciones de lectura
 inline int readInt(const std::vector<uint8_t>& buffer, size_t& pos) {
     int value;
     std::memcpy(&value, &buffer[pos], sizeof(int));

@@ -8,8 +8,8 @@
 class VehicleWallCollisionDto: public Dto {
 public:
     std::string username;
-
-    VehicleWallCollisionDto(const std::string& username);
+    int vehicle_new_hp;
+    VehicleWallCollisionDto(const std::string& username, int vehicle_new_hp);
 };
 
 #endif

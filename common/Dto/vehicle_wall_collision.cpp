@@ -2,5 +2,7 @@
 
 #include "../common_codes.h"
 
-VehicleWallCollisionDto::VehicleWallCollisionDto(const std::string& username):
-        Dto(uint8_t(ActionCode::SEND_VEHICLE_WALL_COLLISION)), username(username) {}
+VehicleWallCollisionDto::VehicleWallCollisionDto(const std::string& username, int vehicle_new_hp):
+        Dto(uint8_t(ActionCode::SEND_VEHICLE_WALL_COLLISION)), 
+        username(username),
+        vehicle_new_hp(vehicle_new_hp) {}

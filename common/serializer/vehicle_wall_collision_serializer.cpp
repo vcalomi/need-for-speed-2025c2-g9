@@ -13,10 +13,11 @@ std::vector<uint8_t> VehicleWallCollisionSerializer::serialize(const Dto& dto) c
     const VehicleWallCollisionDto& vehicleWallCollisionDto =
             static_cast<const VehicleWallCollisionDto&>(dto);
     size_t username_len = vehicleWallCollisionDto.username.length();
-    std::vector<uint8_t> buffer(1 + username_len);
+    std::vector<uint8_t> buffer(1 + username_len + sizeof(int));
     size_t pos = 0;
 
     SerializerUtils::writeString(buffer, pos, vehicleWallCollisionDto.username);
+    SerializerUtils::writeInt(buffer, pos, vehicleWallCollisionDto.vehicle_new_hp);
     return buffer;
 }
 
@@ -25,5 +26,6 @@ std::shared_ptr<Dto> VehicleWallCollisionSerializer::deserialize(
     size_t pos = 0;
 
     std::string username = SerializerUtils::readString(buffer, pos);
-    return std::make_shared<VehicleWallCollisionDto>(username);
+    int vehicle_new_hp = SerializerUtils::readInt(buffer, pos);
+    return std::make_shared<VehicleWallCollisionDto>(username, vehicle_new_hp);
 }

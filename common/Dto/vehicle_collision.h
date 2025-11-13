@@ -7,10 +7,13 @@
 
 class VehicleCollisionDto: public Dto {
 public:
-    std::string vehicle1_username; 
+    std::string vehicle1_username;
+    int vehicle_1_new_hp; 
     std::string vehicle2_username;
+    int vehicle_2_new_hp;
 
-    VehicleCollisionDto(const std::string& vehicle1_username, const std::string& vehicle2_username);
+    VehicleCollisionDto(const std::string& vehicle1_username, int vehicle_1_new_hp, 
+                        const std::string& vehicle2_username, int vehicle_2_new_hp);
 };
 
 #endif
