@@ -46,10 +46,8 @@ void Game::Run() {
         inputSystem_.PollEvents(running);
         PlayerMoveDto input =
                 inputSystem_.GetInputByte(this->world_.GetLocalPlayer().GetUsername());
-        if (static_cast<ActionCode>(input.move) != ActionCode::IDLE) {
-            eventBus_.Publish(PlayerMoveEvent(this->world_.GetLocalPlayer().GetUsername(),
-                                              static_cast<ActionCode>(input.move)));
-        }
+        eventBus_.Publish(PlayerMoveEvent(this->world_.GetLocalPlayer().GetUsername(),
+                                          static_cast<ActionCode>(input.move)));
 
         // --- MENSAJES DEL SERVIDOR ---
         std::shared_ptr<Dto> dto = nullptr;
