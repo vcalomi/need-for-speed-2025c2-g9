@@ -2,9 +2,11 @@
 
 #include "../../common/Dto/checkpoint.h"
 #include "../../common/Dto/vehicle_checkpoint.h"
+#include "../../common/Dto/vehicle_collision.h"
 #include "../../common/Dto/vehicle_wall_collision.h"
 #include "../events/checkpoint_completed_event.h"
 #include "../events/checkpoint_event.h"
+#include "../events/player_collision_event.h"
 #include "../events/player_events.h"
 #include "../events/player_joined_event.h"
 #include "../events/wall_collision_event.h"
@@ -83,6 +85,19 @@ void DtoHandlerSystem::Process(const std::shared_ptr<Dto>& dto) {
                       << std::endl;
 
             event = std::make_shared<WallCollisionEvent>(wallCollisionDto->username);
+            break;
+        }
+        case ActionCode::SEND_VEHICLES_COLLISION: {
+            auto vehicleCollisionDto = std::dynamic_pointer_cast<VehicleCollisionDto>(dto);
+            if (!vehicleCollisionDto)
+                return;
+
+            std::cout << "[DtoHandler] Vehicle Collision: "
+                      << vehicleCollisionDto->vehicle1_username << " with "
+                      << vehicleCollisionDto->vehicle2_username << std::endl;
+
+            event = std::make_shared<PlayerCollisionEvent>(vehicleCollisionDto->vehicle1_username,
+                                                           vehicleCollisionDto->vehicle2_username);
             break;
         }
 
