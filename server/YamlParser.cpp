@@ -20,7 +20,7 @@ std::unordered_map<std::string, VehicleSpec> YamlParser::parse(const std::string
                                 v["density"].as<float>(),       v["engine_force_N"].as<float>(),
                                 v["brake_force_N"].as<float>(), v["steer_torque"].as<float>(),
                                 v["friction"].as<float>(),      v["restitution"].as<float>(),
-                                v["health"].as<float>()};
+                                v["health_points"].as<float>()};
 
             vehicles[name] = vehicle;
         }
