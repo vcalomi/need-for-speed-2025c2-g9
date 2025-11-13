@@ -92,25 +92,23 @@ void GameLoop::handlerProcessCommand(std::shared_ptr<Dto> command) {
     switch (static_cast<ActionCode>(command->return_code())) {
         case ActionCode::SEND_PLAYER_MOVE: {
             auto player_move_dto = std::dynamic_pointer_cast<PlayerMoveDto>(command);
-            switch (static_cast<ActionCode>(player_move_dto->move)) {
-                case ActionCode::TURN_RIGHT:
-                    vehicle->turn(TurnDir::Right);
-                    break;
-                case ActionCode::TURN_LEFT:
-                    vehicle->turn(TurnDir::Left);
-                    break;
-                case ActionCode::ACCELERATE:
-                    vehicle->accelerate();
-                    break;
-                case ActionCode::BRAKE:
-                    vehicle->brake();
-                    break;
-                default:
-                    std::cerr << "[GameLoop] unknown command: " << command->return_code() << "\n";
-                    break;
-            }
+            uint8_t mask = player_move_dto->move;
+
+            if (mask & static_cast<uint8_t>(MoveMask::ACCELERATE))
+                vehicle->accelerate();
+
+            if (mask & static_cast<uint8_t>(MoveMask::BRAKE))
+                vehicle->brake();
+
+            if (mask & static_cast<uint8_t>(MoveMask::TURN_LEFT))
+                vehicle->turn(TurnDir::Left);
+
+            if (mask & static_cast<uint8_t>(MoveMask::TURN_RIGHT))
+                vehicle->turn(TurnDir::Right);
+
             break;
         }
+
         default:
             std::cerr << "[GameLoop] unknown command: " << command->return_code() << "\n";
             break;
@@ -152,17 +150,20 @@ Vehicle* GameLoop::getVehicleByPlayer(const std::string& username) {
 void GameLoop::processGameEvents() {
     auto events = setup->stepAndDrainEvents(1.0f / 60.0f);
 
-    for (auto& event : events) {
+    for (auto& event: events) {
         if (auto* vehicle_checkpoint = std::get_if<RawVehicleCheckpoint>(&event)) {
-            auto dto = std::make_shared<VehicleCheckpointDto>(playerUsernames_.at(vehicle_checkpoint->vehicleId), vehicle_checkpoint->checkpointIndex);
+            auto dto = std::make_shared<VehicleCheckpointDto>(
+                    playerUsernames_.at(vehicle_checkpoint->vehicleId),
+                    vehicle_checkpoint->checkpointIndex);
             broadcaster_.broadcast(dto);
-        }
-        else if (auto* vechicle_vechicle = std::get_if<RawVehicleVehicle>(&event)) {
-            auto dto = std::make_shared<VehicleCollisionDto>(playerUsernames_.at(vechicle_vechicle->a), playerUsernames_.at(vechicle_vechicle->b));
+        } else if (auto* vechicle_vechicle = std::get_if<RawVehicleVehicle>(&event)) {
+            auto dto = std::make_shared<VehicleCollisionDto>(
+                    playerUsernames_.at(vechicle_vechicle->a),
+                    playerUsernames_.at(vechicle_vechicle->b));
             broadcaster_.broadcast(dto);
-        }
-        else if (auto* vehicle_wall = std::get_if<RawVehicleWall>(&event)) {
-            auto dto = std::make_shared<VehicleWallCollisionDto>(playerUsernames_.at(vehicle_wall->vehicleId));
+        } else if (auto* vehicle_wall = std::get_if<RawVehicleWall>(&event)) {
+            auto dto = std::make_shared<VehicleWallCollisionDto>(
+                    playerUsernames_.at(vehicle_wall->vehicleId));
             broadcaster_.broadcast(dto);
         }
     }

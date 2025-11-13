@@ -14,15 +14,19 @@ void InputSystem::PollEvents(bool& running) {
 PlayerMoveDto InputSystem::GetInputByte(std::string username) const {
     const Uint8* keys = SDL_GetKeyboardState(NULL);
 
-    if (keys[SDL_SCANCODE_W])
-        return PlayerMoveDto(username, (static_cast<uint8_t>(ActionCode::ACCELERATE)));
-    if (keys[SDL_SCANCODE_S])
-        return PlayerMoveDto(username, (static_cast<uint8_t>(ActionCode::BRAKE)));
-    if (keys[SDL_SCANCODE_A])
-        return PlayerMoveDto(username, (static_cast<uint8_t>(ActionCode::TURN_RIGHT)));
-    if (keys[SDL_SCANCODE_D])
-        return PlayerMoveDto(username, (static_cast<uint8_t>(ActionCode::TURN_LEFT)));
+    uint8_t mask = static_cast<uint8_t>(MoveMask::NONE);
 
-    // Ninguna tecla presionada: no se envía nada
-    return PlayerMoveDto(username, (static_cast<uint8_t>(ActionCode::IDLE)));
+    if (keys[SDL_SCANCODE_W])
+        mask |= static_cast<uint8_t>(MoveMask::ACCELERATE);
+
+    if (keys[SDL_SCANCODE_S])
+        mask |= static_cast<uint8_t>(MoveMask::BRAKE);
+
+    if (keys[SDL_SCANCODE_A])
+        mask |= static_cast<uint8_t>(MoveMask::TURN_RIGHT);
+
+    if (keys[SDL_SCANCODE_D])
+        mask |= static_cast<uint8_t>(MoveMask::TURN_LEFT);
+
+    return PlayerMoveDto(username, mask);
 }

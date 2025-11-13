@@ -38,6 +38,19 @@ enum class ActionCode : uint8_t {
     SEND_VEHICLE_WALL_COLLISION = 0x25
 };
 
+enum class MoveMask : uint8_t {
+    NONE = 0,
+    ACCELERATE = 1 << 0,
+    BRAKE = 1 << 1,
+    TURN_LEFT = 1 << 2,
+    TURN_RIGHT = 1 << 3
+};
+
+inline uint8_t operator|(MoveMask a, MoveMask b) {
+    return static_cast<uint8_t>(a) | static_cast<uint8_t>(b);
+}
+
+
 enum class VehicleTipe : uint8_t {
     // Identificador de vehiculo
     FIAT_600 = 0x40,
