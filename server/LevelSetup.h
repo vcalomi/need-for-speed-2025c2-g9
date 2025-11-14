@@ -48,5 +48,5 @@ private:
     std::mt19937 rng_;
     std::deque<FixtureTag> vehicle_tags_;
     PhysicsEventCollector collector_;
-    int totalLaps_ = 2;
+    int totalLaps_ = 1;
 };

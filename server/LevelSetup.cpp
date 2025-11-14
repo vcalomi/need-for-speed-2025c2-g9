@@ -64,7 +64,9 @@ void LevelSetup::buildVehicles() {
     }
 }
 
+
 std::vector<RawEvent> LevelSetup::stepAndDrainEvents(float dt) {
+    collector_.capturePreStepSpeeds(player_vehicle_map_);
     const float substepDt = dt;
     const int substeps = 4;
     b2World_Step(world_, substepDt, substeps);
@@ -72,14 +74,4 @@ std::vector<RawEvent> LevelSetup::stepAndDrainEvents(float dt) {
     collector_.collect(world_);
 
     return collector_.drain();  
-}
-
-void LevelSetup::capturePreStepSpeeds() {
-    lastSpeeds_.clear();
-
-    for (auto& [playerId, vehiclePtr] : player_vehicle_map_) {
-        b2Vec2 v = b2Body_GetLinearVelocity(vehiclePtr->bodyId());
-        float speed = std::sqrt(v.x * v.x + v.y * v.y);
-        lastSpeeds_[playerId] = speed;
-    }
 }

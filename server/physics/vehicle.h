@@ -22,9 +22,9 @@ public:
     void setFixtureTag(FixtureTag* tag);
     void disableControl() { controlsEnabled_ = false; }
     void enableControl() { controlsEnabled_ = true; }
-    void hit_with_wall() { vehicle_hp_ = vehicle_hp_ - 5.0; }
-    void hit_with_car() { vehicle_hp_ = vehicle_hp_ - 10.0; }
+    
     float getVehicleHp() { return vehicle_hp_; }
+    void applyDamage(float damage);
 private:
     bool controlsEnabled_ = true;
     b2WorldId world_id_;

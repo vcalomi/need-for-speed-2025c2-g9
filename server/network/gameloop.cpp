@@ -15,6 +15,8 @@
 #include "../../common/Dto/vehicle_checkpoint.h"
 #include "../../common/Dto/vehicle_collision.h"
 #include "../../common/Dto/vehicle_wall_collision.h"
+#include "../../common/Dto/lap_completed.h"
+#include "../../common/Dto/race_finished.h"
 #include "../../common/common_codes.h"
 #include "../../common/vehicle_type_utils.h"
 #include "../YamlParser.h"
@@ -73,8 +75,8 @@ void GameLoop::sendInitialPlayersCars() {
         }
 
         std::string username = playerUsernames_.at(playerId);
-
-        auto dto = std::make_shared<PlayerDto>(username, vt);
+        auto vehicle = getVehicleById(playerId);
+        auto dto = std::make_shared<PlayerDto>(username, vt, vehicle->getVehicleHp());
         broadcaster_.broadcast(dto);
     }
 }
@@ -147,6 +149,16 @@ Vehicle* GameLoop::getVehicleByPlayer(const std::string& username) {
     return (it == map.end()) ? nullptr : it->second.get();
 }
 
+Vehicle* GameLoop::getVehicleById(int vehicleId) {
+    auto it = playerUsernames_.find(vehicleId);
+    if (it == playerUsernames_.end()) {
+        return nullptr;
+    }
+
+    const std::string& username = it->second;
+    return getVehicleByPlayer(username);
+}
+
 void GameLoop::handleRaceProgress(int vehicleId, int checkpointIndex) {
     auto& prog = raceProgress_[vehicleId];
 
@@ -164,7 +176,7 @@ void GameLoop::handleRaceProgress(int vehicleId, int checkpointIndex) {
     );
     broadcaster_.broadcast(cpDto);
 
-    if (checkpointIndex == totalCheckpoints_ - 1) {
+    if (checkpointIndex == setup->totalCheckpoints() - 1) {
         prog.currentLap++;
         prog.nextCheckpoint = 0;
 
@@ -174,15 +186,15 @@ void GameLoop::handleRaceProgress(int vehicleId, int checkpointIndex) {
         );
         broadcaster_.broadcast(lapDto);
 
-        if (prog.currentLap >= totalLaps_) {
+        if (prog.currentLap >= setup->totalLaps()) {
             prog.finished = true;
 
             auto finishDto = std::make_shared<RaceFinishedDto>(
                 playerUsernames_.at(vehicleId)
             );
             broadcaster_.broadcast(finishDto);
-
-            // getVehicleById(vehicleId)->disableControl();
+            
+            getVehicleById(vehicleId)->disableControl();
         }
 
     } else {
@@ -190,24 +202,88 @@ void GameLoop::handleRaceProgress(int vehicleId, int checkpointIndex) {
     }
 }
 
+float GameLoop::computeCollisionDamage(float impactSpeed){
+    const float minSpeed = 5.0f;
+    const float maxSpeed = 25.0f;
+    const float maxDamage = 40.0f;
 
+    if (impactSpeed <= minSpeed) return 0.0f;
+    if (impactSpeed >= maxSpeed) return maxDamage;
+
+    float t = (impactSpeed - minSpeed) / (maxSpeed - minSpeed);
+    return t * maxDamage;
+}
+
+void GameLoop::handleVehicleVehicleCollision(const RawVehicleVehicle& event) {
+    Vehicle* vehicleA = getVehicleById(event.a);
+    Vehicle* vehicleB = getVehicleById(event.b);
+
+    if (!vehicleA && !vehicleB) return;
+
+
+    float dmgA = computeCollisionDamage(event.speedA);
+    if (dmgA > 0.0f) {
+        vehicleA->applyDamage(dmgA);
+    }
+
+    float dmgB = computeCollisionDamage(event.speedB);
+    if (dmgB > 0.0f) {
+        vehicleB->applyDamage(dmgB);
+    }
+
+    auto dto = std::make_shared<VehicleCollisionDto>(
+        playerUsernames_.at(event.a),
+        vehicleA->getVehicleHp(),
+        playerUsernames_.at(event.b),
+        vehicleB->getVehicleHp()
+    );
+    broadcaster_.broadcast(dto);
+
+    if (vehicleA->getVehicleHp() == 0) {
+        vehicleA->disableControl();
+        //dto_destruccion 
+    }
+    if (vehicleB->getVehicleHp() == 0) {
+        vehicleB->disableControl();
+        //dto_destruccion 
+    }
+}
+
+void GameLoop::handleVehicleWallCollision(const RawVehicleWall& event) {
+    Vehicle* vehicle = getVehicleById(event.vehicleId);
+    if (!vehicle) return;
+
+    float dmg = computeCollisionDamage(event.speedBeforeImpact);
+    if (dmg > 0.0f) {
+        vehicle->applyDamage(dmg);
+    }
+
+    auto dto = std::make_shared<VehicleWallCollisionDto>(
+        playerUsernames_.at(event.vehicleId),
+        vehicle->getVehicleHp()
+    );
+    broadcaster_.broadcast(dto);
+
+    if (vehicle->getVehicleHp() == 0) {
+        vehicle->disableControl();
+    }
+}
 
 void GameLoop::processGameEvents() {
     auto events = setup->stepAndDrainEvents(1.0f / 60.0f);
 
-    for (auto& event: events) {
+    for (auto& event : events) {
         if (auto* vehicle_checkpoint = std::get_if<RawVehicleCheckpoint>(&event)) {
+
             handleRaceProgress(vehicle_checkpoint->vehicleId, vehicle_checkpoint->checkpointIndex);
-            
-        } else if (auto* vechicle_vechicle = std::get_if<RawVehicleVehicle>(&event)) {
-            auto dto = std::make_shared<VehicleCollisionDto>(
-                    playerUsernames_.at(vechicle_vechicle->a),
-                    playerUsernames_.at(vechicle_vechicle->b));
-            broadcaster_.broadcast(dto);
+
+        } else if (auto* vehicle_vehicle = std::get_if<RawVehicleVehicle>(&event)) {
+
+            handleVehicleVehicleCollision(*vehicle_vehicle);
+
         } else if (auto* vehicle_wall = std::get_if<RawVehicleWall>(&event)) {
-            auto dto = std::make_shared<VehicleWallCollisionDto>(
-                    playerUsernames_.at(vehicle_wall->vehicleId));
-            broadcaster_.broadcast(dto);
+
+            handleVehicleWallCollision(*vehicle_wall);
         }
     }
 }

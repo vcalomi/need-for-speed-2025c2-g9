@@ -2,7 +2,7 @@
 
 
 Vehicle::Vehicle(b2WorldId worldId, VehicleSpec spec, Spawn spawn, int player_id, FixtureTag* tag):
-        world_id_(worldId), spec_(spec), spawn_(spawn), vehicle_id_(player_id) {
+        world_id_(worldId), spec_(spec), spawn_(spawn), vehicle_id_(player_id), vehicle_hp_(spec.health) {
 
     b2BodyDef bodyDef = b2DefaultBodyDef();
     bodyDef.type = b2_dynamicBody;
@@ -21,6 +21,7 @@ Vehicle::Vehicle(b2WorldId worldId, VehicleSpec spec, Spawn spawn, int player_id
     shapeDef.enableSensorEvents = true;
 
     b2CreatePolygonShape(body_, &shapeDef, &boxShape);
+
 }
 
 void Vehicle::accelerate() {
@@ -95,3 +96,11 @@ void Vehicle::draw(SDL_Renderer* r, float camX_px, float camY_px, float zoom, fl
 void Vehicle::setFixtureTag(FixtureTag* tag) {
     b2Body_SetUserData(body_, tag);
 }
+
+void Vehicle::applyDamage(float damage){
+    if (vehicle_hp_ <= 0.0f) return;
+    vehicle_hp_ -= damage;
+    if (vehicle_hp_ < 0.0f) vehicle_hp_ = 0.0f;
+}
+
+

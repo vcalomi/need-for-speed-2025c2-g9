@@ -31,9 +31,13 @@ private:
     int maxPlayers;
     void handlerProcessCommand(std::shared_ptr<Dto> dto);
     Vehicle* getVehicleByPlayer(const std::string& username);
-
+    Vehicle* getVehicleById(int vehicleId);
     std::unordered_map<int, PlayerRaceProgress> raceProgress_; 
-    bool handleRaceProgress();
+    void handleRaceProgress(int vehicleId, int checkpointIndex);
+    float computeCollisionDamage(float impactSpeed);
+    void handleVehicleVehicleCollision(const RawVehicleVehicle& event);
+    void handleVehicleWallCollision(const RawVehicleWall& event);
+    
 
 public:
     explicit GameLoop(Queue<std::shared_ptr<Dto>>& gameLoopQueue,
@@ -47,6 +51,8 @@ public:
     void sendInitialPlayersCars();
     void sendCheckpoints();
     void processGameEvents();
+
+
 
 
     ~GameLoop();
