@@ -9,11 +9,10 @@ public:
     float x;
     float y;
     float rotation;
-    bool isAccelerating;
-    bool isBraking;
     bool isAboveBridge;
-    VehicleDto(const std::string& username, float x, float y, float v, bool isAccelerating = false,
-               bool isBraking = false, bool isAboveBridge = false);
+    float speed;
+    VehicleDto(const std::string& username, float x, float y, float v, bool isAboveBridge = false,
+               float speed);
 };
 
 #endif
