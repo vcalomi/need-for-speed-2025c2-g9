@@ -5,6 +5,7 @@
 #include "../../common/Dto/race_finished.h"
 #include "../../common/Dto/vehicle_checkpoint.h"
 #include "../../common/Dto/vehicle_collision.h"
+#include "../../common/Dto/vehicle_exploded.h"
 #include "../../common/Dto/vehicle_wall_collision.h"
 #include "../events/checkpoint_completed_event.h"
 #include "../events/checkpoint_event.h"
@@ -13,6 +14,7 @@
 #include "../events/player_events.h"
 #include "../events/player_joined_event.h"
 #include "../events/race_finished_event.h"
+#include "../events/vehicle_exploded_event.h"
 #include "../events/wall_collision_event.h"
 
 
@@ -127,6 +129,17 @@ void DtoHandlerSystem::Process(const std::shared_ptr<Dto>& dto) {
             std::cout << "[DtoHandler] Race Finished: " << raceFinishedDto->username << std::endl;
 
             event = std::make_shared<RaceFinishedEvent>(raceFinishedDto->username);
+            break;
+        }
+        case ActionCode::SEND_VEHICLE_EXPLODED: {
+            auto vehicleExplodedDto = std::dynamic_pointer_cast<VehicleExplodedDto>(dto);
+            if (!vehicleExplodedDto)
+                return;
+
+            std::cout << "[DtoHandler] Vehicle Exploded: " << vehicleExplodedDto->username
+                      << std::endl;
+
+            event = std::make_shared<VehicleExplodedEvent>(vehicleExplodedDto->username);
             break;
         }
 
