@@ -8,6 +8,7 @@
 #include "../events/checkpoint_completed_event.h"
 #include "../events/checkpoint_event.h"
 #include "../events/player_collision_event.h"
+#include "../events/race_finished_event.h"
 #include "../events/wall_collision_event.h"
 #include "../ui/checkpoint_indicator.h"
 
@@ -45,6 +46,9 @@ RendererSystem::RendererSystem(SDL2pp::Renderer& renderer, SpriteSheet& cars, Wo
         SpawnParticlesFor(world_, e.player1_username, ParticleType::SPARK_VEHICLE);
         SpawnParticlesFor(world_, e.player2_username, ParticleType::SPARK_VEHICLE);
     });
+
+    eventBus_.Subscribe<RaceFinishedEvent>(
+            [this](const RaceFinishedEvent& e) { raceFinished_ = true; });
 }
 
 
@@ -57,6 +61,13 @@ RendererSystem::~RendererSystem() {
 
 void RendererSystem::Render(const World& world, Map& map, const Camera& camera, Minimap& minimap) {
     renderer_.Clear();
+
+    if (raceFinished_) {
+        RenderRaceFinishedScreen(world);
+        renderer_.Present();
+        return;
+    }
+
     CheckpointIndicator checkpointIndicator(renderer_);
     map.RenderBackground(renderer_, camera);
     if (!world.HasPlayers()) {
@@ -210,4 +221,28 @@ void RendererSystem::RenderHealthBar(const World& world) {
     SDL_Rect dst{x + (barWidth - tw) / 2, y + (barHeight - th) / 2, tw, th};
     SDL_RenderCopy(renderer_.Get(), tex, nullptr, &dst);
     SDL_DestroyTexture(tex);
+}
+
+void RendererSystem::RenderRaceFinishedScreen(const World& world) {
+    int w, h;
+    SDL_GetRendererOutputSize(renderer_.Get(), &w, &h);
+
+    // Fondo oscuro
+    SDL_SetRenderDrawColor(renderer_.Get(), 0, 0, 0, 200);
+    SDL_Rect bg{0, 0, w, h};
+    SDL_RenderFillRect(renderer_.Get(), &bg);
+
+    // Título
+    DrawText("RACE FINISHED", w / 2 - 100, 80);
+
+    // Mostrar datos del jugador local
+    const auto& local = world.GetLocalPlayer();
+    // std::string time = "Your time: " + std::to_string(local.GetRaceTime());
+    // DrawText(time, w / 2 - 100, 150);
+
+    // Si guardaste standings en lastRaceInfo_
+    // DrawText("Position: " + std::to_string(lastRaceInfo_.position), w / 2 - 100, 190);
+
+    // Mensaje de espera
+    DrawText("Waiting for next race...", w / 2 - 120, h - 100);
 }

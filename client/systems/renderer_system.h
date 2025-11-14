@@ -33,7 +33,10 @@ private:
     PlayerRenderer playerRenderer_;
     CheckpointRenderer checkpointRenderer_;
 
+    bool raceFinished_ = false;
+
     void RenderLapCounter(const World& world);
     void DrawText(const std::string& text, int x, int y);
     void RenderHealthBar(const World& world);
+    void RenderRaceFinishedScreen(const World& world);
 };
