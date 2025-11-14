@@ -175,7 +175,7 @@ void RendererSystem::SpawnParticlesFor(const World& world, const std::string& us
                                        ParticleType type) {
     const auto player = world.GetPlayer(username);
 
-    const Sprite& sprite = player.GetCurrentSprite(cars_);
+    const Sprite& sprite = cars_.GetSprite(player.GetSprite());
     float angle = player.GetAngle();
 
     float offset = 0.0f;

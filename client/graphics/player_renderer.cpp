@@ -7,21 +7,44 @@ PlayerRenderer::PlayerRenderer(SDL2pp::Renderer& renderer, SpriteSheet& cars, TT
         renderer_(renderer), cars_(cars), font_(font) {}
 
 void PlayerRenderer::Draw(const Player& player, const Camera& camera) {
-    std::string spriteName = player.GetSpriteForAngle(player.GetAngle());
-    if (!cars_.HasSprite(spriteName)) {
-        std::cerr << "[Renderer] Sprite '" << spriteName << "' not found, skipping draw\n";
+    // 1) Obtener sprite BASE del auto
+    //    Debe llamarse algo como "Fiat_600_Base" o "Ferrari_F40_Base".
+    std::string baseSpriteName = player.GetSprite();
+
+    if (!cars_.HasSprite(baseSpriteName)) {
+        std::cerr << "[Renderer] Base sprite '" << baseSpriteName << "' not found\n";
         return;
     }
 
-    const Sprite& src = cars_.GetSprite(spriteName);
+    const Sprite& src = cars_.GetSprite(baseSpriteName);
 
-    float drawX = player.GetX() - camera.getX() - src.width / HALF_DIVISOR;
-    float drawY = player.GetY() - camera.getY() - src.height / HALF_DIVISOR;
+    // 2) Convertir coordenadas de mundo → pantalla
+    float drawX = player.GetX() - camera.getX();
+    float drawY = player.GetY() - camera.getY();
 
-    Rect dest(drawX, drawY, src.width, src.height);
-    renderer_.Copy(cars_.GetTexture(), src.area, dest);
-    DrawTextAbove(font_, player.GetUsername(), drawX, drawY, src.area);
+    // 3) Crear rect de destino
+    SDL_Rect dest;
+    dest.w = src.width;
+    dest.h = src.height;
+    dest.x = static_cast<int>(drawX - dest.w / 2);
+    dest.y = static_cast<int>(drawY - dest.h / 2);
+
+    // 4) Rotación real en grados
+    double angle = player.GetAngle();
+
+    // 5) Renderizar usando SDL2 (dentro de SDL2pp)
+    SDL_RenderCopyEx(renderer_.Get(),           // Renderer nativo
+                     cars_.GetTexture().Get(),  // Textura nativa del spritesheet
+                     &src.area,                 // SRC rect
+                     &dest,                     // DEST rect
+                     angle,                     // Ángulo real en grados
+                     nullptr,                   // Rotar desde el centro
+                     SDL_FLIP_NONE);
+
+    // 6) Dibujar nombre encima (igual que siempre)
+    DrawTextAbove(font_, player.GetUsername(), dest.x, dest.y, src.area);
 }
+
 
 void PlayerRenderer::SetFont(TTF_Font* font) { font_ = font; }
 

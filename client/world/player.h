@@ -18,15 +18,14 @@ public:
     float GetHealth() const { return health_; }
     float GetMaxHealth() const { return maxHealth_; }
     std::string GetUsername() const { return username_; }
-    std::string GetSpriteForAngle(float angle) const;
+    std::string GetSprite() const;
     std::string VehicleTipeToString(VehicleTipe type) const;
-    const Sprite& GetCurrentSprite(const SpriteSheet& carSprites) const;
     void updateHealth(float health) { health_ = health; }
 
 private:
     std::string username_;
     VehicleTipe carType_;
-    std::string currentSprite_;
+    std::string baseSprite_;
     float x_;
     float y_;
     float angle_;

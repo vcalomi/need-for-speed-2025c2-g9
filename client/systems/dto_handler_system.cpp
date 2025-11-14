@@ -49,13 +49,9 @@ void DtoHandlerSystem::Process(const std::shared_ptr<Dto>& dto) {
             if (!vehicleDto)
                 return;
 
-            std::cout << "[DtoHandler] Vehicle update: " << vehicleDto->username << " pos("
-                      << vehicleDto->x << ", " << vehicleDto->y << ") rot=" << vehicleDto->rotation
-                      << std::endl;
-
             event = std::make_shared<PlayerStateUpdatedEvent>(
                     vehicleDto->username, vehicleDto->x, vehicleDto->y, vehicleDto->rotation,
-                    vehicleDto->isAccelerating, vehicleDto->isBraking);
+                    vehicleDto->speed, vehicleDto->isAboveBridge);
 
 
             break;

@@ -24,32 +24,26 @@ void ResourceLoader::LoadCarSprites() {
 
         for (auto itVeh = sprites.begin(); itVeh != sprites.end(); ++itVeh) {
             std::string vehicle = itVeh->first.as<std::string>();
-            YAML::Node frames = itVeh->second["frames"];
+            YAML::Node base = itVeh->second["frames"]["base"];
 
-            if (!frames) {
+            if (!base) {
                 std::cerr << "[ResourceLoader] WARNING: vehicle '" << vehicle
-                          << "' has no frames section\n";
+                          << "' has no base section\n";
                 continue;
             }
 
-            for (auto itFrame = frames.begin(); itFrame != frames.end(); ++itFrame) {
-                std::string frameName = itFrame->first.as<std::string>();
+            int x = base["x"].as<int>();
+            int y = base["y"].as<int>();
+            int w = base["w"].as<int>();
+            int h = base["h"].as<int>();
 
-                auto f = itFrame->second;
+            std::string spriteKey = vehicle;
+            spriteKey[0] = std::toupper(spriteKey[0]);
+            spriteKey += "_Base";
 
-                int x = f["x"].as<int>();
-                int y = f["y"].as<int>();
-                int w = f["w"].as<int>();
-                int h = f["h"].as<int>();
+            carSprites_.AddSprite(spriteKey, SDL2pp::Rect(x, y, w, h));
 
-                std::string spriteKey = vehicle;
-                spriteKey[0] = std::toupper(spriteKey[0]);
-                spriteKey += frameName;
-
-                carSprites_.AddSprite(spriteKey, SDL2pp::Rect(x, y, w, h));
-            }
-
-            std::cout << "[ResourceLoader] Loaded frames for " << vehicle << std::endl;
+            std::cout << "[ResourceLoader] Loaded BASE sprite for " << vehicle << std::endl;
         }
 
     } catch (const YAML::Exception& e) {
