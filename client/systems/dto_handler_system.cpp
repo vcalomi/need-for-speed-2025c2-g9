@@ -89,7 +89,8 @@ void DtoHandlerSystem::Process(const std::shared_ptr<Dto>& dto) {
             std::cout << "[DtoHandler] Vehicle Wall Collision: " << wallCollisionDto->username
                       << std::endl;
 
-            event = std::make_shared<WallCollisionEvent>(wallCollisionDto->username);
+            event = std::make_shared<WallCollisionEvent>(wallCollisionDto->username,
+                                                         wallCollisionDto->vehicle_new_hp);
             break;
         }
         case ActionCode::SEND_VEHICLES_COLLISION: {
@@ -101,8 +102,9 @@ void DtoHandlerSystem::Process(const std::shared_ptr<Dto>& dto) {
                       << vehicleCollisionDto->vehicle1_username << " with "
                       << vehicleCollisionDto->vehicle2_username << std::endl;
 
-            event = std::make_shared<PlayerCollisionEvent>(vehicleCollisionDto->vehicle1_username,
-                                                           vehicleCollisionDto->vehicle2_username);
+            event = std::make_shared<PlayerCollisionEvent>(
+                    vehicleCollisionDto->vehicle1_username, vehicleCollisionDto->vehicle_1_new_hp,
+                    vehicleCollisionDto->vehicle2_username, vehicleCollisionDto->vehicle_2_new_hp);
             break;
         }
         case ActionCode::SEND_LAP_COMPLETED: {

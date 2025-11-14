@@ -4,8 +4,10 @@
 
 #include "../events/checkpoint_completed_event.h"
 #include "../events/checkpoint_event.h"
+#include "../events/player_collision_event.h"
 #include "../events/player_events.h"
 #include "../events/player_joined_event.h"
+#include "../events/wall_collision_event.h"
 
 World::World(EventBus& eventBus): eventBus_(eventBus) {
     eventBus_.Subscribe<CheckPointEvent>([this](const CheckPointEvent& e) {
@@ -32,6 +34,12 @@ World::World(EventBus& eventBus): eventBus_(eventBus) {
     eventBus_.Subscribe<CheckPointCompletedEvent>([this](const CheckPointCompletedEvent& e) {
         OnPlayerReachedCheckpoint(e.username, e.checkpoint_id);
     });
+
+    eventBus_.Subscribe<PlayerCollisionEvent>(
+            [this](const PlayerCollisionEvent& e) { OnCollision(e); });
+
+    eventBus_.Subscribe<WallCollisionEvent>(
+            [this](const WallCollisionEvent& e) { OnCollision(e); });
 }
 
 void World::AddPlayer(std::string username, VehicleTipe carType, bool isLocal, float health) {
@@ -68,8 +76,24 @@ void World::UpdateFromServer(std::string username, float x, float y, float angle
     player.UpdateFromNetwork(x, y, angle);
 }
 
-void World::OnCollision(std::string username1, std::string username2) {
-    std::cout << "💥 Collision between " << username1 << " and " << username2 << std::endl;
+void World::OnCollision(const Event& e) {
+    if (e.GetType() == PlayerCollisionEvent::Type()) {
+        const PlayerCollisionEvent& collisionEvent = static_cast<const PlayerCollisionEvent&>(e);
+        auto it1 = players_.find(collisionEvent.player1_username);
+        if (it1 != players_.end()) {
+            it1->second.updateHealth(collisionEvent.player1_new_hp);
+        }
+        auto it2 = players_.find(collisionEvent.player2_username);
+        if (it2 != players_.end()) {
+            it2->second.updateHealth(collisionEvent.player2_new_hp);
+        }
+    } else if (e.GetType() == WallCollisionEvent::Type()) {
+        const WallCollisionEvent& collisionEvent = static_cast<const WallCollisionEvent&>(e);
+        auto it = players_.find(collisionEvent.player1_username);
+        if (it != players_.end()) {
+            it->second.updateHealth(collisionEvent.player1_new_hp);
+        }
+    }
 }
 
 float World::GetLocalPlayerX() const {
