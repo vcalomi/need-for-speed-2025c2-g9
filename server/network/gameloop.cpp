@@ -243,10 +243,12 @@ void GameLoop::handleVehicleVehicleCollision(const RawVehicleVehicle& event) {
     if (vehicleA->getVehicleHp() == 0) {
         vehicleA->disableControl();
         auto dto = std::make_shared< VehicleExplodedDto>( playerUsernames_.at(event.a));
+        broadcaster_.broadcast(dto);
     }
     if (vehicleB->getVehicleHp() == 0) {
         vehicleB->disableControl();
         auto dto = std::make_shared< VehicleExplodedDto>( playerUsernames_.at(event.b));
+        broadcaster_.broadcast(dto);
     }
 }
 
