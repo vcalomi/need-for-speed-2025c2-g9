@@ -1,14 +1,18 @@
 #include "./dto_handler_system.h"
 
 #include "../../common/Dto/checkpoint.h"
+#include "../../common/Dto/lap_completed.h"
+#include "../../common/Dto/race_finished.h"
 #include "../../common/Dto/vehicle_checkpoint.h"
 #include "../../common/Dto/vehicle_collision.h"
 #include "../../common/Dto/vehicle_wall_collision.h"
 #include "../events/checkpoint_completed_event.h"
 #include "../events/checkpoint_event.h"
+#include "../events/lap_completed_event.h"
 #include "../events/player_collision_event.h"
 #include "../events/player_events.h"
 #include "../events/player_joined_event.h"
+#include "../events/race_finished_event.h"
 #include "../events/wall_collision_event.h"
 
 
@@ -98,6 +102,28 @@ void DtoHandlerSystem::Process(const std::shared_ptr<Dto>& dto) {
 
             event = std::make_shared<PlayerCollisionEvent>(vehicleCollisionDto->vehicle1_username,
                                                            vehicleCollisionDto->vehicle2_username);
+            break;
+        }
+        case ActionCode::SEND_LAP_COMPLETED: {
+            auto lapCompletedDto = std::dynamic_pointer_cast<LapCompletedDto>(dto);
+            if (!lapCompletedDto)
+                return;
+
+            std::cout << "[DtoHandler] Lap Completed: " << lapCompletedDto->username
+                      << " current lap " << lapCompletedDto->current_lap << std::endl;
+
+            event = std::make_shared<LapCompletedEvent>(lapCompletedDto->username,
+                                                        lapCompletedDto->current_lap);
+            break;
+        }
+        case ActionCode::SEND_RACE_FINISHED: {
+            auto raceFinishedDto = std::dynamic_pointer_cast<RaceFinishedDto>(dto);
+            if (!raceFinishedDto)
+                return;
+
+            std::cout << "[DtoHandler] Race Finished: " << raceFinishedDto->username << std::endl;
+
+            event = std::make_shared<RaceFinishedEvent>(raceFinishedDto->username);
             break;
         }
 
