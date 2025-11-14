@@ -20,7 +20,7 @@ vehicles:
     steer_torque: 5500.0
     friction: 1.0
     restitution: 1.0
-    health_points: 2000.0
+    health_points: 200.0
 
   porsche_911:
     width_m: 5.0

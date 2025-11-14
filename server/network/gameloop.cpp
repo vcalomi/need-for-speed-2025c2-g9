@@ -242,12 +242,12 @@ void GameLoop::handleVehicleVehicleCollision(const RawVehicleVehicle& event) {
 
     if (vehicleA->getVehicleHp() == 0) {
         vehicleA->disableControl();
-        auto dto = std::make_shared< VehicleExplodedDto>( playerUsernames_.at(event.a));
+        auto dto = std::make_shared<VehicleExplodedDto>( playerUsernames_.at(event.a));
         broadcaster_.broadcast(dto);
     }
     if (vehicleB->getVehicleHp() == 0) {
         vehicleB->disableControl();
-        auto dto = std::make_shared< VehicleExplodedDto>( playerUsernames_.at(event.b));
+        auto dto = std::make_shared<VehicleExplodedDto>( playerUsernames_.at(event.b));
         broadcaster_.broadcast(dto);
     }
 }
@@ -269,6 +269,8 @@ void GameLoop::handleVehicleWallCollision(const RawVehicleWall& event) {
 
     if (vehicle->getVehicleHp() == 0) {
         vehicle->disableControl();
+        auto dto = std::make_shared<VehicleExplodedDto>(playerUsernames_.at(event.vehicleId));
+        broadcaster_.broadcast(dto);
     }
 }
 
