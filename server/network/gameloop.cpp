@@ -17,6 +17,7 @@
 #include "../../common/Dto/vehicle_wall_collision.h"
 #include "../../common/Dto/lap_completed.h"
 #include "../../common/Dto/race_finished.h"
+#include "../../common/Dto/vehicle_exploded.h"
 #include "../../common/common_codes.h"
 #include "../../common/vehicle_type_utils.h"
 #include "../YamlParser.h"
@@ -241,11 +242,11 @@ void GameLoop::handleVehicleVehicleCollision(const RawVehicleVehicle& event) {
 
     if (vehicleA->getVehicleHp() == 0) {
         vehicleA->disableControl();
-        //dto_destruccion 
+        auto dto = std::make_shared< VehicleExplodedDto>( playerUsernames_.at(event.a));
     }
     if (vehicleB->getVehicleHp() == 0) {
         vehicleB->disableControl();
-        //dto_destruccion 
+        auto dto = std::make_shared< VehicleExplodedDto>( playerUsernames_.at(event.b));
     }
 }
 
