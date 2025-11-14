@@ -34,13 +34,6 @@ void Client::stop() {
         return;
     }
     connected = false;
-    try {
-        recvQueue.close();
-    } catch (...) {}
-    try {
-        senderQueue.close();
-    } catch (...) {}
-    
     sender.stop();
     receiver.stop();
     
@@ -48,6 +41,13 @@ void Client::stop() {
         clientProtocol.close();
     } catch (...) {}
 
+    try {
+        recvQueue.close();
+    } catch (...) {}
+    try {
+        senderQueue.close();
+    } catch (...) {}
+    
     if (sender.is_alive())
         sender.join();
 
