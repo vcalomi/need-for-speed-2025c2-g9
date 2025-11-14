@@ -15,10 +15,12 @@ public:
     float GetX() const { return x_; }
     float GetY() const { return y_; }
     float GetAngle() const { return angle_; }
+    float GetHealth() const { return health_; }
     std::string GetUsername() const { return username_; }
     std::string GetSpriteForAngle(float angle) const;
     std::string VehicleTipeToString(VehicleTipe type) const;
     const Sprite& GetCurrentSprite(const SpriteSheet& carSprites) const;
+    void updateHealth(float health) { health_ = health; }
 
 private:
     std::string username_;
@@ -27,4 +29,5 @@ private:
     float x_;
     float y_;
     float angle_;
+    float health_;
 };
