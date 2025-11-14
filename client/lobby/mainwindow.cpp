@@ -364,6 +364,11 @@ void MainWindow::handleCreateButton() {
 }
 
 void MainWindow::handleContinueToWait() {
+    if (ui->comboMaxPlayers->currentIndex() == 0) {
+        QMessageBox::warning(this, "Missing Selection",
+                             "Please select the number of players before continuing.");
+        return;
+    }
     player.maxPlayers = ui->comboMaxPlayers->currentText().toUInt();
     try {
         if (!this->lobbySvc->createRoom(player.roomCode, player.maxPlayers)) {
