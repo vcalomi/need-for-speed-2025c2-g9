@@ -8,7 +8,7 @@
 
 class Player {
 public:
-    Player(std::string username, VehicleTipe carType, float x, float y);
+    Player(std::string username, VehicleTipe carType, float x, float y, float health);
 
     void UpdateFromNetwork(float x, float y, float angle);
 
@@ -16,6 +16,7 @@ public:
     float GetY() const { return y_; }
     float GetAngle() const { return angle_; }
     float GetHealth() const { return health_; }
+    float GetMaxHealth() const { return maxHealth_; }
     std::string GetUsername() const { return username_; }
     std::string GetSpriteForAngle(float angle) const;
     std::string VehicleTipeToString(VehicleTipe type) const;
@@ -30,4 +31,5 @@ private:
     float y_;
     float angle_;
     float health_;
+    const float maxHealth_;
 };

@@ -17,7 +17,7 @@ struct PlayerProgress {
 class World {
 public:
     explicit World(EventBus& eventBus);
-    void AddPlayer(std::string username, VehicleTipe carType, bool isLocal);
+    void AddPlayer(std::string username, VehicleTipe carType, bool isLocal, float health);
     const Player& GetLocalPlayer() const;
     float GetLocalPlayerX() const;
     float GetLocalPlayerY() const;

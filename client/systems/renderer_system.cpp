@@ -1,5 +1,6 @@
 #include "./renderer_system.h"
 
+#include <iomanip>
 #include <iostream>
 
 #include <SDL2/SDL_ttf.h>
@@ -75,6 +76,7 @@ void RendererSystem::Render(const World& world, Map& map, const Camera& camera, 
     minimap.Render(world, camera);
     checkpointIndicator.Draw(camera, localPlayer, activeCp);
     RenderLapCounter(world);
+    RenderHealthBar(world);
     renderer_.Present();
 }
 
@@ -148,4 +150,64 @@ void RendererSystem::RenderLapCounter(const World& world) {
 
     DrawText(lapText, x, yLap);
     DrawText(cpText, x, yCp);
+}
+
+void RendererSystem::RenderHealthBar(const World& world) {
+    const Player& local = world.GetLocalPlayer();
+
+    float health = local.GetHealth();
+    float maxHealth = local.GetMaxHealth();
+
+    float ratio = (maxHealth > 0) ? (health / maxHealth) : 0.0f;
+    ratio = std::clamp(ratio, 0.0f, 1.0f);
+
+    int sw = 0, sh = 0;
+    SDL_GetRendererOutputSize(renderer_.Get(), &sw, &sh);
+
+    int margin = 20;
+    int barWidth = 200;
+    int barHeight = 18;
+
+    int x = margin;
+    int y = sh - margin - barHeight - 90;
+
+    SDL_Rect bgRect{x, y, barWidth, barHeight};
+    SDL_SetRenderDrawColor(renderer_.Get(), 40, 40, 40, 200);
+    SDL_RenderFillRect(renderer_.Get(), &bgRect);
+
+    int hpWidth = static_cast<int>(barWidth * ratio);
+
+    Uint8 r = 0, g = 255, b = 0;
+    if (ratio < 0.3f) {
+        r = 255;
+        g = 40;
+        b = 40;
+    } else if (ratio < 0.6f) {
+        r = 255;
+        g = 165;
+        b = 0;
+    }
+
+    SDL_Rect hpRect{x, y, hpWidth, barHeight};
+    SDL_SetRenderDrawColor(renderer_.Get(), r, g, b, 255);
+    SDL_RenderFillRect(renderer_.Get(), &hpRect);
+
+    std::stringstream ss;
+    ss << std::fixed << std::setprecision((health == floor(health)) ? 0 : 1);
+    ss << health << "/" << maxHealth;
+    std::string hpText = ss.str();
+
+    SDL_Color white{255, 255, 255, 255};
+    SDL_Surface* surf = TTF_RenderText_Blended(font_, hpText.c_str(), white);
+    if (!surf)
+        return;
+
+    SDL_Texture* tex = SDL_CreateTextureFromSurface(renderer_.Get(), surf);
+    int tw = surf->w;
+    int th = surf->h;
+    SDL_FreeSurface(surf);
+
+    SDL_Rect dst{x + (barWidth - tw) / 2, y + (barHeight - th) / 2, tw, th};
+    SDL_RenderCopy(renderer_.Get(), tex, nullptr, &dst);
+    SDL_DestroyTexture(tex);
 }

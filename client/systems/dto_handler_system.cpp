@@ -37,7 +37,8 @@ void DtoHandlerSystem::Process(const std::shared_ptr<Dto>& dto) {
             std::cout << "[DtoHandler] Received player: " << username << std::endl;
 
             event = std::make_shared<PlayerJoinedEvent>(username, playerDto->Type,
-                                                        username == client_.getUsername());
+                                                        username == client_.getUsername(),
+                                                        playerDto->car_hp);
             break;
         }
 

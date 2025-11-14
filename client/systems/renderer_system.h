@@ -35,4 +35,5 @@ private:
 
     void RenderLapCounter(const World& world);
     void DrawText(const std::string& text, int x, int y);
+    void RenderHealthBar(const World& world);
 };

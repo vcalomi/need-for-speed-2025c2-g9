@@ -21,7 +21,7 @@ World::World(EventBus& eventBus): eventBus_(eventBus) {
 
     eventBus_.Subscribe<PlayerJoinedEvent>([this](const PlayerJoinedEvent& e) {
         if (!HasPlayer(e.username)) {
-            AddPlayer(e.username, e.type, e.isLocal);
+            AddPlayer(e.username, e.type, e.isLocal, e.health);
         }
     });
 
@@ -34,12 +34,12 @@ World::World(EventBus& eventBus): eventBus_(eventBus) {
     });
 }
 
-void World::AddPlayer(std::string username, VehicleTipe carType, bool isLocal) {
+void World::AddPlayer(std::string username, VehicleTipe carType, bool isLocal, float health) {
     float spawnDistance = 3.0f;
     float angle = 0.5f;
     float defaultX = std::cos(angle) * spawnDistance;
     float defaultY = std::sin(angle) * spawnDistance;
-    players_.emplace(username, Player(username, carType, defaultX, defaultY));
+    players_.emplace(username, Player(username, carType, defaultX, defaultY, health));
     playerProgress_[username] = PlayerProgress();
     if (isLocal)
         localUsername_ = username;
