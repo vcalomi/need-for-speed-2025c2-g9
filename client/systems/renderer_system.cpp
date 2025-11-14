@@ -74,6 +74,7 @@ void RendererSystem::Render(const World& world, Map& map, const Camera& camera, 
     map.RenderForeground(renderer_, camera);
     minimap.Render(world, camera);
     checkpointIndicator.Draw(camera, localPlayer, activeCp);
+    RenderLapCounter(world);
     renderer_.Present();
 }
 
@@ -102,4 +103,49 @@ void RendererSystem::SpawnParticlesFor(const World& world, const std::string& us
     }
 
     particleRenderer_.Emit(player.GetX(), player.GetY(), angle, offset, type, 8);
+}
+
+
+void RendererSystem::DrawText(const std::string& text, int x, int y) {
+    SDL_Color white = {255, 255, 255, 255};
+    SDL_Surface* surface = TTF_RenderText_Blended(font_, text.c_str(), white);
+    if (!surface)
+        return;
+
+    SDL_Texture* texture = SDL_CreateTextureFromSurface(renderer_.Get(), surface);
+
+    SDL_Rect dst{x, y, surface->w, surface->h};
+    SDL_FreeSurface(surface);
+
+    SDL_RenderCopy(renderer_.Get(), texture, nullptr, &dst);
+    SDL_DestroyTexture(texture);
+}
+
+void RendererSystem::RenderLapCounter(const World& world) {
+    const auto& localPlayer = world.GetLocalPlayer();
+
+    int laps = world.GetLapsFor(localPlayer.GetUsername());
+    int totalLaps = 3;
+
+    int currentCp = world.GetLapProgressFor(localPlayer.GetUsername());
+    int totalCp = world.GetCheckpoints().size();
+
+    std::string lapText = "Lap " + std::to_string(laps + 1) + "/" + std::to_string(totalLaps);
+    std::string cpText = "CP " + std::to_string(currentCp) + "/" + std::to_string(totalCp);
+
+
+    int width = 0, height = 0;
+    SDL_GetRendererOutputSize(renderer_.Get(), &width, &height);
+
+    int margin = 20;
+
+
+    int lineHeight = 22;
+
+    int x = margin;
+    int yLap = height - margin - lineHeight * 2;
+    int yCp = height - margin - lineHeight;
+
+    DrawText(lapText, x, yLap);
+    DrawText(cpText, x, yCp);
 }
