@@ -7,8 +7,6 @@ PlayerRenderer::PlayerRenderer(SDL2pp::Renderer& renderer, SpriteSheet& cars, TT
         renderer_(renderer), cars_(cars), font_(font) {}
 
 void PlayerRenderer::Draw(const Player& player, const Camera& camera) {
-    // 1) Obtener sprite BASE del auto
-    //    Debe llamarse algo como "Fiat_600_Base" o "Ferrari_F40_Base".
     std::string baseSpriteName = player.GetSprite();
 
     if (!cars_.HasSprite(baseSpriteName)) {
@@ -18,30 +16,21 @@ void PlayerRenderer::Draw(const Player& player, const Camera& camera) {
 
     const Sprite& src = cars_.GetSprite(baseSpriteName);
 
-    // 2) Convertir coordenadas de mundo → pantalla
     float drawX = player.GetX() - camera.getX();
     float drawY = player.GetY() - camera.getY();
 
-    // 3) Crear rect de destino
     SDL_Rect dest;
     dest.w = src.width;
     dest.h = src.height;
     dest.x = static_cast<int>(drawX - dest.w / 2);
     dest.y = static_cast<int>(drawY - dest.h / 2);
 
-    // 4) Rotación real en grados
     double angle = player.GetAngle();
+    angle += 180.0;
 
-    // 5) Renderizar usando SDL2 (dentro de SDL2pp)
-    SDL_RenderCopyEx(renderer_.Get(),           // Renderer nativo
-                     cars_.GetTexture().Get(),  // Textura nativa del spritesheet
-                     &src.area,                 // SRC rect
-                     &dest,                     // DEST rect
-                     angle,                     // Ángulo real en grados
-                     nullptr,                   // Rotar desde el centro
+    SDL_RenderCopyEx(renderer_.Get(), cars_.GetTexture().Get(), &src.area, &dest, angle, nullptr,
                      SDL_FLIP_NONE);
 
-    // 6) Dibujar nombre encima (igual que siempre)
     DrawTextAbove(font_, player.GetUsername(), dest.x, dest.y, src.area);
 }
 
