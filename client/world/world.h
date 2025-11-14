@@ -36,6 +36,9 @@ public:
     void OnPlayerReachedCheckpoint(const std::string& username, int checkpointId);
     const std::set<int> GetPassedCheckpointIdsFor(const std::string& username) const;
 
+    int GetLapsFor(const std::string& username) const;
+    int GetLapProgressFor(const std::string& username) const;
+
 private:
     std::map<std::string, Player> players_;
     std::string localUsername_;

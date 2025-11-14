@@ -140,3 +140,15 @@ const std::set<int> World::GetPassedCheckpointIdsFor(const std::string& username
 
     return passed;
 }
+
+int World::GetLapsFor(const std::string& username) const {
+    if (!playerProgress_.count(username))
+        return 0;
+    return playerProgress_.at(username).lapsCompleted;
+}
+
+int World::GetLapProgressFor(const std::string& username) const {
+    if (!playerProgress_.count(username))
+        return 0;
+    return playerProgress_.at(username).currentCheckpointIndex;
+}
