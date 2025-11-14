@@ -6,8 +6,6 @@
 
 #include "../app/game.h"
 
-#include "client_input_handler.h"
-
 Client::Client(ClientProtocol& protocol, const std::string& username):
         clientProtocol(protocol),
         username(username),
@@ -18,15 +16,13 @@ Client::Client(ClientProtocol& protocol, const std::string& username):
         receiver(clientProtocol, recvQueue) {}
 
 void Client::run() {
+    sender.start();
+    receiver.start();
+    std::cout << "Client: Game communication started" << std::endl;
+    
     try {
-        ClientInputHandler input([this]() { this->stop(); });
-        input.start();
-        sender.start();
-        receiver.start();
-        std::cout << "Client: Game communication started" << std::endl;
         Game game(*this);
         game.Run();
-        input.join();
     } catch (const std::exception& e) {
         std::cerr << "Client fatal error: " << e.what() << std::endl;
     }
@@ -34,20 +30,27 @@ void Client::run() {
 }
 
 void Client::stop() {
+    if (!connected) {
+        return;
+    }
     connected = false;
-    try {
-        clientProtocol.close();
-    } catch (...) {}
     try {
         recvQueue.close();
     } catch (...) {}
     try {
         senderQueue.close();
     } catch (...) {}
+    
     sender.stop();
     receiver.stop();
+    
+    try {
+        clientProtocol.close();
+    } catch (...) {}
+
     if (sender.is_alive())
         sender.join();
+
     if (receiver.is_alive())
         receiver.join();
 }
