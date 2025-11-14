@@ -9,7 +9,9 @@
 class RaceFinishedDto: public Dto {
 public:
     std::string username;
-    RaceFinishedDto(const std::string& username);
+    float finishTime;
+    int finalPosition;
+    RaceFinishedDto(const std::string& username, float finishTime, int finalPosition);
 };
 
 #endif
