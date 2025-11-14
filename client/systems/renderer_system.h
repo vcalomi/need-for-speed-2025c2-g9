@@ -34,9 +34,17 @@ private:
     CheckpointRenderer checkpointRenderer_;
 
     bool raceFinished_ = false;
+    bool localPlayerExploded_ = false;
+    bool showExplosion_ = false;
+    float explosionTimer_ = 0.0f;
+
 
     void RenderLapCounter(const World& world);
     void DrawText(const std::string& text, int x, int y);
     void RenderHealthBar(const World& world);
     void RenderRaceFinishedScreen(const World& world);
+    void RenderWorldWithoutLocal(const World& world, Map& map, const Camera& camera,
+                                 Minimap& minimap);
+    void RenderExplosion(const World& world);
+    void RenderPlayerLostScreen(const World& world);
 };

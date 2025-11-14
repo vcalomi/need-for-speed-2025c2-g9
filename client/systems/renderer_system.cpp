@@ -9,6 +9,7 @@
 #include "../events/checkpoint_event.h"
 #include "../events/player_collision_event.h"
 #include "../events/race_finished_event.h"
+#include "../events/vehicle_exploded_event.h"
 #include "../events/wall_collision_event.h"
 #include "../ui/checkpoint_indicator.h"
 
@@ -49,6 +50,14 @@ RendererSystem::RendererSystem(SDL2pp::Renderer& renderer, SpriteSheet& cars, Wo
 
     eventBus_.Subscribe<RaceFinishedEvent>(
             [this](const RaceFinishedEvent& e) { raceFinished_ = true; });
+
+    eventBus_.Subscribe<VehicleExplodedEvent>([this](const VehicleExplodedEvent& e) {
+        if (e.username == world_.GetLocalPlayer().GetUsername()) {
+            localPlayerExploded_ = true;
+            showExplosion_ = true;
+            explosionTimer_ = 1.0f;
+        }
+    });
 }
 
 
@@ -59,8 +68,79 @@ RendererSystem::~RendererSystem() {
     }
 }
 
+void RendererSystem::RenderWorldWithoutLocal(const World& world, Map& map, const Camera& camera,
+                                             Minimap& minimap) {
+    CheckpointIndicator checkpointIndicator(renderer_);
+    map.RenderBackground(renderer_, camera);
+
+    const auto& local = world.GetLocalPlayer();
+    const std::string localName = local.GetUsername();
+
+    for (const auto& [id, player]: world.GetPlayers()) {
+        if (player.GetUsername() == localName)
+            continue;
+
+        playerRenderer_.Draw(player, camera);
+    }
+
+    particleRenderer_.Update(0.016f);
+    particleRenderer_.Render(camera);
+
+    const auto& activeCp = world.GetActiveCheckpointFor(localName);
+    const auto passed = world.GetPassedCheckpointIdsFor(localName);
+
+    checkpointRenderer_.Draw(world.GetCheckpoints(), activeCp, passed, camera);
+    map.RenderForeground(renderer_, camera);
+    minimap.Render(world, camera);
+}
+
+void RendererSystem::RenderExplosion(const World& world) {
+    const auto& local = world.GetLocalPlayer();
+    float x = local.GetX();
+    float y = local.GetY();
+
+    SDL_SetRenderDrawColor(renderer_.Get(), 255, 200, 50, 200);
+    SDL_FRect boom{x - 50, y - 50, 100, 100};
+    SDL_RenderFillRectF(renderer_.Get(), &boom);
+}
+
+void RendererSystem::RenderPlayerLostScreen(const World& world) {
+    int w, h;
+    SDL_GetRendererOutputSize(renderer_.Get(), &w, &h);
+
+    SDL_SetRenderDrawColor(renderer_.Get(), 0, 0, 0, 180);
+    SDL_Rect bg{0, 0, w, h};
+    SDL_RenderFillRect(renderer_.Get(), &bg);
+
+    DrawText("YOU EXPLODED!", w / 2 - 100, 150);
+    DrawText("You will appear in the next race.", w / 2 - 150, 220);
+    DrawText("Waiting for next race...", w / 2 - 120, h - 100);
+}
+
+
 void RendererSystem::Render(const World& world, Map& map, const Camera& camera, Minimap& minimap) {
     renderer_.Clear();
+
+    if (localPlayerExploded_) {
+        renderer_.Clear();
+
+        RenderWorldWithoutLocal(world, map, camera, minimap);
+
+
+        if (showExplosion_) {
+            RenderExplosion(world);
+            explosionTimer_ -= 0.016f;
+            if (explosionTimer_ <= 0.0f) {
+                showExplosion_ = false;
+            }
+        } else {
+            RenderPlayerLostScreen(world);
+        }
+
+        renderer_.Present();
+        return;
+    }
+
 
     if (raceFinished_) {
         RenderRaceFinishedScreen(world);
