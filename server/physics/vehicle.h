@@ -21,10 +21,13 @@ public:
     void draw(SDL_Renderer* r, float camX_px, float camY_px, float zoom, float ppm) const;
     void setFixtureTag(FixtureTag* tag);
     void disableControl() { controlsEnabled_ = false; }
-    void enableControl() { controlsEnabled_ = true; }
     
     float getVehicleHp() { return vehicle_hp_; }
     void applyDamage(float damage);
+    
+    void resetToSpawn();
+    void resetHp();
+    void enableControl() { controlsEnabled_ = true; }
 private:
     bool controlsEnabled_ = true;
     b2WorldId world_id_;

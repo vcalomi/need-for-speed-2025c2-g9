@@ -15,12 +15,12 @@ vehicles:
     width_m: 5.0
     height_m: 10.0
     density: 1.0
-    engine_force_N: 8000.0
+    engine_force_N: 10000.0
     brake_force_N: 3000.0
     steer_torque: 5500.0
     friction: 1.0
     restitution: 1.0
-    health_points: 200.0
+    health_points: 20000.0
 
   porsche_911:
     width_m: 5.0

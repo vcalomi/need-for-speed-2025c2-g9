@@ -37,23 +37,65 @@ GameLoop::GameLoop(Queue<std::shared_ptr<Dto>>& gameLoopQueue, std::map<int, Car
         chosenCars_(chosenCars),
         playerUsernames_(playerUsernames),
         broadcaster_(broadcaster),
-        maxPlayers(maxPlayers) {}
+        maxPlayers(maxPlayers), 
+        raceActive_(false),
+        pendingNextRace_(false) 
+{
+
+        levelPaths_.push_back("../server/physics/Levels/Liberty_City");
+        levelPaths_.push_back("../server/physics/Levels/San_Andreas");
+
+}
 
 void GameLoop::run() {
     try {
-        setup.emplace("../server/physics/Levels", "../server/vehicles_specs/vehicle_specs.yaml",
-                      chosenCars_);
-        sendCheckpoints();
-        sendInitialPlayersCars();
+        startRace(0);
+
         while (should_keep_running()) {
             processCommands();
-            sendVehiclesPositions();
-            processGameEvents();
+
+            if (raceActive_ && setup.has_value()) {
+                sendVehiclesPositions();
+                processGameEvents();
+            }
+
+            if (!raceActive_ && pendingNextRace_) {
+                if (currentLevelIndex_ == 0 && levelPaths_.size() > 1) {
+                    std::cout << "[GameLoop] starting second race on level 1\n";
+                    startRace(1);  
+                }
+            }
+
             std::this_thread::sleep_for(std::chrono::milliseconds(GAME_TICK_MS));
         }
     } catch (const ClosedQueue& e) {
         return;
     }
+}
+
+void GameLoop::startRace(int levelIndex) {
+    if (levelIndex < 0 || levelIndex >= (int)levelPaths_.size()) {
+        std::cerr << "[GameLoop] invalid levelIndex " << levelIndex << "\n";
+        return;
+    }
+
+    currentLevelIndex_ = levelIndex;
+    pendingNextRace_ = false;
+
+    const std::string vehiclesYaml = "../server/vehicles_specs/vehicle_specs.yaml";
+    const std::string& levelDir = levelPaths_[levelIndex];
+
+    setup.emplace(levelDir, vehiclesYaml, chosenCars_);
+
+    raceProgress_.clear();
+    for (const auto& [playerId, _] : chosenCars_) {
+        raceProgress_[playerId] = {};
+    }
+
+    sendCheckpoints();
+    sendInitialPlayersCars();
+
+    raceActive_ = true;
 }
 
 void GameLoop::sendCheckpoints() {
@@ -160,6 +202,16 @@ Vehicle* GameLoop::getVehicleById(int vehicleId) {
     return getVehicleByPlayer(username);
 }
 
+bool GameLoop::allPlayersFinished() {
+    for (const auto& [playerId, _] : chosenCars_) {
+        auto it = raceProgress_.find(playerId);
+        if (it == raceProgress_.end() || !it->second.finished) {
+            return false;
+        }
+    }
+    return true;
+}
+
 void GameLoop::handleRaceProgress(int vehicleId, int checkpointIndex) {
     auto& prog = raceProgress_[vehicleId];
 
@@ -191,6 +243,12 @@ void GameLoop::handleRaceProgress(int vehicleId, int checkpointIndex) {
             broadcaster_.broadcast(finishDto);
 
             getVehicleById(vehicleId)->disableControl();
+
+            if (allPlayersFinished()) {
+                raceActive_ = false;
+                pendingNextRace_ = true;
+                std::cout << "[GameLoop] race finished on level " << currentLevelIndex_ << "\n";
+            }
         }
 
     } else {
