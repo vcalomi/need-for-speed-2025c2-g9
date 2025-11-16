@@ -3,6 +3,7 @@
 #include <QDebug>
 #include <QMessageBox>
 #include <QShortcut>
+#include <QTimer>
 
 #include "markeritem.h"
 #include "ui_mainwindow.h"
@@ -20,12 +21,14 @@ MainWindow::MainWindow(QWidget* parent):
 
     ui->comboCity->addItems({"Liberty City", "San Andreas", "Vice City"});
 
+    QTimer::singleShot(0, this, &MainWindow::loadMapFromCity);
+    connect(ui->comboCity, &QComboBox::currentTextChanged, this, &MainWindow::loadMapFromCity);
+
     // Botones
     connect(ui->loadMapBtn, &QPushButton::clicked, this, &MainWindow::on_loadMapBtn_clicked);
     connect(ui->saveMapBtn, &QPushButton::clicked, this, &MainWindow::on_saveMapBtn_clicked);
     connect(ui->cleanBtn, &QPushButton::clicked, this, &MainWindow::on_cleanBtn_clicked);
 
-    connect(ui->selectToolBtn, &QPushButton::clicked, this, &MainWindow::toolSelect);
     connect(ui->checkpointToolBtn, &QPushButton::clicked, this, &MainWindow::toolCheckpoint);
     connect(ui->hintToolBtn, &QPushButton::clicked, this, &MainWindow::toolHint);
     connect(ui->spawnToolBtn, &QPushButton::clicked, this, &MainWindow::toolSpawn);
@@ -67,10 +70,10 @@ QPixmap MainWindow::mapForCity(const QString& city) const {
     return QPixmap(":/images/vice_city.png");
 }
 
-void MainWindow::on_loadMapBtn_clicked() {
+void MainWindow::loadMapFromCity() {
     QPixmap pm = mapForCity(ui->comboCity->currentText());
     if (pm.isNull()) {
-        QMessageBox::warning(this, "Error", "Could not load the selected map image.");
+        QMessageBox::warning(this, "Error", "Could not load map image.");
         return;
     }
 
@@ -79,8 +82,36 @@ void MainWindow::on_loadMapBtn_clicked() {
     history.clear();
 }
 
+void MainWindow::on_loadMapBtn_clicked() {
+    QString fname = YamlHandler::getOpenFilename(this);
+    if (fname.isEmpty())
+        return;
+
+    QString cityId = YamlHandler::readCityId(fname);
+    if (cityId.isEmpty()) {
+        QMessageBox::warning(this, "Error", "Invalid YAML: missing city_id");
+        return;
+    }
+
+    if (cityId == "liberty_city")
+        ui->comboCity->setCurrentText("Liberty City");
+    else if (cityId == "san_andreas")
+        ui->comboCity->setCurrentText("San Andreas");
+    else
+        ui->comboCity->setCurrentText("Vice City");
+
+    loadMapFromCity();
+
+    if (!YamlHandler::loadSceneFromTrack(fname, view->scenePtr(), view->mapPixelSize())) {
+        QMessageBox::warning(this, "Error", "Could not load track elements.");
+        return;
+    }
+
+    history.clear();
+}
+
 void MainWindow::on_saveMapBtn_clicked() {
-    QString fname = YamlHandler::getSaveFilename();
+    QString fname = YamlHandler::getSaveFilename(this);
     if (fname.isEmpty())
         return;
 
@@ -108,7 +139,6 @@ void MainWindow::onUndo() {
     }
 }
 
-void MainWindow::toolSelect() { view->setTool(MapView::Tool::Select); }
 void MainWindow::toolCheckpoint() { view->setTool(MapView::Tool::PlaceCheckpoint); }
 void MainWindow::toolHint() { view->setTool(MapView::Tool::PlaceHint); }
 void MainWindow::toolSpawn() { view->setTool(MapView::Tool::PlaceSpawn); }

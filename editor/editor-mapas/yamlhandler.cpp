@@ -3,6 +3,7 @@
 #include <QFileDialog>
 #include <QGraphicsItem>
 #include <fstream>
+#include <string>
 
 #include <yaml-cpp/yaml.h>
 
@@ -12,9 +13,45 @@ static QPointF normalize(const QPointF& p, const QSize& canvas) {
     return QPointF(p.x() / canvas.width(), p.y() / canvas.height());
 }
 
-QString YamlHandler::getSaveFilename() {
-    return QFileDialog::getSaveFileName(nullptr, QObject::tr("Save track"), "output/",
-                                        QObject::tr("YAML files (*.yaml)"));
+QString YamlHandler::getOpenFilename(QWidget* parent) {
+    QFileDialog dialog(parent, "Open track", "output/", "YAML files (*.yaml *.yml)");
+    dialog.setOption(QFileDialog::DontUseNativeDialog, true);
+
+    if (dialog.exec() == QDialog::Accepted)
+        return dialog.selectedFiles().first();
+
+    return "";
+}
+
+
+QString YamlHandler::readCityId(const QString& filename) {
+    YAML::Node file = YAML::LoadFile(filename.toStdString());
+    if (!file["city_id"])
+        return "";
+    return QString::fromStdString(file["city_id"].as<std::string>());
+}
+
+static QPointF denormalize(const QPointF& n, const QSize& size) {
+    return QPointF(n.x() * size.width(), n.y() * size.height());
+}
+
+QString YamlHandler::getSaveFilename(QWidget* parent) {
+    QFileDialog dialog(nullptr, "Save track", QDir::currentPath() + "/editor/editor-mapas/maps/",
+                       "YAML files (*.yaml *.yml)");
+
+    dialog.setAcceptMode(QFileDialog::AcceptSave);
+    dialog.setOption(QFileDialog::DontUseNativeDialog, true);
+
+    if (dialog.exec() != QDialog::Accepted)
+        return "";
+
+    QString fname = dialog.selectedFiles().first();
+
+    // Asegurar extensión .yaml
+    if (!fname.endsWith(".yaml") && !fname.endsWith(".yml"))
+        fname += ".yaml";
+
+    return fname;
 }
 
 void YamlHandler::saveSceneAsTrack(const QString& filename, QGraphicsScene* scene,
@@ -22,7 +59,6 @@ void YamlHandler::saveSceneAsTrack(const QString& filename, QGraphicsScene* scen
     if (filename.isEmpty() || !scene || mapPixelSize.isEmpty())
         return;
 
-    // Recolectar elementos
     struct Checkpoint {
         int id;
         QPointF pos;
@@ -72,11 +108,7 @@ void YamlHandler::saveSceneAsTrack(const QString& filename, QGraphicsScene* scen
 
     YAML::Emitter out;
     out << YAML::BeginMap;
-    out << YAML::Key << "track_id" << YAML::Value << "track";
-    out << YAML::Key << "track_name" << YAML::Value << "track";
     out << YAML::Key << "city_id" << YAML::Value << cityId.toStdString();
-    out << YAML::Key << "laps" << YAML::Value << 1;
-
     out << YAML::Key << "checkpoints" << YAML::Value << YAML::BeginSeq;
     for (const auto& c: cps) {
         out << YAML::BeginMap;
@@ -119,7 +151,70 @@ void YamlHandler::saveSceneAsTrack(const QString& filename, QGraphicsScene* scen
 
     out << YAML::EndMap;
 
-    std::ofstream fout(filename.toStdString());
+    std::ofstream fout;
+    fout.open(filename.toStdString(), std::ios::out | std::ios::trunc);
     fout << out.c_str();
     fout.close();
+}
+
+bool YamlHandler::loadSceneFromTrack(const QString& filename, QGraphicsScene* scene,
+                                     const QSize& mapSize) {
+    if (!scene || mapSize.isEmpty())
+        return false;
+
+    YAML::Node file = YAML::LoadFile(filename.toStdString());
+
+    // Checkpoints
+    if (file["checkpoints"]) {
+        for (const auto& cp: file["checkpoints"]) {
+            auto pos = cp["position"];
+            QPointF p(pos[0].as<double>(), pos[1].as<double>());
+            QPointF d = denormalize(p, mapSize);
+
+            auto* it = new MarkerItem(MarkerKind::Checkpoint);
+            it->setPos(d);
+            scene->addItem(it);
+
+            // Hints
+            if (cp["hints"]) {
+                for (const auto& h: cp["hints"]) {
+                    auto pos2 = h["position"];
+                    QPointF hp(pos2[0].as<double>(), pos2[1].as<double>());
+                    QPointF hd = denormalize(hp, mapSize);
+
+                    auto* hint = new MarkerItem(MarkerKind::Hint);
+                    hint->setPos(hd);
+                    scene->addItem(hint);
+                }
+            }
+        }
+    }
+
+    if (file["start"]) {
+        auto pos = file["start"]["position"];
+        QPointF p(pos[0].as<double>(), pos[1].as<double>());
+        auto* it = new MarkerItem(MarkerKind::Start);
+        it->setPos(denormalize(p, mapSize));
+        scene->addItem(it);
+    }
+
+    if (file["finish"]) {
+        auto pos = file["finish"]["position"];
+        QPointF p(pos[0].as<double>(), pos[1].as<double>());
+        auto* it = new MarkerItem(MarkerKind::Finish);
+        it->setPos(denormalize(p, mapSize));
+        scene->addItem(it);
+    }
+
+    if (file["player_spawns"]) {
+        for (const auto& sp: file["player_spawns"]) {
+            auto pos = sp["position"];
+            QPointF p(pos[0].as<double>(), pos[1].as<double>());
+
+            auto* it = new MarkerItem(MarkerKind::Spawn);
+            it->setPos(denormalize(p, mapSize));
+            scene->addItem(it);
+        }
+    }
+    return true;
 }

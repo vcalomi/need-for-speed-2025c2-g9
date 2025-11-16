@@ -29,9 +29,10 @@ private slots:
     void on_loadMapBtn_clicked();
     void on_saveMapBtn_clicked();
     void on_cleanBtn_clicked();
+    void loadMapFromCity();
     void onUndo();
 
-    void toolSelect();
+    // void toolSelect();
     void toolCheckpoint();
     void toolHint();
     void toolSpawn();

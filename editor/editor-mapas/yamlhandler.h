@@ -2,15 +2,21 @@
 #define YAMLHANDLER_H
 
 #include <QGraphicsScene>
-#include <QPointF>
 #include <QSize>
 #include <QString>
-#include <QVector>
 
-namespace YamlHandler {
-QString getSaveFilename();
-void saveSceneAsTrack(const QString& filename, QGraphicsScene* scene, const QSize& mapPixelSize,
-                      const QString& cityId);
-}  // namespace YamlHandler
+class YamlHandler {
+public:
+    static QString getSaveFilename(QWidget* parent = nullptr);
+    static QString getOpenFilename(QWidget* parent = nullptr);
+
+    static void saveSceneAsTrack(const QString& filename, QGraphicsScene* scene,
+                                 const QSize& mapPixelSize, const QString& cityId);
+
+    static QString readCityId(const QString& filename);
+
+    static bool loadSceneFromTrack(const QString& filename, QGraphicsScene* scene,
+                                   const QSize& mapPixelSize);
+};
 
 #endif  // YAMLHANDLER_H

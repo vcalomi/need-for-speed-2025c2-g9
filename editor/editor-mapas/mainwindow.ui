@@ -48,8 +48,6 @@
          </property>
         </widget>
        </item>
-
-       <!-- File Buttons -->
        <item>
         <widget class="QPushButton" name="loadMapBtn">
          <property name="text">
@@ -95,8 +93,6 @@
          </property>
         </widget>
        </item>
-
-       <item><widget class="QPushButton" name="selectToolBtn"><property name="text"><string>Select</string></property></widget></item>
        <item><widget class="QPushButton" name="checkpointToolBtn"><property name="text"><string>Checkpoint</string></property></widget></item>
        <item><widget class="QPushButton" name="hintToolBtn"><property name="text"><string>Hint (Arrow)</string></property></widget></item>
        <item><widget class="QPushButton" name="spawnToolBtn"><property name="text"><string>Player Spawn</string></property></widget></item>

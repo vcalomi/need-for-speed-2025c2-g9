@@ -63,7 +63,6 @@ void MapView::mousePressEvent(QMouseEvent* e) {
         return;
     }
 
-
     if (e->button() == Qt::LeftButton) {
         if (currentTool == Tool::Select) {
             QGraphicsView::mousePressEvent(e);
@@ -85,6 +84,7 @@ void MapView::mousePressEvent(QMouseEvent* e) {
             scene()->removeItem(it);
             emit this->itemRemoved(it);
             delete it;
+            updateCheckpointLines();
             break;
         }
         e->accept();
@@ -168,4 +168,30 @@ void MapView::placeItemAt(const QPointF& scenePos) {
     it->setPos(scenePos);
     scene()->addItem(it);
     emit itemAdded(it);
+    updateCheckpointLines();
+}
+
+void MapView::updateCheckpointLines() {
+    // Borrar líneas existentes
+    for (auto* ln: cpLines) scene()->removeItem(ln);
+    cpLines.clear();
+
+    // Recolectar checkpoints en orden
+    QList<QPointF> pts;
+
+    for (auto* it: scene()->items(Qt::AscendingOrder)) {
+        if (auto* mi = dynamic_cast<MarkerItem*>(it)) {
+            if (mi->kindOf() == MarkerKind::Checkpoint) {
+                pts.append(mi->sceneBoundingRect().center());
+            }
+        }
+    }
+
+    // Dibujar líneas entre puntos consecutivos
+    for (int i = 0; i < pts.size() - 1; i++) {
+        QLineF line(pts[i], pts[i + 1]);
+        auto* li = scene()->addLine(line, QPen(QColor("#00ffff"), 3));
+        li->setZValue(-50);
+        cpLines.append(li);
+    }
 }

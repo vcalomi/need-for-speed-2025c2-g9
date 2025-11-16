@@ -10,6 +10,12 @@
     <height>734</height>
    </rect>
   </property>
+  <property name="minimumSize">
+   <size>
+    <width>720</width>   
+    <height>540</height>
+   </size>
+  </property>
   <property name="windowTitle">
    <string>Need for Speed - Lobby</string>
   </property>
@@ -21,229 +27,881 @@
        <enum>Qt::LeftToRight</enum>
       </property>
       <property name="styleSheet">
-       <string notr="true">QPushButton {
-    background-color: #ff6600;   /* color base */
+       <string notr="true">
+QPushButton {
+    background-color: #ff6600;
     color: white;
     font-weight: bold;
     border: none;
-    border-radius: 10px;         /* podés ajustar el radio si querés redondeado */
+    border-radius: 10px;
     padding: 8px;
 }
-
 QPushButton:hover {
-    background-color: #ff8800;   /* color al pasar el mouse */
+    background-color: #ff8800;
 }
-</string>
+       </string>
       </property>
       <property name="currentIndex">
-       <number>8</number>
+       <number>0</number>
       </property>
+      <!-- PAGE CONNECTION -->
       <widget class="QWidget" name="page_connection">
-       <widget class="QPushButton" name="connectButton">
-        <property name="geometry">
-         <rect>
-          <x>520</x>
-          <y>390</y>
-          <width>171</width>
-          <height>51</height>
-         </rect>
+       <property name="styleSheet">
+        <string notr="true">
+QLabel#flag_left, QLabel#flag_right {
+    background-image: url(:/flag_pattern.png);
+    background-repeat: repeat-x;
+    background-position: center;
+    background-size: 50px 50px;
+    border: none;
+    min-width: 150px;
+    min-height: 40px;
+}
+QPushButton {
+    background-color: #ff6600;
+    color: white;
+    font-weight: bold;
+    border: none;
+    border-radius: 10px;
+    padding: 10px 22px;
+}
+QPushButton:hover { background-color: #ff8800; }
+        </string>
+       </property>
+       <layout class="QVBoxLayout" name="layout_connection">
+        <property name="spacing">
+         <number>10</number>
         </property>
-        <property name="text">
-         <string>Connect</string>
-        </property>
-       </widget>
-       <widget class="QLabel" name="game_name">
-        <property name="geometry">
-         <rect>
-          <x>120</x>
-          <y>150</y>
-          <width>981</width>
-          <height>131</height>
-         </rect>
-        </property>
-        <property name="styleSheet">
-         <string notr="true">QLabel#game_name {
-    color: #1cd3dc; /* Relleno azul celeste */
+        <item>
+         <spacer name="spacer_top">
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>20</width>
+            <height>0</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
+         <layout class="QHBoxLayout" name="layout_title">
+          <property name="spacing">
+           <number>30</number>
+          </property>
+          <item>
+           <widget class="QLabel" name="flag_left">
+            <property name="text">
+             <string/>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="game_name">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Preferred"/>
+            </property>
+            <property name="minimumHeight">
+             <number>60</number>
+            </property>
+            <property name="scaledContents">
+              <bool>true</bool>
+            </property>
+            <property name="wordWrap">
+              <bool>true</bool>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">
+QLabel#game_name {
+    color: #1cd3dc;
     font-family: 'Tektur';
-    font-size: 90px;
-    font-weight: 900;
+    font-size: 54px;
+    font-weight: 800;
     qproperty-alignment: 'AlignCenter';
-    text-transform: uppercase;
     letter-spacing: 6px;
-    padding: 25px 60px;
+    padding: 20px 40px;
     border-radius: 25px;
-
     background-color: rgba(5, 51, 86, 0.85);
     border: 4px solid #1cd3dc;
-    box-shadow: 0px 0px 20px rgba(28, 211, 220, 0.5);
-
-    /* Contorno negro &quot;falso&quot; con varias sombras alrededor del texto */
     text-shadow:
-        -2px  0px 0 #000,
-         2px  0px 0 #000,
-         0px  2px 0 #000,
-         0px -2px 0 #000,
-        -2px -2px 0 #000,
-         2px -2px 0 #000,
-        -2px  2px 0 #000,
-         2px  2px 0 #000;
+        -2px 0 0 #000,
+         2px 0 0 #000,
+         0px 2px 0 #000,
+         0px -2px 0 #000;
 }
-</string>
-        </property>
-        <property name="text">
-         <string>NEED FOR SPEED</string>
-        </property>
-        <property name="alignment">
-         <set>Qt::AlignCenter</set>
-        </property>
-       </widget>
-       <widget class="QLabel" name="flag_left">
-        <property name="geometry">
-         <rect>
-          <x>-70</x>
-          <y>170</y>
-          <width>191</width>
-          <height>101</height>
-         </rect>
-        </property>
-        <property name="styleSheet">
-         <string notr="true">QLabel#flag_left,
-QLabel#flag_right {
-    background-image: url(:/flag_pattern.png);
-    background-repeat: repeat-x;
-    background-position: center;
-    background-size: 50px 50px;   /* Escala del patrón: más chico = más cuadros visibles */
-    border: none;
-    min-width: 150px;
-    min-height: 40px;
-}
-
-</string>
-        </property>
-        <property name="text">
-         <string/>
-        </property>
-       </widget>
-       <widget class="QLabel" name="flag_right">
-        <property name="geometry">
-         <rect>
-          <x>1100</x>
-          <y>170</y>
-          <width>181</width>
-          <height>101</height>
-         </rect>
-        </property>
-        <property name="styleSheet">
-         <string notr="true">QLabel#flag_left,
-QLabel#flag_right {
-    background-image: url(:/flag_pattern.png);
-    background-repeat: repeat-x;
-    background-position: center;
-    background-size: 50px 50px;   /* Escala del patrón: más chico = más cuadros visibles */
-    border: none;
-    min-width: 150px;
-    min-height: 40px;
-}
-
-</string>
-        </property>
-        <property name="text">
-         <string/>
-        </property>
-       </widget>
+             </string>
+            </property>
+            <property name="text">
+             <string>NEED FOR SPEED</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="flag_right">
+            <property name="text">
+             <string/>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item alignment="Qt::AlignHCenter">
+         <widget class="QPushButton" name="connectButton">
+          <property name="minimumWidth">
+           <number>200</number>
+          </property>
+          <property name="minimumHeight">
+           <number>50</number>
+          </property>
+          <property name="text">
+           <string>Connect</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <spacer name="spacer_bottom">
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>20</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+       </layout>
       </widget>
+      <!-- PAGE USERNAME -->
       <widget class="QWidget" name="page_username">
-       <widget class="QFrame" name="backgorund">
-        <property name="geometry">
-         <rect>
-          <x>350</x>
-          <y>189</y>
-          <width>500</width>
-          <height>321</height>
-         </rect>
-        </property>
-        <property name="styleSheet">
-         <string notr="true">
-    QFrame {
-        background-color: rgba(0, 0, 0, 0.5);
-        border: 2px solid #ff6600;
-        border-radius: 20px;
-    }
-    QLabel {
-        color: white;
-        font-family: 'Tektur';
-        font-size: 20px;
-        font-weight: bold;
-    }
-    QLineEdit {
-        background: rgba(255,255,255,0.1);
-        color: white;
-        border: 2px solid #ff6600;
-        border-radius: 10px;
-        padding: 8px;
-        font-family: 'Tektur';
-        font-size: 17px;
-    }
-    QLineEdit::placeholder {
-        color: rgba(255,255,255,180);
-        font-style: italic;
-    }
-    QPushButton {
-        background-color: #ff6600;
-        color: white;
-        border: none;
-        border-radius: 10px;
-        padding: 10px 20px;
-        font-family: 'Tektur';
-        font-size: 16px;
-        font-weight: bold;
-    }
-    QPushButton:hover { background-color: #ffa31a; }
-    QPushButton:pressed { background-color: #cc5200; }
-         </string>
-        </property>
-        <widget class="QLineEdit" name="input_username">
-         <property name="geometry">
-          <rect>
-           <x>90</x>
-           <y>90</y>
-           <width>321</width>
-           <height>41</height>
-          </rect>
-         </property>
-         <property name="text">
-          <string/>
-         </property>
-         <property name="placeholderText">
-          <string>Enter your username</string>
-         </property>
-        </widget>
-        <widget class="QPushButton" name="btnConfirmUsername">
-         <property name="geometry">
-          <rect>
-           <x>140</x>
-           <y>190</y>
-           <width>211</width>
-           <height>45</height>
-          </rect>
-         </property>
-         <property name="text">
-          <string>Confirm username</string>
-         </property>
-        </widget>
-       </widget>
+       <property name="styleSheet">
+        <string notr="true">
+QFrame {
+    background-color: rgba(0, 0, 0, 0.5);
+    border: 2px solid #ff6600;
+    border-radius: 20px;
+    padding: 70px;
+}
+QLabel {
+    color: white;
+    font-family: 'Tektur';
+    font-size: 20px;
+    font-weight: bold;
+}
+QLineEdit {
+    background: rgba(255,255,255,0.1);
+    color: white;
+    border: 2px solid #ff6600;
+    border-radius: 10px;
+    padding: 8px;
+    font-family: 'Tektur';
+    font-size: 17px;
+}
+QLineEdit::placeholder {
+    color: rgba(255,255,255,180);
+    font-style: italic;
+}
+QPushButton {
+    background-color: #ff6600;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    padding: 10px 20px;
+    font-family: 'Tektur';
+    font-size: 16px;
+    font-weight: bold;
+}
+QPushButton:hover { background-color: #ffa31a; }
+QPushButton:pressed { background-color: #cc5200; }
+        </string>
+       </property>
+       <layout class="QVBoxLayout" name="layout_username_page">
+        <item>
+         <spacer name="spacer_top_username">
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
+          </property>
+          <property name="sizeHint">
+           <size>
+            <width>20</width>
+            <height>80</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item alignment="Qt::AlignHCenter">
+         <widget class="QFrame" name="background">
+          <property name="maximumWidth">
+           <number>600</number>
+          </property>
+          <property name="minimumWidth">
+           <number>300</number>
+          </property>
+          <layout class="QVBoxLayout" name="layout_username_frame">
+           <property name="spacing">
+            <number>70</number>
+           </property>
+           <item>
+            <widget class="QLineEdit" name="input_username">
+             <property name="placeholderText">
+              <string>Enter your username</string>
+             </property>
+             <property name="minimumHeight">
+              <number>45</number>
+             </property>
+            </widget>
+           </item>
+           <item alignment="Qt::AlignHCenter">
+            <widget class="QPushButton" name="btnConfirmUsername">
+             <property name="minimumWidth">
+              <number>220</number>
+             </property>
+             <property name="minimumHeight">
+              <number>50</number>
+             </property>
+             <property name="text">
+              <string>Confirm username</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item>
+         <spacer name="spacer_bottom_username">
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
+          </property>
+          <property name="sizeHint">
+           <size>
+            <width>20</width>
+            <height>120</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+       </layout>
       </widget>
+      <!-- PAGE ROOMS -->
       <widget class="QWidget" name="page_rooms">
        <property name="styleSheet">
         <string notr="true">
-QWidget {
-    background-color: rgba(0, 0, 0, 0.5);
-    border-radius: 10px;
+QFrame {
+    background-color: rgba(0, 0, 0, 0.50);
+    border-radius: 15px;
+    border: 2px solid #ff6600;
+    padding: 30px;
 }
 QLabel {
     color: white;
     font-family: 'Tektur';
     font-size: 22px;
+    font-weight: bold;
+}
+QListWidget {
+    background-color: rgba(255,255,255,0.1);
+    border-radius: 10px;
+    color: white;
+    font-family: 'Tektur';
+    font-size: 16px;
+    padding: 6px;
+}
+QPushButton {
+    background-color: #ff6600;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    padding: 10px 20px;
+    font-family: 'Tektur';
+    font-size: 16px;
+    font-weight: bold;
+}
+QPushButton:hover { background-color: #ffa31a; }
+QPushButton:pressed { background-color: #cc5200; }
+        </string>
+       </property>
+       <layout class="QVBoxLayout" name="layout_rooms_page">
+        <property name="spacing">
+         <number>20</number>
+        </property>
+        <item>
+         <spacer name="rooms_spacer_top">
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
+          </property>
+          <property name="sizeHint">
+           <size>
+            <width>20</width>
+            <height>60</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item alignment="Qt::AlignHCenter">
+         <widget class="QFrame" name="frame_rooms">
+          <property name="maximumWidth">
+           <number>600</number>
+          </property>
+          <property name="minimumWidth">
+           <number>300</number>
+          </property>
+          <layout class="QVBoxLayout" name="layout_rooms_frame">
+           <property name="spacing">
+            <number>25</number>
+           </property>
+           <item alignment="Qt::AlignHCenter">
+            <widget class="QLabel" name="labelRoomsTitle">
+             <property name="text">
+              <string>Available Rooms</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QListWidget" name="listRooms">
+             <property name="minimumHeight">
+              <number>260</number>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <layout class="QHBoxLayout" name="layout_rooms_pagination">
+             <property name="spacing">
+              <number>20</number>
+             </property>
+             <item>
+              <widget class="QPushButton" name="btnPrevRooms">
+               <property name="text">
+                <string>&lt; Prev</string>
+               </property>
+              </widget>
+             </item>
+             <item alignment="Qt::AlignCenter">
+              <widget class="QLabel" name="labelPageInfo">
+               <property name="text">
+                <string>Page 1 / 1</string>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignCenter</set>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="btnNextRooms">
+               <property name="text">
+                <string>Next &gt;</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item alignment="Qt::AlignCenter">
+            <widget class="QPushButton" name="btnContinueRooms">
+             <property name="minimumWidth">
+              <number>180</number>
+             </property>
+             <property name="minimumHeight">
+              <number>45</number>
+             </property>
+             <property name="text">
+              <string>Continue</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item>
+         <spacer name="rooms_spacer_bottom">
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
+          </property>
+          <property name="sizeHint">
+           <size>
+            <width>20</width>
+            <height>80</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+       </layout>
+      </widget>
+      <!-- PAGE MENU -->
+      <widget class="QWidget" name="page_menu">
+       <layout class="QVBoxLayout" name="layout_menu_page">
+        <property name="spacing">
+         <number>25</number>
+        </property>
+        <item>
+         <spacer name="menu_spacer_top">
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
+          </property>
+          <property name="sizeHint">
+           <size>
+            <width>20</width>
+            <height>80</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item alignment="Qt::AlignHCenter">
+         <widget class="QPushButton" name="btnCreate">
+          <property name="minimumWidth">
+           <number>240</number>
+          </property>
+          <property name="minimumHeight">
+           <number>55</number>
+          </property>
+          <property name="text">
+           <string>Create Game</string>
+          </property>
+         </widget>
+        </item>
+        <item alignment="Qt::AlignHCenter">
+         <widget class="QPushButton" name="btnJoin">
+          <property name="minimumWidth">
+           <number>240</number>
+          </property>
+          <property name="minimumHeight">
+           <number>55</number>
+          </property>
+          <property name="text">
+           <string>Join Game</string>
+          </property>
+         </widget>
+        </item>
+        <item alignment="Qt::AlignHCenter">
+         <widget class="QPushButton" name="btnMap">
+          <property name="minimumWidth">
+           <number>240</number>
+          </property>
+          <property name="minimumHeight">
+           <number>55</number>
+          </property>
+          <property name="text">
+           <string>Create race tracks</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <spacer name="menu_spacer_bottom">
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
+          </property>
+          <property name="sizeHint">
+           <size>
+            <width>20</width>
+            <height>120</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+       </layout>
+      </widget>
+      <!-- PAGE CREATE -->
+      <widget class="QWidget" name="page_create">
+       <property name="styleSheet">
+        <string notr="true">
+QLabel {
+    color: white;
+    font-family: 'Tektur';
+    font-size: 20px;
+    font-weight: bold;
+}
+#frameOverlay {
+    background-color: rgba(0, 0, 0, 0.3);
+    border-radius: 15px;
+    padding: 30px;
+}
+#roomCodeBox {
+    background-color: rgba(0,0,0,0.5);
+    color: white;
+    border: 2px solid #ff6600;
+    border-radius: 8px;
+    padding: 12px 20px;
+    font-size: 20px;
+    font-weight: bold;
+}
+#infoBox, #playersBox {
+    background-color: rgba(0, 0, 0, 0.35);
+    border: none;
+    padding: 8px 0px;
+    font-size: 20px;
+}
+QComboBox {
+    background-color: rgba(0, 0, 0, 0.35);
+    color: white;
+    border-radius: 8px;
+    padding: 8px 15px;
+    min-width: 200px;
+    font-size: 18px;
+}
+QComboBox QAbstractItemView {
+    background-color: rgba(5, 51, 86, 0.92);
+    color: white;
+    border: 2px solid #ff6600;
+    border-radius: 5px;
+    outline: none;
+    selection-background-color: #ff6600;
+}
+QComboBox QAbstractItemView::item {
+    background-color: transparent;
+    padding: 8px 12px;
+    border: none;
+    height: 30px;
+    color: white;
+}
+QComboBox QAbstractItemView::item:hover {
+    background-color: rgba(255, 255, 255, 0.28);
+}
+QComboBox QAbstractItemView::item:selected {
+    background-color: #ff6600;
+    color: white;
+}
+QPushButton {
+    background-color: #ff6600;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 12px 30px;
+    font-size: 18px;
+    font-family: 'Tektur';
+    font-weight: bold;
+    min-width: 180px;
+}
+QPushButton:hover { background-color: #ffa31a; }
+QPushButton:pressed { background-color: #cc5200; }
+        </string>
+       </property>
+       <layout class="QVBoxLayout" name="layout_page_create">
+        <property name="spacing">
+         <number>0</number>
+        </property>
+        <property name="leftMargin">
+         <number>80</number>
+        </property>
+        <property name="topMargin">
+         <number>0</number>
+        </property>
+        <property name="rightMargin">
+         <number>80</number>
+        </property>
+        <property name="bottomMargin">
+         <number>20</number>
+        </property>
+        <item>
+         <widget class="QFrame" name="frameOverlay">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <layout class="QVBoxLayout" name="layout_overlay">
+           <property name="spacing">
+            <number>20</number>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignHCenter</set>
+           </property>
+           <item alignment="Qt::AlignHCenter">
+            <widget class="QLabel" name="labelCode">
+             <property name="objectName">
+              <string>roomCodeBox</string>
+             </property>
+             <property name="minimumWidth">
+              <number>280</number>
+             </property>
+             <property name="text">
+              <string>ROOM CODE: XXXX</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item alignment="Qt::AlignHCenter">
+            <widget class="QLabel" name="labelCreateInfo">
+             <property name="objectName">
+              <string>infoBox</string>
+             </property>
+             <property name="minimumWidth">
+              <number>350</number>
+             </property>
+             <property name="wordWrap">
+              <bool>true</bool>
+             </property>
+             <property name="text">
+              <string>Share this code with your friends so they can join your game.</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item alignment="Qt::AlignHCenter">
+            <widget class="QLabel" name="labelPlayersTitle">
+             <property name="objectName">
+              <string>playersBox</string>
+             </property>
+             <property name="minimumWidth">
+              <number>220</number>
+             </property>
+             <property name="text">
+              <string>How many players?</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item alignment="Qt::AlignHCenter">
+            <widget class="QComboBox" name="comboMaxPlayers">
+             <property name="minimumWidth">
+              <number>200</number>
+             </property>
+             <property name="minimumHeight">
+              <number>45</number>
+             </property>
+             <item><property name="text"><string>2</string></property></item>
+             <item><property name="text"><string>3</string></property></item>
+             <item><property name="text"><string>4</string></property></item>
+             <item><property name="text"><string>5</string></property></item>
+             <item><property name="text"><string>6</string></property></item>
+             <item><property name="text"><string>7</string></property></item>
+             <item><property name="text"><string>8</string></property></item>
+            </widget>
+           </item>
+           <item alignment="Qt::AlignHCenter">
+            <widget class="QPushButton" name="btnContinue">
+             <property name="minimumWidth">
+              <number>240</number>
+             </property>
+             <property name="minimumHeight">
+              <number>55</number>
+             </property>
+             <property name="text">
+              <string>Continue</string>
+             </property>
+            </widget>
+           </item>
+          </layout> 
+         </widget> 
+        </item>
+       </layout> 
+      </widget>
+      <!-- PAGE JOIN -->
+      <widget class="QWidget" name="page_join">
+       <layout class="QVBoxLayout" name="layout_join_page">
+        <property name="leftMargin">
+         <number>0</number>
+        </property>
+        <property name="rightMargin">
+         <number>0</number>
+        </property>
+        <property name="topMargin">
+         <number>70</number>
+        </property>
+        <property name="bottomMargin">
+         <number>40</number>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignHCenter</set>
+        </property>
+        <item>
+         <widget class="QFrame" name="frameJoin">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumWidth">
+           <number>260</number>
+          </property>
+          <property name="maximumWidth">
+           <number>400</number>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">
+QFrame#frameJoin {
+    background-color: rgba(0, 0, 0, 0.55);
+    border: 3px solid #ff6600;
+    border-radius: 25px;
+    padding: 10px;
+    box-shadow: 0px 0px 20px #ff3300;
+}
+QLabel {
+    color: white;
+    font-family: 'Tektur';
+    font-size: 20px;
+    font-weight: bold;
+}
+QLineEdit {
+    background: rgba(0,0,0,0.3);
+    color: white;
+    border: 2px solid #ff6600;
+    border-radius: 12px;
+    padding: 10px 14px;
+    font-family: 'Tektur';
+    font-size: 19px;
+}
+QLineEdit::placeholder {
+    color: rgba(255,255,255,200);
+}
+QPushButton {
+    background-color: #ff6600;
+    color: white;
+    border: none;
+    border-radius: 12px;
+    padding: 12px 25px;
+    font-family: 'Tektur';
+    font-size: 20px;
+    font-weight: bold;
+}
+QPushButton:hover { background-color: #ffa31a; }
+QPushButton:pressed { background-color: #cc5200; }
+           </string>
+          </property>
+          <layout class="QVBoxLayout" name="layout_join_frame">
+           <property name="spacing">
+            <number>30</number>
+           </property>
+           <property name="topMargin">
+            <number>40</number>
+           </property>
+           <property name="bottomMargin">
+            <number>40</number>
+           </property>
+           <property name="leftMargin">
+            <number>25</number>
+           </property>
+           <property name="rightMargin">
+            <number>25</number>
+           </property>
+           <item alignment="Qt::AlignHCenter">
+            <widget class="QLabel" name="labelJoinTitle">
+             <property name="minimumWidth">
+              <number>200</number>
+             </property>
+             <property name="maximumWidth">
+              <number>300</number>
+             </property>
+             <property name="styleSheet">
+              <string notr="true">
+QLabel#labelJoinTitle {
+    background-color: rgba(0,0,0,0.7);
+    padding: 8px 25px;
+    border: 3px solid #ff6600;
+    border-radius: 18px;
+    font-size: 24px;
+    font-weight: bold;
+}
+              </string>
+             </property>
+             <property name="text">
+              <string>Join Game</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item alignment="Qt::AlignHCenter">
+            <widget class="QLineEdit" name="inputCode">
+             <property name="minimumWidth">
+              <number>280</number>
+             </property>
+             <property name="maximumWidth">
+              <number>330</number>
+             </property>
+             <property name="placeholderText">
+              <string>Enter room code</string>
+             </property>
+            </widget>
+           </item>
+           <item alignment="Qt::AlignHCenter">
+            <widget class="QPushButton" name="btnConfirmJoin">
+             <property name="minimumWidth">
+              <number>100</number>
+             </property>
+             <property name="minimumHeight">
+              <number>40</number>
+             </property>
+             <property name="text">
+              <string>Join</string>
+             </property>
+            </widget>
+           </item>
+           <item alignment="Qt::AlignHCenter">
+            <widget class="QPushButton" name="btnBackJoin">
+             <property name="minimumWidth">
+              <number>100</number>
+             </property>
+             <property name="minimumHeight">
+              <number>40</number>
+             </property>
+             <property name="text">
+              <string>Back</string>
+             </property>
+            </widget>
+           </item>
+          </layout> 
+         </widget> 
+        </item>
+       </layout> 
+      </widget>
+      <!-- PAGE WAIT -->
+      <widget class="QWidget" name="page_wait">
+       <layout class="QVBoxLayout" name="layout_page_wait">
+        <property name="leftMargin">
+         <number>0</number>
+        </property>
+        <property name="rightMargin">
+         <number>0</number>
+        </property>
+        <property name="topMargin">
+         <number>40</number>
+        </property>
+        <property name="bottomMargin">
+         <number>40</number>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignHCenter</set>
+        </property>
+        <item>
+         <widget class="QFrame" name="frameWait">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumWidth">
+           <number>380</number>
+          </property>
+          <property name="maximumWidth">
+           <number>520</number>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">
+QFrame {
+    background-color: rgba(0, 0, 0, 0.6);
+    border: 2px solid #ff6600;
+    border-radius: 20px;
+}
+QLabel {
+    color: white;
+    font-family: 'Tektur';
+    font-size: 20px;
     font-weight: bold;
 }
 QListWidget {
@@ -265,740 +923,415 @@ QPushButton {
 }
 QPushButton:hover { background-color: #ffa31a; }
 QPushButton:pressed { background-color: #cc5200; }
-  </string>
-       </property>
-       <widget class="QLabel" name="labelRoomsTitle">
-        <property name="geometry">
-         <rect>
-          <x>470</x>
-          <y>100</y>
-          <width>300</width>
-          <height>40</height>
-         </rect>
-        </property>
-        <property name="text">
-         <string>Available Rooms</string>
-        </property>
-        <property name="alignment">
-         <set>Qt::AlignCenter</set>
-        </property>
-       </widget>
-       <widget class="QListWidget" name="listRooms">
-        <property name="geometry">
-         <rect>
-          <x>370</x>
-          <y>160</y>
-          <width>500</width>
-          <height>320</height>
-         </rect>
-        </property>
-       </widget>
-       <widget class="QPushButton" name="btnPrevRooms">
-        <property name="geometry">
-         <rect>
-          <x>410</x>
-          <y>500</y>
-          <width>120</width>
-          <height>40</height>
-         </rect>
-        </property>
-        <property name="text">
-         <string>&lt; Prev</string>
-        </property>
-       </widget>
-       <widget class="QLabel" name="labelPageInfo">
-        <property name="geometry">
-         <rect>
-          <x>560</x>
-          <y>500</y>
-          <width>120</width>
-          <height>40</height>
-         </rect>
-        </property>
-        <property name="text">
-         <string>Page 1 / 1</string>
-        </property>
-        <property name="alignment">
-         <set>Qt::AlignCenter</set>
-        </property>
-       </widget>
-       <widget class="QPushButton" name="btnNextRooms">
-        <property name="geometry">
-         <rect>
-          <x>710</x>
-          <y>500</y>
-          <width>120</width>
-          <height>40</height>
-         </rect>
-        </property>
-        <property name="text">
-         <string>Next &gt;</string>
-        </property>
-       </widget>
-       <widget class="QPushButton" name="btnContinueRooms">
-        <property name="geometry">
-         <rect>
-          <x>530</x>
-          <y>560</y>
-          <width>180</width>
-          <height>45</height>
-         </rect>
-        </property>
-        <property name="text">
-         <string>Continue</string>
-        </property>
-       </widget>
-      </widget>
-      <widget class="QWidget" name="page_menu">
-       <widget class="QPushButton" name="btnCreate">
-        <property name="geometry">
-         <rect>
-          <x>480</x>
-          <y>260</y>
-          <width>251</width>
-          <height>61</height>
-         </rect>
-        </property>
-        <property name="text">
-         <string>Create Game</string>
-        </property>
-       </widget>
-       <widget class="QPushButton" name="btnJoin">
-        <property name="geometry">
-         <rect>
-          <x>480</x>
-          <y>360</y>
-          <width>251</width>
-          <height>61</height>
-         </rect>
-        </property>
-        <property name="text">
-         <string>Join Game</string>
-        </property>
-       </widget>
-       <widget class="QPushButton" name="btnMap">
-        <property name="geometry">
-         <rect>
-          <x>480</x>
-          <y>450</y>
-          <width>251</width>
-          <height>61</height>
-         </rect>
-        </property>
-        <property name="text">
-         <string>Create race tracks</string>
-        </property>
-       </widget>
-      </widget>
-      <widget class="QWidget" name="page_create">
-       <property name="styleSheet">
-        <string notr="true">
-         QWidget {
-            background-color: rgba(0, 0, 0, 0.5);
-            border-radius: 10px;
-         }
-         QLabel {
-            color: white;
-            font-family: 'Tektur';
-            font-size: 18px;
-            font-weight: bold;
-         }
-         QPushButton {
-            background-color: #ff6600;
-            color: white;
-            border: none;
-            border-radius: 10px;
-            padding: 10px 20px;
-            font-family: 'Tektur';
-            font-size: 16px;
-            font-weight: bold;
-         }
-         QPushButton:hover { background-color: #ffa31a; }
-         QPushButton:pressed { background-color: #cc5200; }
-        </string>
-       </property>
-       <widget class="QLabel" name="labelCode">
-        <property name="geometry">
-         <rect>
-          <x>490</x>
-          <y>150</y>
-          <width>250</width>
-          <height>41</height>
-         </rect>
-        </property>
-        <property name="text">
-         <string>Room code:</string>
-        </property>
-        <property name="alignment">
-         <set>Qt::AlignCenter</set>
-        </property>
-        <property name="margin">
-         <number>-2</number>
-        </property>
-       </widget>
-       <widget class="QLabel" name="labelCreateInfo">
-        <property name="geometry">
-         <rect>
-          <x>310</x>
-          <y>219</y>
-          <width>611</width>
-          <height>51</height>
-         </rect>
-        </property>
-        <property name="text">
-         <string/>
-        </property>
-        <property name="alignment">
-         <set>Qt::AlignCenter</set>
-        </property>
-       </widget>
-       <widget class="QPushButton" name="btnContinue">
-        <property name="geometry">
-         <rect>
-          <x>520</x>
-          <y>450</y>
-          <width>180</width>
-          <height>45</height>
-         </rect>
-        </property>
-        <property name="text">
-         <string>Continue</string>
-        </property>
-       </widget>
-       <widget class="QComboBox" name="comboMaxPlayers">
-        <property name="geometry">
-         <rect>
-          <x>470</x>
-          <y>360</y>
-          <width>291</width>
-          <height>41</height>
-         </rect>
-        </property>
-        <property name="maxVisibleItems">
-         <number>6</number>
-        </property>
-        <item>
-         <property name="text">
-          <string/>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string>2</string>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string>3</string>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string>4</string>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string>5</string>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string>6</string>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string>7</string>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string>8</string>
-         </property>
-        </item>
-       </widget>
-       <widget class="QLabel" name="labelPlayersTitle">
-        <property name="geometry">
-         <rect>
-          <x>490</x>
-          <y>300</y>
-          <width>250</width>
-          <height>41</height>
-         </rect>
-        </property>
-        <property name="text">
-         <string>How many players?</string>
-        </property>
-        <property name="alignment">
-         <set>Qt::AlignCenter</set>
-        </property>
-       </widget>
-      </widget>
-      <widget class="QWidget" name="page_join">
-       <widget class="QFrame" name="frameJoin">
-        <property name="geometry">
-         <rect>
-          <x>370</x>
-          <y>120</y>
-          <width>500</width>
-          <height>400</height>
-         </rect>
-        </property>
-        <property name="styleSheet">
-         <string notr="true">
-    QFrame {
-        background-color: rgba(0, 0, 0, 0.5);
-        border: 2px solid #ff6600;
-        border-radius: 20px;
-    }
-    QLabel {
-        color: white;
-        font-family: 'Tektur';
-        font-size: 20px;
-        font-weight: bold;
-    }
-    QLineEdit {
-        background: rgba(255,255,255,0.1);
-        color: white;
-        border: 2px solid #ff6600;
-        border-radius: 10px;
-        padding: 8px;
-        font-family: 'Tektur';
-        font-size: 17px;
-    }
-    QLineEdit::placeholder {
-        color: rgba(255,255,255,180);
-        font-style: italic;
-    }
-    QPushButton {
-        background-color: #ff6600;
-        color: white;
-        border: none;
-        border-radius: 10px;
-        padding: 10px 20px;
-        font-family: 'Tektur';
-        font-size: 16px;
-        font-weight: bold;
-    }
-    QPushButton:hover { background-color: #ffa31a; }
-    QPushButton:pressed { background-color: #cc5200; }
-         </string>
-        </property>
-        <widget class="QLabel" name="labelJoinTitle">
-         <property name="geometry">
-          <rect>
-           <x>150</x>
-           <y>40</y>
-           <width>200</width>
-           <height>40</height>
-          </rect>
-         </property>
-         <property name="text">
-          <string>Join Game</string>
-         </property>
-         <property name="alignment">
-          <set>Qt::AlignCenter</set>
-         </property>
-        </widget>
-        <widget class="QLineEdit" name="inputCode">
-         <property name="geometry">
-          <rect>
-           <x>125</x>
-           <y>120</y>
-           <width>250</width>
-           <height>41</height>
-          </rect>
-         </property>
-         <property name="placeholderText">
-          <string>Enter room code</string>
-         </property>
-        </widget>
-        <widget class="QPushButton" name="btnConfirmJoin">
-         <property name="geometry">
-          <rect>
-           <x>160</x>
-           <y>200</y>
-           <width>180</width>
-           <height>45</height>
-          </rect>
-         </property>
-         <property name="text">
-          <string>Join</string>
-         </property>
-        </widget>
-        <widget class="QPushButton" name="btnBackJoin">
-         <property name="geometry">
-          <rect>
-           <x>160</x>
-           <y>260</y>
-           <width>180</width>
-           <height>45</height>
-          </rect>
-         </property>
-         <property name="text">
-          <string>Back</string>
-         </property>
-        </widget>
-       </widget>
-      </widget>
-      <widget class="QWidget" name="page_wait">
-       <widget class="QFrame" name="frameWait">
-        <property name="geometry">
-         <rect>
-          <x>370</x>
-          <y>90</y>
-          <width>500</width>
-          <height>541</height>
-         </rect>
-        </property>
-        <property name="styleSheet">
-         <string notr="true">
-         QFrame {
-             background-color: rgba(0, 0, 0, 0.6);
-             border: 2px solid #ff6600;
-             border-radius: 20px;
-         }
-         QLabel {
-             color: white;
-             font-family: 'Tektur';
-             font-size: 20px;
-             font-weight: bold;
-         }
-         QListWidget {
-             background-color: rgba(255,255,255,0.1);
-             border-radius: 10px;
-             color: white;
-             font-family: 'Tektur';
-             font-size: 16px;
-         }
-         QPushButton {
-             background-color: #ff6600;
-             color: white;
-             border: none;
-             border-radius: 10px;
-             padding: 10px 20px;
-             font-family: 'Tektur';
-             font-size: 16px;
-             font-weight: bold;
-         }
-         QPushButton:hover { background-color: #ffa31a; }
-         QPushButton:pressed { background-color: #cc5200; }
-         </string>
-        </property>
-        <widget class="QLabel" name="labelRoomCode">
-         <property name="geometry">
-          <rect>
-           <x>60</x>
-           <y>50</y>
-           <width>381</width>
-           <height>41</height>
-          </rect>
-         </property>
-         <property name="styleSheet">
-          <string notr="true">QLabel {
-    background-color: rgba(0, 0, 0, 150);   /* color de fondo */
-    color: white;                  /* color del texto */
-    border: 2px solid #ff6600    /* borde naranja */
-    border-radius: 0px;            /* sin esquinas redondeadas */
-    padding: 5px;
-    font-weight: bold;
-}
-</string>
-         </property>
-         <property name="text">
-          <string>ROOM CODE: </string>
-         </property>
-         <property name="alignment">
-          <set>Qt::AlignCenter</set>
-         </property>
-        </widget>
-        <widget class="QListWidget" name="listPlayers">
-         <property name="geometry">
-          <rect>
-           <x>100</x>
-           <y>220</y>
-           <width>300</width>
-           <height>200</height>
-          </rect>
-         </property>
-        </widget>
-        <widget class="QPushButton" name="btnStartGame">
-         <property name="geometry">
-          <rect>
-           <x>70</x>
-           <y>450</y>
-           <width>180</width>
-           <height>45</height>
-          </rect>
-         </property>
-         <property name="text">
-          <string>Start Game</string>
-         </property>
-        </widget>
-        <widget class="QPushButton" name="btnRefresh">
-         <property name="geometry">
-          <rect>
-           <x>270</x>
-           <y>450</y>
-           <width>161</width>
-           <height>45</height>
-          </rect>
-         </property>
-         <property name="text">
-          <string>Refresh </string>
-         </property>
-        </widget>
-        <widget class="QLabel" name="labelLobbyStatus">
-         <property name="geometry">
-          <rect>
-           <x>160</x>
-           <y>100</y>
-           <width>181</width>
-           <height>40</height>
-          </rect>
-         </property>
-         <property name="styleSheet">
-          <string notr="true">QLabel {
-    background: transparent;
-    border: none;
-    color: white;   /* o el color que prefieras */
-    font-weight: bold;
-}
-</string>
-         </property>
-         <property name="text">
-          <string>Players 1/8</string>
-         </property>
-         <property name="alignment">
-          <set>Qt::AlignCenter</set>
-         </property>
-        </widget>
-        <widget class="QPushButton" name="btnChooseCar">
-         <property name="geometry">
-          <rect>
-           <x>100</x>
-           <y>150</y>
-           <width>301</width>
-           <height>45</height>
-          </rect>
-         </property>
-         <property name="styleSheet">
-          <string notr="true">#btnChooseCar {
-    background-color: #053356; /* azul retro */
+
+#btnChooseCar {
+    background-color: #053356;
     color: #faf2b7;
-    font-weight: bold;
-    border: 2px solid #1cd3dc; /* borde oscuro para contraste */
+    border: 2px solid #1cd3dc;
     border-radius: 8px;
     padding: 8px 16px;
     font-size: 18px;
 }
-
 #btnChooseCar:hover {
-	color: #053356;
-	font-weight: bold;
-    background-color: #00BFFF; /* azul eléctrico */
+    background-color: #00BFFF;
+    color: #053356;
 }
-
 #btnChooseCar:pressed {
     background-color: #137ec2;
 }
-</string>
-         </property>
-         <property name="text">
-          <string>Choose you car</string>
-         </property>
-        </widget>
-       </widget>
-      </widget>
+           </string>
+          </property>
+          <layout class="QVBoxLayout" name="layout_frame_wait">
+           <property name="spacing">
+            <number>20</number>
+           </property>
+           <property name="leftMargin">
+            <number>35</number>
+           </property>
+           <property name="rightMargin">
+            <number>35</number>
+           </property>
+           <property name="topMargin">
+            <number>35</number>
+           </property>
+           <property name="bottomMargin">
+            <number>35</number>
+           </property>
+           <item>
+            <widget class="QLabel" name="labelRoomCode">
+             <property name="text">
+              <string>ROOM CODE:</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignCenter</set>
+             </property>
+             <property name="styleSheet">
+              <string notr="true">
+QLabel {
+    background-color: rgba(0, 0, 0, 150);
+    border: 2px solid #ff6600;
+    padding: 5px;
+    font-weight: bold;
+}
+              </string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLabel" name="labelLobbyStatus">
+             <property name="text">
+              <string>Players 1/8</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="btnChooseCar">
+             <property name="minimumHeight">
+              <number>45</number>
+             </property>
+             <property name="text">
+              <string>Choose your car</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QListWidget" name="listPlayers">
+             <property name="minimumHeight">
+              <number>200</number>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <layout class="QHBoxLayout" name="layout_buttons_wait">
+             <property name="spacing">
+              <number>20</number>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignHCenter</set>
+             </property>
+             <item>
+              <widget class="QPushButton" name="btnStartGame">
+               <property name="minimumHeight">
+                <number>45</number>
+               </property>
+               <property name="text">
+                <string>Start Game</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="btnRefresh">
+               <property name="minimumHeight">
+                <number>45</number>
+               </property>
+               <property name="text">
+                <string>Refresh</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+          </layout> 
+         </widget> 
+        </item>
+       </layout> 
+      </widget> 
+      <!-- PAGE CAR -->
       <widget class="QWidget" name="page_car">
-       <widget class="QPushButton" name="btnBackToLobby">
-        <property name="geometry">
-         <rect>
-          <x>510</x>
-          <y>520</y>
-          <width>171</width>
-          <height>51</height>
-         </rect>
+       <layout class="QVBoxLayout" name="layout_page_car">
+        <property name="spacing">
+         <number>35</number>
         </property>
-        <property name="styleSheet">
-         <string notr="true">#btnBackToLobby {
-    background-color: #053356; /* azul retro */
+        <property name="topMargin">
+         <number>20</number>
+        </property>
+        <property name="bottomMargin">
+         <number>20</number>
+        </property>
+        <property name="leftMargin">
+         <number>15</number>
+        </property>
+        <property name="rightMargin">
+         <number>15</number>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignHCenter</set>
+        </property>
+        <item alignment="Qt::AlignHCenter">
+         <widget class="QLabel" name="labelCreateInfo_2">
+          <!-- <property name="minimumWidth">
+           <number>100</number>
+          </property>
+          <property name="maximumWidth">
+           <number>100</number>
+          </property> -->
+          <property name="sizePolicy">
+          <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+          </sizepolicy>
+          </property>
+          <property name="minimumSize">
+            <size>
+              <width>0</width>
+              <height>30</height> <!-- Altura fija -->
+            </size>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">
+QLabel {
+    background-color: #222222;
+    color: white;
+    border: 3px solid #00ffff;
+    border-radius: 20px;
+    font-weight: bold;
+    font-size: 22px;
+    padding: 20px 20px;
+}
+           </string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignHCenter|Qt::AlignVCenter</set>
+          </property>
+          <property name="text">
+           <string>The best exciting moment: Select your car!</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <layout class="QHBoxLayout" name="layout_car_selector">
+          <property name="spacing">
+           <number>20</number>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+          <item>
+           <widget class="QPushButton" name="btnPrevCar">
+            <property name="minimumSize">
+             <size><width>60</width><height>100</height></size>
+            </property>
+            <property name="maximumSize">
+             <size><width>70</width><height>140</height></size>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">
+#btnPrevCar {
+    background-color: #ff6600;
+    border-radius: 20px;
+    color: white;
+    font-size: 28px;
+    padding: 5px;
+}
+#btnPrevCar:hover { background-color: #ffa31a; }
+#btnPrevCar:pressed { background-color: #cc5200; }
+             </string>
+            </property>
+            <property name="text">
+             <string>⟨</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="labelCarImage">
+            <property name="minimumSize">
+             <size><width>200</width><height>250</height></size>
+            </property>
+            <property name="maximumSize">
+             <size><width>800</width><height>500</height></size>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">
+#labelCarImage {
+    background-color: rgba(0, 0, 0, 130);
+    border: 3px solid #00ffff;
+    border-radius: 18px;
+    padding: 12px;
+}
+             </string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="btnNextCar">
+            <property name="minimumSize">
+             <size><width>60</width><height>100</height></size>
+            </property>
+            <property name="maximumSize">
+             <size><width>70</width><height>140</height></size>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">
+#btnNextCar {
+    background-color: #ff6600;
+    border-radius: 20px;
+    color: white;
+    font-size: 28px;
+    padding: 5px;
+}
+#btnNextCar:hover { background-color: #ffa31a; }
+#btnNextCar:pressed { background-color: #cc5200; }
+             </string>
+            </property>
+            <property name="text">
+             <string>⟩</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <widget class="QPushButton" name="btnBackToLobby">
+          <property name="minimumWidth">
+           <number>220</number>
+          </property>
+          <property name="minimumHeight">
+           <number>55</number>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">
+#btnBackToLobby {
+    background-color: #053356;
     color: #faf2b7;
     font-weight: bold;
-    border: 2px solid #1cd3dc; /* borde oscuro para contraste */
-    border-radius: 8px;
-    padding: 8px 16px;
-    font-size: 18px;
-}
-
-#btnBackToLobby:hover {
-	color: #053356;
-	font-weight: bold;
-    background-color: #00BFFF; /* azul eléctrico */
-}
-
-#btnBackToLobby:pressed {
-    background-color: #137ec2;
-}
-</string>
-        </property>
-        <property name="text">
-         <string>Select this car</string>
-        </property>
-       </widget>
-       <widget class="QLabel" name="textSelect">
-        <property name="geometry">
-         <rect>
-          <x>279</x>
-          <y>120</y>
-          <width>691</width>
-          <height>41</height>
-         </rect>
-        </property>
-        <property name="text">
-         <string/>
-        </property>
-        <property name="alignment">
-         <set>Qt::AlignCenter</set>
-        </property>
-       </widget>
-       <widget class="QCommandLinkButton" name="btnNextCar">
-        <property name="geometry">
-         <rect>
-          <x>850</x>
-          <y>320</y>
-          <width>41</width>
-          <height>41</height>
-         </rect>
-        </property>
-        <property name="text">
-         <string/>
-        </property>
-       </widget>
-       <widget class="QCommandLinkButton" name="btnPrevCar">
-        <property name="geometry">
-         <rect>
-          <x>320</x>
-          <y>320</y>
-          <width>41</width>
-          <height>41</height>
-         </rect>
-        </property>
-        <property name="layoutDirection">
-         <enum>Qt::RightToLeft</enum>
-        </property>
-        <property name="text">
-         <string/>
-        </property>
-       </widget>
-       <widget class="QLabel" name="labelCreateInfo_2">
-        <property name="geometry">
-         <rect>
-          <x>300</x>
-          <y>140</y>
-          <width>611</width>
-          <height>61</height>
-         </rect>
-        </property>
-        <property name="styleSheet">
-         <string notr="true">QLabel {
-    background-color: #222222;     /* gris oscuro de fondo */
-    color: white;                  /* texto blanco */
-    border: 3px solid #00ffff;             /* cian neón */
-    border-radius: 20px;           /* bordes redondeados */
-    font-weight: bold;             /* negrita */
+    border: 2px solid #1cd3dc;
+    border-radius: 10px;
+    padding: 10px 20px;
     font-size: 20px;
-    padding: 6px 20px;             /* margen interno */
-    qproperty-alignment: 'AlignCenter';  /* centra el texto */
 }
-
-</string>
-        </property>
-        <property name="text">
-         <string>The best exciting moment: Select your car!</string>
-        </property>
-        <property name="alignment">
-         <set>Qt::AlignCenter</set>
-        </property>
-       </widget>
-       <widget class="QLabel" name="labelCarImage">
-        <property name="geometry">
-         <rect>
-          <x>360</x>
-          <y>210</y>
-          <width>491</width>
-          <height>301</height>
-         </rect>
-        </property>
-        <property name="styleSheet">
-         <string notr="true">#labelCarImage {
-    background-color: rgba(0, 0, 0, 130);
-    border: 3px solid #00ffff;             /* cian neón */
-    border-radius: 15px;
-    padding: 8px;
-}
-
-#labelCarName {
-    color: #00ffff;
-    font-weight: bold;
-    font-family: &quot;Tektur SemiBold&quot;;
-    background-color: transparent;
-    text-align: center;
-    font-size: 18px;
-}
-</string>
-        </property>
-        <property name="text">
-         <string/>
-        </property>
-        <property name="textFormat">
-         <enum>Qt::MarkdownText</enum>
-        </property>
-        <property name="alignment">
-         <set>Qt::AlignCenter</set>
-        </property>
-       </widget>
+#btnBackToLobby:hover { background-color: #00BFFF; color: #053356; }
+#btnBackToLobby:pressed { background-color: #137ec2; }
+           </string>
+          </property>
+          <property name="text">
+           <string>Select this car</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
       </widget>
+      <!-- PAGE MAPS -->
       <widget class="QWidget" name="page_maps">
-       <widget class="QListWidget" name="listMaps">
-        <property name="geometry">
-         <rect>
-          <x>350</x>
-          <y>170</y>
-          <width>581</width>
-          <height>441</height>
-         </rect>
+       <property name="styleSheet">
+        <string notr="true">
+QWidget {
+    background: qlineargradient(x1:0, y1:0, x2:1, y2:1,
+                               stop:0 #0a1f2e, stop:1 #152a40);
+}
+QListWidget {
+    background-color: rgba(0, 0, 0, 0.6);
+    border: 2px solid #ff6600;
+    border-radius: 15px;
+    color: white;
+    font-family: 'Tektur';
+    font-size: 16px;
+    padding: 10px;
+}
+QScrollBar:vertical {
+    background: rgba(0, 0, 0, 0.3);
+    width: 15px;
+    border-radius: 7px;
+}
+QScrollBar::handle:vertical {
+    background: #ff6600;
+    border-radius: 7px;
+    min-height: 20px;
+}
+QScrollBar::handle:vertical:hover {
+    background: #ff8800;
+}
+QPushButton {
+    background-color: #ff6600;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    padding: 12px 25px;
+    font-family: 'Tektur';
+    font-size: 16px;
+    font-weight: bold;
+    min-width: 200px;
+    min-height: 45px;
+}
+QPushButton:hover {
+    background-color: #ff8800;
+}
+QPushButton:pressed {
+    background-color: #cc5200;
+}
+        </string>
+       </property>
+       <layout class="QVBoxLayout" name="layout_maps_main">
+        <property name="spacing">
+         <number>30</number>
         </property>
-       </widget>
-       <widget class="QScrollBar" name="verticalScrollBar">
-        <property name="geometry">
-         <rect>
-          <x>910</x>
-          <y>170</y>
-          <width>20</width>
-          <height>441</height>
-         </rect>
+        <property name="leftMargin">
+         <number>40</number>
         </property>
-        <property name="orientation">
-         <enum>Qt::Vertical</enum>
+        <property name="topMargin">
+         <number>40</number>
         </property>
-       </widget>
-       <widget class="QPushButton" name="btnSelectMaps">
-        <property name="geometry">
-         <rect>
-          <x>530</x>
-          <y>630</y>
-          <width>231</width>
-          <height>51</height>
-         </rect>
+        <property name="rightMargin">
+         <number>40</number>
         </property>
-        <property name="text">
-         <string>Select and back to menu</string>
+        <property name="bottomMargin">
+         <number>40</number>
         </property>
-       </widget>
+        <item alignment="Qt::AlignHCenter">
+         <widget class="QLabel" name="labelMapsTitle">
+          <property name="styleSheet">
+           <string notr="true">
+QLabel {
+    background-color: rgba(0, 0, 0, 0.5);
+    color: white;
+    border: 2px solid #00ffff;
+    border-radius: 15px;
+    padding: 15px 30px;
+    font-family: 'Tektur';
+    font-size: 24px;
+    font-weight: bold;
+}
+           </string>
+          </property>
+          <property name="text">
+           <string>Select a Map</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QListWidget" name="listMaps">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Expanding"/>
+          </property>
+          <property name="minimumHeight">
+           <number>300</number>
+          </property>
+         </widget>
+        </item>
+        <item alignment="Qt::AlignHCenter">
+         <widget class="QPushButton" name="btnSelectMaps">
+          <property name="minimumWidth">
+           <number>250</number>
+          </property>
+          <property name="minimumHeight">
+           <number>50</number>
+          </property>
+          <property name="text">
+           <string>Select and back to menu</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
       </widget>
-     </widget>
+     </widget> 
     </item>
    </layout>
   </widget>
@@ -1006,3 +1339,4 @@ QPushButton:pressed { background-color: #cc5200; }
  <resources/>
  <connections/>
 </ui>
+

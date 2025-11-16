@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 
 #include <QAudioOutput>
+#include <QListWidgetItem>
 #include <QMainWindow>
 #include <QMediaPlayer>
 #include <QVector>
@@ -15,8 +16,6 @@
 #include "lobby_service.h"
 #include "player_info.h"
 
-// class LobbyApi;
-// class LobbyService;
 class RoomsPager;
 class WaitRoomController;
 class CarSelectionController;
@@ -37,6 +36,9 @@ public:
                         QWidget* parent = nullptr);
     ~MainWindow();
 
+protected:
+    void resizeEvent(QResizeEvent* e) override;
+
 private slots:
     void handleJoinGame();
     void handleCreateGame();
@@ -53,6 +55,8 @@ private slots:
     void openEditorMap();
     void handleOpenMapsPage();  // Abre la página con la lista de recorridos
     void handleSelectMaps();    // Selecciona y pasa a page_create
+    void onMapItemChanged(QListWidgetItem* item);
+    void updateMapItemStyle(QListWidgetItem* item);
 
 private:
     Ui::Lobby* ui;

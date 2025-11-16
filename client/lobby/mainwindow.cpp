@@ -9,6 +9,7 @@
 #include <QProcess>
 #include <QRandomGenerator>
 #include <QScreen>
+#include <QStackedWidget>
 #include <QStandardItem>
 #include <QStandardItemModel>
 #include <QTimer>
@@ -28,29 +29,21 @@
 #include "wait_room_controller.h"
 
 void MainWindow::onWaitTimerTickHost() {
-    // if (inFlight)
-    //     return;
-    // inFlight = true;
     try {
         if (this->lobbySvc->pollState().started) {
             game_started = true;
             this->close();
         }
     } catch (...) {}
-    // inFlight = false;
 }
 
 void MainWindow::onWaitTimerTickJoin() {
-    // if (inFlight)
-    //     return;
-    // inFlight = true;
     try {
         if (this->lobbySvc->pollState().started) {
             game_started = true;
             this->close();
         }
     } catch (...) {}
-    // inFlight = false;
 }
 
 MainWindow::MainWindow(ClientProtocol& protocol, bool& game_started_ref, std::string& username_ref,
@@ -68,6 +61,18 @@ MainWindow::MainWindow(ClientProtocol& protocol, bool& game_started_ref, std::st
         username(username_ref),
         refreshTimer(nullptr) {
     ui->setupUi(this);
+
+    QTimer::singleShot(0, this, [this] {
+        Navigation::goToPage(ui->stackedWidget->currentWidget(), ui->stackedWidget, this);
+    });
+
+    connect(ui->stackedWidget, &QStackedWidget::currentChanged, this, [this](int) {
+        Navigation::goToPage(ui->stackedWidget->currentWidget(), ui->stackedWidget, this);
+    });
+
+    this->setCentralWidget(ui->centralwidget);
+    this->centralWidget()->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    ui->stackedWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
     // Instanciar controladores
     roomsPager = std::make_unique<RoomsPager>(*lobbySvc, ui);
@@ -148,6 +153,12 @@ MainWindow::MainWindow(ClientProtocol& protocol, bool& game_started_ref, std::st
             Qt::UniqueConnection);
     connect(ui->btnStartGame, &QPushButton::clicked, this, &MainWindow::handleStartGame);
 
+    connect(ui->listMaps, &QListWidget::itemClicked, this, [this](QListWidgetItem* item) {
+        bool current = item->data(Qt::UserRole + 1).toBool();
+        item->setData(Qt::UserRole + 1, !current);
+        updateMapItemStyle(item);
+    });
+
     connect(ui->btnChooseCar, &QPushButton::clicked, this, [this]() {
         ui->stackedWidget->setCurrentWidget(ui->page_car);
         carCtrl->updateImage();
@@ -179,6 +190,13 @@ MainWindow::MainWindow(ClientProtocol& protocol, bool& game_started_ref, std::st
     // Centrar ventana
     QRect screenGeometry = QGuiApplication::primaryScreen()->geometry();
     this->move(screenGeometry.center() - this->rect().center());
+}
+
+void MainWindow::resizeEvent(QResizeEvent* e) {
+    if (ui && ui->stackedWidget && ui->stackedWidget->currentWidget()) {
+        Navigation::goToPage(ui->stackedWidget->currentWidget(), ui->stackedWidget, this);
+    }
+    QMainWindow::resizeEvent(e);
 }
 
 void MainWindow::openEditorMap() {
@@ -225,6 +243,11 @@ void MainWindow::handleOpenMapsPage() {
     }
 
     ui->listMaps->clear();
+    ui->listMaps->setSpacing(8);
+    ui->listMaps->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
+    ui->listMaps->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    ui->listMaps->setViewMode(QListView::ListMode);
+
     dir.setFilter(QDir::Files | QDir::NoDotAndDotDot);
     QFileInfoList mapFiles = dir.entryInfoList();
 
@@ -233,13 +256,33 @@ void MainWindow::handleOpenMapsPage() {
     } else {
         for (const QFileInfo& info: mapFiles) {
             QListWidgetItem* item = new QListWidgetItem(info.baseName());
-            item->setCheckState(Qt::Unchecked);
+            item->setFlags(item->flags() | Qt::ItemIsUserCheckable | Qt::ItemIsSelectable |
+                           Qt::ItemIsEnabled);
             item->setData(Qt::UserRole, info.absoluteFilePath());
+            item->setCheckState(Qt::Unchecked);
+            item->setData(Qt::UserRole + 1, false);
             ui->listMaps->addItem(item);
+            updateMapItemStyle(item);
         }
     }
-    // Mostrar la página de mapas
     Navigation::goToPage(ui->page_maps, ui->stackedWidget, this);
+}
+
+void MainWindow::onMapItemChanged(QListWidgetItem* item) { updateMapItemStyle(item); }
+
+void MainWindow::updateMapItemStyle(QListWidgetItem* item) {
+    if (!item)
+        return;
+
+    bool isSelected = item->data(Qt::UserRole + 1).toBool();
+
+    if (isSelected) {
+        item->setBackground(QColor("#ff6600"));
+        item->setForeground(QColor("white"));
+    } else {
+        item->setBackground(QColor(255, 255, 255, 25));
+        item->setForeground(QColor("white"));
+    }
 }
 
 void MainWindow::handleSelectMaps() {
@@ -349,16 +392,17 @@ void MainWindow::handleCreateButton() {
 
     // Placeholder
     ui->comboMaxPlayers->addItem("Select players...");
-    auto* model = qobject_cast<QStandardItemModel*>(ui->comboMaxPlayers->model());
+    auto combo = ui->comboMaxPlayers;
+    combo->setView(new QListView(combo));
 
-    if (model) {
+    auto* model = qobject_cast<QStandardItemModel*>(combo->model());
+    if (combo) {
         QStandardItem* first = model->item(0);
         first->setEnabled(false);
         first->setForeground(QBrush(Qt::gray));
         first->setFont(QFont("Tektur", 12, QFont::StyleItalic));
     }
 
-    // Valores reales
     for (int i = 2; i <= 8; i++) ui->comboMaxPlayers->addItem(QString::number(i));
     ui->comboMaxPlayers->setCurrentIndex(0);
 }

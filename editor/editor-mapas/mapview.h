@@ -36,6 +36,7 @@ public:
     void zoomIn() { scale(1.2, 1.2); }
     void zoomOut() { scale(1.0 / 1.2, 1.0 / 1.2); }
     void resetZoom() { fitMap(); }
+    void updateCheckpointLines();
 
 
 signals:
@@ -61,6 +62,7 @@ private:
 
     void fitMap();
     void placeItemAt(const QPointF& scenePos);
+    QList<QGraphicsLineItem*> cpLines;
 };
 
 #endif  // MAPVIEW_H
