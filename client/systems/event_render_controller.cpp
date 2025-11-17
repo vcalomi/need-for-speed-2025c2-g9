@@ -2,6 +2,7 @@
 
 #include "../events/player_collision_event.h"
 #include "../events/player_events.h"
+#include "../events/player_race_finished_event.h"
 #include "../events/race_finished_event.h"
 #include "../events/vehicle_exploded_event.h"
 #include "../events/wall_collision_event.h"
@@ -35,6 +36,12 @@ void EventRenderController::RegisterEvents() {
 
     eventBus_.Subscribe<RaceFinishedEvent>(
             [this](const RaceFinishedEvent&) { state_.raceFinished = true; });
+
+    eventBus_.Subscribe<PlayerRaceFinishedEvent>([this](const PlayerRaceFinishedEvent& e) {
+        if (e.username == world_.GetLocalPlayer().GetUsername()) {
+            state_.raceFinished = true;
+        }
+    });
 
     eventBus_.Subscribe<VehicleExplodedEvent>([this](const VehicleExplodedEvent& e) {
         if (e.username == world_.GetLocalPlayer().GetUsername()) {

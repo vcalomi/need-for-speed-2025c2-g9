@@ -1,5 +1,7 @@
 # === Submódulo: systems ===
 
+add_subdirectory(dto_handlers)
+
 add_library(systems
     renderer_system.cpp
     network_system.cpp
@@ -25,4 +27,5 @@ target_link_libraries(systems
         ui
         network
         resources
+        dto_handlers
 )
