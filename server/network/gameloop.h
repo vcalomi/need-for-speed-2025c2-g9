@@ -21,6 +21,11 @@ struct PlayerRaceProgress {
     bool finished = false;    
 };
 
+struct LevelInfo {
+    std::string dir;      
+    std::string mapName;  
+};
+
 class GameLoop: public Thread {
 private:
     Queue<std::shared_ptr<Dto>>& gameLoopQueue;
@@ -30,11 +35,14 @@ private:
     std::optional<LevelSetup> setup;
     int maxPlayers;
 
-    std::vector<std::string> levelPaths_;
-    int currentLevelIndex_ = -1;
+    std::vector<LevelInfo> levels_;
+    int currentLevelIndex_ = 0;
+    std::string currentMapName_;
+
     bool raceActive_ = false;
     bool pendingNextRace_ = false;
     std::unordered_map<int, PlayerRaceProgress> raceProgress_; 
+
     
     void handlerProcessCommand(std::shared_ptr<Dto> dto);
     Vehicle* getVehicleByPlayer(const std::string& username);

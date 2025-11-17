@@ -40,10 +40,12 @@ GameLoop::GameLoop(Queue<std::shared_ptr<Dto>>& gameLoopQueue, std::map<int, Car
         broadcaster_(broadcaster),
         maxPlayers(maxPlayers),
         raceActive_(false),
-        pendingNextRace_(false) {
+        pendingNextRace_(false) 
+{
+    levels_.push_back(LevelInfo{"../server/physics/Levels/Liberty_City", "Liberty_City"});
 
-    levelPaths_.push_back("../server/physics/Levels/Liberty_City");
-    levelPaths_.push_back("../server/physics/Levels/San_Andreas");
+    levels_.push_back(LevelInfo{"../server/physics/Levels/San_Andreas", "San_Andreas"});
+    
 }
 
 void GameLoop::run() {
@@ -93,6 +95,7 @@ void GameLoop::startRace(int levelIndex) {
 
     sendCheckpoints();
     sendInitialPlayersCars();
+
 
     raceActive_ = true;
 }
