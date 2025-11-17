@@ -30,7 +30,14 @@ void Lobby::run() {
         }
     } catch (const std::exception& e) {
         this->stop();
+        try {
+            gameMonitor.removeClient(clientId);
+        } catch (...) {}
+        return;
     }
+    try {
+        gameMonitor.removeClient(clientId);
+    } catch (...) {}
 }
 
 void Lobby::initHandlers() {

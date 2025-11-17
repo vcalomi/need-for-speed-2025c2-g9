@@ -75,11 +75,18 @@ void ClientHandler::stop() {
         receiver->stop();
     if (sender)
         sender->stop();
+    try {
+        gameMonitor.removeClient(clientId);
+    } catch (...) {}
 }
 
 bool ClientHandler::is_alive() const {
     return lobby.is_alive() || (receiver && receiver->is_alive()) || (sender && sender->is_alive());
 }
 
-ClientHandler::~ClientHandler() {}
+ClientHandler::~ClientHandler() {
+    try {
+        gameMonitor.removeClient(clientId);
+    } catch (...) {}
+}
 #include <memory>

@@ -20,6 +20,7 @@
 #include "vehicle_exploded_serializer.h"
 #include "vehicle_serializer.h"
 #include "vehicle_wall_collision_serializer.h"
+#include "player_left_serializer.h"
 
 class SerializerMap {
 public:
@@ -49,6 +50,8 @@ public:
         serializers[static_cast<uint8_t>(ActionCode::SEND_INITIAL_RACE_MAP)] =
                 std::make_unique<InitialRaceMapSerializer>();
         serializers[static_cast<uint8_t>(ActionCode::SEND_PLAYER_RACE_FINISHED)] =
+                std::make_unique<PlayerRaceFinishedSerializer>();
+        serializers[static_cast<uint8_t>(ActionCode::SEND_PLAYER_LEFT)] =
                 std::make_unique<PlayerRaceFinishedSerializer>();
 
         return serializers;

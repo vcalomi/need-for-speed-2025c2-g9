@@ -4,6 +4,7 @@
 #include <iostream>
 
 #include "../../common/Dto/vehicle.h"
+#include "../../common/Dto/player_left.h"
 #include "../../common/common_codes.h"
 #include "../../common/queue.h"
 
@@ -73,12 +74,22 @@ bool GameRoom::chooseCar(int clientId, const CarConfig& car) {
 
 void GameRoom::removePlayer(int clientId) {
     std::lock_guard<std::mutex> lock(mtx);
+    std::string leftUsername;
+    auto uIt = playerUsernames.find(clientId);
+    if (uIt != playerUsernames.end()) {
+        leftUsername = uIt->second;
+    }
     auto it = players.find(clientId);
     if (it != players.end()) {
         broadcaster.removeQueue(it->second);
         players.erase(it);
     }
     playerUsernames.erase(clientId);
+    chosenCars.erase(clientId);
+    if (!leftUsername.empty()) {
+        auto dto = std::make_shared<PlayerLeftDto>(leftUsername);
+        broadcaster.broadcast(dto);
+    }
 }
 
 bool GameRoom::canJoin() const {

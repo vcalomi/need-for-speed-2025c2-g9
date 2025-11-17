@@ -35,7 +35,8 @@ enum class ActionCode : uint8_t {
     SEND_RACE_FINISHED = 0x27,
     SEND_VEHICLE_EXPLODED = 0x28,
     SEND_INITIAL_RACE_MAP = 0x29,
-    SEND_PLAYER_RACE_FINISHED = 0x2A
+    SEND_PLAYER_RACE_FINISHED = 0x2A,
+    SEND_PLAYER_LEFT = 0x30
 };
 
 enum class MoveMask : uint8_t {

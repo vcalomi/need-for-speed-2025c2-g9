@@ -178,4 +178,22 @@ void GameMonitor::registerStartNotifier(int clientId,
     startNotifiers[clientId] = std::move(notifier);
 }
 
+void GameMonitor::removeClient(int clientId) {
+    std::shared_ptr<GameRoom> roomToCleanup = nullptr;
+    {
+        std::lock_guard<std::mutex> lock(mtx);
+        auto it = clientToRoom.find(clientId);
+        if (it != clientToRoom.end()) {
+            roomToCleanup = it->second;
+            clientToRoom.erase(it);
+        }
+        clientUsernames.erase(clientId);
+        startNotifiers.erase(clientId);
+        pendingGameStarts.erase(clientId);
+    }
+    if (roomToCleanup) {
+        roomToCleanup->removePlayer(clientId);
+    }
+}
+
 GameMonitor::~GameMonitor() {}

@@ -4,7 +4,6 @@
 #include <string>
 #include <vector>
 
-#include "../../common/client_command.h"
 #include "../../common/liberror.h"
 #include "../../common/socket.h"
 #include "../../common/thread.h"

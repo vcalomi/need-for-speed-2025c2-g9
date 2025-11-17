@@ -2,7 +2,6 @@
 #define SERVER_H
 #include <string>
 
-#include "../../common/client_command.h"
 #include "../../common/queue.h"
 
 #include "acceptor.h"

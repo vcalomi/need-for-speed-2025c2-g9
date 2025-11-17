@@ -42,6 +42,7 @@ public:
     void registerStartNotifier(int clientId,
                                std::function<void(std::shared_ptr<GameRoom>)> notifier);
     std::shared_ptr<GameRoom> getRoomByClient(int clientId);
+    void removeClient(int clientId);
     ~GameMonitor();
 };
 
