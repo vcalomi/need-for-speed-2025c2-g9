@@ -1,18 +1,40 @@
-#include "./checkpoint_indicator.h"
+#include "checkpoint_indicator.h"
+
+#include <cmath>
+
+CheckpointIndicator::CheckpointIndicator(SDL2pp::Renderer& renderer): renderer_(renderer) {}
+
+void CheckpointIndicator::SetTexture(const std::string& path) {
+    SDL2pp::Surface surf(path);
+    arrowTexture_ = new SDL2pp::Texture(renderer_, surf);
+}
 
 void CheckpointIndicator::Draw(const Camera& camera, const Player& localPlayer,
                                const Checkpoint& activeCp) {
-    auto [dx, dy] = ComputeDirection(localPlayer, activeCp);
-    if (dx == 0 && dy == 0)
+    if (!arrowTexture_)
         return;
 
-    SDL_FPoint start = ComputeArrowStart(localPlayer, camera, dx, dy);
-    auto [left, right, tip] = ComputeTrianglePoints(start, dx, dy);
+    auto [dx, dy] = ComputeDirection(localPlayer, activeCp);
+    if (dx == 0.0f && dy == 0.0f)
+        return;
 
-    renderer_.SetDrawBlendMode(SDL_BLENDMODE_BLEND);
-    renderer_.SetDrawColor(255, 255, 255, 220);
+    float angleDeg = ComputeAngle(dx, dy);
 
-    DrawFilledTriangle(left, right, tip);
+    float screenX = localPlayer.GetX() - camera.getX();
+    float screenY = localPlayer.GetY() - camera.getY();
+
+    const float offsetForward = 50.0f;
+    float arrowX = screenX + dx * offsetForward;
+    float arrowY = screenY + dy * offsetForward;
+
+    SDL_Rect dst;
+    dst.w = 48;
+    dst.h = 48;
+    dst.x = static_cast<int>(arrowX - dst.w / 2);
+    dst.y = static_cast<int>(arrowY - dst.h / 2);
+
+    SDL_RenderCopyEx(renderer_.Get(), arrowTexture_->Get(), nullptr, &dst, angleDeg, nullptr,
+                     SDL_FLIP_NONE);
 }
 
 std::pair<float, float> CheckpointIndicator::ComputeDirection(const Player& player,
@@ -20,53 +42,13 @@ std::pair<float, float> CheckpointIndicator::ComputeDirection(const Player& play
     float dx = checkpoint.x - player.GetX();
     float dy = checkpoint.y - player.GetY();
     float len = std::sqrt(dx * dx + dy * dy);
+
     if (len < 0.001f)
-        return {0, 0};
+        return {0.f, 0.f};
+
     return {dx / len, dy / len};
 }
 
-SDL_FPoint CheckpointIndicator::ComputeArrowStart(const Player& player, const Camera& camera,
-                                                  float dx, float dy) const {
-    float baseX = player.GetX() - camera.getX();
-    float baseY = player.GetY() - camera.getY();
-    const float offsetForward = 40.0f;
-    return {baseX + dx * offsetForward, baseY + dy * offsetForward};
-}
-
-std::tuple<SDL_FPoint, SDL_FPoint, SDL_FPoint> CheckpointIndicator::ComputeTrianglePoints(
-        const SDL_FPoint& start, float dx, float dy) const {
-    const float arrowLength = 35.0f;
-    const float arrowWidth = 20.0f;
-
-    SDL_FPoint tip = {start.x + dx * arrowLength, start.y + dy * arrowLength};
-    SDL_FPoint left = {start.x - dy * (arrowWidth / 2.0f), start.y + dx * (arrowWidth / 2.0f)};
-    SDL_FPoint right = {start.x + dy * (arrowWidth / 2.0f), start.y - dx * (arrowWidth / 2.0f)};
-    return {left, right, tip};
-}
-
-void CheckpointIndicator::DrawFilledTriangle(SDL_FPoint a, SDL_FPoint b, SDL_FPoint c) {
-    if (b.y < a.y)
-        std::swap(a, b);
-    if (c.y < a.y)
-        std::swap(a, c);
-    if (c.y < b.y)
-        std::swap(b, c);
-
-    for (int y = static_cast<int>(a.y); y <= static_cast<int>(c.y); ++y) {
-        bool secondHalf = y > b.y || b.y == a.y;
-        float segmentHeight = secondHalf ? c.y - b.y : b.y - a.y;
-        if (segmentHeight == 0)
-            continue;
-
-        float alpha = (y - a.y) / (c.y - a.y);
-        float beta = (y - (secondHalf ? b.y : a.y)) / segmentHeight;
-
-        SDL_FPoint A = {a.x + (c.x - a.x) * alpha, a.y + (c.y - a.y) * alpha};
-        SDL_FPoint B = secondHalf ? SDL_FPoint{b.x + (c.x - b.x) * beta, b.y + (c.y - b.y) * beta} :
-                                    SDL_FPoint{a.x + (b.x - a.x) * beta, a.y + (b.y - a.y) * beta};
-
-        if (A.x > B.x)
-            std::swap(A, B);
-        renderer_.DrawLine((int)A.x, y, (int)B.x, y);
-    }
+float CheckpointIndicator::ComputeAngle(float dx, float dy) const {
+    return std::atan2(dy, dx) * 180.0 / M_PI;
 }

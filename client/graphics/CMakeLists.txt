@@ -3,6 +3,10 @@ add_library(graphics
     particle_renderer.cpp
     player_renderer.cpp
     checkpoint_renderer.cpp
+    background_renderer.cpp
+    text_renderer.cpp
+    screen_renderer.cpp
+    hud_renderer.cpp
 )
 
 target_include_directories(graphics

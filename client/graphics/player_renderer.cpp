@@ -1,60 +1,70 @@
-#include "./player_renderer.h"
+#include "player_renderer.h"
 
-
-#define HALF_DIVISOR 2.0f
+#include <iostream>
 
 PlayerRenderer::PlayerRenderer(SDL2pp::Renderer& renderer, SpriteSheet& cars, TTF_Font* font):
         renderer_(renderer), cars_(cars), font_(font) {}
 
-void PlayerRenderer::Draw(const Player& player, const Camera& camera) {
-    std::string baseSpriteName = player.GetSprite();
 
-    if (!cars_.HasSprite(baseSpriteName)) {
-        std::cerr << "[Renderer] Base sprite '" << baseSpriteName << "' not found\n";
+void PlayerRenderer::Draw(const Player& player, const Camera& camera) {
+    std::string spriteName = player.GetSprite();
+
+    if (!cars_.HasSprite(spriteName)) {
+        std::cerr << "[PlayerRenderer] Sprite not found: " << spriteName << "\n";
         return;
     }
 
-    const Sprite& src = cars_.GetSprite(baseSpriteName);
+    const Sprite& src = cars_.GetSprite(spriteName);
 
-    float drawX = player.GetX() - camera.getX();
-    float drawY = player.GetY() - camera.getY();
+    // Convertir coordenadas a pantalla
+    float worldX = player.GetX();
+    float worldY = player.GetY();
 
+    int screenX = static_cast<int>(worldX - camera.getX());
+    int screenY = static_cast<int>(worldY - camera.getY());
+
+    // Rect destino
     SDL_Rect dest;
     dest.w = src.width;
     dest.h = src.height;
-    dest.x = static_cast<int>(drawX - dest.w / 2);
-    dest.y = static_cast<int>(drawY - dest.h / 2);
+    dest.x = screenX - dest.w / 2;
+    dest.y = screenY - dest.h / 2;
 
-    double angle = player.GetAngle();
-    angle += 180.0;
+    // Rotación del auto
+    double angle = player.GetAngle() + 180.0;
 
     SDL_RenderCopyEx(renderer_.Get(), cars_.GetTexture().Get(), &src.area, &dest, angle, nullptr,
                      SDL_FLIP_NONE);
 
-    DrawTextAbove(font_, player.GetUsername(), dest.x, dest.y, src.area);
+    // Dibujar nombre arriba del auto
+    DrawTextAbove(player.GetUsername(), dest.x, dest.y, src);
 }
 
 
 void PlayerRenderer::SetFont(TTF_Font* font) { font_ = font; }
 
-void PlayerRenderer::DrawTextAbove(TTF_Font* font, const std::string& text, float drawX,
-                                   float drawY, const Rect& src) {
-    if (!font)
+void PlayerRenderer::DrawTextAbove(const std::string& text, int carX, int carY,
+                                   const Sprite& sprite) {
+    if (!font_)
         return;
 
-    SDL_Color color = {255, 255, 255, 255};
+    SDL_Color white = {255, 255, 255, 255};
+    SDL_Surface* rawSurface = TTF_RenderText_Blended(font_, text.c_str(), white);
 
-    SDL2pp::Surface textSurface(TTF_RenderText_Blended(font, text.c_str(), color));
-    if (textSurface.Get() == nullptr)
+    if (!rawSurface)
         return;
 
-    SDL2pp::Texture textTexture(renderer_, textSurface);
+    SDL2pp::Surface surf(rawSurface);
+    SDL2pp::Texture texture(renderer_, surf);
 
-    int textW = textSurface.Get()->w;
-    int textH = textSurface.Get()->h;
+    int textW = surf.Get()->w;
+    int textH = surf.Get()->h;
 
-    SDL_Rect textRect = {static_cast<int>(drawX + src.GetW() / 2 - textW / 2),
-                         static_cast<int>(drawY - textH - 5), textW, textH};
+    SDL_Rect rect;
+    rect.w = textW;
+    rect.h = textH;
+    rect.x = carX + (sprite.width / 2) - (textW / 2);
+    rect.y = carY - textH - 4;
 
-    renderer_.Copy(textTexture, SDL2pp::NullOpt, textRect);
+    renderer_.Copy(texture, SDL2pp::NullOpt, rect);
 }

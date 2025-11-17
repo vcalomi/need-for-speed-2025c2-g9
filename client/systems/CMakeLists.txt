@@ -6,6 +6,7 @@ add_library(systems
     dto_handler_system.cpp
     input_system.cpp
     audio_system.cpp
+    event_render_controller.cpp
 )
 
 target_include_directories(systems

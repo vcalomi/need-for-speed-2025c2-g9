@@ -11,14 +11,14 @@
 class PlayerRenderer {
 public:
     PlayerRenderer(SDL2pp::Renderer& renderer, SpriteSheet& cars, TTF_Font* font);
+
     void Draw(const Player& player, const Camera& camera);
     void SetFont(TTF_Font* font);
 
 private:
     SDL2pp::Renderer& renderer_;
     SpriteSheet& cars_;
-    TTF_Font* font_;
+    TTF_Font* font_ = nullptr;
 
-    void DrawTextAbove(TTF_Font* font, const std::string& text, float drawX, float drawY,
-                       const Rect& src);
+    void DrawTextAbove(const std::string& text, int screenX, int screenY, const Sprite& sprite);
 };

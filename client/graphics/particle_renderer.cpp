@@ -1,8 +1,9 @@
-#include "./particle_renderer.h"
+#include "particle_renderer.h"
 
 #include <algorithm>
 #include <cmath>
 #include <cstdlib>
+#include <string>
 
 ParticleRenderer::ParticleRenderer(Renderer& renderer): renderer_(renderer) {}
 
@@ -112,4 +113,14 @@ void ParticleRenderer::Render(const Camera& camera) {
         SDL_FRect rect = {screenX, screenY, p.size, p.size};
         SDL_RenderFillRectF(renderer_.Get(), &rect);
     }
+}
+
+void ParticleRenderer::EmitForPlayer(const World& world, const std::string& username,
+                                     ParticleType type) {
+    const Player& p = world.GetPlayer(username);
+    float angle = p.GetAngle();
+
+    float offset = 0.0f;
+
+    Emit(p.GetX(), p.GetY(), angle, offset, type, 8);
 }
