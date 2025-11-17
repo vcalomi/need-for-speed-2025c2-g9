@@ -21,8 +21,8 @@ Game::Game(Client& client):
         world_(eventBus_),
         rendererSystem_(engine_.GetRenderer(), resources_.GetCarSprites(), world_, eventBus_),
         networkSystem_(client_, eventBus_),
-        map_(engine_.GetRenderer(), eventBus_),
-        dtoHandlerSystem_(client_, eventBus_) {
+        dtoHandlerSystem_(client_, eventBus_),
+        map_(engine_.GetRenderer(), eventBus_) {
     audioSystem_.PlayBackgroundMusic("../client/assets/need-for-speed/music/background.wav");
 }
 

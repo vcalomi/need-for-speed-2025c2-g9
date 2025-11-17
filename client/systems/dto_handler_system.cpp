@@ -1,6 +1,7 @@
 #include "./dto_handler_system.h"
 
 #include "../../common/Dto/checkpoint.h"
+#include "../../common/Dto/initial_race_map.h"
 #include "../../common/Dto/lap_completed.h"
 #include "../../common/Dto/player_race_finished.h"
 #include "../../common/Dto/race_finished.h"
@@ -15,6 +16,7 @@
 #include "../events/player_events.h"
 #include "../events/player_joined_event.h"
 #include "../events/race_finished_event.h"
+#include "../events/race_info_event.h"
 #include "../events/vehicle_exploded_event.h"
 #include "../events/wall_collision_event.h"
 
@@ -138,6 +140,15 @@ void DtoHandlerSystem::Process(const std::shared_ptr<Dto>& dto) {
 
             event = std::make_shared<VehicleExplodedEvent>(vehicleExplodedDto->username);
             break;
+        }
+        case ActionCode::SEND_INITIAL_RACE_MAP: {
+            auto raceMapDto = std::dynamic_pointer_cast<InitialRaceMapDto>(dto);
+            if (!raceMapDto)
+                return;
+
+            std::cout << "[DtoHandler] Initial Race Map received" << std::endl;
+
+            event = std::make_shared<RaceInfoEvent>(raceMapDto->mapName);
         }
 
         default:

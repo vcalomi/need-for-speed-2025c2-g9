@@ -12,6 +12,6 @@ public:
 
 private:
     SDL2pp::Renderer& renderer_;
-    const SDL2pp::Texture& mapTexture_;
+    SDL2pp::Texture* mapTexture_;
     int miniWidth, miniHeight;
 };

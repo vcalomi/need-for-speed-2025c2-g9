@@ -1,41 +1,59 @@
 #include "map.h"
 
+#include <fstream>
+
 #include "../events/race_info_event.h"
 
+static bool FileExists(const std::string& p) { return std::ifstream(p).good(); }
+
 Map::Map(SDL2pp::Renderer& renderer, EventBus& eventBus):
-        renderer_(renderer),
-        eventBus_(eventBus),
-        backgroundTexture_(nullptr),
-        foregroundTexture_(nullptr),
-        width_(0),
-        height_(0) {
-
+        renderer_(renderer), eventBus_(eventBus), width_(0), height_(0) {
     eventBus_.Subscribe<RaceInfoEvent>([this](const RaceInfoEvent& e) {
-        std::string backgroundpath = e.map;
-        std::string foregroundpath = e.map + "_foreground";
-        backgroundTexture_ = SDL2pp::Texture(renderer_, backgroundpath);
-        foregroundTexture_ = SDL2pp::Texture(renderer_, foregroundpath);
+        std::string assetsPath = "../client/assets/need-for-speed/cities/";
+        std::string assetsFileType = ".png";
+        std::string backgroundpath = assetsPath + e.map + assetsFileType;
+        std::string foregroundpath = assetsPath + e.map + "_foreground" + assetsFileType;
 
-        SDL2pp::Point size = backgroundTexture_.GetSize();
-        width_ = size.x;
-        height_ = size.y;
+        if (FileExists(backgroundpath)) {
+            backgroundTexture_.emplace(renderer_, backgroundpath);
+
+            SDL2pp::Point size = backgroundTexture_->GetSize();
+            width_ = size.x;
+            height_ = size.y;
+
+            std::cout << "[Map] Background loaded: " << backgroundpath << "\n";
+        } else {
+            std::cerr << "[Map] ERROR: Background not found: " << backgroundpath << "\n";
+            return;
+        }
+
+        if (FileExists(foregroundpath)) {
+            foregroundTexture_.emplace(renderer_, foregroundpath);
+            std::cout << "[Map] Foreground loaded: " << foregroundpath << "\n";
+        } else {
+            std::cout << "[Map] No foreground found for: " << e.map << "\n";
+            foregroundTexture_.reset();
+        }
     });
 }
 
 void Map::RenderBackground(const Camera& camera) {
+    if (!backgroundTexture_)
+        return;
+
     SDL2pp::Rect dst(-camera.getX(), -camera.getY(), width_, height_);
-    renderer_.Copy(backgroundTexture_, SDL2pp::NullOpt, dst);
+    renderer_.Copy(*backgroundTexture_, SDL2pp::NullOpt, dst);
 }
 
 void Map::RenderForeground(const Camera& camera) {
+    if (!foregroundTexture_)
+        return;
+
     SDL2pp::Rect dst(-camera.getX(), -camera.getY(), width_, height_);
-    renderer_.Copy(foregroundTexture_, SDL2pp::NullOpt, dst);
+    renderer_.Copy(*foregroundTexture_, SDL2pp::NullOpt, dst);
 }
 
 int Map::GetWidth() const { return width_; }
 int Map::GetHeight() const { return height_; }
-const SDL2pp::Texture& Map::GetTexture() const { return backgroundTexture_; }
 
-bool Map::IsLoaded() const {
-    return backgroundTexture_.Get() != nullptr && foregroundTexture_.Get() != nullptr;
-}
+bool Map::IsLoaded() const { return backgroundTexture_.has_value(); }
