@@ -4,6 +4,7 @@ add_library(world
     camera.cpp
     player.cpp
     world.cpp
+    map.cpp
 )
 
 target_include_directories(world

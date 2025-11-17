@@ -21,8 +21,7 @@ Game::Game(Client& client):
         world_(eventBus_),
         rendererSystem_(engine_.GetRenderer(), resources_.GetCarSprites(), world_, eventBus_),
         networkSystem_(client_, eventBus_),
-        map_(engine_.GetRenderer(), "../client/assets/need-for-speed/cities/liberty_city.png",
-             "../client/assets/need-for-speed/cities/liberty_city_foreground.png"),
+        map_(engine_.GetRenderer(), eventBus_),
         dtoHandlerSystem_(client_, eventBus_) {
     audioSystem_.PlayBackgroundMusic("../client/assets/need-for-speed/music/background.wav");
 }
@@ -33,7 +32,7 @@ void Game::Run() {
     Camera camera(engine_.getWindowWidth(), engine_.getWindowHeight());
     Minimap minimap(engine_.GetRenderer(), map_, 100, 100);
 
-    while (world_.HasPlayers() == false) {
+    while (map_.IsLoaded() == false && world_.HasPlayers() == false) {
         std::shared_ptr<Dto> dto = nullptr;
         while (client_.getRecvQueue().try_pop(dto)) {
             dtoHandlerSystem_.Process(dto);
@@ -42,24 +41,20 @@ void Game::Run() {
 
     while (running) {
 
-        // --- INPUT ---
         inputSystem_.PollEvents(running);
         PlayerMoveDto input =
                 inputSystem_.GetInputByte(this->world_.GetLocalPlayer().GetUsername());
         eventBus_.Publish(PlayerMoveEvent(this->world_.GetLocalPlayer().GetUsername(),
                                           static_cast<ActionCode>(input.move)));
 
-        // --- MENSAJES DEL SERVIDOR ---
         std::shared_ptr<Dto> dto = nullptr;
         while (client_.getRecvQueue().try_pop(dto)) {
             dtoHandlerSystem_.Process(dto);
         }
 
-        // CAMERA UPDATE
         camera.Follow(world_.GetLocalPlayerX(), world_.GetLocalPlayerY(), map_.GetWidth(),
                       map_.GetHeight());
 
-        // --- RENDERIZADO ---
         rendererSystem_.Render(world_, map_, camera, minimap);
         SDL_Delay(16);
     }

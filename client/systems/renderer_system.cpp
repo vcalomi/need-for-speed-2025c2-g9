@@ -71,7 +71,7 @@ RendererSystem::~RendererSystem() {
 void RendererSystem::RenderWorldWithoutLocal(const World& world, Map& map, const Camera& camera,
                                              Minimap& minimap) {
     CheckpointIndicator checkpointIndicator(renderer_);
-    map.RenderBackground(renderer_, camera);
+    map.RenderBackground(camera);
 
     const auto& local = world.GetLocalPlayer();
     const std::string localName = local.GetUsername();
@@ -90,7 +90,7 @@ void RendererSystem::RenderWorldWithoutLocal(const World& world, Map& map, const
     const auto passed = world.GetPassedCheckpointIdsFor(localName);
 
     checkpointRenderer_.Draw(world.GetCheckpoints(), activeCp, passed, camera);
-    map.RenderForeground(renderer_, camera);
+    map.RenderForeground(camera);
     minimap.Render(world, camera);
 }
 
@@ -149,7 +149,7 @@ void RendererSystem::Render(const World& world, Map& map, const Camera& camera, 
     }
 
     CheckpointIndicator checkpointIndicator(renderer_);
-    map.RenderBackground(renderer_, camera);
+    map.RenderBackground(camera);
     if (!world.HasPlayers()) {
         renderer_.Present();
         return;
@@ -163,7 +163,7 @@ void RendererSystem::Render(const World& world, Map& map, const Camera& camera, 
     }
     particleRenderer_.Update(0.016f);
     particleRenderer_.Render(camera);
-    map.RenderForeground(renderer_, camera);
+    map.RenderForeground(camera);
     minimap.Render(world, camera);
     checkpointIndicator.Draw(camera, localPlayer, activeCp);
     RenderLapCounter(world);
