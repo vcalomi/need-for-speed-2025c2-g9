@@ -40,6 +40,14 @@ void Minimap::Render(const World& world, const Camera& camera, const Map& map) {
 
     renderer_.Copy(*mapTexture, src, dst);
 
+    SDL_Rect clip;
+    clip.x = MINIMAP_MARGIN_X;
+    clip.y = MINIMAP_MARGIN_Y;
+    clip.w = miniWidth;
+    clip.h = miniHeight;
+
+    SDL_RenderSetClipRect(renderer_.Get(), &clip);
+
     float scaleX = miniWidth / viewW;
     float scaleY = miniHeight / viewH;
 
@@ -97,4 +105,5 @@ void Minimap::Render(const World& world, const Camera& camera, const Map& map) {
                          (int)(camera.GetViewportHeight() * scaleY));
 
     renderer_.DrawRect(camRect);
+    SDL_RenderSetClipRect(renderer_.Get(), nullptr);
 }
