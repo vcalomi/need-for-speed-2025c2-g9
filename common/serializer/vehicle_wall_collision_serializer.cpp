@@ -13,7 +13,7 @@ std::vector<uint8_t> VehicleWallCollisionSerializer::serialize(const Dto& dto) c
     const VehicleWallCollisionDto& vehicleWallCollisionDto =
             static_cast<const VehicleWallCollisionDto&>(dto);
     size_t username_len = vehicleWallCollisionDto.username.length();
-    std::vector<uint8_t> buffer(1 + username_len + sizeof(float));
+    std::vector<uint8_t> buffer(SerializerUtils::STRING_LENGTH_SIZE + username_len + sizeof(float));
     size_t pos = 0;
 
     SerializerUtils::writeString(buffer, pos, vehicleWallCollisionDto.username);

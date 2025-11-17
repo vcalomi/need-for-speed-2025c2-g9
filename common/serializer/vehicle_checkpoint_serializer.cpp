@@ -12,7 +12,7 @@
 std::vector<uint8_t> VehicleCheckpointSerializer::serialize(const Dto& dto) const {
     const VehicleCheckpointDto& vehicleCheckpointDto = static_cast<const VehicleCheckpointDto&>(dto);
     size_t username_len = vehicleCheckpointDto.username.length();
-    std::vector<uint8_t> buffer(1 + username_len + sizeof(int));
+    std::vector<uint8_t> buffer(SerializerUtils::STRING_LENGTH_SIZE + username_len + sizeof(int));
     size_t pos = 0;
 
     SerializerUtils::writeString(buffer, pos, vehicleCheckpointDto.username);

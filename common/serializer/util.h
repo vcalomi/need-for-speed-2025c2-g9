@@ -6,8 +6,11 @@
 #include <vector>
 
 #include <netinet/in.h>
+#include <string>
 
 namespace SerializerUtils {
+
+constexpr size_t STRING_LENGTH_SIZE = sizeof(int);
 
 inline void writeInt(std::vector<uint8_t>& buffer, size_t& pos, int value) {
     value = htonl(value);
@@ -25,7 +28,7 @@ inline void writeByte(std::vector<uint8_t>& buffer, size_t& pos, uint8_t value) 
 }
 
 inline void writeString(std::vector<uint8_t>& buffer, size_t& pos, const std::string& str) {
-    writeByte(buffer, pos, static_cast<uint8_t>(str.length()));
+    writeInt(buffer, pos, static_cast<int>(str.length()));
     for (char c: str) {
         writeByte(buffer, pos, static_cast<uint8_t>(c));
     }
@@ -52,7 +55,7 @@ inline float readFloat(const std::vector<uint8_t>& buffer, size_t& pos) {
 inline uint8_t readByte(const std::vector<uint8_t>& buffer, size_t& pos) { return buffer[pos++]; }
 
 inline std::string readString(const std::vector<uint8_t>& buffer, size_t& pos) {
-    uint8_t length = readByte(buffer, pos);
+    int length = readInt(buffer, pos);
     std::string str;
     str.reserve(length);
     for (int i = 0; i < length && pos < buffer.size(); i++) {

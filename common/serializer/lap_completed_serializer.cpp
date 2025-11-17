@@ -11,7 +11,7 @@
 std::vector<uint8_t> LapCompletedSerializer::serialize(const Dto& dto) const {
     const LapCompletedDto& lapCompletedDto = static_cast<const LapCompletedDto&>(dto);
     size_t username_len = lapCompletedDto.username.length();
-    std::vector<uint8_t> buffer(1 + username_len + 1 + sizeof(int));
+    std::vector<uint8_t> buffer(SerializerUtils::STRING_LENGTH_SIZE + username_len + 1 + sizeof(int));
     size_t pos = 0;
 
     SerializerUtils::writeString(buffer, pos, lapCompletedDto.username);

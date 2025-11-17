@@ -17,6 +17,7 @@
 #include "lap_completed_serializer.h"
 #include "race_finished_serializer.h"
 #include "vehicle_exploded_serializer.h"
+#include "initial_race_map_serializer.h"
 
 class SerializerMap {
 public:
@@ -43,6 +44,8 @@ public:
                 std::make_unique<RaceFinishedSerializer>();
         serializers[static_cast<uint8_t>(ActionCode::SEND_VEHICLE_EXPLODED)] =
                 std::make_unique<VehicleExplodedSerializer>();
+        serializers[static_cast<uint8_t>(ActionCode::SEND_INITIAL_RACE_MAP)] =
+                std::make_unique<InitialRaceMapSerializer>();
         
         return serializers;
     }

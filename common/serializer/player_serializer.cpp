@@ -12,7 +12,7 @@
 std::vector<uint8_t> PlayerSerializer::serialize(const Dto& dto) const {
     const PlayerDto& playerDto = static_cast<const PlayerDto&>(dto);
     size_t username_len = playerDto.username.length();
-    std::vector<uint8_t> buffer(1 + username_len + 1 + sizeof(float));
+    std::vector<uint8_t> buffer(SerializerUtils::STRING_LENGTH_SIZE + username_len + 1 + sizeof(float));
     size_t pos = 0;
 
     SerializerUtils::writeString(buffer, pos, playerDto.username);

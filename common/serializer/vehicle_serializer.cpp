@@ -12,7 +12,7 @@
 std::vector<uint8_t> VehicleSerializer::serialize(const Dto& dto) const {
     const VehicleDto& vehicleDto = static_cast<const VehicleDto&>(dto);
     size_t username_len = vehicleDto.username.length();
-    std::vector<uint8_t> buffer(1 + username_len + 4 * sizeof(float) + sizeof(bool));
+    std::vector<uint8_t> buffer(SerializerUtils::STRING_LENGTH_SIZE + username_len + 4 * sizeof(float) + sizeof(bool));
     size_t pos = 0;
 
     SerializerUtils::writeString(buffer, pos, vehicleDto.username);
