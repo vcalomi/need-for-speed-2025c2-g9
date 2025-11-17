@@ -495,7 +495,8 @@ void MainWindow::handleStartGame() {
 void MainWindow::setupBackgroundMusic() {}
 
 MainWindow::~MainWindow() {
-    if (music)
+    if (music) {
         music->stop();
+    }
     delete ui;
 }
