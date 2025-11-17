@@ -20,6 +20,7 @@
 #include "../../common/Dto/vehicle_exploded.h"
 #include "../../common/Dto/vehicle_wall_collision.h"
 #include "../../common/Dto/initial_race_map.h"
+#include "../../common/Dto/race_finished.h"
 #include "../../common/common_codes.h"
 #include "../../common/vehicle_type_utils.h"
 #include "../YamlParser.h"
@@ -44,8 +45,7 @@ GameLoop::GameLoop(Queue<std::shared_ptr<Dto>>& gameLoopQueue, std::map<int, Car
         pendingNextRace_(false) 
 {
     levels_.push_back(LevelInfo{"../server/physics/Levels/Liberty_City", "liberty_city"});
-
-    levels_.push_back(LevelInfo{"../server/physics/Levels/San_Andreas", "san_andreas"});
+    levels_.push_back(LevelInfo{"../server/physics/Levels/San_Andreas", "liberty_city"});
     
 }
 
@@ -63,7 +63,6 @@ void GameLoop::run() {
 
             if (!raceActive_ && pendingNextRace_) {
                 if (currentLevelIndex_ == 0 && levels_.size() > 1) {
-                    std::cout << "[GameLoop] starting second race on level 1\n";
                     startRace(1);
                 }
             }
@@ -100,6 +99,7 @@ void GameLoop::startRace(int levelIndex) {
 
 
     raceActive_ = true;
+    raceStartTime_ = Clock::now();
 }
 
 void GameLoop::sendMapName(std::string mapName){
@@ -175,8 +175,6 @@ void GameLoop::sendVehiclesPositions() {
         float x, y, angle;
         vehicle->getPosition(x, y, angle);
         std::string username = playerUsernames_.at(player_id);
-        std::cout << "[GameLoop] Vehicle of player " << username << " is at (" << x << ", " << y
-                  << ") angle " << angle << "\n";
         auto dto = std::make_shared<VehicleDto>(username, x, y, angle, 0.0f);
         broadcaster_.broadcast(dto);
     }
@@ -221,6 +219,52 @@ bool GameLoop::allPlayersFinished() {
     return true;
 }
 
+int GameLoop::computePlayerPosition(int vehicleId){
+    int finishedBefore = 0;
+
+    for (const auto& [id, st] : raceProgress_) {
+        if (id == vehicleId) continue;
+        if (st.finished) {
+            finishedBefore++;
+        }
+    }
+    return finishedBefore + 1;
+}
+
+void GameLoop::onPlayerFinished(int vehicleId, PlayerRaceProgress& prog) {
+    if (prog.finished) {
+        return;
+    }
+
+    prog.finished = true;
+    prog.finishTime = Clock::now();
+
+    auto elapsed = *prog.finishTime - raceStartTime_;
+    auto ms = std::chrono::duration_cast<Milliseconds>(elapsed).count();
+    float seconds = static_cast<float>(ms) / 1000.0f;
+
+    int position = computePlayerPosition(vehicleId);
+
+    auto finishDto = std::make_shared<PlayerRaceFinishedDto>(
+        playerUsernames_.at(vehicleId),
+        seconds,
+        position
+    );
+    broadcaster_.broadcast(finishDto);
+
+    if (auto* vehicle = getVehicleById(vehicleId)) {
+        vehicle->disableControl();
+    }
+
+    if (allPlayersFinished()) {
+        raceActive_ = false;
+        pendingNextRace_ = true;
+
+        auto raceFinish = std::make_shared<RaceFinishedDto>();
+        broadcaster_.broadcast(raceFinish);
+    }
+}
+
 void GameLoop::handleRaceProgress(int vehicleId, int checkpointIndex) {
     auto& prog = raceProgress_[vehicleId];
 
@@ -245,19 +289,7 @@ void GameLoop::handleRaceProgress(int vehicleId, int checkpointIndex) {
         broadcaster_.broadcast(lapDto);
 
         if (prog.currentLap >= setup->totalLaps()) {
-            prog.finished = true;
-
-            auto finishDto = std::make_shared<PlayerRaceFinishedDto>(playerUsernames_.at(vehicleId),
-                                                                     0.0f, 1);
-            broadcaster_.broadcast(finishDto);
-
-            getVehicleById(vehicleId)->disableControl();
-
-            if (allPlayersFinished()) {
-                raceActive_ = false;
-                pendingNextRace_ = true;
-                std::cout << "[GameLoop] race finished on level " << currentLevelIndex_ << "\n";
-            }
+            onPlayerFinished(vehicleId, prog);
         }
 
     } else {

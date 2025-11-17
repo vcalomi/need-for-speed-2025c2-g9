@@ -17,7 +17,7 @@ vehicles:
     density: 1.0
     engine_force_N: 10000.0
     brake_force_N: 3000.0
-    steer_torque: 5500.0
+    steer_torque: 6500.0
     friction: 1.0
     restitution: 1.0
     health_points: 20000.0
