@@ -22,6 +22,7 @@ private:
     Queue<std::shared_ptr<Dto>>& senderQueue;
     std::function<void(std::shared_ptr<GameRoom> room)> onStartGame;
     CommandDispatcher dispatcher;
+    std::shared_ptr<Dto> lastDto; // last received dto in loop
 
     void initHandlers();
     // Handlers

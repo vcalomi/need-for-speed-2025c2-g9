@@ -19,49 +19,8 @@ ClientProtocol::ClientProtocol(const std::string& hostname, const std::string& p
         socket(hostname.c_str(), port.c_str()), protocol(),
         serializers(SerializerMap::createSerializerMap()) {}
 
-void ClientProtocol::sendUsername(const std::string& username) {
-    protocol.sendAction(socket, ActionCode::SEND_USERNAME);
-    protocol.sendString(socket, username);
-}
-
-void ClientProtocol::sendCreateRoom(const std::string& roomName, unsigned maxPlayers) {
-    protocol.sendAction(socket, ActionCode::CREATE_ROOM);
-    protocol.sendString(socket, roomName);
-    protocol.sendUint16(socket, uint16_t(maxPlayers));
-}
-
-void ClientProtocol::sendJoinRoom(const std::string& roomName) {
-    protocol.sendAction(socket, ActionCode::JOIN_ROOM);
-    protocol.sendString(socket, roomName);
-}
-
-void ClientProtocol::sendListRooms() { protocol.sendAction(socket, ActionCode::LIST_ROOMS); }
-
-void ClientProtocol::sendStartGame() { protocol.sendAction(socket, ActionCode::START_GAME); }
-
-void ClientProtocol::sendChooseCar(const std::string& carType) {
-    protocol.sendAction(socket, ActionCode::CHOOSE_CAR);
-    protocol.sendString(socket, carType);
-}
-
-void ClientProtocol::sendListPlayers() { protocol.sendAction(socket, ActionCode::LIST_PLAYERS); }
-
-void ClientProtocol::sendListState() { protocol.sendAction(socket, ActionCode::LIST_STATE); }
-
-std::vector<std::string> ClientProtocol::receiveRoomList() {
-    uint16_t count = protocol.receiveUint16(socket);
-    std::vector<std::string> rooms;
-    rooms.reserve(count);
-    for (uint16_t i = 0; i < count; ++i) {
-        rooms.push_back(protocol.receiveString(socket));
-    }
-    return rooms;
-}
-
-ActionCode ClientProtocol::receiveAction() { return protocol.receiveAction(socket); }
-
 std::shared_ptr<Dto> ClientProtocol::receiveDTO() {
-    int8_t dtoCode = uint8_t(receiveActionCode());
+    int8_t dtoCode = uint8_t(protocol.receiveAction(socket));
 
     auto it = serializers.find(dtoCode);
     if (it == serializers.end()) {
@@ -88,8 +47,6 @@ void ClientProtocol::sendDTO(std::shared_ptr<Dto> dto) {
     protocol.sendUint32(socket, buffer_size);
     socket.sendall(buffer.data(), buffer.size());
 }
-
-ActionCode ClientProtocol::receiveActionCode() { return protocol.receiveAction(socket); }
 
 bool ClientProtocol::isClientConnected() const {
     return socket.is_stream_recv_closed() || socket.is_stream_send_closed();

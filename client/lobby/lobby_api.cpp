@@ -1,51 +1,76 @@
 #include "lobby_api.h"
 
+#include "../../common/Dto/lobby_auth.h"
+#include "../../common/Dto/lobby_room.h"
+#include "../../common/Dto/lobby_room_state.h"
+#include "../../common/Dto/lobby_choose_car.h"
+
 bool LobbyApi::login(const std::string& username) {
-    proto.sendUsername(username);
-    return proto.receiveActionCode() == ActionCode::USERNAME_OK;
+    auto req = std::make_shared<AuthDto>(static_cast<uint8_t>(ActionCode::SEND_USERNAME));
+    req->username = username;
+    proto.sendDTO(req);
+    auto resp = proto.receiveDTO();
+    return resp && static_cast<ActionCode>(resp->return_code()) == ActionCode::USERNAME_OK;
 }
 
 std::vector<std::string> LobbyApi::listRooms() {
-    proto.sendListRooms();
-    return proto.receiveRoomList();
+    auto req = std::make_shared<RoomDto>(static_cast<uint8_t>(ActionCode::LIST_ROOMS));
+    proto.sendDTO(req);
+    auto resp = proto.receiveDTO();
+    if (!resp || static_cast<ActionCode>(resp->return_code()) != ActionCode::LIST_ROOMS) return {};
+    auto dto = std::dynamic_pointer_cast<RoomDto>(resp);
+    if (!dto) return {};
+    return dto->rooms;
 }
 
 bool LobbyApi::createRoom(const std::string& code, unsigned maxPlayers) {
-    proto.sendCreateRoom(code, maxPlayers);
-    return proto.receiveActionCode() == ActionCode::ROOM_CREATED;
+    auto req = std::make_shared<RoomDto>(static_cast<uint8_t>(ActionCode::CREATE_ROOM));
+    req->roomCode = code;
+    req->maxPlayers = static_cast<uint8_t>(maxPlayers);
+    proto.sendDTO(req);
+    auto resp = proto.receiveDTO();
+    return resp && static_cast<ActionCode>(resp->return_code()) == ActionCode::ROOM_CREATED;
 }
 
 bool LobbyApi::joinRoom(const std::string& code) {
-    proto.sendJoinRoom(code);
-    return proto.receiveActionCode() == ActionCode::JOIN_OK;
+    auto req = std::make_shared<RoomDto>(static_cast<uint8_t>(ActionCode::JOIN_ROOM));
+    req->roomCode = code;
+    proto.sendDTO(req);
+    auto resp = proto.receiveDTO();
+    return resp && static_cast<ActionCode>(resp->return_code()) == ActionCode::JOIN_OK;
 }
 
 PlayersList LobbyApi::listPlayers() {
-    proto.sendListPlayers();
-    auto items = proto.receiveRoomList();
     PlayersList snap;
-    if (!items.empty() && items[0].rfind("maxPlayers:", 0) == 0) {
-        std::string maxStr = items[0].substr(std::string("maxPlayers:").size());
-        try {
-            snap.maxPlayers = static_cast<unsigned>(std::stoul(maxStr));
-        } catch (...) {
-            snap.maxPlayers = 0;
-        }
-        items.erase(items.begin());
-    }
-    snap.players = std::move(items);
+    auto req = std::make_shared<RoomStateDto>(static_cast<uint8_t>(ActionCode::LIST_PLAYERS));
+    proto.sendDTO(req);
+    auto resp = proto.receiveDTO();
+    if (!resp || static_cast<ActionCode>(resp->return_code()) != ActionCode::LIST_PLAYERS) return snap;
+    auto dto = std::dynamic_pointer_cast<RoomStateDto>(resp);
+    if (!dto) return snap;
+    snap.maxPlayers = dto->maxPlayers;
+    snap.players = dto->players;
     return snap;
 }
 
 bool LobbyApi::pollStarted() {
-    proto.sendListState();
-    auto v = proto.receiveRoomList();
-    return !v.empty() && v[0] == std::string("started");
+    auto req = std::make_shared<RoomStateDto>(static_cast<uint8_t>(ActionCode::LIST_STATE));
+    proto.sendDTO(req);
+    auto resp = proto.receiveDTO();
+    if (!resp || static_cast<ActionCode>(resp->return_code()) != ActionCode::LIST_STATE) return false;
+    auto dto = std::dynamic_pointer_cast<RoomStateDto>(resp);
+    return dto && dto->started;
 }
 
 bool LobbyApi::chooseCar(const std::string& carKey) {
-    proto.sendChooseCar(carKey);
-    return proto.receiveActionCode() == ActionCode::CHOOSE_CAR_OK;
+    auto req = std::make_shared<ChooseCarDto>(static_cast<uint8_t>(ActionCode::CHOOSE_CAR));
+    req->carKey = carKey;
+    proto.sendDTO(req);
+    auto resp = proto.receiveDTO();
+    return resp && static_cast<ActionCode>(resp->return_code()) == ActionCode::CHOOSE_CAR_OK;
 }
 
-void LobbyApi::startGame() { proto.sendStartGame(); }
+void LobbyApi::startGame() {
+    auto req = std::make_shared<RoomStateDto>(static_cast<uint8_t>(ActionCode::START_GAME));
+    proto.sendDTO(req);
+}

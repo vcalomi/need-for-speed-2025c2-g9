@@ -10,8 +10,6 @@
 ServerProtocol::ServerProtocol(Socket& socket): socket(socket), protocol(),
         serializers(SerializerMap::createSerializerMap()) {}
 
-void ServerProtocol::sendMsg(ActionCode code) { protocol.sendAction(socket, code); }
-
 void ServerProtocol::sendDTO(std::shared_ptr<Dto> dto) {
     uint8_t dtoCode = dto->return_code();
     protocol.sendAction(socket, static_cast<ActionCode>(dtoCode));
@@ -28,7 +26,7 @@ void ServerProtocol::sendDTO(std::shared_ptr<Dto> dto) {
 }
 
 std::shared_ptr<Dto> ServerProtocol::receiveDTO() {
-    uint8_t dtoCode = uint8_t(receiveActionCode());
+    uint8_t dtoCode = uint8_t(protocol.receiveAction(socket));
 
     auto it = serializers.find(dtoCode);
     if (it == serializers.end() || !it->second) {
@@ -41,22 +39,5 @@ std::shared_ptr<Dto> ServerProtocol::receiveDTO() {
 
     return it->second->deserialize(buffer);
 }
-
-ActionCode ServerProtocol::receiveActionCode() { return protocol.receiveAction(socket); }
-
-std::string ServerProtocol::receiveRoomName() { return protocol.receiveString(socket); }
-
-void ServerProtocol::sendRoomList(const std::vector<std::string>& rooms) {
-    protocol.sendUint16(socket, static_cast<uint16_t>(rooms.size()));
-    for (const auto& room: rooms) {
-        protocol.sendString(socket, room);
-    }
-}
-
-void ServerProtocol::sendErrorMsg(const std::string& /*errorMsg*/) {
-    protocol.sendAction(socket, ActionCode::SEND_ERROR_MSG);
-}
-
-int ServerProtocol::receiveMaxPlayers() { return protocol.receiveUint16(socket); }
 
 ServerProtocol::~ServerProtocol() {}

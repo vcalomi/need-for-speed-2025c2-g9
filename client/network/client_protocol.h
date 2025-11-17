@@ -26,19 +26,8 @@ public:
 
     bool isDummy() const { return dummyMode; }  // para verificar si es modo dummy
 
-    void sendUsername(const std::string& username);
-    void sendCreateRoom(const std::string& roomName, unsigned maxPlayers = 8);
-    void sendJoinRoom(const std::string& roomName);
-    void sendListRooms();
-    void sendListPlayers();
-    void sendListState();
-    void sendStartGame();
-    void sendChooseCar(const std::string& carType);
-    std::vector<std::string> receiveRoomList();
-    ActionCode receiveAction();
     std::shared_ptr<Dto> receiveDTO();
     void sendDTO(std::shared_ptr<Dto> dto);
-    ActionCode receiveActionCode();
     bool isClientConnected() const;
     void close();
     ~ClientProtocol();
