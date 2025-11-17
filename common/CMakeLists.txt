@@ -18,7 +18,8 @@ target_sources(taller_common
     serializer/lap_completed_serializer.cpp
     serializer/race_finished_serializer.cpp
     serializer/vehicle_exploded_serializer.cpp
-    serializer/initial_race_map_serializer.ccpp
+    serializer/initial_race_map_serializer.cpp
+    serializer/player_race_finished_serializer.cpp
     Dto/dto.cpp
     Dto/vehicle.cpp
     Dto/player.cpp
@@ -31,6 +32,7 @@ target_sources(taller_common
     Dto/lap_completed.cpp
     Dto/vehicle_exploded.cpp
     dto/initial_race_map.cpp
+    dto/player_race_finished.cpp
     PUBLIC
     # .h files
     liberror.h
@@ -54,6 +56,7 @@ target_sources(taller_common
     serializer/race_finished_serializer.h
     serializer/vehicle_exploded_serializer.h
     serializer/initial_race_map_serializer.h
+    serializer/player_race_finished_serializer.h
     Dto/dto.h
     Dto/vehicle.h
     Dto/player.h
@@ -68,4 +71,5 @@ target_sources(taller_common
     Dto/lap_completed.h
     Dto/vehicle_exploded.h
     dto/initial_race_map.h
+    dto/player_race_finished.h
 )
