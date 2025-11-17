@@ -52,7 +52,7 @@ public:
         serializers[static_cast<uint8_t>(ActionCode::SEND_PLAYER_RACE_FINISHED)] =
                 std::make_unique<PlayerRaceFinishedSerializer>();
         serializers[static_cast<uint8_t>(ActionCode::SEND_PLAYER_LEFT)] =
-                std::make_unique<PlayerRaceFinishedSerializer>();
+                std::make_unique<PlayerLeftSerializer>();
 
         return serializers;
     }
