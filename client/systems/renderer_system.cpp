@@ -91,7 +91,7 @@ void RendererSystem::RenderWorldWithoutLocal(const World& world, Map& map, const
 
     checkpointRenderer_.Draw(world.GetCheckpoints(), activeCp, passed, camera);
     map.RenderForeground(camera);
-    minimap.Render(world, camera);
+    minimap.Render(world, camera, map);
 }
 
 void RendererSystem::RenderExplosion(const World& world) {
@@ -164,7 +164,7 @@ void RendererSystem::Render(const World& world, Map& map, const Camera& camera, 
     particleRenderer_.Update(0.016f);
     particleRenderer_.Render(camera);
     map.RenderForeground(camera);
-    minimap.Render(world, camera);
+    minimap.Render(world, camera, map);
     checkpointIndicator.Draw(camera, localPlayer, activeCp);
     RenderLapCounter(world);
     RenderHealthBar(world);

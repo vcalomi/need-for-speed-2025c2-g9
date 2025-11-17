@@ -8,10 +8,9 @@
 class Minimap {
 public:
     Minimap(SDL2pp::Renderer& renderer, const Map& map, int width, int height);
-    void Render(const World& world, const Camera& camera);
+    void Render(const World& world, const Camera& camera, const Map& map);
 
 private:
     SDL2pp::Renderer& renderer_;
-    SDL2pp::Texture* mapTexture_;
     int miniWidth, miniHeight;
 };

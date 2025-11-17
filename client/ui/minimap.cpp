@@ -17,14 +17,12 @@ constexpr SDL_Color CAMERA_RECT_COLOR = {255, 255, 255, 120};
 constexpr float HALF_DIVISOR = 2.0f;
 
 Minimap::Minimap(SDL2pp::Renderer& renderer, const Map& map, int width, int height):
-        renderer_(renderer),
-        mapTexture_(const_cast<SDL2pp::Texture*>(map.GetBackgroundTexture())),
-        miniWidth(width),
-        miniHeight(height) {}
+        renderer_(renderer), miniWidth(width), miniHeight(height) {}
 
 
-void Minimap::Render(const World& world, const Camera& camera) {
-    if (!mapTexture_)
+void Minimap::Render(const World& world, const Camera& camera, const Map& map) {
+    SDL2pp::Texture* mapTexture = const_cast<SDL2pp::Texture*>(map.GetBackgroundTexture());
+    if (!mapTexture)
         return;
 
 
@@ -34,13 +32,13 @@ void Minimap::Render(const World& world, const Camera& camera) {
     float srcX = camera.getX() + camera.GetViewportWidth() / HALF_DIVISOR - viewW / HALF_DIVISOR;
     float srcY = camera.getY() + camera.GetViewportHeight() / HALF_DIVISOR - viewH / HALF_DIVISOR;
 
-    srcX = std::clamp(srcX, 0.0f, (float)(mapTexture_->GetWidth() - viewW));
-    srcY = std::clamp(srcY, 0.0f, (float)(mapTexture_->GetHeight() - viewH));
+    srcX = std::clamp(srcX, 0.0f, (float)(mapTexture->GetWidth() - viewW));
+    srcY = std::clamp(srcY, 0.0f, (float)(mapTexture->GetHeight() - viewH));
 
     SDL2pp::Rect src((int)srcX, (int)srcY, (int)viewW, (int)viewH);
     SDL2pp::Rect dst(MINIMAP_MARGIN_X, MINIMAP_MARGIN_Y, miniWidth, miniHeight);
 
-    renderer_.Copy(*mapTexture_, src, dst);
+    renderer_.Copy(*mapTexture, src, dst);
 
     float scaleX = miniWidth / viewW;
     float scaleY = miniHeight / viewH;
