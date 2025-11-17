@@ -42,6 +42,7 @@ private:
     bool raceActive_ = false;
     bool pendingNextRace_ = false;
     std::unordered_map<int, PlayerRaceProgress> raceProgress_; 
+    
 
     
     void handlerProcessCommand(std::shared_ptr<Dto> dto);
@@ -53,6 +54,12 @@ private:
     void handleVehicleWallCollision(const RawVehicleWall& event);
     bool allPlayersFinished();
 
+    void sendVehiclesPositions();
+    void sendInitialPlayersCars();
+    void sendCheckpoints();
+    void sendMapName(std::string mapName);
+
+
 public:
     explicit GameLoop(Queue<std::shared_ptr<Dto>>& gameLoopQueue,
                       std::map<int, CarConfig>& chosenCars,
@@ -61,9 +68,6 @@ public:
 
     void run() override;
     void processCommands();
-    void sendVehiclesPositions();
-    void sendInitialPlayersCars();
-    void sendCheckpoints();
     void processGameEvents();
     void startRace(int levelIndex);
 

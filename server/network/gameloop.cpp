@@ -19,6 +19,7 @@
 #include "../../common/Dto/vehicle_collision.h"
 #include "../../common/Dto/vehicle_exploded.h"
 #include "../../common/Dto/vehicle_wall_collision.h"
+#include "../../common/Dto/initial_race_map.h"
 #include "../../common/common_codes.h"
 #include "../../common/vehicle_type_utils.h"
 #include "../YamlParser.h"
@@ -42,9 +43,9 @@ GameLoop::GameLoop(Queue<std::shared_ptr<Dto>>& gameLoopQueue, std::map<int, Car
         raceActive_(false),
         pendingNextRace_(false) 
 {
-    levels_.push_back(LevelInfo{"../server/physics/Levels/Liberty_City", "Liberty_City"});
+    levels_.push_back(LevelInfo{"../server/physics/Levels/Liberty_City", "liberty_city"});
 
-    levels_.push_back(LevelInfo{"../server/physics/Levels/San_Andreas", "San_Andreas"});
+    levels_.push_back(LevelInfo{"../server/physics/Levels/San_Andreas", "san_andreas"});
     
 }
 
@@ -61,7 +62,7 @@ void GameLoop::run() {
             }
 
             if (!raceActive_ && pendingNextRace_) {
-                if (currentLevelIndex_ == 0 && levelPaths_.size() > 1) {
+                if (currentLevelIndex_ == 0 && levels_.size() > 1) {
                     std::cout << "[GameLoop] starting second race on level 1\n";
                     startRace(1);
                 }
@@ -75,7 +76,7 @@ void GameLoop::run() {
 }
 
 void GameLoop::startRace(int levelIndex) {
-    if (levelIndex < 0 || levelIndex >= (int)levelPaths_.size()) {
+    if (levelIndex < 0 || levelIndex >= (int)levels_.size()) {
         std::cerr << "[GameLoop] invalid levelIndex " << levelIndex << "\n";
         return;
     }
@@ -84,20 +85,26 @@ void GameLoop::startRace(int levelIndex) {
     pendingNextRace_ = false;
 
     const std::string vehiclesYaml = "../server/vehicles_specs/vehicle_specs.yaml";
-    const std::string& levelDir = levelPaths_[levelIndex];
+    LevelInfo level = levels_[levelIndex];
 
-    setup.emplace(levelDir, vehiclesYaml, chosenCars_);
+    setup.emplace(level.dir, vehiclesYaml, chosenCars_);
 
     raceProgress_.clear();
     for (const auto& [playerId, _]: chosenCars_) {
         raceProgress_[playerId] = {};
     }
 
+    sendMapName(level.mapName);
     sendCheckpoints();
     sendInitialPlayersCars();
 
 
     raceActive_ = true;
+}
+
+void GameLoop::sendMapName(std::string mapName){
+    auto dto = std::make_shared<InitialRaceMapDto>(mapName);
+    broadcaster_.broadcast(dto);
 }
 
 void GameLoop::sendCheckpoints() {
