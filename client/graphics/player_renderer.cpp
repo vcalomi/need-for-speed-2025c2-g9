@@ -8,6 +8,9 @@ PlayerRenderer::PlayerRenderer(SDL2pp::Renderer& renderer, SpriteSheet& cars, TT
 
 void PlayerRenderer::Draw(const Player& player, const Camera& camera) {
     std::string spriteName = player.GetSprite();
+    if (!spriteName.empty())
+        spriteName[0] = std::tolower(spriteName[0]);
+
 
     if (!cars_.HasSprite(spriteName)) {
         std::cerr << "[PlayerRenderer] Sprite not found: " << spriteName << "\n";
@@ -16,7 +19,7 @@ void PlayerRenderer::Draw(const Player& player, const Camera& camera) {
 
     const Sprite& src = cars_.GetSprite(spriteName);
 
-    // Convertir coordenadas a pantalla
+    // Convertir coordenadas world -> screen
     float worldX = player.GetX();
     float worldY = player.GetY();
 
@@ -30,11 +33,14 @@ void PlayerRenderer::Draw(const Player& player, const Camera& camera) {
     dest.x = screenX - dest.w / 2;
     dest.y = screenY - dest.h / 2;
 
-    // Rotación del auto
+    // Rotación real
     double angle = player.GetAngle() + 180.0;
 
-    SDL_RenderCopyEx(renderer_.Get(), cars_.GetTexture().Get(), &src.area, &dest, angle, nullptr,
-                     SDL_FLIP_NONE);
+    // AHORA USAMOS LA TEXTURA DEL SPRITE
+    SDL_RenderCopyEx(renderer_.Get(),
+                     src.texture->Get(),  // textura particular del auto
+                     &src.area,           // el rect dentro de la textura
+                     &dest, angle, nullptr, SDL_FLIP_NONE);
 
     // Dibujar nombre arriba del auto
     DrawTextAbove(player.GetUsername(), dest.x, dest.y, src);
@@ -50,7 +56,6 @@ void PlayerRenderer::DrawTextAbove(const std::string& text, int carX, int carY,
 
     SDL_Color white = {255, 255, 255, 255};
     SDL_Surface* rawSurface = TTF_RenderText_Blended(font_, text.c_str(), white);
-
     if (!rawSurface)
         return;
 

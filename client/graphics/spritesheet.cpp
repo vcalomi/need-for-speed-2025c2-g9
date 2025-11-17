@@ -2,13 +2,12 @@
 
 #include <stdexcept>
 
-SpriteSheet::SpriteSheet(Renderer& renderer, const std::string& path): texture_(renderer, path) {}
-
-Texture& SpriteSheet::GetTexture() { return texture_; }
-
-void SpriteSheet::AddSprite(const std::string& name, const Rect& area) {
+void SpriteSheet::AddSprite(const std::string& name, std::shared_ptr<Texture> texture,
+                            const Rect& area) {
     Sprite s;
+    s.texture = texture.get();
     s.area = area;
+
     s.width = area.w;
     s.height = area.h;
     s.halfWidth = s.width / 2.0f;
@@ -18,6 +17,8 @@ void SpriteSheet::AddSprite(const std::string& name, const Rect& area) {
     s.backOffset = -s.halfHeight;
 
     sprites_[name] = s;
+
+    textures_.push_back(texture);
 }
 
 const Sprite& SpriteSheet::GetSprite(const std::string& name) const {

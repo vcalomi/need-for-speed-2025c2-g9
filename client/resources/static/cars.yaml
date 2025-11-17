@@ -1,57 +1,29 @@
 sprites:
   fiat_600:
-    sheet_path: ./assets/need-for-speed/cars/cars.png
+    sheet_path: ../client/assets/need-for-speed/cars/fiat_600.png
     frames:
-      base:
-        x: 133
-        y: 34
-        w: 22
-        h: 27
+     base: { x: 0, y: 0, w: 22, h: 28 }
   ferrari_F40:
-    sheet_path: ./assets/need-for-speed/cars/cars.png
+    sheet_path: ../client/assets/need-for-speed/cars/ferrari_F40.png
     frames:
-      base:
-        x: 381
-        y: 110
-        w: 24
-        h: 39
+      base: { x: 0, y: 0, w: 24, h: 40 }
   porsche_911:
-    sheet_path: ./assets/need-for-speed/cars/cars.png
+    sheet_path: ../client/assets/need-for-speed/cars/porsche_911.png
     frames:
-      base:
-        x: 172
-        y: 186
-        w: 22
-        h: 39
+      base: { x: 0, y: 0, w: 22, h: 40 }
   sedan:
-    sheet_path: ./assets/need-for-speed/cars/cars.png
+    sheet_path: ../client/assets/need-for-speed/cars/sedan.png
     frames:
-      base:
-        x: 169
-        y: 271
-        w: 24
-        h: 39
+      base: { x: 0, y: 0, w: 24, h: 40 }
   jeep:
-    sheet_path: ./assets/need-for-speed/cars/cars.png
+    sheet_path: ../client/assets/need-for-speed/cars/jeep.png
     frames:
-      base:
-        x: 170
-        y: 359
-        w: 26
-        h: 38
+      base: { x: 0, y: 0, w: 26, h: 39 }
   f100:
-    sheet_path: ./assets/need-for-speed/cars/cars.png
+    sheet_path: ../client/assets/need-for-speed/cars/f100.png
     frames:
-      base:
-        x: 196
-        y: 457
-        w: 22
-        h: 39
+      base: { x: 0, y: 0, w: 24, h: 42 }
   truck:
-    sheet_path: ./assets/need-for-speed/cars/cars.png
+    sheet_path: ../client/assets/need-for-speed/cars/truck.png
     frames:
-      base:
-        x: 210
-        y: 565
-        w: 19
-        h: 47
+      base: { x: 0, y: 0, w: 20, h: 48 }
