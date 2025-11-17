@@ -2,6 +2,7 @@
 
 #include "../../common/Dto/checkpoint.h"
 #include "../../common/Dto/lap_completed.h"
+#include "../../common/Dto/player_race_finished.h"
 #include "../../common/Dto/race_finished.h"
 #include "../../common/Dto/vehicle_checkpoint.h"
 #include "../../common/Dto/vehicle_collision.h"
@@ -118,7 +119,7 @@ void DtoHandlerSystem::Process(const std::shared_ptr<Dto>& dto) {
             break;
         }
         case ActionCode::SEND_RACE_FINISHED: {
-            auto raceFinishedDto = std::dynamic_pointer_cast<RaceFinishedDto>(dto);
+            auto raceFinishedDto = std::dynamic_pointer_cast<PlayerRaceFinishedDto>(dto);
             if (!raceFinishedDto)
                 return;
 

@@ -12,6 +12,7 @@
 #include "../../common/Dto/lap_completed.h"
 #include "../../common/Dto/player.h"
 #include "../../common/Dto/player_move.h"
+#include "../../common/Dto/player_race_finished.h"
 #include "../../common/Dto/race_finished.h"
 #include "../../common/Dto/vehicle.h"
 #include "../../common/Dto/vehicle_checkpoint.h"
@@ -37,14 +38,12 @@ GameLoop::GameLoop(Queue<std::shared_ptr<Dto>>& gameLoopQueue, std::map<int, Car
         chosenCars_(chosenCars),
         playerUsernames_(playerUsernames),
         broadcaster_(broadcaster),
-        maxPlayers(maxPlayers), 
+        maxPlayers(maxPlayers),
         raceActive_(false),
-        pendingNextRace_(false) 
-{
+        pendingNextRace_(false) {
 
-        levelPaths_.push_back("../server/physics/Levels/Liberty_City");
-        levelPaths_.push_back("../server/physics/Levels/San_Andreas");
-
+    levelPaths_.push_back("../server/physics/Levels/Liberty_City");
+    levelPaths_.push_back("../server/physics/Levels/San_Andreas");
 }
 
 void GameLoop::run() {
@@ -62,7 +61,7 @@ void GameLoop::run() {
             if (!raceActive_ && pendingNextRace_) {
                 if (currentLevelIndex_ == 0 && levelPaths_.size() > 1) {
                     std::cout << "[GameLoop] starting second race on level 1\n";
-                    startRace(1);  
+                    startRace(1);
                 }
             }
 
@@ -88,7 +87,7 @@ void GameLoop::startRace(int levelIndex) {
     setup.emplace(levelDir, vehiclesYaml, chosenCars_);
 
     raceProgress_.clear();
-    for (const auto& [playerId, _] : chosenCars_) {
+    for (const auto& [playerId, _]: chosenCars_) {
         raceProgress_[playerId] = {};
     }
 
@@ -203,7 +202,7 @@ Vehicle* GameLoop::getVehicleById(int vehicleId) {
 }
 
 bool GameLoop::allPlayersFinished() {
-    for (const auto& [playerId, _] : chosenCars_) {
+    for (const auto& [playerId, _]: chosenCars_) {
         auto it = raceProgress_.find(playerId);
         if (it == raceProgress_.end() || !it->second.finished) {
             return false;
@@ -238,8 +237,8 @@ void GameLoop::handleRaceProgress(int vehicleId, int checkpointIndex) {
         if (prog.currentLap >= setup->totalLaps()) {
             prog.finished = true;
 
-            auto finishDto =
-                    std::make_shared<RaceFinishedDto>(playerUsernames_.at(vehicleId), 0.0f, 1);
+            auto finishDto = std::make_shared<PlayerRaceFinishedDto>(playerUsernames_.at(vehicleId),
+                                                                     0.0f, 1);
             broadcaster_.broadcast(finishDto);
 
             getVehicleById(vehicleId)->disableControl();
