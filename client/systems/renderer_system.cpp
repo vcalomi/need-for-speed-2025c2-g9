@@ -24,8 +24,7 @@ void RendererSystem::Render(const World& world, Map& map, const Camera& camera, 
     background_.RenderBackground(map, camera);
 
     if (state_.localPlayerExploded) {
-        background_.RenderBackground(map, camera);
-        screenRenderer_.RenderExplosion(world, 100);
+        screenRenderer_.RenderExplosion(world, camera, 100);
 
         state_.explosionTimer -= 0.016f;
         if (state_.explosionTimer <= 0)
@@ -38,7 +37,13 @@ void RendererSystem::Render(const World& world, Map& map, const Camera& camera, 
         return;
     }
 
-    if (state_.raceFinished) {
+    if (state_.showPlayerFinishedScreen) {
+        screenRenderer_.RenderPlayerFinished(state_.localFinishPosition, state_.localFinishTime);
+        renderer_.Present();
+        return;
+    }
+
+    if (state_.showFinalResultsScreen) {
         screenRenderer_.RenderRaceFinished(world);
         renderer_.Present();
         return;
@@ -60,11 +65,9 @@ void RendererSystem::Render(const World& world, Map& map, const Camera& camera, 
 
     hudRenderer_.Render(world);
 
-    {
-        const auto& local = world.GetLocalPlayer();
-        const auto& nextCp = world.GetActiveCheckpointFor(local.GetUsername());
-        checkpointIndicator_.Draw(camera, local, nextCp);
-    }
+    const auto& local = world.GetLocalPlayer();
+    const auto& nextCp = world.GetActiveCheckpointFor(local.GetUsername());
+    checkpointIndicator_.Draw(camera, local, nextCp);
 
     renderer_.Present();
 }

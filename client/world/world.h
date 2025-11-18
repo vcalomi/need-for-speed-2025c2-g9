@@ -39,6 +39,8 @@ public:
     int GetLapsFor(const std::string& username) const;
     int GetLapProgressFor(const std::string& username) const;
 
+    void resetRace();
+
 private:
     std::map<std::string, Player> players_;
     std::string localUsername_;

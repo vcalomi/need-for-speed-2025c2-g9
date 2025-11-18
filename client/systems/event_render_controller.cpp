@@ -4,6 +4,7 @@
 #include "../events/player_events.h"
 #include "../events/player_race_finished_event.h"
 #include "../events/race_finished_event.h"
+#include "../events/race_info_event.h"
 #include "../events/vehicle_exploded_event.h"
 #include "../events/wall_collision_event.h"
 
@@ -34,14 +35,33 @@ void EventRenderController::RegisterEvents() {
         particles_.EmitForPlayer(world_, e.player2_username, ParticleType::SPARK_VEHICLE);
     });
 
-    eventBus_.Subscribe<RaceFinishedEvent>(
-            [this](const RaceFinishedEvent&) { state_.raceFinished = true; });
+    eventBus_.Subscribe<RaceInfoEvent>([this](const RaceInfoEvent&) {
+        state_.raceFinished = false;
+        state_.localPlayerFinished = false;
+        state_.localPlayerExploded = false;
+        state_.localFinishPosition = -1;
+        state_.localFinishTime = 0.0f;
+        state_.explosionTimer = 0.0f;
+        state_.showExplosion = false;
+        state_.showFinalResultsScreen = false;
+        state_.showPlayerFinishedScreen = false;
+    });
+
+    eventBus_.Subscribe<RaceFinishedEvent>([this](const RaceFinishedEvent&) {
+        state_.raceFinished = true;
+        state_.showFinalResultsScreen = true;
+    });
 
     eventBus_.Subscribe<PlayerRaceFinishedEvent>([this](const PlayerRaceFinishedEvent& e) {
         if (e.username == world_.GetLocalPlayer().GetUsername()) {
-            state_.raceFinished = true;
+            state_.localPlayerFinished = true;
+            state_.localFinishPosition = e.finalPosition;
+            state_.localFinishTime = e.finishTime;
+
+            state_.showPlayerFinishedScreen = true;
         }
     });
+
 
     eventBus_.Subscribe<VehicleExplodedEvent>([this](const VehicleExplodedEvent& e) {
         if (e.username == world_.GetLocalPlayer().GetUsername()) {

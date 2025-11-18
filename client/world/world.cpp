@@ -7,6 +7,8 @@
 #include "../events/player_collision_event.h"
 #include "../events/player_events.h"
 #include "../events/player_joined_event.h"
+#include "../events/player_race_finished_event.h"
+#include "../events/race_finished_event.h"
 #include "../events/wall_collision_event.h"
 
 World::World(EventBus& eventBus): eventBus_(eventBus) {
@@ -40,6 +42,8 @@ World::World(EventBus& eventBus): eventBus_(eventBus) {
 
     eventBus_.Subscribe<WallCollisionEvent>(
             [this](const WallCollisionEvent& e) { OnCollision(e); });
+
+    eventBus_.Subscribe<RaceFinishedEvent>([this](const RaceFinishedEvent&) { resetRace(); });
 }
 
 void World::AddPlayer(std::string username, VehicleTipe carType, bool isLocal, float health) {
@@ -175,4 +179,11 @@ int World::GetLapProgressFor(const std::string& username) const {
     if (!playerProgress_.count(username))
         return 0;
     return playerProgress_.at(username).currentCheckpointIndex;
+}
+
+void World::resetRace() {
+    for (auto& [username, progress]: playerProgress_) {
+        progress.currentCheckpointIndex = 0;
+        progress.lapsCompleted = 0;
+    }
 }
