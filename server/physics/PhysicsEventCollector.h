@@ -20,6 +20,7 @@ public:
     void capturePreStepSpeeds(const std::unordered_map<int, std::unique_ptr<Vehicle>>& vehicles);
     void collect(b2WorldId world);
     std::vector<RawEvent> drain();
+    const std::unordered_map<int, float>& getLastSpeeds() const { return lastSpeeds_;}
 
 private:
     std::unordered_map<int, float> lastSpeeds_;

@@ -21,6 +21,10 @@ target_sources(taller_common
     serializer/initial_race_map_serializer.cpp
     serializer/player_race_finished_serializer.cpp
     serializer/player_left_serializer.cpp
+    serializer/lobby_auth_serializer.cpp
+    serializer/lobby_choose_car_serializer.cpp
+    serializer/lobby_room_state_serializer.cpp
+    serializer/lobby_room_serializer.cpp
     Dto/dto.cpp
     Dto/vehicle.cpp
     Dto/player.cpp
@@ -59,6 +63,10 @@ target_sources(taller_common
     serializer/initial_race_map_serializer.h
     serializer/player_race_finished_serializer.h
     serializer/player_left_serializer.h
+    serializer/lobby_auth_serializer.h
+    serializer/lobby_choose_car_serializer.h
+    serializer/lobby_room_state_serializer.h
+    serializer/lobby_room_serializer.h
     Dto/dto.h
     Dto/vehicle.h
     Dto/player.h
@@ -75,4 +83,8 @@ target_sources(taller_common
     Dto/initial_race_map.h
     Dto/player_race_finished.h
     Dto/player_left.h
+    Dto/lobby_auth.h
+    Dto/lobby_choose_car.h
+    Dto/lobby_room_state.h
+    Dto/lobby_room.h
 )

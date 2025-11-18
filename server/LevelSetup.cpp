@@ -75,3 +75,13 @@ std::vector<RawEvent> LevelSetup::stepAndDrainEvents(float dt) {
 
     return collector_.drain();  
 }
+
+float LevelSetup::getVehicleSpeed(int vehicle_id) {
+    const auto& speeds = collector_.getLastSpeeds();
+    auto it = speeds.find(vehicle_id);
+    if (it != speeds.end()) {
+        std::cout << it->second << std::endl;
+        return it->second;
+    }
+    return 0.0f;
+}

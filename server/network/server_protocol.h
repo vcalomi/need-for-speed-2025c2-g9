@@ -22,13 +22,6 @@ public:
     explicit ServerProtocol(Socket& socket);
     void sendDTO(std::shared_ptr<Dto> dto);
     std::shared_ptr<Dto> receiveDTO();
-    ActionCode receiveActionCode();
-    std::string receiveRoomName();
-    int receiveMaxPlayers();
-    void sendActionCode();
-    void sendRoomList(const std::vector<std::string>& rooms);
-    void sendErrorMsg(const std::string& errorMsg);
-    void sendMsg(ActionCode code);
     ~ServerProtocol();
 };
 

@@ -5,9 +5,14 @@
 
 struct RenderState {
     bool raceFinished = false;
+    bool localPlayerFinished = false;
     bool localPlayerExploded = false;
+    int localFinishPosition = -1;
+    float localFinishTime = 0.0f;
     float explosionTimer = 0.0f;
     bool showExplosion = false;
+    bool showFinalResultsScreen = false;
+    bool showPlayerFinishedScreen = false;
 };
 
 class EventRenderController {

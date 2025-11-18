@@ -16,6 +16,19 @@ TextRenderer::~TextRenderer() {
     }
 }
 
+void TextRenderer::Measure(const std::string& msg, int& w, int& h) {
+    if (!font_) {
+        w = h = 0;
+        return;
+    }
+
+    if (TTF_SizeText(font_, msg.c_str(), &w, &h) != 0) {
+        std::cerr << "[TextRenderer] Failed to measure text: " << TTF_GetError() << std::endl;
+        w = h = 0;
+    }
+}
+
+
 void TextRenderer::Draw(const std::string& text, int x, int y, SDL_Color color) {
     if (!font_)
         return;

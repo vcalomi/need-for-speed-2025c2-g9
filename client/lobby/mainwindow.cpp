@@ -484,7 +484,7 @@ void MainWindow::updateCarImage() { carCtrl->updateImage(); }
 void MainWindow::handleStartGame() {
     game_started = true;
     try {
-        this->protocol.sendStartGame();
+        this->lobbySvc->startGame();
     } catch (const std::exception& e) {
         QMessageBox::critical(this, "Start Game", QString("Error: %1").arg(e.what()));
     }

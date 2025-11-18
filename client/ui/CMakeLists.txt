@@ -3,6 +3,7 @@
 add_library(ui
     minimap.cpp
     checkpoint_indicator.cpp
+    speedometer.cpp
 )
 
 target_include_directories(ui

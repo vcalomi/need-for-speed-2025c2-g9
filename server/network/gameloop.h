@@ -6,6 +6,7 @@
 #include <optional>
 #include <string>
 #include <vector>
+#include <chrono>
 
 #include "../../common/Dto/dto.h"
 #include "../../common/broadcaster.h"
@@ -17,8 +18,9 @@
 
 struct PlayerRaceProgress {
     int currentLap = 0;       
-    int nextCheckpoint = 0;   
-    bool finished = false;    
+    int nextCheckpoint = 0;     
+    bool finished = false;
+    std::optional<std::chrono::steady_clock::time_point> finishTime;
 };
 
 struct LevelInfo {
@@ -34,7 +36,7 @@ private:
     Broadcaster& broadcaster_;
     std::optional<LevelSetup> setup;
     int maxPlayers;
-
+    
     std::vector<LevelInfo> levels_;
     int currentLevelIndex_ = 0;
     std::string currentMapName_;
@@ -42,7 +44,7 @@ private:
     bool raceActive_ = false;
     bool pendingNextRace_ = false;
     std::unordered_map<int, PlayerRaceProgress> raceProgress_; 
-    
+    std::chrono::steady_clock::time_point raceStartTime_;
 
     
     void handlerProcessCommand(std::shared_ptr<Dto> dto);
@@ -59,6 +61,8 @@ private:
     void sendCheckpoints();
     void sendMapName(std::string mapName);
 
+    int computePlayerPosition(int vehicleId);
+    void onPlayerFinished(int vehicleId, PlayerRaceProgress& prog);
 
 public:
     explicit GameLoop(Queue<std::shared_ptr<Dto>>& gameLoopQueue,

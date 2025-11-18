@@ -24,7 +24,8 @@ public:
     bool HasPlayer(std::string username) const;
     bool HasPlayers() const;
     const std::map<std::string, Player>& GetPlayers() const;
-    void UpdateFromServer(std::string username, float x, float y, float angle);
+    void UpdateFromServer(std::string username, float x, float y, float angle, float speed,
+                          bool isAboveBridge);
     void OnCollision(const Event& e);
     const Player& GetPlayer(const std::string& username) const;
 
@@ -38,6 +39,8 @@ public:
 
     int GetLapsFor(const std::string& username) const;
     int GetLapProgressFor(const std::string& username) const;
+
+    void resetRace();
 
 private:
     std::map<std::string, Player> players_;

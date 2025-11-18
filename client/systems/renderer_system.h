@@ -2,20 +2,20 @@
 
 #include <SDL2pp/Renderer.hh>
 
+#include "../graphics/background_renderer.h"
+#include "../graphics/checkpoint_renderer.h"
+#include "../graphics/hud_renderer.h"
+#include "../graphics/particle_renderer.h"
+#include "../graphics/player_renderer.h"
+#include "../graphics/screen_renderer.h"
+#include "../graphics/text_renderer.h"
 #include "../ui/checkpoint_indicator.h"
 #include "../ui/minimap.h"
+#include "../ui/speedometer.h"
 #include "../world/camera.h"
 #include "../world/map.h"
 #include "../world/world.h"
-
-#include "background_renderer.h"
-#include "checkpoint_renderer.h"
-#include "event_render_controller.h"
-#include "hud_renderer.h"
-#include "particle_renderer.h"
-#include "player_renderer.h"
-#include "screen_renderer.h"
-#include "text_renderer.h"
+#include "./event_render_controller.h"
 
 class RendererSystem {
 public:
@@ -36,6 +36,7 @@ private:
     HUDRenderer hudRenderer_;
     ScreenRenderer screenRenderer_;
     CheckpointIndicator checkpointIndicator_;
+    Speedometer speedometer_;
 
     RenderState state_;
     EventRenderController controller_;

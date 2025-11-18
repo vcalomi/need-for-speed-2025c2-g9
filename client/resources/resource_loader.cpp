@@ -1,13 +1,10 @@
 #include "./resource_loader.h"
 
-#include <cctype>
 #include <iostream>
 
 #include <yaml-cpp/yaml.h>
 
-ResourceLoader::ResourceLoader(SDL2pp::Renderer& renderer):
-        carSprites_(renderer, "../client/assets/need-for-speed/cars/cars.png") {
-
+ResourceLoader::ResourceLoader(SDL2pp::Renderer& renderer): renderer_(renderer) {
     LoadCarSprites();
     std::cout << "[ResourceLoader] Loaded car sprites from YAML\n";
 }
@@ -23,12 +20,24 @@ void ResourceLoader::LoadCarSprites() {
         }
 
         for (auto itVeh = sprites.begin(); itVeh != sprites.end(); ++itVeh) {
-            std::string vehicle = itVeh->first.as<std::string>();
-            YAML::Node base = itVeh->second["frames"]["base"];
 
+            std::string vehicle = itVeh->first.as<std::string>();
+            YAML::Node vehNode = itVeh->second;
+
+            if (!vehNode["sheet_path"]) {
+                std::cerr << "[ResourceLoader] WARNING: vehicle '" << vehicle
+                          << "' missing sheet_path\n";
+                continue;
+            }
+
+            std::string sheetPath = vehNode["sheet_path"].as<std::string>();
+
+            auto texture = std::make_shared<SDL2pp::Texture>(renderer_, SDL2pp::Surface(sheetPath));
+
+            YAML::Node base = vehNode["frames"]["base"];
             if (!base) {
                 std::cerr << "[ResourceLoader] WARNING: vehicle '" << vehicle
-                          << "' has no base section\n";
+                          << "' missing base frame\n";
                 continue;
             }
 
@@ -37,17 +46,16 @@ void ResourceLoader::LoadCarSprites() {
             int w = base["w"].as<int>();
             int h = base["h"].as<int>();
 
-            std::string spriteKey = vehicle;
-            spriteKey[0] = std::toupper(spriteKey[0]);
-            spriteKey += "_Base";
+            std::string spriteName = vehicle + "_Base";
 
-            carSprites_.AddSprite(spriteKey, SDL2pp::Rect(x, y, w, h));
+            carSprites_.AddSprite(spriteName, texture, SDL2pp::Rect(x, y, w, h));
 
-            std::cout << "[ResourceLoader] Loaded BASE sprite for " << vehicle << std::endl;
+            std::cout << "[ResourceLoader] Loaded BASE sprite for " << vehicle << " from "
+                      << sheetPath << std::endl;
         }
 
     } catch (const YAML::Exception& e) {
-        std::cerr << "[ResourceLoader] YAML parse error: " << e.what() << std::endl;
+        std::cerr << "[ResourceLoader] YAML parser error: " << e.what() << std::endl;
     }
 }
 
