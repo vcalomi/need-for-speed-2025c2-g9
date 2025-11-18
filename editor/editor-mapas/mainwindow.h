@@ -31,8 +31,6 @@ private slots:
     void on_cleanBtn_clicked();
     void loadMapFromCity();
     void onUndo();
-
-    // void toolSelect();
     void toolCheckpoint();
     void toolHint();
     void toolSpawn();
@@ -46,7 +44,7 @@ private:
     QStack<Command> history;
 
     QString currentCityId() const;
-    QPixmap mapForCity(const QString& city) const;
+    QPixmap mapForCity(const QString& cityId) const;
 };
 
 #endif  // MAINWINDOW_H

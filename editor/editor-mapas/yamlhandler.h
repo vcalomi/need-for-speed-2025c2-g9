@@ -15,8 +15,7 @@ public:
 
     static QString readCityId(const QString& filename);
 
-    static bool loadSceneFromTrack(const QString& filename, QGraphicsScene* scene,
-                                   const QSize& mapPixelSize);
+    static bool loadSceneFromTrack(const QString& filename, QGraphicsScene* scene);
 };
 
 #endif  // YAMLHANDLER_H

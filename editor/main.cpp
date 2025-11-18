@@ -1,8 +1,10 @@
-// #include "common/foo.h"
+#include <QApplication>
 
-#include <iostream>
+#include "mainwindow.h"
 
-int main() {
-    std::cout << "Editor funcionando correctamente." << std::endl;
-    return 0;
+int main(int argc, char* argv[]) {
+    QApplication a(argc, argv);
+    MainWindow w;
+    w.showMaximized();
+    return a.exec();
 }

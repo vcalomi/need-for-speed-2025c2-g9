@@ -7,7 +7,7 @@ BackgroundMusic::BackgroundMusic(QObject* parent): QObject(parent) {
     output = new QAudioOutput(this);
 
     player->setAudioOutput(output);
-    player->setSource(QUrl("qrc:/derezzed.mp3"));
+    player->setSource(QUrl("qrc:/derezzed.wav"));
     player->setLoops(QMediaPlayer::Infinite);
     output->setVolume(0.2);
 }

@@ -237,8 +237,20 @@ endif()
 
 if(TALLER_EDITOR)
     # HEY!! TODO XXX: Change the name of the executable to the one you like!
-    add_executable(taller_editor)
+    add_executable(taller_editor
+    editor/main.cpp
 
+    editor/editor-mapas/mainwindow.cpp
+    editor/editor-mapas/mainwindow.h
+    editor/editor-mapas/mainwindow.ui
+    editor/editor-mapas/mapview.cpp
+    editor/editor-mapas/mapview.h
+    editor/editor-mapas/yamlhandler.cpp     
+    editor/editor-mapas/yamlhandler.h
+    )
+
+    find_package(yaml-cpp REQUIRED)
+    
     # Make them depend on taller_common lib
     add_dependencies(taller_editor taller_common SDL2pp::SDL2pp)
 
@@ -249,10 +261,13 @@ if(TALLER_EDITOR)
     set_project_warnings(taller_editor ${TALLER_MAKE_WARNINGS_AS_ERRORS} FALSE)
 
     # add libSDL2pp's headers
-    target_include_directories(taller_editor PRIVATE ${libSDL2pp_SOURCE_DIR})
+    target_include_directories(taller_editor PRIVATE ${libSDL2pp_SOURCE_DIR} ${CMAKE_SOURCE_DIR}/editor/editor-mapas)
 
     # Link the taller_common lib target
-    target_link_libraries(taller_editor taller_common SDL2pp::SDL2pp)
+    target_link_libraries(taller_editor taller_common SDL2pp::SDL2pp Qt6::Core
+    Qt6::Gui
+    Qt6::Widgets
+    yaml-cpp)
 endif()
 
 # Testing section

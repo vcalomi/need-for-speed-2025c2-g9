@@ -201,8 +201,7 @@ void MainWindow::resizeEvent(QResizeEvent* e) {
 
 void MainWindow::openEditorMap() {
     // Ruta absoluta correcta al ejecutable del editor
-    QString editorPath = QDir::cleanPath(
-            QDir::currentPath() + "/../editor/editor-mapas/build/Desktop-Debug/editor-mapas");
+    QString editorPath = QDir::cleanPath(QDir::currentPath() + "/taller_editor");
 
     qDebug() << "Intentando abrir el editor en:" << editorPath;
 

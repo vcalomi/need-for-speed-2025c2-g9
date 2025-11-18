@@ -2,6 +2,58 @@
 <ui version="4.0">
  <class>MainWindow</class>
  <widget class="QMainWindow" name="MainWindow">
+  <property name="styleSheet">
+  <string notr="true">
+QMainWindow, QWidget {
+    background-color: #1e1e1e;
+    color: #dddddd;
+    font-family: "Segoe UI";
+}
+
+QWidget#leftPanel {
+    background-color: #252526;
+    border-right: 1px solid #333;
+}
+
+QLabel {
+    color: #e5e5e5;
+    font-weight: bold;
+}
+
+QPushButton {
+    background-color: #3a3a3a;
+    border: 1px solid #444;
+    padding: 6px;
+    color: #f0f0f0;
+    border-radius: 4px;
+} 
+
+QPushButton:hover {
+    background-color: #4a4a4a;
+}
+
+QPushButton:pressed {
+    background-color: #666;
+}
+
+QComboBox {
+    background-color: #f09c1fff;
+    color: white;
+    border: 1px solid #444;
+    padding: 4px;
+}
+
+Line {
+    background-color: #444;
+}
+
+QGraphicsView {
+    background-color: #111;
+    border: none;
+}
+  </string>
+ </property>
+
   <property name="geometry">
    <rect>
     <x>0</x>

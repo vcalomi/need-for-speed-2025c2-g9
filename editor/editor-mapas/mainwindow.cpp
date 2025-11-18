@@ -1,7 +1,9 @@
 #include "mainwindow.h"
 
 #include <QDebug>
+#include <QDir>
 #include <QMessageBox>
+#include <QPixmap>
 #include <QShortcut>
 #include <QTimer>
 
@@ -25,10 +27,6 @@ MainWindow::MainWindow(QWidget* parent):
     connect(ui->comboCity, &QComboBox::currentTextChanged, this, &MainWindow::loadMapFromCity);
 
     // Botones
-    connect(ui->loadMapBtn, &QPushButton::clicked, this, &MainWindow::on_loadMapBtn_clicked);
-    connect(ui->saveMapBtn, &QPushButton::clicked, this, &MainWindow::on_saveMapBtn_clicked);
-    connect(ui->cleanBtn, &QPushButton::clicked, this, &MainWindow::on_cleanBtn_clicked);
-
     connect(ui->checkpointToolBtn, &QPushButton::clicked, this, &MainWindow::toolCheckpoint);
     connect(ui->hintToolBtn, &QPushButton::clicked, this, &MainWindow::toolHint);
     connect(ui->spawnToolBtn, &QPushButton::clicked, this, &MainWindow::toolSpawn);
@@ -62,16 +60,8 @@ QString MainWindow::currentCityId() const {
     return "vice_city";
 }
 
-QPixmap MainWindow::mapForCity(const QString& city) const {
-    if (city == "Liberty City")
-        return QPixmap(":/images/liberty_city.png");
-    if (city == "San Andreas")
-        return QPixmap(":/images/san_andreas.png");
-    return QPixmap(":/images/vice_city.png");
-}
-
 void MainWindow::loadMapFromCity() {
-    QPixmap pm = mapForCity(ui->comboCity->currentText());
+    QPixmap pm = mapForCity(currentCityId());
     if (pm.isNull()) {
         QMessageBox::warning(this, "Error", "Could not load map image.");
         return;
@@ -102,10 +92,12 @@ void MainWindow::on_loadMapBtn_clicked() {
 
     loadMapFromCity();
 
-    if (!YamlHandler::loadSceneFromTrack(fname, view->scenePtr(), view->mapPixelSize())) {
+    if (!YamlHandler::loadSceneFromTrack(fname, view->scenePtr())) {
         QMessageBox::warning(this, "Error", "Could not load track elements.");
         return;
     }
+
+    view->updateCheckpointLines();
 
     history.clear();
 }
@@ -137,6 +129,27 @@ void MainWindow::onUndo() {
         if (cmd.item)
             view->scenePtr()->addItem(cmd.item);
     }
+}
+
+QPixmap MainWindow::mapForCity(const QString& cityId) const {
+    QString base = QDir::cleanPath(QDir::currentPath() + "/../editor/editor-mapas/images");
+
+    QString fileName;
+
+    if (cityId == "liberty_city")
+        fileName = base + "/liberty_city.png";
+    else if (cityId == "san_andreas")
+        fileName = base + "/san_andreas.png";
+    else if (cityId == "vice_city")
+        fileName = base + "/vice_city.png";
+    else
+        return QPixmap();
+
+    QPixmap pm(fileName);
+    if (pm.isNull()) {
+        qWarning() << "Failed to load map image:" << fileName;
+    }
+    return pm;
 }
 
 void MainWindow::toolCheckpoint() { view->setTool(MapView::Tool::PlaceCheckpoint); }
