@@ -13,7 +13,9 @@ RendererSystem::RendererSystem(SDL2pp::Renderer& renderer, SpriteSheet& cars, Wo
         hudRenderer_(renderer, text_),
         screenRenderer_(renderer, text_),
         controller_(bus, particleRenderer_, world, state_),
-        checkpointIndicator_(renderer) {
+        checkpointIndicator_(renderer),
+        speedometer_(renderer, "../client/assets/need-for-speed/cars/speedometer.png",
+                     "../client/assets/need-for-speed/cars/speedometer_needle.png") {
     checkpointIndicator_.SetTexture("../client/assets/need-for-speed/cars/arrow.png");
 }
 
@@ -79,6 +81,9 @@ void RendererSystem::Render(const World& world, Map& map, const Camera& camera, 
     const auto& local = world.GetLocalPlayer();
     const auto& nextCp = world.GetActiveCheckpointFor(local.GetUsername());
     checkpointIndicator_.Draw(camera, local, nextCp);
+
+    float speed = world.GetLocalPlayer().GetSpeed();
+    speedometer_.Render(speed, 200.0f);
 
     renderer_.Present();
 }

@@ -11,6 +11,7 @@
 #include "../graphics/text_renderer.h"
 #include "../ui/checkpoint_indicator.h"
 #include "../ui/minimap.h"
+#include "../ui/speedometer.h"
 #include "../world/camera.h"
 #include "../world/map.h"
 #include "../world/world.h"
@@ -35,6 +36,7 @@ private:
     HUDRenderer hudRenderer_;
     ScreenRenderer screenRenderer_;
     CheckpointIndicator checkpointIndicator_;
+    Speedometer speedometer_;
 
     RenderState state_;
     EventRenderController controller_;
