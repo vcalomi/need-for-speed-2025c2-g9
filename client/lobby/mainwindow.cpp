@@ -231,7 +231,7 @@ void MainWindow::openEditorMap() {
 
 void MainWindow::handleOpenMapsPage() {
     // Ruta absoluta desde el lobby hasta los mapas
-    QString mapsPath = QDir::cleanPath(QDir::currentPath() + "/../editor/editor-mapas/maps");
+    QString mapsPath = QDir::cleanPath(QDir::currentPath() + "/../server/maps");
 
     qDebug() << "Buscando mapas en:" << mapsPath;
 
