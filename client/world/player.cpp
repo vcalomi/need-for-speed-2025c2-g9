@@ -36,7 +36,7 @@ std::string Player::VehicleTipeToString(VehicleTipe type) const {
     }
 }
 
-void Player::UpdateFromNetwork(float x, float y, float angleRad) {
+void Player::UpdateFromNetwork(float x, float y, float angleRad, float speed, bool isAboveBridge) {
     x_ = x;
     y_ = y;
 
@@ -47,6 +47,8 @@ void Player::UpdateFromNetwork(float x, float y, float angleRad) {
     while (angleDeg >= 360) angleDeg -= 360;
 
     angle_ = angleDeg;
+    speed_ = speed;
+    isAboveBridge_ = isAboveBridge;
 }
 
 

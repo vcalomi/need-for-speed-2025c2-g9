@@ -10,12 +10,16 @@ class Player {
 public:
     Player(std::string username, VehicleTipe carType, float x, float y, float health);
 
-    void UpdateFromNetwork(float x, float y, float angle);
+    void UpdateFromNetwork(float x, float y, float angle, float speed, bool isAboveBridge);
 
     float GetX() const { return x_; }
     float GetY() const { return y_; }
     float GetAngle() const { return angle_; }
     float GetHealth() const { return health_; }
+    float GetSpeed() const { return speed_; }
+    bool IsAboveBridge() const { return isAboveBridge_; }
+    void setSpeed(float speed) { speed_ = speed; }
+    void setIsAboveBridge(bool isAbove) { isAboveBridge_ = isAbove; }
     float GetMaxHealth() const { return maxHealth_; }
     std::string GetUsername() const { return username_; }
     std::string GetSprite() const;
@@ -31,4 +35,6 @@ private:
     float angle_;
     float health_;
     const float maxHealth_;
+    float speed_;
+    bool isAboveBridge_;
 };

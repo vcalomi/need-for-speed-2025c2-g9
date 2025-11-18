@@ -30,7 +30,7 @@ World::World(EventBus& eventBus): eventBus_(eventBus) {
     });
 
     eventBus_.Subscribe<PlayerStateUpdatedEvent>([this](const PlayerStateUpdatedEvent& e) {
-        UpdateFromServer(e.username, e.x, e.y, e.angle);
+        UpdateFromServer(e.username, e.x, e.y, e.angle, e.speed, e.isAboveBridge);
     });
 
     eventBus_.Subscribe<CheckPointCompletedEvent>([this](const CheckPointCompletedEvent& e) {
@@ -67,7 +67,8 @@ bool World::HasPlayer(std::string username) const {
     return players_.find(username) != players_.end();
 }
 
-void World::UpdateFromServer(std::string username, float x, float y, float angle) {
+void World::UpdateFromServer(std::string username, float x, float y, float angle, float speed,
+                             bool isAboveBridge) {
     auto it = players_.find(username);
     if (it == players_.end()) {
         std::cerr << "[World] Warning: received update for unknown player " << username << "\n";
@@ -77,7 +78,7 @@ void World::UpdateFromServer(std::string username, float x, float y, float angle
     Player& player = it->second;
 
     // Actualizamos la posición y rotación según datos del servidor
-    player.UpdateFromNetwork(x, y, angle);
+    player.UpdateFromNetwork(x, y, angle, speed, isAboveBridge);
 }
 
 void World::OnCollision(const Event& e) {

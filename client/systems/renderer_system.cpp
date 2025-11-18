@@ -54,15 +54,26 @@ void RendererSystem::Render(const World& world, Map& map, const Camera& camera, 
                              world.GetPassedCheckpointIdsFor(world.GetLocalPlayer().GetUsername()),
                              camera);
 
-    for (auto& [id, player]: world.GetPlayers()) playerRenderer_.Draw(player, camera);
+
+    for (auto& [id, player]: world.GetPlayers()) {
+        if (!player.IsAboveBridge()) {
+            playerRenderer_.Draw(player, camera);
+        }
+    }
 
     particleRenderer_.Update(0.016f);
     particleRenderer_.Render(camera);
 
+
     background_.RenderForeground(map, camera);
 
-    minimap.Render(world, camera, map);
+    for (auto& [id, player]: world.GetPlayers()) {
+        if (player.IsAboveBridge()) {
+            playerRenderer_.Draw(player, camera);
+        }
+    }
 
+    minimap.Render(world, camera, map);
     hudRenderer_.Render(world);
 
     const auto& local = world.GetLocalPlayer();
