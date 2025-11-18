@@ -8,6 +8,7 @@ class TextRenderer {
 public:
     TextRenderer(SDL2pp::Renderer& renderer, const std::string& fontPath, int size);
     ~TextRenderer();
+    void Measure(const std::string& msg, int& w, int& h);
 
     void Draw(const std::string& text, int x, int y, SDL_Color color = {255, 255, 255, 255});
 
