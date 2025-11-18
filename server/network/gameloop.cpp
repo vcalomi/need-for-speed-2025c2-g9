@@ -175,7 +175,8 @@ void GameLoop::sendVehiclesPositions() {
         float x, y, angle;
         vehicle->getPosition(x, y, angle);
         std::string username = playerUsernames_.at(player_id);
-        auto dto = std::make_shared<VehicleDto>(username, x, y, angle, 0.0f);
+
+        auto dto = std::make_shared<VehicleDto>(username, x, y, angle, setup->getVehicleSpeed(player_id));
         broadcaster_.broadcast(dto);
     }
 }
