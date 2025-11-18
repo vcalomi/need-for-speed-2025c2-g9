@@ -1,6 +1,7 @@
 #pragma once
 #include "../events/event.h"
 #include "../graphics/particle_renderer.h"
+#include "../graphics/screen_renderer.h"
 #include "../world/world.h"
 
 struct RenderState {
@@ -18,7 +19,7 @@ struct RenderState {
 class EventRenderController {
 public:
     EventRenderController(EventBus& bus, ParticleRenderer& particles, const World& world,
-                          RenderState& state);
+                          RenderState& state, ScreenRenderer& screenRenderer);
 
 private:
     void RegisterEvents();
@@ -27,4 +28,5 @@ private:
     ParticleRenderer& particles_;
     const World& world_;
     RenderState& state_;
+    ScreenRenderer& screenRenderer_;
 };

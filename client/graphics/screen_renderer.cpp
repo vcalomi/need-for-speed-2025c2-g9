@@ -1,18 +1,66 @@
 #include "screen_renderer.h"
 
 ScreenRenderer::ScreenRenderer(SDL2pp::Renderer& renderer, TextRenderer& text):
-        renderer_(renderer), text_(text) {}
+        renderer_(renderer),
+        text_(text),
+        explosionTexture_(std::make_unique<SDL2pp::Texture>(
+                renderer, "../client/assets/need-for-speed/cars/explosion.png")) {}
 
 
-void ScreenRenderer::RenderExplosion(const World& world, const Camera& camera, float size) {
-    const auto& local = world.GetLocalPlayer();
+void ScreenRenderer::RenderExplosion(const Camera& camera, float dt) {
+    if (!explosionTexture_)
+        return;
 
-    float screenX = local.GetX() - camera.getX();
-    float screenY = local.GetY() - camera.getY();
+    const int rows = 6;
+    const int cols = 8;
+    const int totalFrames = rows * cols;
 
-    SDL_FRect boom{screenX - size / 2, screenY - size / 2, size, size};
-    SDL_SetRenderDrawColor(renderer_.Get(), 255, 180, 40, 200);
-    SDL_RenderFillRectF(renderer_.Get(), &boom);
+    int texW, texH;
+    SDL_QueryTexture(explosionTexture_->Get(), nullptr, nullptr, &texW, &texH);
+
+    const int frameW = texW / cols;
+    const int frameH = texH / rows;
+
+    for (auto& e: explosions_) {
+        if (e.finished)
+            continue;
+
+        e.elapsed += dt;
+        if (e.elapsed >= e.timePerFrame) {
+            e.elapsed = 0;
+            e.frame++;
+
+            if (e.frame >= totalFrames) {
+                e.finished = true;
+                continue;
+            }
+        }
+
+        int row = e.frame / cols;
+        int col = e.frame % cols;
+
+        SDL_Rect src{col * frameW, row * frameH, frameW, frameH};
+
+        SDL2pp::Rect dst(static_cast<int>(e.worldX - camera.getX() - e.size / 2),
+                         static_cast<int>(e.worldY - camera.getY() - e.size / 2),
+                         static_cast<int>(e.size), static_cast<int>(e.size));
+
+        renderer_.Copy(*explosionTexture_, SDL2pp::Optional<SDL2pp::Rect>(src),
+                       SDL2pp::Optional<SDL2pp::Rect>(dst));
+
+
+        renderer_.Copy(*explosionTexture_, src, dst);
+    }
+
+    // borrar explosiones finalizadas
+    explosions_.erase(std::remove_if(explosions_.begin(), explosions_.end(),
+                                     [](const auto& e) { return e.finished; }),
+                      explosions_.end());
+}
+
+
+void ScreenRenderer::TriggerExplosion(float worldX, float worldY, float size) {
+    explosions_.push_back({worldX, worldY, size});
 }
 
 

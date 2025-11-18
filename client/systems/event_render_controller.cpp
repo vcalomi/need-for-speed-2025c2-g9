@@ -9,8 +9,13 @@
 #include "../events/wall_collision_event.h"
 
 EventRenderController::EventRenderController(EventBus& bus, ParticleRenderer& particles,
-                                             const World& world, RenderState& state):
-        eventBus_(bus), particles_(particles), world_(world), state_(state) {
+                                             const World& world, RenderState& state,
+                                             ScreenRenderer& screenRenderer):
+        eventBus_(bus),
+        particles_(particles),
+        world_(world),
+        state_(state),
+        screenRenderer_(screenRenderer) {
     RegisterEvents();
 }
 
@@ -68,6 +73,9 @@ void EventRenderController::RegisterEvents() {
             state_.localPlayerExploded = true;
             state_.showExplosion = true;
             state_.explosionTimer = 1.0f;
+
+            const auto& p = world_.GetLocalPlayer();
+            screenRenderer_.TriggerExplosion(p.GetX(), p.GetY(), 240.0f);
         }
     });
 }

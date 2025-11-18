@@ -12,7 +12,7 @@ RendererSystem::RendererSystem(SDL2pp::Renderer& renderer, SpriteSheet& cars, Wo
         checkpointRenderer_(renderer),
         hudRenderer_(renderer, text_),
         screenRenderer_(renderer, text_),
-        controller_(bus, particleRenderer_, world, state_),
+        controller_(bus, particleRenderer_, world, state_, screenRenderer_),
         checkpointIndicator_(renderer),
         speedometer_(renderer, "../client/assets/need-for-speed/cars/speedometer.png",
                      "../client/assets/need-for-speed/cars/speedometer_needle.png") {
@@ -26,18 +26,19 @@ void RendererSystem::Render(const World& world, Map& map, const Camera& camera, 
     background_.RenderBackground(map, camera);
 
     if (state_.localPlayerExploded) {
-        screenRenderer_.RenderExplosion(world, camera, 100);
+        float dt = 0.016f;
 
-        state_.explosionTimer -= 0.016f;
-        if (state_.explosionTimer <= 0)
-            state_.showExplosion = false;
+        screenRenderer_.RenderExplosion(camera, dt);
 
-        if (!state_.showExplosion)
+        state_.explosionTimer -= dt;
+        if (state_.explosionTimer <= 0) {
             screenRenderer_.RenderPlayerLost();
+        }
 
         renderer_.Present();
         return;
     }
+
 
     if (state_.showPlayerFinishedScreen) {
         screenRenderer_.RenderPlayerFinished(state_.localFinishPosition, state_.localFinishTime);
