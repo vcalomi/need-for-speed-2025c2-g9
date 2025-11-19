@@ -477,7 +477,24 @@ void MainWindow::updateLobbyStatus() {
     ui->labelLobbyStatus->setText(text);
 }
 
-void MainWindow::handleRefreshPlayers() { waitCtrl->refreshOnce(); }
+void MainWindow::handleRefreshPlayers() {
+    if (inFlight) return;
+    inFlight = true;
+    try {
+        auto vm = lobbySvc->listPlayers();
+        ui->listPlayers->clear();
+        for (const auto& p : vm.players) {
+            ui->listPlayers->addItem(p);
+        }
+        player.currentPlayers = static_cast<unsigned>(vm.players.size());
+        if (vm.maxPlayers > 0) player.maxPlayers = vm.maxPlayers;
+        updateLobbyStatus();
+    } catch (const std::exception& e) {
+        QMessageBox::warning(this, "Refresh Players",
+                             QString("Failed to refresh: %1").arg(e.what()));
+    }
+    inFlight = false;
+}
 
 void MainWindow::updateCarImage() { carCtrl->updateImage(); }
 

@@ -16,7 +16,6 @@ public:
     void startHost();
     void startGuest();
     void stop();
-    void refreshOnce();
 
 signals:
     void gameStarted();

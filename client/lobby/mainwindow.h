@@ -73,6 +73,7 @@ private:
     int currentPage = 0;
     QStringList allRooms;
     QStringList selectedMaps;
+    bool inFlight = false;
 
     QString generateRoomCode();
     void loadRooms();
