@@ -26,5 +26,5 @@ target_link_libraries(lobby
     PUBLIC
         Qt${QT_VERSION_MAJOR}::Widgets
         Qt${QT_VERSION_MAJOR}::Multimedia
-        taller_common
+        nfs_common
 )

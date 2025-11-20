@@ -14,5 +14,5 @@ target_include_directories(dto_handlers
 target_link_libraries(dto_handlers
     PUBLIC
         events
-        taller_common
+        nfs_common
 )

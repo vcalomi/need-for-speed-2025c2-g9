@@ -18,6 +18,6 @@ target_link_libraries(app
         events
         ui
         resources
-        taller_common
+        nfs_common
         SDL2pp::SDL2pp
 )

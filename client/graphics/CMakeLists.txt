@@ -18,7 +18,7 @@ target_link_libraries(graphics
     PUBLIC
         SDL2pp::SDL2pp
         yaml-cpp
-        taller_common
+        nfs_common
         systems
         world
         events

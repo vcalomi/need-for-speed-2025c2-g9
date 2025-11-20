@@ -1,6 +1,6 @@
 # === CLIENT MAIN CMAKE ===
 
-set_target_properties(taller_client PROPERTIES
+set_target_properties(nfs_client PROPERTIES
     AUTOMOC ON
     AUTOUIC ON
     AUTORCC ON
@@ -20,13 +20,13 @@ add_subdirectory(network)
 add_subdirectory(resources)
 
 # === Ejecutable principal del cliente ===
-target_sources(taller_client
+target_sources(nfs_client
     PRIVATE
         client_main.cpp   # o el nombre de tu archivo main real
 )
 
 # === Enlazar todo al ejecutable ===
-target_link_libraries(taller_client
+target_link_libraries(nfs_client
     PRIVATE
         lobby
         network
@@ -37,7 +37,7 @@ target_link_libraries(taller_client
         events
         ui
         resources
-        taller_common
+        nfs_common
         SDL2pp::SDL2pp
         yaml-cpp
         Qt${QT_VERSION_MAJOR}::Widgets

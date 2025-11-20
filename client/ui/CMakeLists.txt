@@ -15,7 +15,7 @@ target_link_libraries(ui
     PUBLIC
         SDL2pp::SDL2pp
         yaml-cpp
-        taller_common
+        nfs_common
         systems
         graphics
         world
