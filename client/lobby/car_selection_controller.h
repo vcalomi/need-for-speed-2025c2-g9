@@ -16,8 +16,9 @@ public:
     void initCars();
     void next();
     void prev();
-    bool submitSelectedCar();  // true si CHOOSE_CAR_OK
+    bool submitSelectedCar();
     void updateImage();
+    void updateSpecs();
     CarType currentCarType() const;
 
 private:

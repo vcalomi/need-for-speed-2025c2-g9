@@ -1,0 +1,270 @@
+# 📘 Manual del Usuario – Need for Speed 
+
+Este documento explica cómo **instalar**, **compilar**, **configurar** y **usar** el juego desarrollado para Taller de Programación I. Está escrito para usuarios sin conocimientos profundos sobre programación, por lo que utiliza un lenguaje claro y directo.
+
+---
+
+## 📑 Índice
+
+* [1. Instalación y Requisitos](#1-instalación-y-requisitos)
+* [2. Instalación y Compilación](#2-instalación-y-compilación)
+* [3. Ejecución del Software](#3-ejecución-del-software)
+* [4. Uso del Juego: Lobby y Flujo General](#4-uso-del-juego-lobby-y-flujo-general)
+* [5. Editor de Mapas (Race Track Editor)](#5-editor-de-mapas-race-track-editor)
+* [6. Controles del Juego](#6-controles-del-juego)
+* [7. Objetivo y Dinámica del Juego](#7-objetivo-y-dinámica-del-juego)
+* [8. Servidor](#8-servidor)
+
+---
+
+### 1. ⚙️ Instalación y Requisitos
+
+El proyecto fue desarrollado y probado en **Ubuntu 22.04 / 24.04**. Se recomienda utilizar **Linux** para evitar problemas de compilación.
+
+---
+
+### 2. 🔨 Instalación y Compilación
+
+Para instalar las dependencias necesarias, en la raíz del proyecto ejecuta:
+
+```bash
+chmod +x install_all.sh
+sudo ./install_all.sh
+```
+Este script instala automáticamente todas las dependencias necesarias.
+
+Compilar el proyecto
+Ejecuta el script de compilación:
+
+```bash
+chmod +x build_game.sh
+./build_game.sh
+```
+
+Si el script no te deja dentro de build/, podés entrar manualmente:
+
+```bash
+cd build
+```
+---
+
+### 3. 🚀 Ejecución del Software
+Todos los comandos se ejecutan desde la carpeta `build/`
+
+**Levantar el servidor**
+```bash
+./nfs_server <puerto>
+```
+
+Ejemplo:
+```bash
+./nfs_server 8080
+```
+
+**Abrir el cliente**
+En otra terminal:
+```bash
+./nfs_client <host> <puerto>
+```
+
+Ejemplo:
+```bash
+./nfs_client 127.0.0.1 8080
+```
+
+**Abrir el editor de mapas**
+Podés abrirlo desde el lobby del cliente o directamente desde la terminal:
+```bash
+./nfs_editor
+```
+
+**Ejecutar tests**
+```bash
+./nfs_tests
+```
+
+---
+
+### 4. 🎮 Uso del Juego: Lobby y Flujo General
+Al abrir el cliente verás una pantalla inicial donde podrás conectarte al servidor. 
+
+![Captura de pantalla página de conexion](../assets/images/Imagen1.png)
+
+Luego de presionar el botón `Connect` te aparecerá un cartel de que te has concectado con éxito y luego ingresarás tu nombre de usuario
+
+![Captura de pantalla página de ingresar username](../assets/images/Imagen2.png)
+
+Una vez ingresado y clickeado el botón `Confirm username` verás el siguiente menú principal:
+
+![Captura de pantalla página de menú principal](../assets/images/Imagen3.png)
+
+Opciones disponibles:
+
+- `Create Game` → Crear una partida
+
+- `Join Game` → Unirse a una partida existente
+
+- `Create Race Tracks` → Abrir el editor de mapas y crear un recorrido
+
+Veamos que hace cada opción en detalle:
+
+#### 🏁 Crear una partida
+El flujo es:
+
+1. **Seleccionar recorridos**: Primero selecciona los recorridos que deseas jugar en la partida. Cada recorrido es un circuito (carrera) que se jugará dentro de la partida. Puedes seleccionar más de uno.
+
+![Captura de pantalla página de seleccionar mapas](../assets/images/Imagen4.png)
+
+Luego de tocar el botón `Select and back to menu` verás la siguiente sala:
+
+2. **Crear sala**: Selecciona la cantidad de jugadores y obtendrás un room code para enviarle a tus amigos.
+
+![Captura de pantalla página de código de sala](../assets/images/Imagen5.png)
+
+Luego de tocar el botón `Continue` verás la sala de espera
+
+3. **Sala de espera**: Aquí puedes seleccionar el auto con el que correrás en la partida presionando el botón `Choose your car`, y también podrás esperar hasta que el host inicie la partida.
+
+![Captura de pantalla página de sala de espera](../assets/images/Imagen6.png)
+
+- **Elegir tu auto** → Disponés de **7 vehículos** distintos, y podés visualizarlos usando las flechas laterales. Cada uno tiene su propio estilo de conducción y difieren en:
+
+    - ⚡ **Velocidad máxima**
+    - 🏎️ **Aceleración**
+    - 🛡️ **Salud**
+    - 🧱 **Masa**
+    - 🎮 **Controlabilidad**
+
+Por ejemplo, un camión tendrá una velocidad y aceleración menores que un auto deportivo pero tendrá más salud, masa y controlabilidad. 
+
+![Captura de pantalla página de elegir auto](../assets/images/Imagen7.png)
+
+**Elegís un solo auto y te acompaña durante todas las carreras de la partida**.
+🏁 **No hay segundas oportunidades**: elegí bien tu máquina de batalla.
+
+
+Una vez seleccionado el auto (luego de tocar el botón `Select this car`) serás redirigido nuevamente a la sala de espera.
+
+- **Ver los jugadores conectados** → Al tocar el botón `Refresh` podes ir actualizando la página para ir viendo si se van uniendo el resto de jugadores.
+
+- **Iniciar la partida (solo el host)** → El único jugador que puede iniciar el juego tocando el botón `Start game` es el host (quien crea la sala).
+
+---
+
+#### 👥 Unirse a una partida
+
+Si en el menú principal seleccionas el botón `Join Game` primero verás las salas disponibles que existen en el momento.
+
+![Captura de pantalla página de salas disponibles](../assets/images/Imagen8.png)
+
+De aquí podrás copiar el código de la sala para pegarlo en la próxima página que aparece luego de presionar el botón `Continue`, donde ingresarás el código.
+
+![Captura de pantalla página de ingresar room code](../assets/images/Imagen9.png)
+
+Luego de tocar el botón `Join` entras en la sala de espera para:
+
+![Captura de pantalla página de sala de espera](../assets/images/Imagen10.png)
+
+- **Elegir tu auto** → Disponés de **7 vehículos** distintos, y podés visualizarlos usando las flechas laterales. Cada uno tiene su propio estilo de conducción y difieren en:
+
+    - ⚡ **Velocidad máxima**
+    - 🏎️ **Aceleración**
+    - 🛡️ **Salud**
+    - 🧱 **Masa**
+    - 🎮 **Controlabilidad**
+
+Por ejemplo, un camión tendrá una velocidad y aceleración menores que un auto deportivo pero tendrá más salud, masa y controlabilidad. 
+
+![Captura de pantalla página de elegir auto](../assets/images/Imagen7.png)
+
+**Elegís un solo auto y te acompaña durante todas las carreras de la partida**.
+🏁 **No hay segundas oportunidades**: elegí bien tu máquina de batalla.
+
+- **Ver a los demás jugadores** → Al tocar el botón `Refresh` podes ir actualizando la página para ir viendo si se van uniendo el resto de jugadores.
+
+- **Esperar a que el host inicie la carrera** 
+
+---
+
+### 5. 🗺️ Editor de Mapas (Race Track Editor)
+El editor permite crear circuitos personalizados que luego pueden jugarse en el servidor. Estos serán visualizados cuando se crea una partida en la página donde hay que seleccionar los recorridos que contendrá la partida.
+
+Puede abrirse desde:
+
+- El menú principal del cliente, presionando el botón `Race Track Editor`
+
+- O desde la terminal → `./nfs_editor`
+
+![Captura de pantalla del editor de mapas](../assets/images/Imagen11.png)
+
+El recorrido consta de:
+
+- **Seleccionar una ciudad**: Liberty City, Vice City o San Andreas
+
+- **Colocar los elementos del recorrido**:
+
+    - `Start` → inicio de la carrera
+
+    - `Player Spawn` → posiciones iniciales de autos
+
+    - `Checkpoints` → marcan el camino
+
+    - `Hints / Flechas` → para señalizar giros
+
+    - `Finish` → meta final
+
+Para realizar el circuito puedes:
+- Hacer **zoom** y desplazarte por el mapa, con los botones `Zoom In (+)` o `Zoom Out (-)`, o sino también con el touchpad.
+- Si prefieres ver todo el mapa como desde el inicio puedes tocar el botón `Reset zoom`
+- Deshacer el último cambio con **Ctrl Z**
+- Borrar todo con `Clear All`
+
+
+#### 💾 Guardar y Cargar Mapas:
+- **Guardar**: Haz clic en Save Map y solo elige el nombre del mapa! Por defecto se aplica la  extensión.yaml y se coloca el archivo en server/maps para que sea jugable. Si lo guardas en otro lugar no será utilizado.
+- **Cargar**: Haz clic en Load Map y selecciona un archivo existente para seguir editando.
+
+---
+### 6. 🕹️ Juego
+
+#### 🎮 Controles del Juego
+
+| Acción | Tecla(s) |
+|--------|----------|
+| Avanzar / Acelerar   |   **W ⬆️** |
+| Girar a la izquierda | **W + A ⬆️⬅️** |
+| Girar a la derecha   | **W + D ⬆️➡️** |
+| Retroceder / Marcha atrás | **S ⬇️** |
+
+#### 😶‍🌫️ Cheats
+Al finalizar cada carrera y hasta unos 10 segundos de arrancar la siguiente, **cada jugador podrá mejorar algunas de las propiedades de su auto**. Por ejemplo, podrá hacerlo un poco más rápido. Cada mejora tiene un **costo** que se computa como una **penalización** del tiempo de llegada de la siguiente carrera. 
+
+**Mejoras disponibles**:
+- una
+- dos
+- tres
+
+
+
+#### 🎯 Dinámica y Objetivo del Juego
+**¡Bienvenido a la pista!** Cada partida puede incluir una sola carrera... o una verdadera maratón de circuitos consecutivos.
+Tu misión no es solo manejar: es sobrevivir a la velocidad, a los giros cerrados y a tus rivales.
+
+Para completar una carrera:
+
+- 🚦 Largás desde tu **posición inicial** esperando el momento justo para acelerar.
+
+- 🔵 Pasás por todos los **checkpoints**, que van marcando el camino correcto.
+
+- 🏹 Seguís las **flechas** de ayuda, que te indican cuándo doblar, cuándo seguir de largo o cuándo prepararte para una curva traicionera.
+
+- 🏁 Cruzás la **meta** a toda velocidad, intentando no chocarte en el último segundo.
+
+Si la partida tiene varios circuitos, no te relajes: apenas termina uno… ¡arranca el siguiente!
+
+🏆 **Gana el jugador que cruce primero la meta en cada carrera**. 
+**Velocidad, precisión y estrategia**: acá no gana el que acelera más… sino el que sabe cuándo hacerlo.
+
+---
+### 7. 🌐 Servidor
+Para cerrar el servidor, escribe la letra `q` en la terminal donde fue ejecutado.
