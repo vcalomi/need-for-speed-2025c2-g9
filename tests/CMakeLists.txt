@@ -56,5 +56,5 @@ add_custom_command(TARGET runTests POST_BUILD
   COMMAND ${CMAKE_COMMAND} -E copy
           $<TARGET_FILE:runTests>
           ${CMAKE_BINARY_DIR}/taller_tests
-  COMMENT "Copying runTests to ${CMAKE_BINARY_DIR}/taller_tests"
+  COMMENT "Copying runTests to ${CMAKE_BINARY_DIR}/nfs_tests"
 )

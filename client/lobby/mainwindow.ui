@@ -1091,7 +1091,7 @@ QLabel {
            <set>Qt::AlignHCenter|Qt::AlignVCenter</set>
           </property>
           <property name="text">
-           <string>The best exciting moment: Select your car!</string>
+           <string>The most exciting moment: Select your car!</string>
           </property>
          </widget>
         </item>
