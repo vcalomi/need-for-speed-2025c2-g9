@@ -17,13 +17,13 @@ Este documento explica cómo **instalar**, **compilar**, **configurar** y **usar
 
 ---
 
-### 1. ⚙️ Instalación y Requisitos
+## 1. ⚙️ Instalación y Requisitos
 
 El proyecto fue desarrollado y probado en **Ubuntu 22.04 / 24.04**. Se recomienda utilizar **Linux** para evitar problemas de compilación.
 
 ---
 
-### 2. 🔨 Instalación y Compilación
+## 2. 🔨 Instalación y Compilación
 
 Para instalar las dependencias necesarias, en la raíz del proyecto ejecuta:
 
@@ -48,7 +48,7 @@ cd build
 ```
 ---
 
-### 3. 🚀 Ejecución del Software
+## 3. 🚀 Ejecución del Software
 Todos los comandos se ejecutan desde la carpeta `build/`
 
 **Levantar el servidor**
@@ -85,7 +85,7 @@ Podés abrirlo desde el lobby del cliente o directamente desde la terminal:
 
 ---
 
-### 4. 🎮 Uso del Juego: Lobby y Flujo General
+## 4. 🎮 Uso del Juego: Lobby y Flujo General
 Al abrir el cliente verás una pantalla inicial donde podrás conectarte al servidor. 
 
 ![Captura de pantalla página de conexion](../assets/images/Imagen1.png)
@@ -108,7 +108,7 @@ Opciones disponibles:
 
 Veamos que hace cada opción en detalle:
 
-#### 🏁 Crear una partida
+### 🏁 Crear una partida
 El flujo es:
 
 1. **Seleccionar recorridos**: Primero selecciona los recorridos que deseas jugar en la partida. Cada recorrido es un circuito (carrera) que se jugará dentro de la partida. Puedes seleccionar más de uno.
@@ -151,7 +151,7 @@ Una vez seleccionado el auto (luego de tocar el botón `Select this car`) serás
 
 ---
 
-#### 👥 Unirse a una partida
+### 👥 Unirse a una partida
 
 Si en el menú principal seleccionas el botón `Join Game` primero verás las salas disponibles que existen en el momento.
 
@@ -186,7 +186,7 @@ Por ejemplo, un camión tendrá una velocidad y aceleración menores que un auto
 
 ---
 
-### 5. 🗺️ Editor de Mapas (Race Track Editor)
+## 5. 🗺️ Editor de Mapas (Race Track Editor)
 El editor permite crear circuitos personalizados que luego pueden jugarse en el servidor. Estos serán visualizados cuando se crea una partida en la página donde hay que seleccionar los recorridos que contendrá la partida.
 
 Puede abrirse desde:
@@ -220,14 +220,14 @@ Para realizar el circuito puedes:
 - Borrar todo con `Clear All`
 
 
-#### 💾 Guardar y Cargar Mapas:
+### 💾 Guardar y Cargar Mapas:
 - **Guardar**: Haz clic en Save Map y solo elige el nombre del mapa! Por defecto se aplica la  extensión.yaml y se coloca el archivo en server/maps para que sea jugable. Si lo guardas en otro lugar no será utilizado.
 - **Cargar**: Haz clic en Load Map y selecciona un archivo existente para seguir editando.
 
 ---
-### 6. 🕹️ Juego
+## 6. 🕹️ Juego
 
-#### 🎮 Controles del Juego
+### 🎮 Controles del Juego
 
 | Acción | Tecla(s) |
 |--------|----------|
@@ -236,7 +236,7 @@ Para realizar el circuito puedes:
 | Girar a la derecha   | **W + D ⬆️➡️** |
 | Retroceder / Marcha atrás | **S ⬇️** |
 
-#### 😶‍🌫️ Cheats
+### 😶‍🌫️ Cheats
 Al finalizar cada carrera y hasta unos 10 segundos de arrancar la siguiente, **cada jugador podrá mejorar algunas de las propiedades de su auto**. Por ejemplo, podrá hacerlo un poco más rápido. Cada mejora tiene un **costo** que se computa como una **penalización** del tiempo de llegada de la siguiente carrera. 
 
 **Mejoras disponibles**:
@@ -246,7 +246,7 @@ Al finalizar cada carrera y hasta unos 10 segundos de arrancar la siguiente, **c
 
 
 
-#### 🎯 Dinámica y Objetivo del Juego
+### 🎯 Dinámica y Objetivo del Juego
 **¡Bienvenido a la pista!** Cada partida puede incluir una sola carrera... o una verdadera maratón de circuitos consecutivos.
 Tu misión no es solo manejar: es sobrevivir a la velocidad, a los giros cerrados y a tus rivales.
 
@@ -266,5 +266,5 @@ Si la partida tiene varios circuitos, no te relajes: apenas termina uno… ¡arr
 **Velocidad, precisión y estrategia**: acá no gana el que acelera más… sino el que sabe cuándo hacerlo.
 
 ---
-### 7. 🌐 Servidor
+## 7. 🌐 Servidor
 Para cerrar el servidor, escribe la letra `q` en la terminal donde fue ejecutado.
