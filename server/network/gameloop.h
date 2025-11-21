@@ -51,6 +51,7 @@ private:
     Vehicle* getVehicleByPlayer(const std::string& username);
     Vehicle* getVehicleById(int vehicleId);
     void handleRaceProgress(int vehicleId, int checkpointIndex);
+    void handleVehicleExplosion(int vehicleId);
     float computeCollisionDamage(float impactSpeed);
     void handleVehicleVehicleCollision(const RawVehicleVehicle& event);
     void handleVehicleWallCollision(const RawVehicleWall& event);

@@ -176,11 +176,10 @@ void GameLoop::sendVehiclesPositions() {
         vehicle->getPosition(x, y, angle);
         std::string username = playerUsernames_.at(player_id);
 
-        auto dto = std::make_shared<VehicleDto>(username, x, y, angle, setup->getVehicleSpeed(player_id));
+        auto dto = std::make_shared<VehicleDto>(username, x, y, angle, setup->getVehicleSpeed(player_id), false);
         broadcaster_.broadcast(dto);
     }
 }
-
 
 Vehicle* GameLoop::getVehicleByPlayer(const std::string& username) {
     int foundId = -1;
@@ -298,6 +297,30 @@ void GameLoop::handleRaceProgress(int vehicleId, int checkpointIndex) {
     }
 }
 
+void GameLoop::handleVehicleExplosion(int vehicleId) {
+    Vehicle* vehicle = getVehicleById(vehicleId);
+    if (!vehicle)
+        return;
+
+    vehicle->disableControl();
+
+    auto explDto = std::make_shared<VehicleExplodedDto>(playerUsernames_.at(vehicleId));
+    broadcaster_.broadcast(explDto);
+
+    auto it = raceProgress_.find(vehicleId);
+    if (it != raceProgress_.end()) {
+        it->second.finished = true;
+    }
+
+    if (allPlayersFinished()) {
+        raceActive_ = false;
+        pendingNextRace_ = true;
+
+        auto raceFinish = std::make_shared<RaceFinishedDto>();
+        broadcaster_.broadcast(raceFinish);
+    }
+}
+
 float GameLoop::computeCollisionDamage(float impactSpeed) {
     const float minSpeed = 5.0f;
     const float maxSpeed = 25.0f;
@@ -336,14 +359,10 @@ void GameLoop::handleVehicleVehicleCollision(const RawVehicleVehicle& event) {
     broadcaster_.broadcast(dto);
 
     if (vehicleA->getVehicleHp() == 0) {
-        vehicleA->disableControl();
-        auto dto = std::make_shared<VehicleExplodedDto>(playerUsernames_.at(event.a));
-        broadcaster_.broadcast(dto);
+        handleVehicleExplosion(event.a);
     }
     if (vehicleB->getVehicleHp() == 0) {
-        vehicleB->disableControl();
-        auto dto = std::make_shared<VehicleExplodedDto>(playerUsernames_.at(event.b));
-        broadcaster_.broadcast(dto);
+        handleVehicleExplosion(event.b);
     }
 }
 
@@ -362,9 +381,7 @@ void GameLoop::handleVehicleWallCollision(const RawVehicleWall& event) {
     broadcaster_.broadcast(dto);
 
     if (vehicle->getVehicleHp() == 0) {
-        vehicle->disableControl();
-        auto dto = std::make_shared<VehicleExplodedDto>(playerUsernames_.at(event.vehicleId));
-        broadcaster_.broadcast(dto);
+        handleVehicleExplosion(event.vehicleId);
     }
 }
 

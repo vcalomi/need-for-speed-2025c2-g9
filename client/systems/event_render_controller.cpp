@@ -41,7 +41,6 @@ void EventRenderController::RegisterEvents() {
     });
 
     eventBus_.Subscribe<RaceInfoEvent>([this](const RaceInfoEvent&) {
-        world_.ResetForNewRace();
         state_.raceFinished = false;
         state_.localPlayerFinished = false;
         state_.localPlayerExploded = false;
