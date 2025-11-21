@@ -7,8 +7,5 @@ std::shared_ptr<Event> SendVehicleWallCollisionHandler::Handle(const std::shared
     auto d = std::dynamic_pointer_cast<VehicleWallCollisionDto>(dto);
     if (!d)
         return nullptr;
-
-    std::cout << "[DtoHandler] Vehicle Wall Collision: " << d->username << std::endl;
-
     return std::make_shared<WallCollisionEvent>(d->username, d->vehicle_new_hp);
 }

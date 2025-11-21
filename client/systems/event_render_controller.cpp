@@ -41,6 +41,7 @@ void EventRenderController::RegisterEvents() {
     });
 
     eventBus_.Subscribe<RaceInfoEvent>([this](const RaceInfoEvent&) {
+        world_.ResetForNewRace();
         state_.raceFinished = false;
         state_.localPlayerFinished = false;
         state_.localPlayerExploded = false;
@@ -50,7 +51,6 @@ void EventRenderController::RegisterEvents() {
         state_.showExplosion = false;
         state_.showFinalResultsScreen = false;
         state_.showPlayerFinishedScreen = false;
-        world_.ResetPlayersExploded();
     });
 
     eventBus_.Subscribe<RaceFinishedEvent>([this](const RaceFinishedEvent&) {
