@@ -9,7 +9,7 @@
 #include "../events/wall_collision_event.h"
 
 EventRenderController::EventRenderController(EventBus& bus, ParticleRenderer& particles,
-                                             const World& world, RenderState& state,
+                                             World& world, RenderState& state,
                                              ScreenRenderer& screenRenderer):
         eventBus_(bus),
         particles_(particles),
@@ -50,11 +50,14 @@ void EventRenderController::RegisterEvents() {
         state_.showExplosion = false;
         state_.showFinalResultsScreen = false;
         state_.showPlayerFinishedScreen = false;
+        world_.ResetPlayersExploded();
     });
 
     eventBus_.Subscribe<RaceFinishedEvent>([this](const RaceFinishedEvent&) {
         state_.raceFinished = true;
         state_.showFinalResultsScreen = true;
+        world_.ResetPlayersExploded();
+        world_.resetRace();
     });
 
     eventBus_.Subscribe<PlayerRaceFinishedEvent>([this](const PlayerRaceFinishedEvent& e) {
@@ -74,8 +77,12 @@ void EventRenderController::RegisterEvents() {
             state_.showExplosion = true;
             state_.explosionTimer = 1.0f;
 
-            const auto& p = world_.GetLocalPlayer();
+            auto& p = world_.GetLocalPlayer();
             screenRenderer_.TriggerExplosion(p.GetX(), p.GetY(), 240.0f);
+        } else {
+            auto& p = world_.GetPlayer(e.username);
+            screenRenderer_.TriggerExplosion(p.GetX(), p.GetY(), 240.0f);
+            p.setExploded(true);
         }
     });
 }

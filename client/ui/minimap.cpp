@@ -53,6 +53,9 @@ void Minimap::Render(const World& world, const Camera& camera, const Map& map) {
 
     // Render de jugadores
     for (const auto& [id, player]: world.GetPlayers()) {
+        if (player.isExploded()) {
+            continue;
+        }
         float relX = (player.GetX() - srcX) * scaleX;
         float relY = (player.GetY() - srcY) * scaleY;
 

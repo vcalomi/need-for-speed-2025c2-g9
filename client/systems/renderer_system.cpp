@@ -59,6 +59,9 @@ void RendererSystem::Render(const World& world, Map& map, const Camera& camera, 
 
 
     for (auto& [id, player]: world.GetPlayers()) {
+        if (player.isExploded()) {
+            continue;
+        }
         if (!player.IsAboveBridge()) {
             playerRenderer_.Draw(player, camera);
         }
@@ -71,6 +74,9 @@ void RendererSystem::Render(const World& world, Map& map, const Camera& camera, 
     background_.RenderForeground(map, camera);
 
     for (auto& [id, player]: world.GetPlayers()) {
+        if (player.isExploded()) {
+            continue;
+        }
         if (player.IsAboveBridge()) {
             playerRenderer_.Draw(player, camera);
         }

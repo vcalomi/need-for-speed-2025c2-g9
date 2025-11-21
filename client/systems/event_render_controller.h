@@ -18,7 +18,7 @@ struct RenderState {
 
 class EventRenderController {
 public:
-    EventRenderController(EventBus& bus, ParticleRenderer& particles, const World& world,
+    EventRenderController(EventBus& bus, ParticleRenderer& particles, World& world,
                           RenderState& state, ScreenRenderer& screenRenderer);
 
 private:
@@ -26,7 +26,7 @@ private:
 
     EventBus& eventBus_;
     ParticleRenderer& particles_;
-    const World& world_;
+    World& world_;
     RenderState& state_;
     ScreenRenderer& screenRenderer_;
 };

@@ -25,6 +25,8 @@ public:
     std::string GetSprite() const;
     std::string VehicleTipeToString(VehicleTipe type) const;
     void updateHealth(float health) { health_ = health; }
+    void setExploded(bool exploded) { exploded_ = exploded; }
+    bool isExploded() const { return exploded_; }
 
 private:
     std::string username_;
@@ -37,4 +39,5 @@ private:
     const float maxHealth_;
     float speed_;
     bool isAboveBridge_;
+    bool exploded_ = false;
 };

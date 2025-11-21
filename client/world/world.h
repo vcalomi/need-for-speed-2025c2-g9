@@ -28,6 +28,8 @@ public:
                           bool isAboveBridge);
     void OnCollision(const Event& e);
     const Player& GetPlayer(const std::string& username) const;
+    Player& GetPlayer(const std::string& username);
+    void ResetPlayersExploded();
 
 
     void SetCheckpoints(const std::vector<Checkpoint>& checkpoints);

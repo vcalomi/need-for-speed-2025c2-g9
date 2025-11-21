@@ -81,6 +81,13 @@ void World::UpdateFromServer(std::string username, float x, float y, float angle
     player.UpdateFromNetwork(x, y, angle, speed, isAboveBridge);
 }
 
+void World::ResetPlayersExploded() {
+    for (auto& [username, player]: players_) {
+        player.setExploded(false);
+    }
+}
+
+
 void World::OnCollision(const Event& e) {
     if (e.GetType() == PlayerCollisionEvent::Type()) {
         const PlayerCollisionEvent& collisionEvent = static_cast<const PlayerCollisionEvent&>(e);
@@ -116,6 +123,8 @@ float World::GetLocalPlayerY() const {
     }
     return 0.0f;  // Valor por defecto si no se encuentra el jugador local
 }
+
+Player& World::GetPlayer(const std::string& username) { return players_.at(username); }
 
 const Player& World::GetPlayer(const std::string& username) const { return players_.at(username); }
 
