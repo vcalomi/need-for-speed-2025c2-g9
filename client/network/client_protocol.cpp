@@ -7,16 +7,17 @@
 #include "../../common/common_codes.h"
 #include "../../common/serializer/serializer_map.h"
 
-// Constructor DUMMY: no se conecta a nada
-ClientProtocol::ClientProtocol():
-        socket(),  // no pasa host ni port
-        protocol(),
-        serializers() {
-    // NO se conecta a nada
-}
+// // Constructor DUMMY: no se conecta a nada
+// ClientProtocol::ClientProtocol():
+//         socket(),  // no pasa host ni port
+//         protocol(),
+//         serializers() {
+//     // NO se conecta a nada
+// }
 
 ClientProtocol::ClientProtocol(const std::string& hostname, const std::string& port):
-        socket(hostname.c_str(), port.c_str()), protocol(),
+        socket(hostname.c_str(), port.c_str()),
+        protocol(),
         serializers(SerializerMap::createSerializerMap()) {}
 
 std::shared_ptr<Dto> ClientProtocol::receiveDTO() {
