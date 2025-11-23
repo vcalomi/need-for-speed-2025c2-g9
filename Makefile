@@ -25,21 +25,32 @@ dependencies:
 		echo "Instalando compilador y herramientas..."; \
 		sudo apt-get update; \
 		sudo apt-get install -y build-essential cmake pkg-config git; \
-		echo "Instalando Qt6 (necesario para interfaz gráfica)..."; \
+		echo "Instalando Qt6..."; \
 		sudo apt-get install -y qt6-base-dev qt6-multimedia-dev; \
-		echo "✓ Dependencias básicas instaladas."; \
-		echo "   El resto (SDL2, Box2D, yaml-cpp) se descargará automáticamente"; \
+		echo "Instalando SDL2..."; \
+		sudo apt-get install -y libsdl2-2.0-0 libsdl2-dev libsdl2-image-2.0-0 libsdl2-image-dev libsdl2-mixer-2.0-0 libsdl2-mixer-dev libsdl2-ttf-2.0-0 libsdl2-ttf-dev; \
+		echo "Configurando archivos CMake de SDL2..."; \
+		if [ ! -e "/usr/lib/x86_64-linux-gnu/cmake/SDL2_image" ]; then \
+			sudo mkdir -p /usr/lib/x86_64-linux-gnu/cmake/SDL2_image; \
+			sudo cp ./cmake/sdl2/sdl2_image-config.cmake /usr/lib/x86_64-linux-gnu/cmake/SDL2_image/ 2>/dev/null || true; \
+		fi; \
+		if [ ! -e "/usr/lib/x86_64-linux-gnu/cmake/SDL2_mixer" ]; then \
+			sudo mkdir -p /usr/lib/x86_64-linux-gnu/cmake/SDL2_mixer; \
+			sudo cp ./cmake/sdl2/sdl2_mixer-config.cmake /usr/lib/x86_64-linux-gnu/cmake/SDL2_mixer/ 2>/dev/null || true; \
+		fi; \
+		if [ ! -e "/usr/lib/x86_64-linux-gnu/cmake/SDL2_ttf" ]; then \
+			sudo mkdir -p /usr/lib/x86_64-linux-gnu/cmake/SDL2_ttf; \
+			sudo cp ./cmake/sdl2/sdl2_ttf-config.cmake /usr/lib/x86_64-linux-gnu/cmake/SDL2_ttf/ 2>/dev/null || true; \
+		fi; \
+		echo "✓ Dependencias instaladas."; \
 	elif [ "$(DISTRO)" = "arch" ]; then \
 		sudo pacman -Syu --noconfirm; \
 		sudo pacman -S --noconfirm base-devel cmake pkg-config git; \
 		sudo pacman -S --noconfirm qt6-base qt6-multimedia; \
-		echo "✓ Dependencias básicas instaladas."; \
+		sudo pacman -S --noconfirm sdl2 sdl2_image sdl2_mixer sdl2_ttf; \
+		echo "✓ Dependencias instaladas."; \
 	else \
-		echo "=== PARA SISTEMAS NO SOPORTADOS ==="; \
-		echo "Instala manualmente:"; \
-		echo "- build-essential, cmake, pkg-config, git"; \
-		echo "- qt6-base-dev, qt6-multimedia-dev"; \
-		echo "Luego ejecuta: make install"; \
+		echo "Distro no soportada"; \
 		exit 1; \
 	fi
 
