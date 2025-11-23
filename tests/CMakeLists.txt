@@ -47,8 +47,15 @@ add_executable(nfs_tests
   ../common/serializer/lobby_choose_car_serializer.cpp
 )
 
-find_package(GTest REQUIRED)
-target_link_libraries(nfs_tests PRIVATE GTest::gtest GTest::gtest_main pthread)
+target_link_libraries(nfs_tests PRIVATE
+    nfs_common
+    GTest::gtest
+    GTest::gtest_main 
+    pthread
+)
+
+include(GoogleTest)
+gtest_discover_tests(nfs_tests)
 
 add_test(NAME nfs_tests COMMAND nfs_tests)
 
