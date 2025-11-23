@@ -66,6 +66,14 @@ compile: configure
 install: dependencies compile
 	@echo "Instalando proyecto en el sistema..."
 	@cd build && sudo make install
+	@echo "Instalando librerías SDL2pp..."
+	@if [ -e "./build/_deps/libsdl2pp-build/libSDL2pp.so.8" ]; then \
+		sudo cp ./build/_deps/libsdl2pp-build/libSDL2pp.so* /usr/local/lib/; \
+		echo "✓ Librerías SDL2pp instaladas"; \
+	else \
+		echo "⚠ SDL2pp no encontrado, buscando en otra ubicación..."; \
+		sudo find ./build -name "libSDL2pp.so*" -exec cp {} /usr/local/lib/ \; 2>/dev/null || true; \
+	fi
 	@echo "Actualizando cache de librerías..."
 	@sudo ldconfig
 	@echo ""
