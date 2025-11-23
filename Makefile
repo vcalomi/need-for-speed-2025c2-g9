@@ -66,6 +66,8 @@ compile: configure
 install: dependencies compile
 	@echo "Instalando proyecto en el sistema..."
 	@cd build && sudo make install
+	@echo "Actualizando cache de librerías..."
+	@sudo ldconfig
 	@echo ""
 	@echo "🎉 ¡INSTALACIÓN COMPLETADA!"
 	@echo ""
