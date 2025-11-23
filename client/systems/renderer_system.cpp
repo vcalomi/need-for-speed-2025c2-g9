@@ -5,7 +5,7 @@ RendererSystem::RendererSystem(SDL2pp::Renderer& renderer, SpriteSheet& cars, Wo
         renderer_(renderer),
         carSprites_(cars),
         world_(world),
-        text_(renderer, "../client/lobby/assets/Tektur-SemiBold.ttf", 14),
+        text_(renderer, LOBBY_ASSETS_DIR "/Tektur-SemiBold.ttf", 14),
         background_(renderer),
         playerRenderer_(renderer, cars, nullptr),
         particleRenderer_(renderer),
@@ -14,9 +14,9 @@ RendererSystem::RendererSystem(SDL2pp::Renderer& renderer, SpriteSheet& cars, Wo
         screenRenderer_(renderer, text_),
         controller_(bus, particleRenderer_, world, state_, screenRenderer_),
         checkpointIndicator_(renderer),
-        speedometer_(renderer, "../client/assets/need-for-speed/cars/speedometer.png",
-                     "../client/assets/need-for-speed/cars/speedometer_needle.png") {
-    checkpointIndicator_.SetTexture("../client/assets/need-for-speed/cars/arrow.png");
+        speedometer_(renderer, ASSETS_DIR "/cars/speedometer.png",
+                     ASSETS_DIR "/cars/speedometer_needle.png") {
+    checkpointIndicator_.SetTexture(ASSETS_DIR "/cars/arrow.png");
 }
 
 

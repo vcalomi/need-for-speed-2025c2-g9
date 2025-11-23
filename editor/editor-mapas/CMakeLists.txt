@@ -9,12 +9,8 @@ set(CMAKE_AUTORCC ON)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-# Indicar a CMake dónde buscar Qt6 en sistemas Ubuntu/Debian
-if(NOT DEFINED CMAKE_PREFIX_PATH)
-    set(CMAKE_PREFIX_PATH "/usr/lib/x86_64-linux-gnu/cmake/Qt6" ${CMAKE_PREFIX_PATH})
-endif()
-find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets)
-find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets)
+find_package(Qt6 REQUIRED COMPONENTS Widgets)
+set(QT_VERSION_MAJOR 6)
 find_package(yaml-cpp REQUIRED)
 
 set(PROJECT_SOURCES
@@ -54,10 +50,9 @@ endif()
 
 target_link_libraries(editor-mapas
     PRIVATE
-        Qt${QT_VERSION_MAJOR}::Widgets
+        Qt6::Widgets
         yaml-cpp
 )
-target_link_libraries(editor-mapas PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.
 # If you are developing for iOS or macOS you should consider setting an

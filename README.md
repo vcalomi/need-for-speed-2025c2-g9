@@ -1,45 +1,54 @@
-# Ejemplo de CMAKE para el TP Final
+## 2. 🔨 Instalación y Compilación
 
-**Importante:** el primer commit de este repositorio tiene el setup
-básico para el TP Final que incluye la instalación de la lib de Google
-Tests, `SDL2` y `SDL2pp` (el wrapper de C++).
+Para instalar las dependencias necesarias, en la raíz del proyecto ejecuta:
 
-El resto de los commits son a modo de ejemplo de como se pueden
-agregar mas código fuente al proyecto.
-
-Este ejemplo **no** incluye instalarse otras libs que son dependencias
-tanto de `SDL2` como de `SDL2pp` (pero si estan documentadas en el
-`CMakeFile` para Xubuntu 24.04).
-
-Este repo **no** incluye tampoco un instalador.
-
-**Se deben agregar las librerias necesarias y el instalador.**
-
-También el ejemplo usa una estructura de carpetas muy simple:
-
+```bash
+make install
 ```
-client/
-server/
-editor/
-common/
+El target se encargará de instalar las dependencias necesarias para el juego, compilarlo y finalmente instalar el juego en el sistema.
+
+Limpiar compilación
+```bash
+make clean
 ```
 
-Bien se puede mejorar (cambiando el cmakefile) agregando mas
-sub-carpetas.
+Desinstalar
+```bash
+make uninstall
+```
+---
 
-Asi tambien **deben** ser cambiados los *targets* del cmake (`taller_client`,
-`taller_server`, ...) por nombres mas acordes al TP que se este
-haciendo.
+## 3. 🚀 Ejecución del Software
+Todos los comandos se ejecutan desde la carpeta `build/`
 
-Tambien, por default solo se compila una version *debug* sin
-optimizar. Si se quiere compilar binarios optimizados
-(lo que cmake llama *release*) se puede, solo hay modificar
-cmake.
+**Levantar el servidor**
+```bash
+nfs_server <puerto>
+```
 
-Aprender del ejemplo para saber como extenderlo!
+Ejemplo:
+```bash
+nfs_server 8080
+```
 
-**Importante:** este repositorio **no** incluye pre-commits hooks,
-ni scripts adicionales (como correr valgrind).
+**Abrir el cliente**
+En otra terminal:
+```bash
+nfs_client <host> <puerto>
+```
 
-**Eso esta a cargo de los estudiantes,** tal como fue mostrado
-en los tps individuales, recaps y hands-on.
+Ejemplo:
+```bash
+nfs_client 127.0.0.1 8080
+```
+
+**Abrir el editor de mapas**
+Podés abrirlo desde el lobby del cliente o directamente desde la terminal:
+```bash
+nfs_editor
+```
+
+**Ejecutar tests**
+```bash
+nfs_tests
+```

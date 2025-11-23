@@ -132,7 +132,7 @@ void MainWindow::onUndo() {
 }
 
 QPixmap MainWindow::mapForCity(const QString& cityId) const {
-    QString base = QDir::cleanPath(QDir::currentPath() + "/../editor/editor-mapas/images");
+    QString base = QDir::cleanPath(QString(EDITOR_DIR) + "/images");
 
     QString fileName;
 

@@ -26,7 +26,7 @@ int main() {
     Renderer renderer(window, -1, SDL_RENDERER_ACCELERATED);
 
     // --- Cargar imagen de fondo ---
-    Texture bgTex(renderer, "../server/physics/city.png");
+    Texture bgTex(renderer, PHYSICS_LEVELS_DIR "/../city.png");
     int bgW = bgTex.GetWidth();
     int bgH = bgTex.GetHeight();
     std::cout << "Fondo cargado: " << bgW << "x" << bgH << std::endl;
@@ -38,16 +38,22 @@ int main() {
 
     // --- Colisiones ---
     LevelCreator lc;
-    lc.processDirectoryLevel("../server/physics/Levels");
+    lc.processDirectoryLevel(PHYSICS_LEVELS_DIR "/Liberty_City");
     lc.createLevelCollision(world, lc.levels());
 
     PhysicsEventCollector collector;
 
     std::vector<Spawn> spawns = lc.getSpawnPoints();
+    
+    if (spawns.empty()) {
+        std::cerr << "Error: No hay spawns disponibles. Saliendo..." << std::endl;
+        return 1;
+    }
+    
     Spawn spawn = spawns[0];
 
     YamlParser parser;
-    auto mapa_config = parser.parse("../server/vehicles_specs/vehicle_specs.yaml");
+    auto mapa_config = parser.parse(VEHICLES_SPECS_DIR "/vehicle_specs.yaml");
     VehicleSpec ferrari_spec = mapa_config["ferrari_F40"];
 
     std::deque<FixtureTag> vehicle_tags;

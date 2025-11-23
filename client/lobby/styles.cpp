@@ -1,3 +1,4 @@
+#include <QDebug>
 #include "styles.h"
 
 #include <QApplication>

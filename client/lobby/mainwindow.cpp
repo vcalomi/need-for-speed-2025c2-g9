@@ -200,8 +200,7 @@ void MainWindow::resizeEvent(QResizeEvent* e) {
 }
 
 void MainWindow::openEditorMap() {
-    // Ruta absoluta correcta al ejecutable del editor
-    QString editorPath = QDir::cleanPath(QDir::currentPath() + "/taller_editor");
+    QString editorPath = "/usr/local/bin/nfs_editor";
 
     qDebug() << "Intentando abrir el editor en:" << editorPath;
 
@@ -231,7 +230,7 @@ void MainWindow::openEditorMap() {
 
 void MainWindow::handleOpenMapsPage() {
     // Ruta absoluta desde el lobby hasta los mapas
-    QString mapsPath = QDir::cleanPath(QDir::currentPath() + "/../server/maps");
+    QString mapsPath = QDir::cleanPath(QDir::currentPath() + "/server/maps");
 
     qDebug() << "Buscando mapas en:" << mapsPath;
 

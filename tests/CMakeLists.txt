@@ -1,6 +1,6 @@
 enable_testing()
 
-add_executable(runTests
+add_executable(nfs_tests
   test_main.cpp
   test_protocols.cpp
 
@@ -48,13 +48,12 @@ add_executable(runTests
 )
 
 find_package(GTest REQUIRED)
-target_link_libraries(runTests PRIVATE GTest::gtest GTest::gtest_main pthread)
+target_link_libraries(nfs_tests PRIVATE GTest::gtest GTest::gtest_main pthread)
 
-add_test(NAME runTests COMMAND runTests)
+add_test(NAME nfs_tests COMMAND nfs_tests)
 
-add_custom_command(TARGET runTests POST_BUILD
+add_custom_command(TARGET nfs_tests POST_BUILD
   COMMAND ${CMAKE_COMMAND} -E copy
-          $<TARGET_FILE:runTests>
-          ${CMAKE_BINARY_DIR}/taller_tests
-  COMMENT "Copying runTests to ${CMAKE_BINARY_DIR}/nfs_tests"
-)
+          $<TARGET_FILE:nfs_tests>
+          ${CMAKE_BINARY_DIR}/nfs_tests
+  COMMENT "Copying nfs_tests to ${CMAKE_BINARY_DIR}/nfs_tests")

@@ -6,6 +6,7 @@
 #include <sys/socket.h>
 
 #include "../../common/common_codes.h"
+#include "../../common/liberror.h"
 
 Sender::Sender(ServerProtocol& serverProtocol, Queue<std::shared_ptr<Dto>>& clientQueue):
         clientQueue(clientQueue), protocol(serverProtocol) {}
@@ -19,6 +20,8 @@ void Sender::run() {
     } catch (const ClosedQueue& e) {
         return;
     } catch (const SocketClosed& e) {
+        return;
+    } catch (const LibError& e) {
         return;
     }
 }

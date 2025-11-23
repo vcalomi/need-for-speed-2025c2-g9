@@ -1,5 +1,5 @@
 #pragma once
-#include <SDL.h>
+#include <SDL2pp/SDL2pp.hh>
 #include <box2d/box2d.h>
 
 #include "../VehicleSpec.h"

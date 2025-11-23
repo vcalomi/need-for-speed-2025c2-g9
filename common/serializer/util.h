@@ -14,16 +14,25 @@ constexpr size_t STRING_LENGTH_SIZE = sizeof(int);
 
 inline void writeInt(std::vector<uint8_t>& buffer, size_t& pos, int value) {
     value = htonl(value);
-    std::memcpy(&buffer[pos], &value, sizeof(int));
+    if (pos + sizeof(int) > buffer.size()) {
+        buffer.resize(pos + sizeof(int));
+    }
+    std::memcpy(buffer.data() + pos, &value, sizeof(int));
     pos += sizeof(int);
 }
 
 inline void writeFloat(std::vector<uint8_t>& buffer, size_t& pos, float value) {
-    std::memcpy(&buffer[pos], &value, sizeof(float));
+    if (pos + sizeof(float) > buffer.size()) {
+        buffer.resize(pos + sizeof(float));
+    }
+    std::memcpy(buffer.data() + pos, &value, sizeof(float));
     pos += sizeof(float);
 }
 
 inline void writeByte(std::vector<uint8_t>& buffer, size_t& pos, uint8_t value) {
+    if (pos + 1 > buffer.size()) {
+        buffer.resize(pos + 1);
+    }
     buffer[pos++] = value;
 }
 
@@ -40,14 +49,14 @@ inline void writeBool(std::vector<uint8_t>& buffer, size_t& pos, bool value) {
 
 inline int readInt(const std::vector<uint8_t>& buffer, size_t& pos) {
     int value;
-    std::memcpy(&value, &buffer[pos], sizeof(int));
+    std::memcpy(&value, buffer.data() + pos, sizeof(int));
     pos += sizeof(int);
     return ntohl(value);
 }
 
 inline float readFloat(const std::vector<uint8_t>& buffer, size_t& pos) {
     float value;
-    std::memcpy(&value, &buffer[pos], sizeof(float));
+    std::memcpy(&value, buffer.data() + pos, sizeof(float));
     pos += sizeof(float);
     return value;
 }

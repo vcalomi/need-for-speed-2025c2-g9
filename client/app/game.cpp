@@ -23,7 +23,7 @@ Game::Game(Client& client):
         networkSystem_(client_, eventBus_),
         dtoHandlerSystem_(client_, eventBus_),
         map_(engine_.GetRenderer(), eventBus_) {
-    audioSystem_.PlayBackgroundMusic("../client/assets/need-for-speed/music/background.wav");
+    audioSystem_.PlayBackgroundMusic(ASSETS_DIR "/music/background.wav");
 }
 
 

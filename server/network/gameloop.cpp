@@ -44,8 +44,8 @@ GameLoop::GameLoop(Queue<std::shared_ptr<Dto>>& gameLoopQueue, std::map<int, Car
         raceActive_(false),
         pendingNextRace_(false) 
 {
-    levels_.push_back(LevelInfo{"../server/physics/Levels/Liberty_City", "liberty_city"});
-    levels_.push_back(LevelInfo{"../server/physics/Levels/San_Andreas", "liberty_city"});
+    levels_.push_back(LevelInfo{PHYSICS_LEVELS_DIR "/Liberty_City", "liberty_city"});
+    levels_.push_back(LevelInfo{PHYSICS_LEVELS_DIR "/San_Andreas", "liberty_city"});
     
 }
 
@@ -83,7 +83,7 @@ void GameLoop::startRace(int levelIndex) {
     currentLevelIndex_ = levelIndex;
     pendingNextRace_ = false;
 
-    const std::string vehiclesYaml = "../server/vehicles_specs/vehicle_specs.yaml";
+    const std::string vehiclesYaml = VEHICLES_SPECS_DIR "/vehicle_specs.yaml";
     LevelInfo level = levels_[levelIndex];
 
     setup.emplace(level.dir, vehiclesYaml, chosenCars_);
@@ -146,6 +146,9 @@ void GameLoop::handlerProcessCommand(std::shared_ptr<Dto> command) {
     switch (static_cast<ActionCode>(command->return_code())) {
         case ActionCode::SEND_PLAYER_MOVE: {
             auto player_move_dto = std::dynamic_pointer_cast<PlayerMoveDto>(command);
+            if (!player_move_dto) {
+                return;
+            }
             uint8_t mask = player_move_dto->move;
 
             if (mask & static_cast<uint8_t>(MoveMask::ACCELERATE))
