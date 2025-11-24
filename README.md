@@ -19,7 +19,7 @@ make uninstall
 ---
 
 ## 3. 🚀 Ejecución del Software
-Todos los comandos se ejecutan desde la carpeta `build/`
+Ejecutar los siguientes comandos en terminales separadas desde la raíz del proyecto:
 
 **Levantar el servidor**
 ```bash
