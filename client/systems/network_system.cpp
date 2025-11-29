@@ -3,6 +3,9 @@
 #include <iostream>
 #include <memory>
 
+#include "../../common/Dto/player_left.h"
+#include "../../events/player_left_event.h"
+
 NetworkSystem::NetworkSystem(Client& client, EventBus& eventBus):
         client_(client), eventBus_(eventBus) {
 
@@ -12,5 +15,9 @@ NetworkSystem::NetworkSystem(Client& client, EventBus& eventBus):
             client_.getSenderQueue().try_push(
                     std::make_shared<PlayerMoveDto>(e.username, move_mask));
         }
+    });
+
+    eventBus_.Subscribe<PlayerLeftEvent>([this](const PlayerLeftEvent& e) {
+        client_.getSenderQueue().try_push(std::make_shared<PlayerLeftDto>(e.username));
     });
 }

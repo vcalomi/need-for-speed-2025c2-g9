@@ -8,6 +8,7 @@
 #include "../../common/Dto/player_move.h"
 #include "../../common/Dto/vehicle.h"
 #include "../events/player_events.h"
+#include "../events/player_left_event.h"
 #include "../ui/minimap.h"
 #include "../world/camera.h"
 
@@ -58,5 +59,7 @@ void Game::Run() {
         rendererSystem_.Render(world_, map_, camera, minimap);
         SDL_Delay(16);
     }
+
+    eventBus_.Publish(PlayerLeftEvent(this->world_.GetLocalPlayer().GetUsername()));
     client_.stop();
 }
