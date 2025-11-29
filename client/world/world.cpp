@@ -7,6 +7,7 @@
 #include "../events/player_collision_event.h"
 #include "../events/player_events.h"
 #include "../events/player_joined_event.h"
+#include "../events/player_left_event.h"
 #include "../events/player_race_finished_event.h"
 #include "../events/race_finished_event.h"
 #include "../events/wall_collision_event.h"
@@ -44,6 +45,9 @@ World::World(EventBus& eventBus): eventBus_(eventBus) {
             [this](const WallCollisionEvent& e) { OnCollision(e); });
 
     eventBus_.Subscribe<RaceFinishedEvent>([this](const RaceFinishedEvent&) { resetRace(); });
+
+    eventBus_.Subscribe<PlayerLeftEvent>(
+            [this](const PlayerLeftEvent& e) { RemovePlayer(e.username); });
 }
 
 void World::AddPlayer(std::string username, VehicleTipe carType, bool isLocal, float health) {
@@ -55,6 +59,11 @@ void World::AddPlayer(std::string username, VehicleTipe carType, bool isLocal, f
     playerProgress_[username] = PlayerProgress();
     if (isLocal)
         localUsername_ = username;
+}
+
+void World::RemovePlayer(const std::string& username) {
+    players_.erase(username);
+    playerProgress_.erase(username);
 }
 
 bool World::HasPlayers() const { return !players_.empty(); }

@@ -30,6 +30,7 @@ public:
     const Player& GetPlayer(const std::string& username) const;
     Player& GetPlayer(const std::string& username);
     void ResetPlayersExploded();
+    void RemovePlayer(const std::string& username);
 
 
     void SetCheckpoints(const std::vector<Checkpoint>& checkpoints);
