@@ -13,9 +13,8 @@
 #include "../../common/queue.h"
 
 #include "gameloop.h"
-/*
-    Maneja el estado y los jugadores de cada sala
-*/
+#include "player.h"
+#include "player_info.h"
 
 enum class RoomState { WAITING_FOR_PLAYERS, CHOOSING_CARS, IN_RACE, RACE_FINISHED };
 
@@ -24,23 +23,24 @@ private:
     std::mutex mtx;
     std::string roomName;
     int hostId;
-    // clientId y su queue
-    std::map<int, Queue<std::shared_ptr<Dto>>*> players;
+    std::map<int, std::unique_ptr<Player>> gamePlayers;
+    std::map<int, Player*> lobbyPlayers;
     std::map<int, std::string> playerUsernames;
     std::map<int, CarConfig> chosenCars;
     int maxPlayers_;
     RoomState state;
+    std::vector<std::string> selectedMaps;
 
-    Queue<std::shared_ptr<Dto>> gameQueue;  // Para comandos de juego
+    Queue<std::shared_ptr<Dto>> gameQueue;
     Broadcaster broadcaster;
     GameLoop gameLoop;
-
 
 public:
     GameRoom(const std::string& roomName, int hostId, int maxPlayers);
 
     // gestión de jugadores
-    bool addPlayer(int clientId, Queue<std::shared_ptr<Dto>>& senderQueue);
+    bool addPlayer(int clientId, Player* player);
+    void addGamePlayer(std::shared_ptr<PlayerInfo> player_info);
     void removePlayer(int clientId);
     bool startGame();
     bool chooseCar(int clientId, const CarConfig& car);
@@ -51,6 +51,17 @@ public:
     bool isInRace();
     int getMaxPlayers() const { return maxPlayers_; }
     bool setPlayerUsername(int clientId, const std::string& username);
+    std::string getRoomName() const { return roomName; }
+    void setSelectedMaps(const std::vector<uint8_t>& mapIds);
+    std::string getCarType(int clientId) const;
+    bool allPlayersHaveCars() const;
+
+    void startGameForAllPlayers();
+    void startGameForPlayer(int clientId);
+    void checkAndStartGameLoop();
+
+    void stopAllPlayers();
+    
     ~GameRoom();
 };
 

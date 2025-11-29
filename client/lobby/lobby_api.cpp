@@ -4,10 +4,10 @@
 #include "../../common/Dto/lobby_room.h"
 #include "../../common/Dto/lobby_room_state.h"
 #include "../../common/Dto/lobby_choose_car.h"
+#include "../../common/Dto/lobby_maps.h"
 
 bool LobbyApi::login(const std::string& username) {
-    auto req = std::make_shared<AuthDto>(static_cast<uint8_t>(ActionCode::SEND_USERNAME));
-    req->username = username;
+    auto req = std::make_shared<AuthDto>(static_cast<uint8_t>(ActionCode::SEND_USERNAME), username);
     proto.sendDTO(req);
     auto resp = proto.receiveDTO();
     return resp && static_cast<ActionCode>(resp->return_code()) == ActionCode::USERNAME_OK;
@@ -57,9 +57,17 @@ bool LobbyApi::pollStarted() {
     auto req = std::make_shared<RoomStateDto>(static_cast<uint8_t>(ActionCode::LIST_STATE));
     proto.sendDTO(req);
     auto resp = proto.receiveDTO();
-    if (!resp || static_cast<ActionCode>(resp->return_code()) != ActionCode::LIST_STATE) return false;
+    if (!resp) {
+        return false;
+    }
+    if (static_cast<ActionCode>(resp->return_code()) != ActionCode::LIST_STATE) {
+        return false;
+    }
     auto dto = std::dynamic_pointer_cast<RoomStateDto>(resp);
-    return dto && dto->started;
+    if (!dto) {
+        return false;
+    }
+    return dto->started;
 }
 
 bool LobbyApi::chooseCar(const std::string& carKey) {
@@ -73,4 +81,12 @@ bool LobbyApi::chooseCar(const std::string& carKey) {
 void LobbyApi::startGame() {
     auto req = std::make_shared<RoomStateDto>(static_cast<uint8_t>(ActionCode::START_GAME));
     proto.sendDTO(req);
+}
+
+bool LobbyApi::selectMaps(const std::vector<uint8_t>& mapCodes) {
+    auto req = std::make_shared<MapsDto>(static_cast<uint8_t>(ActionCode::SELECT_MAPS));
+    req->selectedMaps = mapCodes;
+    proto.sendDTO(req);
+    auto resp = proto.receiveDTO();
+    return resp && static_cast<ActionCode>(resp->return_code()) == ActionCode::SELECT_MAPS_OK;
 }

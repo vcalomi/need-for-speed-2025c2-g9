@@ -286,10 +286,13 @@ void MainWindow::updateMapItemStyle(QListWidgetItem* item) {
 
 void MainWindow::handleSelectMaps() {
     QStringList selectedMaps;
+    std::vector<uint8_t> mapCodes;
     for (int i = 0; i < ui->listMaps->count(); ++i) {
         QListWidgetItem* item = ui->listMaps->item(i);
         if (item->checkState() == Qt::Checked) {
             selectedMaps << item->text();
+            // Convert map index to code (assuming 0-based indexing)
+            mapCodes.push_back(static_cast<uint8_t>(i));
         }
     }
     if (selectedMaps.isEmpty()) {
@@ -297,6 +300,21 @@ void MainWindow::handleSelectMaps() {
         return;
     }
     qDebug() << "Mapas seleccionados:" << selectedMaps;
+    qDebug() << "Enviando" << mapCodes.size() << "códigos de mapa al servidor";
+    
+    // Send selected maps to server
+    try {
+        qDebug() << "Sending selectMaps request to server...";
+        if (!this->lobbySvc->selectMaps(mapCodes)) {
+            QMessageBox::warning(this, "Map Selection", "Failed to send map selection to server.");
+        } else {
+            qDebug() << "Map selection successful!";
+        }
+    } catch (const std::exception& e) {
+        qDebug() << "Exception in selectMaps:" << e.what();
+        QMessageBox::critical(this, "Map Selection", QString("Error: %1").arg(e.what()));
+    }
+    
     handleCreateButton();
 }
 

@@ -5,7 +5,7 @@
 
 #include <sys/socket.h>
 
-#include "client_handler.h"
+#include "lobby.h"
 
 Acceptor::Acceptor(const std::string& port, GameMonitor& gameMonitor):
         acceptor(port.c_str()), gameMonitor(gameMonitor), nextClientId(0) {}
@@ -20,9 +20,10 @@ void Acceptor::run() {
                 break;
             }
             int clientId = nextClientId++;
-            ClientHandler* client = new ClientHandler(std::move(socket), gameMonitor, clientId);
-            clients.push_back(client);
-            client->start();
+
+            Lobby* lobby = new Lobby(std::move(socket), gameMonitor, clientId);
+            lobbies.push_back(lobby);
+            lobby->start();
             reap();
         } catch (const LibError& e) {
             break;
@@ -34,26 +35,24 @@ void Acceptor::run() {
 }
 
 void Acceptor::reap() {
-    auto new_end = std::remove_if(clients.begin(), clients.end(), [](ClientHandler* c) {
-        bool is_dead = !c->is_alive();
+    auto new_end = std::remove_if(lobbies.begin(), lobbies.end(), [](Lobby* l) {
+        bool is_dead = !l->is_alive() && !l->isGameStarted();
         if (is_dead) {
-            c->join();
-            delete c;
+            l->join();
+            delete l;
         }
         return is_dead;
     });
-    clients.erase(new_end, clients.end());
+    lobbies.erase(new_end, lobbies.end());
 }
 
 void Acceptor::clear() {
-    for (auto& client: clients) {
-        client->stop();
+    for (auto& lobby: lobbies) {
+        lobby->stop();
+        lobby->join();
+        delete lobby;
     }
-    for (auto& client: clients) {
-        client->join();
-        delete client;
-    }
-    clients.clear();
+    lobbies.clear();
 }
 
 void Acceptor::close() {

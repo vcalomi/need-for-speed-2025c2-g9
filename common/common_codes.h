@@ -21,6 +21,8 @@ enum class ActionCode : uint8_t {
     SEND_CARS = 0x11,
     LIST_PLAYERS = 0x12,
     LIST_STATE = 0x13,
+    SELECT_MAPS = 0x14,
+    SELECT_MAPS_OK = 0x15,
 
     // Comandos del server/cliente
 
@@ -63,5 +65,19 @@ enum class VehicleTipe : uint8_t {
     TRUCK = 0x46
 };
 
+enum class MapCode : uint8_t {
+    LIBERTY_CITY = 0x50,
+    SAN_ANDREAS = 0x51,
+    VICE_CITY = 0x52
+};
+
+inline std::string mapCodeToString(MapCode mapCode) {
+    switch (mapCode) {
+        case MapCode::LIBERTY_CITY: return "liberty_city";
+        case MapCode::SAN_ANDREAS: return "san_andreas";
+        case MapCode::VICE_CITY: return "vice_city";
+        default: return "default_map";
+    }
+}
 
 #endif

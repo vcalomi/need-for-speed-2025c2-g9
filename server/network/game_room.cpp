@@ -5,6 +5,7 @@
 
 #include "../../common/Dto/vehicle.h"
 #include "../../common/Dto/player_left.h"
+#include "../../common/Dto/lobby_room_state.h"
 #include "../../common/common_codes.h"
 #include "../../common/queue.h"
 
@@ -15,17 +16,39 @@ GameRoom::GameRoom(const std::string& roomName, int hostId, int maxPlayers):
         state(RoomState::WAITING_FOR_PLAYERS),
         gameQueue(),
         broadcaster(),
-        gameLoop(gameQueue, chosenCars, playerUsernames, broadcaster, maxPlayers) {}
+        gameLoop(gameQueue, chosenCars, playerUsernames, broadcaster, maxPlayers, selectedMaps) {}
 
-bool GameRoom::addPlayer(int clientId, Queue<std::shared_ptr<Dto>>& senderQueue) {
+bool GameRoom::addPlayer(int clientId, Player* player) {
     std::lock_guard<std::mutex> lock(mtx);
+    if (!canJoin()) return false;
 
-    if (!canJoin())
-        return false;
-
-    players[clientId] = &senderQueue;
-    broadcaster.addQueue(&senderQueue);
+    lobbyPlayers[clientId] = player;
+    broadcaster.addQueue(&player->getSendQueue());
     return true;
+}
+
+void GameRoom::addGamePlayer(std::shared_ptr<PlayerInfo> player_info) {
+    std::lock_guard<std::mutex> lock(mtx);
+    int clientId = player_info->getPlayerId();
+
+    auto lobbyIt = lobbyPlayers.find(clientId);
+    if (lobbyIt != lobbyPlayers.end()) {
+        broadcaster.removeQueue(&lobbyIt->second->getSendQueue());
+        lobbyPlayers.erase(lobbyIt);
+    }
+
+    gamePlayers[clientId] = std::make_unique<Player>(
+        player_info->getProtocol(),
+        clientId
+    );
+
+    playerUsernames[clientId] = player_info->getUsername();
+    chosenCars[clientId] = CarConfig{player_info->getCarType()};
+
+    auto* queue = &gamePlayers[clientId]->getSendQueue();
+    if (queue != nullptr) {
+        broadcaster.addQueue(queue);
+    }
 }
 
 bool GameRoom::setPlayerUsername(int clientId, const std::string& username) {
@@ -40,14 +63,39 @@ bool GameRoom::setPlayerUsername(int clientId, const std::string& username) {
     return true;
 }
 
+void GameRoom::setSelectedMaps(const std::vector<uint8_t>& mapIds) {
+    std::lock_guard<std::mutex> lock(mtx);
+    selectedMaps.clear();
+    for (uint8_t mapCode : mapIds) {
+        selectedMaps.push_back(mapCodeToString(static_cast<MapCode>(mapCode)));
+    }
+}
+
+std::string GameRoom::getCarType(int clientId) const {
+    auto it = chosenCars.find(clientId);
+    if (it != chosenCars.end()) {
+        return it->second.carType;
+    }
+    return "jeep";
+}
+
+bool GameRoom::allPlayersHaveCars() const {
+    for (const auto& [clientId, player] : lobbyPlayers) {
+        if (chosenCars.find(clientId) == chosenCars.end()) {
+            return false;
+        }
+    }
+    return true;
+}
+
 bool GameRoom::startGame() {
     std::lock_guard<std::mutex> lock(mtx);
-
-    if (state != RoomState::WAITING_FOR_PLAYERS || players.size() < 1) {
+    if (state != RoomState::WAITING_FOR_PLAYERS) return false;
+    if (lobbyPlayers.size() < 2) {
         return false;
     }
 
-    for (const auto& [id, queue]: players) {
+    for (const auto& [id, player] : lobbyPlayers) {
         if (chosenCars.find(id) == chosenCars.end()) {
             CarConfig defaultCar{};
             defaultCar.carType = "jeep";
@@ -56,15 +104,65 @@ bool GameRoom::startGame() {
     }
 
     state = RoomState::IN_RACE;
-
-    gameLoop.start();
-    std::cout << "GameLoop is alive: " << gameLoop.is_alive() << std::endl;
     return true;
+}
+
+void GameRoom::startGameForPlayer(int clientId) {
+    std::lock_guard<std::mutex> lock(mtx);
+    auto it = gamePlayers.find(clientId);
+    if (it != gamePlayers.end() && it->second && !it->second->isInGame()) {
+        it->second->startGame(gameQueue);
+        checkAndStartGameLoop();
+    }
+}
+
+void GameRoom::checkAndStartGameLoop() {
+    size_t expectedPlayers = chosenCars.size();
+
+    if (gamePlayers.size() == expectedPlayers) {
+        gameLoop.start();
+    }
+}
+
+void GameRoom::startGameForAllPlayers() {
+    std::lock_guard<std::mutex> lock(mtx);
+    
+    for (auto& [id, player] : gamePlayers) {
+        if (player && !player->isInGame()) {
+            player->startGame(gameQueue);
+        }
+    }
+    
+    checkAndStartGameLoop();
+}
+
+void GameRoom::stopAllPlayers() {
+    std::lock_guard<std::mutex> lock(mtx);
+
+    try {
+        gameQueue.close();
+    } catch (...) {}
+
+    for (auto& [id, player] : gamePlayers) {
+        if (player) {
+            try {
+                player->stopGame();
+            } catch (...) {}
+        }
+    }
+    gamePlayers.clear();
+
+    try {
+        gameLoop.stop();
+        if (gameLoop.is_alive()) {
+            gameLoop.join();
+        }
+    } catch (...) {}
 }
 
 bool GameRoom::chooseCar(int clientId, const CarConfig& car) {
     std::lock_guard<std::mutex> lock(mtx);
-    if (players.find(clientId) == players.end()) {
+    if (lobbyPlayers.find(clientId) == lobbyPlayers.end()) {
         return false;
     }
 
@@ -79,11 +177,19 @@ void GameRoom::removePlayer(int clientId) {
     if (uIt != playerUsernames.end()) {
         leftUsername = uIt->second;
     }
-    auto it = players.find(clientId);
-    if (it != players.end()) {
-        broadcaster.removeQueue(it->second);
-        players.erase(it);
+
+    auto lobbyIt = lobbyPlayers.find(clientId);
+    if (lobbyIt != lobbyPlayers.end()) {
+        broadcaster.removeQueue(&lobbyIt->second->getSendQueue());
+        lobbyPlayers.erase(lobbyIt);
     }
+
+    auto gameIt = gamePlayers.find(clientId);
+    if (gameIt != gamePlayers.end()) {
+        broadcaster.removeQueue(&gameIt->second->getSendQueue());
+        gamePlayers.erase(gameIt);
+    }
+    
     playerUsernames.erase(clientId);
     chosenCars.erase(clientId);
     if (!leftUsername.empty()) {
@@ -94,7 +200,7 @@ void GameRoom::removePlayer(int clientId) {
 
 bool GameRoom::canJoin() const {
     return state == RoomState::WAITING_FOR_PLAYERS &&
-           static_cast<int>(players.size()) < maxPlayers_;
+           static_cast<int>(lobbyPlayers.size()) < maxPlayers_;
 }
 
 bool GameRoom::isHost(int clientId) const { return hostId == clientId; }
@@ -104,8 +210,8 @@ Queue<std::shared_ptr<Dto>>& GameRoom::getGameQueue() { return gameQueue; }
 std::vector<int> GameRoom::getPlayerIds() {
     std::lock_guard<std::mutex> lock(mtx);
     std::vector<int> ids;
-    ids.reserve(players.size());
-    for (const auto& player: players) {
+    ids.reserve(lobbyPlayers.size());
+    for (const auto& player: lobbyPlayers) {
         ids.push_back(player.first);
     }
     return ids;
@@ -118,16 +224,6 @@ bool GameRoom::isInRace() {
 
 GameRoom::~GameRoom() {
     try {
-        gameLoop.stop();
+        stopAllPlayers();
     } catch (...) {}
-    try {
-        gameQueue.close();
-    } catch (...) {}
-    if (gameLoop.is_alive()) {
-        gameLoop.join();
-    }
-    for (const auto& entry: players) {
-        broadcaster.removeQueue(entry.second);
-    }
 }
-#include <memory>

@@ -45,6 +45,7 @@ add_executable(runTests
   ../common/serializer/lobby_room_serializer.cpp
   ../common/serializer/lobby_room_state_serializer.cpp
   ../common/serializer/lobby_choose_car_serializer.cpp
+  ../common/serializer/lobby_maps_serializer.cpp
 )
 
 find_package(GTest REQUIRED)

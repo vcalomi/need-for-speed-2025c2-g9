@@ -35,18 +35,20 @@ using Seconds = std::chrono::seconds;
 
 GameLoop::GameLoop(Queue<std::shared_ptr<Dto>>& gameLoopQueue, std::map<int, CarConfig>& chosenCars,
                    std::map<int, std::string>& playerUsernames, Broadcaster& broadcaster,
-                   int maxPlayers):
+                   int maxPlayers, const std::vector<std::string>& selectedMaps):
         gameLoopQueue(gameLoopQueue),
         chosenCars_(chosenCars),
         playerUsernames_(playerUsernames),
         broadcaster_(broadcaster),
         maxPlayers(maxPlayers),
         raceActive_(false),
-        pendingNextRace_(false) 
+        pendingNextRace_(false)
 {
     levels_.push_back(LevelInfo{"../server/physics/Levels/Liberty_City", "liberty_city"});
     levels_.push_back(LevelInfo{"../server/physics/Levels/San_Andreas", "liberty_city"});
     
+    // POngo esto para evitar el warning
+    (void)selectedMaps;
 }
 
 void GameLoop::run() {
@@ -404,4 +406,13 @@ void GameLoop::processGameEvents() {
     }
 }
 
-GameLoop::~GameLoop() {}
+GameLoop::~GameLoop() {
+    try {
+        if (should_keep_running()) {
+            stop();
+        }
+        if (is_alive()) {
+            join();
+        }
+    } catch (...) {}
+}

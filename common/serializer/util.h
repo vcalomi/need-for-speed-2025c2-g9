@@ -69,11 +69,11 @@ inline bool readBool(const std::vector<uint8_t>& buffer, size_t& pos) {
 }
 
 inline void writeStringVector(std::vector<uint8_t>& buffer, size_t& pos, const std::vector<std::string>& vec) {
-        writeInt(buffer, pos, static_cast<int>(vec.size()));
-        for (const auto& str : vec) {
-            writeString(buffer, pos, str);
-        }
+    writeInt(buffer, pos, static_cast<int>(vec.size()));
+    for (const auto& str : vec) {
+        writeString(buffer, pos, str);
     }
+}
 
 inline std::vector<std::string> readStringVector(const std::vector<uint8_t>& buffer, size_t& pos) {
     int count = readInt(buffer, pos);
@@ -86,13 +86,34 @@ inline std::vector<std::string> readStringVector(const std::vector<uint8_t>& buf
 }
 
 inline size_t calculateStringVectorSize(const std::vector<std::string>& vec) {
-        size_t total_size = sizeof(int); // Para el count
-        for (const auto& str : vec) {
-            total_size += STRING_LENGTH_SIZE + str.length();
-        }
-        return total_size;
+    size_t total_size = sizeof(int);
+    for (const auto& str : vec) {
+        total_size += STRING_LENGTH_SIZE + str.length();
     }
+    return total_size;
+}
 
-};
+inline void writeByteVector(std::vector<uint8_t>& buffer, size_t& pos, const std::vector<uint8_t>& vec) {
+    writeInt(buffer, pos, static_cast<int>(vec.size()));
+    for (uint8_t value : vec) {
+        writeByte(buffer, pos, value);
+    }
+}
+
+inline std::vector<uint8_t> readByteVector(const std::vector<uint8_t>& buffer, size_t& pos) {
+    int count = readInt(buffer, pos);
+    std::vector<uint8_t> result;
+    result.reserve(count);
+    for (int i = 0; i < count && pos < buffer.size(); ++i) {
+        result.push_back(readByte(buffer, pos));
+    }
+    return result;
+}
+
+inline size_t calculateByteVectorSize(const std::vector<uint8_t>& vec) {
+    return sizeof(int) + vec.size() * sizeof(uint8_t);
+}
+
+}
 
 #endif

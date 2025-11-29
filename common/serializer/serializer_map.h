@@ -25,6 +25,7 @@
 #include "lobby_room_serializer.h"
 #include "lobby_room_state_serializer.h"
 #include "lobby_choose_car_serializer.h"
+#include "lobby_maps_serializer.h"
 
 class SerializerMap {
 public:
@@ -83,6 +84,10 @@ public:
                 std::make_unique<ChooseCarSerializer>(ActionCode::CHOOSE_CAR);
         serializers[static_cast<uint8_t>(ActionCode::CHOOSE_CAR_OK)] =
                 std::make_unique<ChooseCarSerializer>(ActionCode::CHOOSE_CAR_OK);
+        serializers[static_cast<uint8_t>(ActionCode::SELECT_MAPS)] =
+                std::make_unique<MapsSerializer>(ActionCode::SELECT_MAPS);
+        serializers[static_cast<uint8_t>(ActionCode::SELECT_MAPS_OK)] =
+                std::make_unique<MapsSerializer>(ActionCode::SELECT_MAPS_OK);
 
         return serializers;
     }

@@ -69,7 +69,7 @@ public:
     explicit GameLoop(Queue<std::shared_ptr<Dto>>& gameLoopQueue,
                       std::map<int, CarConfig>& chosenCars,
                       std::map<int, std::string>& playerUsernames, Broadcaster& broadcaster,
-                      int maxPlayers);
+                      int maxPlayers, const std::vector<std::string>& selectedMaps);
 
     void run() override;
     void processCommands();

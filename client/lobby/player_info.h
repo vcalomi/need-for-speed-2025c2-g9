@@ -12,7 +12,8 @@ struct PlayerInfo {
     int maxPlayers = 8;
     int currentPlayers = 1;  // host siempre cuenta
     CarType selectedCar;     // luego lo reemplazamos por enum
+    QStringList selectedMaps;
 };
 
 
-#endif  // PLAYER_INFO_H
+#endif

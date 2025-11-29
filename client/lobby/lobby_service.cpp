@@ -28,3 +28,7 @@ LobbyState LobbyService::pollState() { return LobbyState{api.pollStarted()}; }
 bool LobbyService::chooseCar(const QString& carKey) { return api.chooseCar(carKey.toStdString()); }
 
 void LobbyService::startGame() { api.startGame(); }
+
+bool LobbyService::selectMaps(const std::vector<uint8_t>& mapCodes) {
+    return api.selectMaps(mapCodes);
+}

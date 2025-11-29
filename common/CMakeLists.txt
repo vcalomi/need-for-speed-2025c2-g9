@@ -25,6 +25,7 @@ target_sources(nfs_common
     serializer/lobby_choose_car_serializer.cpp
     serializer/lobby_room_state_serializer.cpp
     serializer/lobby_room_serializer.cpp
+    serializer/lobby_maps_serializer.cpp
     Dto/dto.cpp
     Dto/vehicle.cpp
     Dto/player.cpp
@@ -67,6 +68,7 @@ target_sources(nfs_common
     serializer/lobby_choose_car_serializer.h
     serializer/lobby_room_state_serializer.h
     serializer/lobby_room_serializer.h
+    serializer/lobby_maps_serializer.h
     Dto/dto.h
     Dto/vehicle.h
     Dto/player.h
@@ -87,4 +89,5 @@ target_sources(nfs_common
     Dto/lobby_choose_car.h
     Dto/lobby_room_state.h
     Dto/lobby_room.h
+    Dto/lobby_maps.h
 )

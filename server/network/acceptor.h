@@ -8,15 +8,15 @@
 #include "../../common/socket.h"
 #include "../../common/thread.h"
 
-#include "client_handler.h"
 #include "game_monitor.h"
+#include "lobby.h"
 
 class Acceptor: public Thread {
 private:
     Socket acceptor;
     GameMonitor& gameMonitor;
     std::atomic<int> nextClientId;
-    std::vector<ClientHandler*> clients;
+    std::vector<Lobby*> lobbies;
 
 public:
     Acceptor(const std::string& port, GameMonitor& gameMonitor);
