@@ -136,19 +136,6 @@ bool GameMonitor::setUsername(int clientId, const std::string& username) {
     return true;
 }
 
-std::string GameMonitor::getUsername(int clientId) const {
-    std::lock_guard<std::mutex> lock(mtx);
-    auto it = clientUsernames.find(clientId);
-    return (it != clientUsernames.end()) ? it->second : std::to_string(clientId);
-}
-
-bool GameMonitor::isGameStartedByClient(int clientId) {
-    std::lock_guard<std::mutex> lock(mtx);
-    if (!clientToRoom.count(clientId))
-        return false;
-    return clientToRoom[clientId]->isInRace();
-}
-
 void GameMonitor::removeClient(int clientId) {
     std::lock_guard<std::mutex> lock(mtx);
     auto roomIt = clientToRoom.find(clientId);

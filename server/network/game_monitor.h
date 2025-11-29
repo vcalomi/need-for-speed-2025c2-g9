@@ -33,7 +33,6 @@ public:
     bool chooseCarByClientId(int clientId, const CarConfig& car);
     std::vector<std::string> getPlayersInRoomByClient(int clientId);
     bool setUsername(int clientId, const std::string& username);
-    std::string getUsername(int clientId) const;
     std::shared_ptr<GameRoom> getRoomByClient(int clientId);
     void removeClient(int clientId);
     void closeAll();

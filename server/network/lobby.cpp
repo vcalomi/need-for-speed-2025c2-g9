@@ -60,11 +60,11 @@ void Lobby::handleCreateRoom(std::shared_ptr<Dto> dto) {
         protocol->sendDTO(err);
         return;
     }
-    
     std::string roomName = roomDto->roomCode;
     int maxPlayers = static_cast<int>(roomDto->maxPlayers);
+    Player* player = new Player(protocol, clientId);
     
-    if (gameMonitor.createGameRoom(roomName, clientId, nullptr, maxPlayers)) {
+    if (gameMonitor.createGameRoom(roomName, clientId, player, maxPlayers)) {
         auto out = std::make_shared<RoomDto>(static_cast<uint8_t>(ActionCode::ROOM_CREATED));
         protocol->sendDTO(out);
     } else {
@@ -82,8 +82,9 @@ void Lobby::handleJoinRoom(std::shared_ptr<Dto> dto) {
         protocol->sendDTO(err);
         return;
     }
+    Player* player = new Player(protocol, clientId);
     
-    if (gameMonitor.joinGameRoom(roomDto->roomCode, clientId, nullptr)) {
+    if (gameMonitor.joinGameRoom(roomDto->roomCode, clientId, player)) {
         auto out = std::make_shared<RoomDto>(static_cast<uint8_t>(ActionCode::JOIN_OK));
         protocol->sendDTO(out);
     } else {
@@ -167,20 +168,9 @@ void Lobby::handleListState(std::shared_ptr<Dto>) {
     protocol->sendDTO(response);
     
     if (started) {
-        std::string carType = room->getCarType(clientId);
-        
-        auto player_info = std::make_shared<PlayerInfo>(
-            clientId, 
-            gameMonitor.getUsername(clientId),
-            carType,
-            protocol
-        );
-        
-        room->addGamePlayer(player_info);
         room->startGameForPlayer(clientId);
         game_started = true;
         stop();
-        return;
     }
 }
 
@@ -189,14 +179,6 @@ void Lobby::handleStartGame(std::shared_ptr<Dto>) {
     if (!room) return;
     
     if (gameMonitor.startGameByClientId(clientId)) {
-        auto player_info = std::make_shared<PlayerInfo>(
-            clientId, 
-            gameMonitor.getUsername(clientId),
-            room->getCarType(clientId),
-            protocol
-        );
-        
-        room->addGamePlayer(player_info);
         room->startGameForPlayer(clientId);
         game_started = true;
         stop();

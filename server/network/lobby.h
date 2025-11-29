@@ -12,7 +12,6 @@
 
 #include "command_dispatcher.h"
 #include "game_monitor.h"
-#include "player_info.h"
 #include "server_protocol.h"
 
 class Lobby: public Thread {

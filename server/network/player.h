@@ -1,32 +1,34 @@
 #ifndef PLAYER_H
 #define PLAYER_H
 
-#include <atomic>
 #include <memory>
 
+#include "../../common/Dto/dto.h"
 #include "../../common/queue.h"
-#include "../../common/socket.h"
-#include "../../common/thread.h"
-
+#include "server_protocol.h"
 #include "receiver.h"
 #include "sender.h"
-#include "server_protocol.h"
 
 class Player {
+public:
+    enum class State { IN_LOBBY, IN_GAME };
+    
 private:
     std::shared_ptr<ServerProtocol> protocol;
     int clientId;
-    std::atomic<bool> in_game;
+    State state;
+    Queue<std::shared_ptr<Dto>> sendQueue;
     std::unique_ptr<Receiver> receiver;
     std::unique_ptr<Sender> sender;
-    Queue<std::shared_ptr<Dto>> sendQueue;
-
+    
 public:
     Player(std::shared_ptr<ServerProtocol> protocol, int clientId);
-    void startGame(Queue<std::shared_ptr<Dto>>& gameCommands);
+    
+    void beginGame(Queue<std::shared_ptr<Dto>>& gameCommands);
     void stopGame();
+    
+    bool isGameActive() const { return state == State::IN_GAME; }
     Queue<std::shared_ptr<Dto>>& getSendQueue() { return sendQueue; }
-    bool isInGame() const { return in_game; }
     
     ~Player();
 };

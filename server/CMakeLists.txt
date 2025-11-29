@@ -13,7 +13,6 @@ target_sources(nfs_server
     YamlParser.cpp
     network/lobby.cpp
     network/player.cpp
-    network/player_info.cpp
     network/receiver.cpp
     network/sender.cpp
     network/game_monitor.cpp
@@ -27,10 +26,8 @@ target_sources(nfs_server
     vehicleDTO.h
     YamlParser.h
     VehicleSpec.h
-    network/client_state.h
     network/command_dispatcher.h
     network/player.h
-    network/player_info.h
     network/receiver.h
     network/sender.h
     network/game_monitor.h
