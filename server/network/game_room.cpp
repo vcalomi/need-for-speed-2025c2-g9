@@ -91,7 +91,7 @@ bool GameRoom::allPlayersHaveCars() const {
 bool GameRoom::startGame() {
     std::lock_guard<std::mutex> lock(mtx);
     if (state != RoomState::WAITING_FOR_PLAYERS) return false;
-    if (lobbyPlayers.size() < 2) {
+    if (lobbyPlayers.size() < 1) {
         return false;
     }
 

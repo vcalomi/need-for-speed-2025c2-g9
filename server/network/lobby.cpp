@@ -202,7 +202,7 @@ void Lobby::handleStartGame(std::shared_ptr<Dto>) {
         stop();
     } else {
         auto err = std::make_shared<AuthDto>(static_cast<uint8_t>(ActionCode::SEND_ERROR_MSG));
-        err->errorMsg = "Cannot start game - need at least 2 players with cars selected";
+        err->errorMsg = "Cannot start game - need at least 1 player with car selected";
         protocol->sendDTO(err);
     }
 }
