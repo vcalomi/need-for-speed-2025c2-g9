@@ -40,5 +40,5 @@ private:
     int vehicle_id_;
     b2BodyId body_;
     float vehicle_hp_;
-    bool under_bridge = false;
+    bool under_bridge;
 };
