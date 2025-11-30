@@ -29,6 +29,6 @@ bool LobbyService::chooseCar(const QString& carKey) { return api.chooseCar(carKe
 
 void LobbyService::startGame() { api.startGame(); }
 
-bool LobbyService::selectMaps(const std::vector<uint8_t>& mapCodes) {
-    return api.selectMaps(mapCodes);
+bool LobbyService::selectMaps(const std::vector<std::string>& mapNames) {
+    return api.selectMaps(mapNames);
 }

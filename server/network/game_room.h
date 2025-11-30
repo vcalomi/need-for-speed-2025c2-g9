@@ -57,7 +57,7 @@ public:
     int getMaxPlayers() { return maxPlayers; }
     
     Queue<std::shared_ptr<Dto>>& getGameQueue() { return gameQueue; }
-    void setSelectedMaps(const std::vector<uint8_t>& mapIds);
+    void setSelectedMaps(const std::vector<std::string>& mapNames);
     
     void stopAllPlayers();
     ~GameRoom();

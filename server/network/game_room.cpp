@@ -139,12 +139,15 @@ std::vector<int> GameRoom::getPlayerIds() {
     return ids;
 }
 
-void GameRoom::setSelectedMaps(const std::vector<uint8_t>& mapIds) {
+void GameRoom::setSelectedMaps(const std::vector<std::string>& mapNames) {
     std::lock_guard<std::mutex> lock(mtx);
-    selectedMaps.clear();
-    for (uint8_t mapCode : mapIds) {
-        selectedMaps.push_back(mapCodeToString(static_cast<MapCode>(mapCode)));
+    selectedMaps = mapNames;
+
+    std::cout << "[GameRoom] Maps selected: ";
+    for (const auto& mapName : selectedMaps) {
+        std::cout << "\"" << mapName << "\" ";
     }
+    std::cout << std::endl;
 }
 
 void GameRoom::stopAllPlayers() {

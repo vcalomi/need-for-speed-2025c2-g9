@@ -83,9 +83,9 @@ void LobbyApi::startGame() {
     proto.sendDTO(req);
 }
 
-bool LobbyApi::selectMaps(const std::vector<uint8_t>& mapCodes) {
+bool LobbyApi::selectMaps(const std::vector<std::string>& mapNames) {
     auto req = std::make_shared<MapsDto>(static_cast<uint8_t>(ActionCode::SELECT_MAPS));
-    req->selectedMaps = mapCodes;
+    req->selectedMaps = mapNames;
     proto.sendDTO(req);
     auto resp = proto.receiveDTO();
     return resp && static_cast<ActionCode>(resp->return_code()) == ActionCode::SELECT_MAPS_OK;

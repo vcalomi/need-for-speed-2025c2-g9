@@ -8,9 +8,7 @@
 class MapsSerializer : public Serializer {
     ActionCode code;
 public:
-    explicit MapsSerializer(ActionCode code);
-    ~MapsSerializer() override;
-    
+    explicit MapsSerializer(ActionCode code) : code(code) {}
     std::vector<uint8_t> serialize(const Dto& dto) const override;
     std::shared_ptr<Dto> deserialize(const std::vector<uint8_t>& buffer) const override;
 };

@@ -207,6 +207,4 @@ void Lobby::handleSelectMaps(std::shared_ptr<Dto> dto) {
     auto response = std::make_shared<MapsDto>(static_cast<uint8_t>(ActionCode::SELECT_MAPS_OK));
     response->selectedMaps = mapsDto->selectedMaps;
     protocol->sendDTO(response);
-    
-    std::cout << "SELECT_MAPS_OK sent to client" << std::endl;
 }
