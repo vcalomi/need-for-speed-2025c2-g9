@@ -34,7 +34,6 @@ void Player::stopGame() {
                 receiver->join();
             }
         } catch (...) {}
-        receiver.reset();
     }
     
     if (sender) {
@@ -44,7 +43,6 @@ void Player::stopGame() {
                 sender->join();
             }
         } catch (...) {}
-        sender.reset();
     }
     
     state = State::IN_LOBBY;

@@ -26,6 +26,9 @@ add_executable(runTests
   ../common/Dto/race_finished.cpp
   ../common/Dto/vehicle_exploded.cpp
   ../common/Dto/player_race_finished.cpp
+  ../common/Dto/infinite_health.cpp
+  ../common/Dto/end_race.cpp
+  ../common/Dto/vehicle_upgrade.cpp
 
   ../common/serializer/serializer.cpp
   ../common/serializer/player_serializer.cpp
@@ -46,6 +49,7 @@ add_executable(runTests
   ../common/serializer/lobby_room_state_serializer.cpp
   ../common/serializer/lobby_choose_car_serializer.cpp
   ../common/serializer/lobby_maps_serializer.cpp
+  ../common/serializer/vehicle_upgrade_serializer.cpp
 )
 
 find_package(GTest REQUIRED)
@@ -56,6 +60,6 @@ add_test(NAME runTests COMMAND runTests)
 add_custom_command(TARGET runTests POST_BUILD
   COMMAND ${CMAKE_COMMAND} -E copy
           $<TARGET_FILE:runTests>
-          ${CMAKE_BINARY_DIR}/taller_tests
+          ${CMAKE_BINARY_DIR}/nfs_tests
   COMMENT "Copying runTests to ${CMAKE_BINARY_DIR}/nfs_tests"
 )

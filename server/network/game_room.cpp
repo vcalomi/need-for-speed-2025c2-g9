@@ -8,7 +8,7 @@
 #include "../../common/Dto/lobby_room_state.h"
 
 GameRoom::GameRoom(const std::string& roomName, int hostId, int maxPlayers)
-    : roomName(roomName), hostId(hostId), maxPlayers_(maxPlayers), 
+    : roomName(roomName), hostId(hostId), maxPlayers(maxPlayers), 
       state(RoomState::WAITING_FOR_PLAYERS), gameQueue(),
       broadcaster(), gameLoop(gameQueue, chosenCars, playerUsernames, broadcaster, maxPlayers, selectedMaps) {}
 
@@ -66,7 +66,7 @@ void GameRoom::removePlayer(int clientId) {
     }
 }
 
-bool GameRoom::startGame() {
+bool GameRoom::startRace() {
     std::lock_guard<std::mutex> lock(mtx);
     
     if (state != RoomState::WAITING_FOR_PLAYERS) {
@@ -83,20 +83,20 @@ bool GameRoom::startGame() {
     return true;
 }
 
-void GameRoom::startGameForPlayer(int clientId) {
+void GameRoom::startGame(int clientId) {
     std::lock_guard<std::mutex> lock(mtx);
     auto it = players.find(clientId);
     if (it != players.end()) {
         if (it->second) {
             if (!it->second->isGameActive()) {
                 it->second->beginGame(gameQueue);
-                checkAndStartGameLoop();
+                startLoop();
             }
         }
     }
 }
 
-void GameRoom::checkAndStartGameLoop() {
+void GameRoom::startLoop() {
     bool allInGame = true;
     for (const auto& [id, player] : players) {
         if (!player->isGameActive()) {
@@ -112,7 +112,7 @@ void GameRoom::checkAndStartGameLoop() {
 
 bool GameRoom::canJoin() const {
     bool can = state == RoomState::WAITING_FOR_PLAYERS &&
-           static_cast<int>(players.size()) < maxPlayers_;
+           int(players.size()) < maxPlayers;
     
     return can;
 }

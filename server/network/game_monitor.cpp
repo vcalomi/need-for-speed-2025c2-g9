@@ -8,7 +8,7 @@
 
 GameMonitor::GameMonitor() {}
 
-std::shared_ptr<GameRoom> GameMonitor::getRoomByClient(int clientId) {
+std::shared_ptr<GameRoom> GameMonitor::getRoom(int clientId) {
     std::lock_guard<std::mutex> lock(mtx);
     if (!clientToRoom.count(clientId)) {
         return nullptr;
@@ -75,7 +75,7 @@ std::vector<std::string> GameMonitor::getAvailableRooms() {
     return available;
 }
 
-bool GameMonitor::startGameByClientId(int clientId) {
+bool GameMonitor::startGameRoom(int clientId) {
     std::lock_guard<std::mutex> lock(mtx);
 
     if (!clientToRoom.count(clientId))
@@ -85,10 +85,10 @@ bool GameMonitor::startGameByClientId(int clientId) {
     if (!room->isHost(clientId))
         return false;
 
-    return room->startGame();
+    return room->startRace();
 }
 
-bool GameMonitor::chooseCarByClientId(int clientId, const CarConfig& car) {
+bool GameMonitor::choosePlayerCar(int clientId, const CarConfig& car) {
     std::lock_guard<std::mutex> lock(mtx);
 
     if (!clientToRoom.count(clientId)) {
@@ -98,7 +98,7 @@ bool GameMonitor::chooseCarByClientId(int clientId, const CarConfig& car) {
     return room->chooseCar(clientId, car);
 }
 
-Queue<std::shared_ptr<Dto>>& GameMonitor::getGameQueueForClient(int clientId) {
+Queue<std::shared_ptr<Dto>>& GameMonitor::getGameQueue(int clientId) {
     std::lock_guard<std::mutex> lock(mtx);
 
     if (!clientToRoom.count(clientId)) {
@@ -108,7 +108,7 @@ Queue<std::shared_ptr<Dto>>& GameMonitor::getGameQueueForClient(int clientId) {
     return room->getGameQueue();
 }
 
-std::vector<std::string> GameMonitor::getPlayersInRoomByClient(int clientId) {
+std::vector<std::string> GameMonitor::getPlayersInRoom(int clientId) {
     std::lock_guard<std::mutex> lock(mtx);
     std::vector<std::string> result;
     if (!clientToRoom.count(clientId))

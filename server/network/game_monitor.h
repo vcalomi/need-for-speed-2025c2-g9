@@ -27,13 +27,13 @@ public:
     bool joinGameRoom(const std::string& roomName, int clientId,
                       Player* clientPlayer);
     std::vector<std::string> getAvailableRooms();
-    bool startGameByClientId(int clientId);
-    bool isGameStartedByClient(int clientId);
-    Queue<std::shared_ptr<Dto>>& getGameQueueForClient(int clientId);
-    bool chooseCarByClientId(int clientId, const CarConfig& car);
-    std::vector<std::string> getPlayersInRoomByClient(int clientId);
+    bool startGameRoom(int clientId);
+    bool isGameStarted(int clientId);
+    Queue<std::shared_ptr<Dto>>& getGameQueue(int clientId);
+    bool choosePlayerCar(int clientId, const CarConfig& car);
+    std::vector<std::string> getPlayersInRoom(int clientId);
     bool setUsername(int clientId, const std::string& username);
-    std::shared_ptr<GameRoom> getRoomByClient(int clientId);
+    std::shared_ptr<GameRoom> getRoom(int clientId);
     void removeClient(int clientId);
     void closeAll();
     ~GameMonitor();

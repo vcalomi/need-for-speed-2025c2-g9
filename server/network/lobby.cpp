@@ -126,7 +126,7 @@ void Lobby::handleChooseCar(std::shared_ptr<Dto> dto) {
     CarConfig config;
     config.carType = carDto->carKey;
     
-    if (gameMonitor.chooseCarByClientId(clientId, config)) {
+    if (gameMonitor.choosePlayerCar(clientId, config)) {
         auto out = std::make_shared<ChooseCarDto>(static_cast<uint8_t>(ActionCode::CHOOSE_CAR_OK));
         out->carKey = carDto->carKey;
         protocol->sendDTO(out);
@@ -138,7 +138,7 @@ void Lobby::handleChooseCar(std::shared_ptr<Dto> dto) {
 }
 
 void Lobby::handleListPlayers(std::shared_ptr<Dto>) {
-    auto room = gameMonitor.getRoomByClient(clientId);
+    auto room = gameMonitor.getRoom(clientId);
     if (!room) {
         auto err = std::make_shared<AuthDto>(static_cast<uint8_t>(ActionCode::SEND_ERROR_MSG));
         err->errorMsg = "Not in a room";
@@ -146,7 +146,7 @@ void Lobby::handleListPlayers(std::shared_ptr<Dto>) {
         return;
     }
     
-    auto players = gameMonitor.getPlayersInRoomByClient(clientId);
+    auto players = gameMonitor.getPlayersInRoom(clientId);
     auto response = std::make_shared<RoomStateDto>(static_cast<uint8_t>(ActionCode::LIST_PLAYERS));
     response->players = std::move(players);
     response->maxPlayers = room->getMaxPlayers();
@@ -154,7 +154,7 @@ void Lobby::handleListPlayers(std::shared_ptr<Dto>) {
 }
 
 void Lobby::handleListState(std::shared_ptr<Dto>) {
-    auto room = gameMonitor.getRoomByClient(clientId);
+    auto room = gameMonitor.getRoom(clientId);
     if (!room) {
         auto err = std::make_shared<AuthDto>(static_cast<uint8_t>(ActionCode::SEND_ERROR_MSG));
         err->errorMsg = "You must be in a room to start the game";
@@ -168,18 +168,18 @@ void Lobby::handleListState(std::shared_ptr<Dto>) {
     protocol->sendDTO(response);
     
     if (started) {
-        room->startGameForPlayer(clientId);
+        room->startGame(clientId);
         game_started = true;
         stop();
     }
 }
 
 void Lobby::handleStartGame(std::shared_ptr<Dto>) {
-    auto room = gameMonitor.getRoomByClient(clientId);
+    auto room = gameMonitor.getRoom(clientId);
     if (!room) return;
     
-    if (gameMonitor.startGameByClientId(clientId)) {
-        room->startGameForPlayer(clientId);
+    if (gameMonitor.startGameRoom(clientId)) {
+        room->startGame(clientId);
         game_started = true;
         stop();
     } else {
@@ -198,7 +198,7 @@ void Lobby::handleSelectMaps(std::shared_ptr<Dto> dto) {
         return;
     }
 
-    auto room = gameMonitor.getRoomByClient(clientId);
+    auto room = gameMonitor.getRoom(clientId);
 
     if (room) {
         room->setSelectedMaps(mapsDto->selectedMaps);

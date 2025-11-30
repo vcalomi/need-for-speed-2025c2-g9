@@ -24,9 +24,9 @@ class GameRoom {
 private:
     std::string roomName;
     int hostId;
-    int maxPlayers_;
+    int maxPlayers;
     RoomState state;
-    mutable std::mutex mtx;
+    std::mutex mtx;
     
     std::map<int, Player*> players;
     std::map<int, std::string> playerUsernames;
@@ -37,8 +37,6 @@ private:
     Broadcaster broadcaster;
     GameLoop gameLoop;
 
-    void checkAndStartGameLoop();
-
 public:
     GameRoom(const std::string& roomName, int hostId, int maxPlayers);
     
@@ -47,15 +45,16 @@ public:
     bool chooseCar(int clientId, const CarConfig& car);
     void removePlayer(int clientId);
     
-    bool startGame();
-    void startGameForPlayer(int clientId);
-    
-    bool canJoin() const;
+    bool startRace();
+    void startGame(int clientId);
+    void startLoop();
+
     bool isHost(int clientId) const;
     bool isInRace() const { return state == RoomState::IN_RACE; }
     std::string getCarType(int clientId) const;
     std::vector<int> getPlayerIds();
-    int getMaxPlayers() const { return maxPlayers_; }
+    bool canJoin() const;
+    int getMaxPlayers() { return maxPlayers; }
     
     Queue<std::shared_ptr<Dto>>& getGameQueue() { return gameQueue; }
     void setSelectedMaps(const std::vector<uint8_t>& mapIds);
