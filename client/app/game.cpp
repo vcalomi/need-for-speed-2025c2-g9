@@ -47,11 +47,11 @@ void Game::Run() {
         inputSystem_.PollEvents(running);
 
         if (inputSystem_.IsKeyPressed(SDL_SCANCODE_Q)) {
-            eventBus_.Publish(InfiniteHealthEvent());
+            eventBus_.Publish(InfiniteHealthEvent(this->world_.GetLocalPlayer().GetUsername()));
         }
 
         if (inputSystem_.IsKeyPressed(SDL_SCANCODE_E)) {
-            eventBus_.Publish(CheatEndRaceEvent());
+            eventBus_.Publish(CheatEndRaceEvent(this->world_.GetLocalPlayer().GetUsername()));
         }
 
         PlayerMoveDto input =

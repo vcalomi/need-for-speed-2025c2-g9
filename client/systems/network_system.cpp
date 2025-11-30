@@ -25,11 +25,11 @@ NetworkSystem::NetworkSystem(Client& client, EventBus& eventBus):
         client_.getSenderQueue().try_push(std::make_shared<PlayerLeftDto>(e.username));
     });
 
-    eventBus_.Subscribe<InfiniteHealthEvent>([this](const InfiniteHealthEvent&) {
-        client_.getSenderQueue().try_push(std::make_shared<InfiniteHealthDto>());
+    eventBus_.Subscribe<InfiniteHealthEvent>([this](const InfiniteHealthEvent& e) {
+        client_.getSenderQueue().try_push(std::make_shared<InfiniteHealthDto>(e.username));
     });
 
-    eventBus_.Subscribe<CheatEndRaceEvent>([this](const CheatEndRaceEvent&) {
-        client_.getSenderQueue().try_push(std::make_shared<EndRaceDto>());
+    eventBus_.Subscribe<CheatEndRaceEvent>([this](const CheatEndRaceEvent& e) {
+        client_.getSenderQueue().try_push(std::make_shared<EndRaceDto>(e.username));
     });
 }

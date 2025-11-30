@@ -4,8 +4,9 @@
 #include "event.h"
 
 struct InfiniteHealthEvent: public Event {
+    std::string username;
 
-    InfiniteHealthEvent() {}
+    explicit InfiniteHealthEvent(std::string username): username(username) {}
 
     std::string GetType() const override { return Type(); }
     static std::string Type() { return "InfiniteHealthEvent"; }
