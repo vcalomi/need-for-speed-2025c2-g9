@@ -10,4 +10,5 @@ class InputSystem {
 public:
     void PollEvents(bool& running);
     PlayerMoveDto GetInputByte(std::string username) const;
+    bool IsKeyPressed(SDL_Scancode key) const;
 };

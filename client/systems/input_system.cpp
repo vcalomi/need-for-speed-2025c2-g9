@@ -30,3 +30,8 @@ PlayerMoveDto InputSystem::GetInputByte(std::string username) const {
 
     return PlayerMoveDto(username, mask);
 }
+
+bool InputSystem::IsKeyPressed(SDL_Scancode key) const {
+    const Uint8* keys = SDL_GetKeyboardState(NULL);
+    return keys[key] != 0;
+}

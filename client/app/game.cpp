@@ -7,6 +7,8 @@
 #include "../../common/Dto/player.h"
 #include "../../common/Dto/player_move.h"
 #include "../../common/Dto/vehicle.h"
+#include "../events/cheat_end_race_event.h"
+#include "../events/infinite_health_event.h"
 #include "../events/player_events.h"
 #include "../events/player_left_event.h"
 #include "../ui/minimap.h"
@@ -43,6 +45,15 @@ void Game::Run() {
     while (running) {
 
         inputSystem_.PollEvents(running);
+
+        if (inputSystem_.IsKeyPressed(SDL_SCANCODE_Q)) {
+            eventBus_.Publish(InfiniteHealthEvent());
+        }
+
+        if (inputSystem_.IsKeyPressed(SDL_SCANCODE_E)) {
+            eventBus_.Publish(CheatEndRaceEvent());
+        }
+
         PlayerMoveDto input =
                 inputSystem_.GetInputByte(this->world_.GetLocalPlayer().GetUsername());
         eventBus_.Publish(PlayerMoveEvent(this->world_.GetLocalPlayer().GetUsername(),
