@@ -22,14 +22,22 @@ Lobby::Lobby(Socket socket, GameMonitor& gameMonitor, int clientId):
 void Lobby::run() {
     try {
         while (should_keep_running() && !game_started) {
-            auto dto = protocol->receiveDTO();
-            if (!dto) continue;
-            
-            ActionCode action = static_cast<ActionCode>(dto->return_code());
-            dispatcher.dispatch(action, dto);
+            try {
+                auto dto = protocol->receiveDTO();
+                if (!dto) continue;
+                
+                ActionCode action = static_cast<ActionCode>(dto->return_code());
+                dispatcher.dispatch(action, dto);
+            } catch (const SocketClosed& e) {
+                break;
+            }
         }
     } catch (const std::exception& e) {
-        std::cerr << "Lobby error: " << e.what() << std::endl;
+        return;
+    }
+
+    if (!game_started) {
+        gameMonitor.removeClient(clientId);
     }
 }
 
