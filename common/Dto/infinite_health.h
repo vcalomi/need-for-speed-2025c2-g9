@@ -8,7 +8,8 @@
 
 class InfiniteHealthDto: public Dto {
 public:
-    InfiniteHealthDto();
+    std::string username;
+    InfiniteHealthDto(const std::string& username);
 };
 
 #endif

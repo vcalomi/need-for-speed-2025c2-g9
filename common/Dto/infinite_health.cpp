@@ -2,5 +2,6 @@
 
 #include "../common_codes.h"
 
-InfiniteHealthDto::InfiniteHealthDto():
-        Dto(uint8_t(ActionCode::SEND_INFINITE_HEALTH)) {}
+InfiniteHealthDto::InfiniteHealthDto(const std::string& username):
+        Dto(uint8_t(ActionCode::SEND_INFINITE_HEALTH)),
+        username(username) {}

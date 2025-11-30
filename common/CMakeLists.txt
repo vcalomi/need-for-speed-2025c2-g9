@@ -27,6 +27,7 @@ target_sources(nfs_common
     serializer/lobby_room_serializer.cpp
     serializer/lobby_maps_serializer.cpp
     serializer/vehicle_upgrade_serializer.cpp
+    serializer/infinite_health_serializer.cpp
     Dto/dto.cpp
     Dto/vehicle.cpp
     Dto/player.cpp
