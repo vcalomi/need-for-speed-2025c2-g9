@@ -37,6 +37,7 @@ private:
     void addDebugTileRect(float cx_px, float cy_px, float size_px);
 
     std::deque<FixtureTag> checkpoint_tags_;
+    std::deque<FixtureTag> bridge_tags_;
 
     std::vector<CheckpointInfo> checkpoints_;
 };

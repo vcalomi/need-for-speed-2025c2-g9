@@ -44,9 +44,26 @@ void PhysicsEventCollector::collect(b2WorldId world)
 
         auto* sensorTag  = static_cast<FixtureTag*>(b2Shape_GetUserData(e.sensorShapeId));
         auto* visitorTag = static_cast<FixtureTag*>(b2Shape_GetUserData(e.visitorShapeId));
-        
-        if (sensorTag->kind == EntityKind::Checkpoint && visitorTag->kind == EntityKind::Vehicle) {
-            events_.emplace_back(RawVehicleCheckpoint{visitorTag->id, sensorTag->id});
+
+        if (!sensorTag || !visitorTag)
+            continue;
+
+        // Checkpoint + Vehicle
+        if (sensorTag->kind == EntityKind::Checkpoint &&
+            visitorTag->kind == EntityKind::Vehicle) {
+
+            events_.emplace_back(
+                RawVehicleCheckpoint{visitorTag->id, sensorTag->id}
+            );
+        }
+
+        if (sensorTag->kind == EntityKind::BridgeToggle &&
+            visitorTag->kind == EntityKind::Vehicle) {
+
+            bool under = (sensorTag->data == 1); 
+            events_.emplace_back(
+                RawVehicleBridgeToggle{visitorTag->id, under}
+            );
         }
     }
 }

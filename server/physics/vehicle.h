@@ -28,6 +28,10 @@ public:
     void resetToSpawn();
     void resetHp();
     void enableControl() { controlsEnabled_ = true; }
+
+    bool getUnderBridge() { return under_bridge; }
+
+    void setUnderBridge(bool setter) { under_bridge = setter; }
 private:
     bool controlsEnabled_ = true;
     b2WorldId world_id_;
@@ -36,4 +40,5 @@ private:
     int vehicle_id_;
     b2BodyId body_;
     float vehicle_hp_;
+    bool under_bridge = false;
 };

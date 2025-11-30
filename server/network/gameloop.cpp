@@ -178,7 +178,7 @@ void GameLoop::sendVehiclesPositions() {
         vehicle->getPosition(x, y, angle);
         std::string username = playerUsernames_.at(player_id);
 
-        auto dto = std::make_shared<VehicleDto>(username, x, y, angle, setup->getVehicleSpeed(player_id), false);
+        auto dto = std::make_shared<VehicleDto>(username, x, y, angle, setup->getVehicleSpeed(player_id), vehicle->getUnderBridge());
         broadcaster_.broadcast(dto);
     }
 }
@@ -387,6 +387,13 @@ void GameLoop::handleVehicleWallCollision(const RawVehicleWall& event) {
     }
 }
 
+void GameLoop::handleVehicleBridgeToggle(const RawVehicleBridgeToggle& event){
+    Vehicle* vehicle = getVehicleById(event.vehicleId);
+    if (!vehicle)
+        return;
+    vehicle->setUnderBridge(event.under);
+}
+
 void GameLoop::processGameEvents() {
     auto events = setup->stepAndDrainEvents(1.0f / 60.0f);
 
@@ -402,6 +409,8 @@ void GameLoop::processGameEvents() {
         } else if (auto* vehicle_wall = std::get_if<RawVehicleWall>(&event)) {
 
             handleVehicleWallCollision(*vehicle_wall);
+        } else if (auto* vehicle_BridgeToggle = std::get_if<RawVehicleBridgeToggle>(&event) ){
+            handleVehicleBridgeToggle(*vehicle_BridgeToggle);
         }
     }
 }
