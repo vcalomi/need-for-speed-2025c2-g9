@@ -26,6 +26,7 @@ target_sources(nfs_common
     serializer/lobby_room_state_serializer.cpp
     serializer/lobby_room_serializer.cpp
     serializer/lobby_maps_serializer.cpp
+    serializer/vehicle_upgrade_serializer.cpp
     Dto/dto.cpp
     Dto/vehicle.cpp
     Dto/player.cpp
@@ -39,6 +40,9 @@ target_sources(nfs_common
     Dto/vehicle_exploded.cpp
     Dto/initial_race_map.cpp
     Dto/player_race_finished.cpp
+    Dto/vehicle_upgrade.cpp
+    Dto/infinite_health.cpp
+    Dto/end_race.cpp
     PUBLIC
     # .h files
     liberror.h
@@ -69,6 +73,9 @@ target_sources(nfs_common
     serializer/lobby_room_state_serializer.h
     serializer/lobby_room_serializer.h
     serializer/lobby_maps_serializer.h
+    serializer/vehicle_upgrade_serializer.h
+    serializer/infinite_health_serializer.h
+    serializer/end_race_serializer.h
     Dto/dto.h
     Dto/vehicle.h
     Dto/player.h
@@ -90,4 +97,7 @@ target_sources(nfs_common
     Dto/lobby_room_state.h
     Dto/lobby_room.h
     Dto/lobby_maps.h
+    Dto/vehicle_upgrade.h
+    Dto/infinite_health.h
+    Dto/end_race.h
 )
