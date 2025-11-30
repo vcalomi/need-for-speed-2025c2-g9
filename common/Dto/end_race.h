@@ -8,7 +8,8 @@
 
 class EndRaceDto: public Dto {
 public:
-    EndRaceDto();
+    std::string username;
+    EndRaceDto(const std::string& username);
 };
 
 #endif

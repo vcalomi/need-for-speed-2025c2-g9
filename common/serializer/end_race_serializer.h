@@ -12,13 +12,8 @@ class EndRaceSerializer: public Serializer {
 
 public:
     EndRaceSerializer() {}
-    std::vector<uint8_t> serialize(const Dto&) const override {
-        std::vector<uint8_t> buffer(0);
-        return buffer;
-    }
-    std::shared_ptr<Dto> deserialize(const std::vector<uint8_t>&) const override {
-        return std::make_shared<EndRaceDto>();
-    }
+    std::vector<uint8_t> serialize(const Dto&) const override;
+    std::shared_ptr<Dto> deserialize(const std::vector<uint8_t>&) const override;
 };
 
 #endif

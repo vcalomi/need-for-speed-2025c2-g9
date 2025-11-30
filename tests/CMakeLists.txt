@@ -51,6 +51,7 @@ add_executable(runTests
   ../common/serializer/lobby_maps_serializer.cpp
   ../common/serializer/vehicle_upgrade_serializer.cpp
   ../common/serializer/infinite_health_serializer.cpp
+  ../common/serializer/end_race_serializer.cpp
 )
 
 find_package(GTest REQUIRED)
