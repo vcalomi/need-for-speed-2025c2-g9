@@ -19,8 +19,8 @@ std::vector<uint8_t> VehicleSerializer::serialize(const Dto& dto) const {
     SerializerUtils::writeFloat(buffer, pos, vehicleDto.x);
     SerializerUtils::writeFloat(buffer, pos, vehicleDto.y);
     SerializerUtils::writeFloat(buffer, pos, vehicleDto.rotation);
-    SerializerUtils::writeBool(buffer, pos, vehicleDto.isAboveBridge);
     SerializerUtils::writeFloat(buffer, pos, vehicleDto.speed);
+    SerializerUtils::writeBool(buffer, pos, vehicleDto.isAboveBridge);
     return buffer;
 }
 
@@ -31,7 +31,7 @@ std::shared_ptr<Dto> VehicleSerializer::deserialize(const std::vector<uint8_t>& 
     float x = SerializerUtils::readFloat(buffer, pos);
     float y = SerializerUtils::readFloat(buffer, pos);
     float rotation = SerializerUtils::readFloat(buffer, pos);
-    bool isAboveBridge = SerializerUtils::readBool(buffer, pos);
     float speed = SerializerUtils::readFloat(buffer, pos);
-    return std::make_shared<VehicleDto>(username, x, y, rotation, isAboveBridge, speed);
+    bool isAboveBridge = SerializerUtils::readBool(buffer, pos);
+    return std::make_shared<VehicleDto>(username, x, y, rotation, speed, isAboveBridge);
 }
