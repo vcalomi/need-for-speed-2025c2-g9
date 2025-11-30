@@ -7,7 +7,7 @@ std::shared_ptr<Event> SendCarsHandler::Handle(const std::shared_ptr<Dto>& dto) 
     if (!d)
         return nullptr;
 
-    std::cout << "[SendCarsHandler] Is above bridge: " << d->isAboveBridge << std::endl;
+    //std::cout << "[SendCarsHandler] Is above bridge: " << d->isAboveBridge << std::endl;
     return std::make_shared<PlayerStateUpdatedEvent>(d->username, d->x, d->y, d->rotation, d->speed,
                                                      d->isAboveBridge);
 }

@@ -21,6 +21,7 @@
 #include "../../common/Dto/vehicle_wall_collision.h"
 #include "../../common/Dto/initial_race_map.h"
 #include "../../common/Dto/race_finished.h"
+#include "../../common/Dto/end_race.h"
 #include "../../common/common_codes.h"
 #include "../../common/vehicle_type_utils.h"
 #include "../YamlParser.h"
@@ -161,10 +162,38 @@ void GameLoop::handlerProcessCommand(std::shared_ptr<Dto> command) {
 
             if (mask & static_cast<uint8_t>(MoveMask::TURN_RIGHT))
                 vehicle->turn(TurnDir::Right);
-
             break;
         }
+        //case ActionCode::SEND_INFINITE_HEALTH: {
+        //    break;
+        //}
+        case ActionCode::SEND_END_RACE: {
+            auto player_end_race = std::dynamic_pointer_cast<EndRaceDto>(command);
+            if (!player_end_race) {
+                std::cerr << "[SEND_END_RACE] cast a EndRaceDto falló\n";
+                return;
+            }
 
+            auto player_vehicle = getVehicleByPlayer(player_end_race->username);
+            if (!player_vehicle) {
+                std::cerr << "[SEND_END_RACE] no vehicle para username "
+                        << player_end_race->username << "\n";
+                return;
+            }
+
+            int vehicleId = player_vehicle->getVehicleId();
+
+            auto it = raceProgress_.find(vehicleId);
+            if (it == raceProgress_.end()) {
+                std::cerr << "[SEND_END_RACE] no entry en raceProgress_ para vehicleId "
+                        << vehicleId << "\n";
+                return;
+            }
+
+            std::cerr << "[SEND_END_RACE] for vehicleId=" << vehicleId << "\n";
+            onPlayerFinished(vehicleId, it->second);
+            break;
+        }
         default:
             std::cerr << "[GameLoop] unknown command: " << command->return_code() << "\n";
             break;
@@ -177,7 +206,6 @@ void GameLoop::sendVehiclesPositions() {
         float x, y, angle;
         vehicle->getPosition(x, y, angle);
         std::string username = playerUsernames_.at(player_id);
-        std::cout << "Enviando pos, el auto esta en: "  << vehicle->getUnderBridge() << "\n";
         auto dto = std::make_shared<VehicleDto>(username, x, y, angle, setup->getVehicleSpeed(player_id), vehicle->getUnderBridge());
         broadcaster_.broadcast(dto);
     }
@@ -212,12 +240,32 @@ Vehicle* GameLoop::getVehicleById(int vehicleId) {
 }
 
 bool GameLoop::allPlayersFinished() {
+    std::cerr << "\n[allPlayersFinished] chequeando...\n";
+    std::cerr << "  chosenCars_.size() = " << chosenCars_.size() << "\n";
+
+    // Logueamos el estado de cada jugador
+    for (const auto& [playerId, _] : chosenCars_) {
+        auto it = raceProgress_.find(playerId);
+        if (it == raceProgress_.end()) {
+            std::cerr << "  playerId " << playerId 
+                      << ": NO ENTRY in raceProgress_\n";
+        } else {
+            std::cerr << "  playerId " << playerId 
+                      << ": finished=" << it->second.finished << "\n";
+        }
+    }
+
+    // Ahora chequeamos de verdad y logueamos el resultado
     for (const auto& [playerId, _]: chosenCars_) {
         auto it = raceProgress_.find(playerId);
         if (it == raceProgress_.end() || !it->second.finished) {
+            std::cerr << "[allPlayersFinished] -> false "
+                      << "(playerId " << playerId << " aún no terminó)\n";
             return false;
         }
     }
+
+    std::cerr << "[allPlayersFinished] -> true (todos terminaron)\n";
     return true;
 }
 
@@ -259,6 +307,7 @@ void GameLoop::onPlayerFinished(int vehicleId, PlayerRaceProgress& prog) {
     }
 
     if (allPlayersFinished()) {
+        std::cout << "[onPlayerFinished] -> allPlayersFinished() == true, ENVIANDO RaceFinishedDto\n";
         raceActive_ = false;
         pendingNextRace_ = true;
 
@@ -315,6 +364,7 @@ void GameLoop::handleVehicleExplosion(int vehicleId) {
     }
 
     if (allPlayersFinished()) {
+        std::cout << "[handleVehicleExplosion] -> allPlayersFinished() == true, ENVIANDO RaceFinishedDto\n";
         raceActive_ = false;
         pendingNextRace_ = true;
 

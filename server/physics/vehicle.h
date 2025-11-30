@@ -32,6 +32,8 @@ public:
     bool getUnderBridge() { return under_bridge; }
 
     void setUnderBridge(bool setter) { under_bridge = setter; }
+    int getVehicleId(){return vehicle_id_; }
+    
 private:
     bool controlsEnabled_ = true;
     b2WorldId world_id_;
