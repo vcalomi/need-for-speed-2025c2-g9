@@ -21,6 +21,7 @@ struct PlayerRaceProgress {
     int nextCheckpoint = 0;     
     bool finished = false;
     std::optional<std::chrono::steady_clock::time_point> finishTime;
+    bool underBrigde = false;
 };
 
 struct LevelInfo {
@@ -55,6 +56,7 @@ private:
     float computeCollisionDamage(float impactSpeed);
     void handleVehicleVehicleCollision(const RawVehicleVehicle& event);
     void handleVehicleWallCollision(const RawVehicleWall& event);
+    void handleVehicleBridgeToggle(const RawVehicleBridgeToggle& event);
     bool allPlayersFinished();
 
     void sendVehiclesPositions();
