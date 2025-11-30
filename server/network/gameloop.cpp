@@ -177,7 +177,7 @@ void GameLoop::sendVehiclesPositions() {
         float x, y, angle;
         vehicle->getPosition(x, y, angle);
         std::string username = playerUsernames_.at(player_id);
-
+        std::cout << "Enviando pos, el auto esta en: "  << vehicle->getUnderBridge() << "\n";
         auto dto = std::make_shared<VehicleDto>(username, x, y, angle, setup->getVehicleSpeed(player_id), vehicle->getUnderBridge());
         broadcaster_.broadcast(dto);
     }
@@ -392,6 +392,9 @@ void GameLoop::handleVehicleBridgeToggle(const RawVehicleBridgeToggle& event){
     if (!vehicle)
         return;
     vehicle->setUnderBridge(event.under);
+    std::cout << "[BridgeToggle] Vehicle " << event.vehicleId
+              << " is now " << (event.under ? "UNDER" : "OVER")
+              << " the bridge.\n";
 }
 
 void GameLoop::processGameEvents() {

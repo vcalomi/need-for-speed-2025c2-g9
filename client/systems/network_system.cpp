@@ -3,7 +3,11 @@
 #include <iostream>
 #include <memory>
 
+#include "../../common/Dto/end_race.h"
+#include "../../common/Dto/infinite_health.h"
 #include "../../common/Dto/player_left.h"
+#include "../../events/cheat_end_race_event.h"
+#include "../../events/infinite_health_event.h"
 #include "../../events/player_left_event.h"
 
 NetworkSystem::NetworkSystem(Client& client, EventBus& eventBus):
@@ -19,5 +23,13 @@ NetworkSystem::NetworkSystem(Client& client, EventBus& eventBus):
 
     eventBus_.Subscribe<PlayerLeftEvent>([this](const PlayerLeftEvent& e) {
         client_.getSenderQueue().try_push(std::make_shared<PlayerLeftDto>(e.username));
+    });
+
+    eventBus_.Subscribe<InfiniteHealthEvent>([this](const InfiniteHealthEvent&) {
+        client_.getSenderQueue().try_push(std::make_shared<InfiniteHealthDto>());
+    });
+
+    eventBus_.Subscribe<CheatEndRaceEvent>([this](const CheatEndRaceEvent&) {
+        client_.getSenderQueue().try_push(std::make_shared<EndRaceDto>());
     });
 }
