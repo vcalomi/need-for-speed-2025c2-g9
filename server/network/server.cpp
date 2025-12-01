@@ -5,7 +5,12 @@
 #include "../../common/queue.h"
 
 Server::Server(const std::string& port):
-        gameMonitor(), acceptor(port, gameMonitor), inputHandler() {}
+        gameMonitor(), acceptor(port, gameMonitor), inputHandler() {
+
+    inputHandler.setShutdownCallback([this]() {
+        this->stop();
+    });
+}
 
 int Server::run() {
     try {
@@ -24,7 +29,13 @@ void Server::stop() {
     try {
         acceptor.close();
     } catch (...) {}
-    acceptor.join();
+    try {
+        acceptor.join();
+    } catch (...) {}
+    
+    try {
+        gameMonitor.closeAll();
+    } catch (...) {}
 }
 
 Server::~Server() {}

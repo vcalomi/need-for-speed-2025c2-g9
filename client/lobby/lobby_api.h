@@ -24,6 +24,7 @@ public:
     bool pollStarted();
     bool chooseCar(const std::string& carKey);
     void startGame();
+    bool selectMaps(const std::vector<std::string>& mapNames);
 
 private:
     ClientProtocol& proto;

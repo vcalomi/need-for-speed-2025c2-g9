@@ -28,6 +28,7 @@ public:
     LobbyState pollState();
     bool chooseCar(const QString& carKey);
     void startGame();
+    bool selectMaps(const std::vector<std::string>& mapNames);
 
 private:
     LobbyApi& api;

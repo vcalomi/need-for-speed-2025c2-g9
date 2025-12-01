@@ -2,13 +2,20 @@
 
 #include <iostream>
 
-ServerInputHandler::ServerInputHandler(): line("") {}
+ServerInputHandler::ServerInputHandler(): line(""), shutdownCallback(nullptr) {}
+
+void ServerInputHandler::setShutdownCallback(std::function<void()> callback) {
+    shutdownCallback = callback;
+}
 
 void ServerInputHandler::run() {
     try {
         while (should_keep_running()) {
             std::getline(std::cin, line);
             if (line == "q") {
+                if (shutdownCallback) {
+                    shutdownCallback();
+                }
                 this->stop();
                 break;
             }

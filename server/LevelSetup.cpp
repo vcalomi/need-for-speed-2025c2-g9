@@ -8,8 +8,8 @@
 #include "./physics/EntityTags.h"
 
 LevelSetup::LevelSetup(const std::string& level_json_path, const std::string& vehicle_specs_path,
-                       const std::map<int, CarConfig>& chosenCars):
-        chosenCarsRef_(chosenCars), config_map_(YamlParser{}.parse(vehicle_specs_path)) {
+                       const std::map<int, CarConfig>& chosenCars, std::unordered_map<int, CarUpgrades>& upgradesByUser):
+        chosenCarsRef_(chosenCars), config_map_(YamlParser{}.parse(vehicle_specs_path)), upgradesByUserRef_(upgradesByUser) {
 
     // Create empty world
     b2WorldDef wdef = b2DefaultWorldDef();
@@ -53,7 +53,13 @@ void LevelSetup::buildVehicles() {
             std::cerr << "[LevelSetup] ERROR: no hay VehicleSpec para '" << cfg.carType << "'.\n";
             continue;
         }
-        const VehicleSpec& spec = it->second;
+
+        VehicleSpec spec = it->second;
+
+        auto itUp = upgradesByUserRef_.find(player_id);
+        if (itUp != upgradesByUserRef_.end()) {
+            applyUpgradesToSpec(spec, itUp->second);
+        }
         const Spawn& spawn = shuffled[i++];
 
         FixtureTag* tag = makeTag(vehicle_tags_, EntityKind::Vehicle, player_id);
@@ -62,6 +68,12 @@ void LevelSetup::buildVehicles() {
 
         player_vehicle_map_.emplace(player_id, std::move(v));
     }
+}
+
+void LevelSetup::applyUpgradesToSpec(VehicleSpec& spec, const CarUpgrades& up) {
+    // +10% por nivel
+    spec.engine_force_N *= (1.0f + 0.10f * up.engineLevel);
+    spec.health *= (1.0f + 0.10f * up.armorLevel);
 }
 
 

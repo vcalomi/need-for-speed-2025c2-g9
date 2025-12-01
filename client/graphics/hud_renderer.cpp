@@ -6,18 +6,18 @@
 HUDRenderer::HUDRenderer(SDL2pp::Renderer& renderer, TextRenderer& text):
         renderer_(renderer), text_(text) {}
 
-void HUDRenderer::Render(const World& world) {
-    RenderLapCounter(world);
+void HUDRenderer::Render(const World& world, ProgressManager& progress) {
+    RenderLapCounter(world, progress);
     RenderHealthBar(world);
 }
 
-void HUDRenderer::RenderLapCounter(const World& world) {
+void HUDRenderer::RenderLapCounter(const World& world, ProgressManager& progress) {
     const auto& local = world.GetLocalPlayer();
 
-    int laps = world.GetLapsFor(local.GetUsername());
+    int laps = progress.GetLapCount();
     int totalLaps = 3;
 
-    int cp = world.GetLapProgressFor(local.GetUsername());
+    int cp = progress.GetActiveCheckpoint().id;
     int totalCp = world.GetCheckpoints().size();
 
     std::string lapText = "Lap " + std::to_string(laps + 1) + "/" + std::to_string(totalLaps);

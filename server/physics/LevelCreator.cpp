@@ -168,17 +168,18 @@ static void createTileCollider(b2WorldId world, float x_px, float y_px, float si
 void LevelCreator::createLevelCollision(b2WorldId world, const std::vector<Matrix>& levels) {
     const int tile_px = TILE_SIZE_PX; // 2 px
 
-    // POR LAS DUDAS: si no hay niveles, salimos
     if (levels.empty()) {
         std::cerr << "[ERROR] createLevelCollision: levels vacío\n";
         return;
     }
 
+    auto mutableLevels = levels;
+
     for (int lvl = 0; lvl < 4; ++lvl) {
         if (lvl >= (int)levels.size())
             continue;
 
-        const Matrix& M = levels[lvl];
+        Matrix& M =  mutableLevels[lvl];
         if (M.empty())
             continue;
 
@@ -213,6 +214,54 @@ void LevelCreator::createLevelCollision(b2WorldId world, const std::vector<Matri
                     continue;
                 }
 
+                if (v == 18 || v == 19) {
+                    int xStart = x;
+                    int xEnd   = x;
+
+                    // greedy: agrandamos hacia la derecha mientras sea el mismo tile
+                    while (xEnd + 1 < w && M[y][xEnd + 1] == v) {
+                        ++xEnd;
+                    }
+
+                    const int numTiles = (xEnd - xStart + 1);
+
+                    const float center_x_px =
+                        offset_x_px + ((xStart + xEnd + 1) * 0.5f) * tile_px;
+                    const float center_y_px = world_y_px;
+
+                    const float halfWidth_m  = (numTiles * tile_px) * 0.5f / PPM;
+                    const float halfHeight_m = tile_px * 0.5f / PPM;
+
+                    const float cx_m = center_x_px / PPM;
+                    const float cy_m = center_y_px / PPM;
+
+                    b2BodyDef bodyDef = b2DefaultBodyDef();
+                    bodyDef.type = b2_staticBody;
+                    bodyDef.position = {cx_m, cy_m};
+                    b2BodyId body = b2CreateBody(world, &bodyDef);
+
+                    b2Polygon box = b2MakeBox(halfWidth_m, halfHeight_m);
+
+                    b2ShapeDef shapeDef = b2DefaultShapeDef();
+                    shapeDef.isSensor = true;
+                    shapeDef.enableSensorEvents = true;
+
+                    // data: 1 = down (18), 0 = up (19)
+                    int data = (v == 18) ? 1 : 0;
+                    FixtureTag* tag =
+                        makeTag(bridge_tags_, EntityKind::BridgeToggle, 0 ,data);
+                    shapeDef.userData = tag;
+
+                    b2CreatePolygonShape(body, &shapeDef, &box);
+
+                    // pisar los tiles que ya procesamos con 0
+                    for (int k = xStart; k <= xEnd; ++k) {
+                        M[y][k] = 0;
+                    }
+
+                    continue;
+                }
+
                 if (v >= 7) {
                     const int checkpointIndex = v - 7;  // 7->0, 8->1, etc.
 
@@ -234,7 +283,7 @@ void LevelCreator::createLevelCollision(b2WorldId world, const std::vector<Matri
                     shapeDef.isSensor = true;
                     shapeDef.enableSensorEvents = true; 
                     
-                    FixtureTag* tag = makeTag(checkpoint_tags_, EntityKind::Checkpoint, checkpointIndex);
+                    FixtureTag* tag = makeTag(checkpoint_tags_, EntityKind::Checkpoint, checkpointIndex, 0);
                     shapeDef.userData = tag;
                     b2CreateCircleShape(body, &shapeDef, &circle);
 
@@ -242,6 +291,7 @@ void LevelCreator::createLevelCollision(b2WorldId world, const std::vector<Matri
 
                     continue; 
                 }
+
                 createTileCollider(world, world_x_px, world_y_px, tile_px);
                 addDebugTileRect(world_x_px, world_y_px, tile_px);
             }

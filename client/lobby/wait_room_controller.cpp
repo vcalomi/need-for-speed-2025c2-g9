@@ -2,6 +2,7 @@
 
 #include "lobby_service.h"
 #include "ui_mainwindow.h"
+#include "../../common/common_codes.h"
 
 WaitRoomController::WaitRoomController(LobbyService& svc, Ui::Lobby* ui, QObject* parent):
         QObject(parent), svc(svc), ui(ui) {

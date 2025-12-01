@@ -6,12 +6,14 @@
 #include <unordered_map>
 #include <memory>
 #include "vehicle.h"
+
 struct RawVehicleCheckpoint { int vehicleId; int checkpointIndex; };
 struct RawVehicleVehicle   { int a; int b; float speedA; float speedB; };
 struct RawVehicleWall      { int vehicleId; float speedBeforeImpact; };
+struct RawVehicleBridgeToggle { int vehicleId; bool under; };
 
 
-using RawEvent = std::variant<RawVehicleCheckpoint, RawVehicleVehicle, RawVehicleWall>;
+using RawEvent = std::variant<RawVehicleCheckpoint, RawVehicleVehicle, RawVehicleWall, RawVehicleBridgeToggle>;
 
 class PhysicsEventCollector {
 

@@ -251,6 +251,7 @@ void MainWindow::handleOpenMapsPage() {
 
     if (mapFiles.isEmpty()) {
         ui->listMaps->addItem("No se encontraron recorridos disponibles.");
+        ui->btnSelectMaps->setEnabled(false);
     } else {
         for (const QFileInfo& info: mapFiles) {
             QListWidgetItem* item = new QListWidgetItem(info.baseName());
@@ -262,6 +263,7 @@ void MainWindow::handleOpenMapsPage() {
             ui->listMaps->addItem(item);
             updateMapItemStyle(item);
         }
+        ui->btnSelectMaps->setEnabled(true);
     }
     Navigation::goToPage(ui->page_maps, ui->stackedWidget, this);
 }
@@ -284,18 +286,26 @@ void MainWindow::updateMapItemStyle(QListWidgetItem* item) {
 }
 
 void MainWindow::handleSelectMaps() {
-    QStringList selectedMaps;
+    QStringList selectedMapNames;
+    
     for (int i = 0; i < ui->listMaps->count(); ++i) {
         QListWidgetItem* item = ui->listMaps->item(i);
         if (item->checkState() == Qt::Checked) {
-            selectedMaps << item->text();
+            QString mapName = item->text();
+            if (mapName.contains(" - ")) {
+                mapName = mapName.split(" - ").last();
+            }
+            selectedMapNames.push_back(mapName);
         }
     }
-    if (selectedMaps.isEmpty()) {
+    
+    if (selectedMapNames.empty()) {
         QMessageBox::warning(this, "Selección vacía", "Debes seleccionar al menos un recorrido.");
         return;
     }
-    qDebug() << "Mapas seleccionados:" << selectedMaps;
+    
+    qDebug() << "Mapas seleccionados:" << selectedMapNames.size();
+    player.selectedMaps = selectedMapNames;
     handleCreateButton();
 }
 
@@ -348,7 +358,7 @@ void MainWindow::handleJoinGame() {
 
 void MainWindow::handleCreateGame() {
     player.isHost = true;
-    Navigation::goToPage(ui->page_create, ui->stackedWidget, this);
+    handleOpenMapsPage(); // Ir directamente a selección de mapas
 }
 
 void MainWindow::handleCreateButton() {
@@ -382,7 +392,7 @@ void MainWindow::handleCreateButton() {
         }
     )");
 
-    ui->btnContinue->setText("Continue");
+    ui->btnContinue->setText("Create Room");
     ui->btnContinue->show();
     player.isHost = true;
 
@@ -412,11 +422,25 @@ void MainWindow::handleContinueToWait() {
         return;
     }
     player.maxPlayers = ui->comboMaxPlayers->currentText().toUInt();
+    
     try {
         if (!this->lobbySvc->createRoom(player.roomCode, player.maxPlayers)) {
             QMessageBox::critical(this, "Create Room", "Failed to create room on server.");
             return;
         }
+
+        if (player.isHost && !player.selectedMaps.empty()) {
+            std::vector<std::string> mapsToSend;
+            for (const QString& map : player.selectedMaps) {
+                mapsToSend.push_back(map.toStdString());
+            }
+            
+            if (!this->lobbySvc->selectMaps(mapsToSend)) {
+                QMessageBox::warning(this, "Map Selection", 
+                                     "Failed to send map selection, but room was created.");
+            }
+        }
+        
     } catch (const std::exception& e) {
         QMessageBox::critical(this, "Create Room", QString("Error: %1").arg(e.what()));
         return;

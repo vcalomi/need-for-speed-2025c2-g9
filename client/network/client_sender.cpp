@@ -15,6 +15,7 @@ void ClientSender::run() {
     try {
         while (should_keep_running()) {
             std::shared_ptr<Dto> message = clientQueue.pop();
+            if (!should_keep_running()) break;
             protocol.sendDTO(message);
         }
     } catch (const ClosedQueue& e) {

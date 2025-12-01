@@ -16,31 +16,29 @@
 
 class Lobby: public Thread {
 private:
-    ServerProtocol& protocol;
+    Socket peer;
     GameMonitor& gameMonitor;
     int clientId;
-    Queue<std::shared_ptr<Dto>>& senderQueue;
-    std::function<void(std::shared_ptr<GameRoom> room)> onStartGame;
+    std::atomic<bool> game_started;
+    std::shared_ptr<ServerProtocol> protocol;
     CommandDispatcher dispatcher;
-    std::shared_ptr<Dto> lastDto; // last received dto in loop
 
     void initHandlers();
     // Handlers
-    void handleListRooms();
-    void handleCreateRoom();
-    void handleJoinRoom();
-    void handleStartGame();
-    void handleListPlayers();
-    void handleListState();
-    void handleChooseCar();
-    void handleSendUsername();
-
+    void handleListRooms(std::shared_ptr<Dto> dto);
+    void handleCreateRoom(std::shared_ptr<Dto> dto);
+    void handleJoinRoom(std::shared_ptr<Dto> dto);
+    void handleStartGame(std::shared_ptr<Dto> dto);
+    void handleListPlayers(std::shared_ptr<Dto> dto);
+    void handleListState(std::shared_ptr<Dto> dto);
+    void handleChooseCar(std::shared_ptr<Dto> dto);
+    void handleSendUsername(std::shared_ptr<Dto> dto);
+    void handleSelectMaps(std::shared_ptr<Dto> dto);
 
 public:
-    Lobby(ServerProtocol& protocol, GameMonitor& gameMonitor, int clientId,
-          Queue<std::shared_ptr<Dto>>& senderQueue,
-          std::function<void(std::shared_ptr<GameRoom> room)> onStartGame);
+    Lobby(Socket socket, GameMonitor& gameMonitor, int clientId);
     void run() override;
+    bool isGameStarted() { return game_started; }
 };
 
 #endif

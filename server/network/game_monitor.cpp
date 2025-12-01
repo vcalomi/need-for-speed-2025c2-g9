@@ -8,21 +8,28 @@
 
 GameMonitor::GameMonitor() {}
 
-std::shared_ptr<GameRoom> GameMonitor::getRoomByClient(int clientId) {
+std::shared_ptr<GameRoom> GameMonitor::getRoom(int clientId) {
     std::lock_guard<std::mutex> lock(mtx);
-    if (!clientToRoom.count(clientId))
+    if (!clientToRoom.count(clientId)) {
         return nullptr;
+    }
     return clientToRoom[clientId];
 }
 
 bool GameMonitor::createGameRoom(const std::string& roomName, int hostId,
-                                 Queue<std::shared_ptr<Dto>>& hostQueue, int maxPlayers) {
+                                 Player* hostPlayer, int maxPlayers) {
     std::lock_guard<std::mutex> lock(mtx);
+
+    if (activeGames.count(roomName)) {
+        return false;
+    }
 
     auto newRoom = std::make_shared<GameRoom>(roomName, hostId, maxPlayers);
     activeGames[roomName] = newRoom;
     clientToRoom[hostId] = newRoom;
-    newRoom->addPlayer(hostId, hostQueue);
+
+    newRoom->addPlayer(hostId, hostPlayer);
+    
     auto it = clientUsernames.find(hostId);
     if (it != clientUsernames.end()) {
         newRoom->setPlayerUsername(hostId, it->second);
@@ -32,7 +39,7 @@ bool GameMonitor::createGameRoom(const std::string& roomName, int hostId,
 }
 
 bool GameMonitor::joinGameRoom(const std::string& roomName, int clientId,
-                               Queue<std::shared_ptr<Dto>>& clientQueue) {
+                               Player* clientPlayer) {
     std::lock_guard<std::mutex> lock(mtx);
 
     if (!activeGames.count(roomName)) {
@@ -44,8 +51,9 @@ bool GameMonitor::joinGameRoom(const std::string& roomName, int clientId,
         return false;
     }
 
-    room->addPlayer(clientId, clientQueue);
+    room->addPlayer(clientId, clientPlayer);
     clientToRoom[clientId] = room;
+    
     auto it = clientUsernames.find(clientId);
     if (it != clientUsernames.end()) {
         room->setPlayerUsername(clientId, it->second);
@@ -67,53 +75,30 @@ std::vector<std::string> GameMonitor::getAvailableRooms() {
     return available;
 }
 
-bool GameMonitor::startGameByClientId(int clientId) {
-    std::vector<std::pair<int, std::function<void(std::shared_ptr<GameRoom>)>>> callbacksToExecute;
-    std::shared_ptr<GameRoom> targetRoom = nullptr;
+bool GameMonitor::startGameRoom(int clientId) {
+    std::lock_guard<std::mutex> lock(mtx);
 
-    {
-        std::lock_guard<std::mutex> lock(mtx);
+    if (!clientToRoom.count(clientId))
+        return false;
+    
+    auto room = clientToRoom[clientId];
+    if (!room->isHost(clientId))
+        return false;
 
-        if (!clientToRoom.count(clientId))
-            return false;
-        auto room = clientToRoom[clientId];
-        if (!room->isHost(clientId))
-            return false;
-        if (!room->startGame())
-            return false;
-
-        targetRoom = room;
-        auto it = startNotifiers.find(clientId);
-        if (it != startNotifiers.end()) {
-            callbacksToExecute.push_back({clientId, it->second});
-        }
-    }
-
-    for (auto& [cid, callback]: callbacksToExecute) {
-        try {
-            if (callback && targetRoom) {
-                callback(targetRoom);
-            }
-        } catch (const std::exception& e) {
-            std::cout << "Error in callback for client " << cid << ": " << e.what() << std::endl;
-        }
-    }
-
-    return true;
+    return room->startRace();
 }
 
-
-bool GameMonitor::chooseCarByClientId(int clientId, const CarConfig& car) {
+bool GameMonitor::choosePlayerCar(int clientId, const CarConfig& car) {
     std::lock_guard<std::mutex> lock(mtx);
 
     if (!clientToRoom.count(clientId)) {
-        return false;  // Cliente no está en ninguna sala
+        return false;
     }
     std::shared_ptr<GameRoom> room = clientToRoom[clientId];
     return room->chooseCar(clientId, car);
 }
 
-Queue<std::shared_ptr<Dto>>& GameMonitor::getGameQueueForClient(int clientId) {
+Queue<std::shared_ptr<Dto>>& GameMonitor::getGameQueue(int clientId) {
     std::lock_guard<std::mutex> lock(mtx);
 
     if (!clientToRoom.count(clientId)) {
@@ -123,7 +108,7 @@ Queue<std::shared_ptr<Dto>>& GameMonitor::getGameQueueForClient(int clientId) {
     return room->getGameQueue();
 }
 
-std::vector<std::string> GameMonitor::getPlayersInRoomByClient(int clientId) {
+std::vector<std::string> GameMonitor::getPlayersInRoom(int clientId) {
     std::lock_guard<std::mutex> lock(mtx);
     std::vector<std::string> result;
     if (!clientToRoom.count(clientId))
@@ -132,7 +117,6 @@ std::vector<std::string> GameMonitor::getPlayersInRoomByClient(int clientId) {
     std::shared_ptr<GameRoom> room = clientToRoom[clientId];
     auto ids = room->getPlayerIds();
     result.reserve(ids.size());
-    result.push_back("maxPlayers:" + std::to_string(room->getMaxPlayers()));
     for (int id: ids) {
         auto it = clientUsernames.find(id);
         result.push_back(it != clientUsernames.end() ? it->second : std::to_string(id));
@@ -142,58 +126,39 @@ std::vector<std::string> GameMonitor::getPlayersInRoomByClient(int clientId) {
 
 bool GameMonitor::setUsername(int clientId, const std::string& username) {
     std::lock_guard<std::mutex> lock(mtx);
-    for (const auto& [id, name]: clientUsernames) {
-        if (name == username && id != clientId) {
+    if (clientToRoom.count(clientId)) {
+        auto room = clientToRoom[clientId];
+        if (!room->setPlayerUsername(clientId, username)) {
             return false;
         }
     }
-
     clientUsernames[clientId] = username;
-    if (clientToRoom.count(clientId)) {
-        auto room = clientToRoom[clientId];
-        return room->setPlayerUsername(clientId, username);
-    }
-
     return true;
 }
 
-std::string GameMonitor::getUsername(int clientId) const {
-    auto it = clientUsernames.find(clientId);
-    if (it != clientUsernames.end())
-        return it->second;
-    return std::to_string(clientId);
-}
-
-bool GameMonitor::isGameStartedByClient(int clientId) {
-    std::lock_guard<std::mutex> lock(mtx);
-    if (!clientToRoom.count(clientId))
-        return false;
-    std::shared_ptr<GameRoom> room = clientToRoom[clientId];
-    return room->isInRace();
-}
-
-void GameMonitor::registerStartNotifier(int clientId,
-                                        std::function<void(std::shared_ptr<GameRoom>)> notifier) {
-    std::lock_guard<std::mutex> lock(mtx);
-    startNotifiers[clientId] = std::move(notifier);
-}
-
 void GameMonitor::removeClient(int clientId) {
-    std::shared_ptr<GameRoom> roomToCleanup = nullptr;
-    {
-        std::lock_guard<std::mutex> lock(mtx);
-        auto it = clientToRoom.find(clientId);
-        if (it != clientToRoom.end()) {
-            roomToCleanup = it->second;
-            clientToRoom.erase(it);
-        }
-        clientUsernames.erase(clientId);
-        startNotifiers.erase(clientId);
-        pendingGameStarts.erase(clientId);
+    std::lock_guard<std::mutex> lock(mtx);
+    auto roomIt = clientToRoom.find(clientId);
+    if (roomIt != clientToRoom.end()) {
+        std::shared_ptr<GameRoom> room = roomIt->second;
+        room->removePlayer(clientId);
+        clientToRoom.erase(roomIt);
     }
-    if (roomToCleanup) {
-        roomToCleanup->removePlayer(clientId);
+    clientUsernames.erase(clientId);
+}
+
+void GameMonitor::closeAll() {
+    std::lock_guard<std::mutex> lock(mtx);
+    
+    for (auto& [roomName, room] : activeGames) {
+        try {
+            room->stopAllPlayers();
+        } catch (...) {}
     }
+    
+    clientToRoom.clear();
+    clientUsernames.clear();
+    activeGames.clear();
 }
 
 GameMonitor::~GameMonitor() {}

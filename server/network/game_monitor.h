@@ -3,49 +3,40 @@
 
 #include <functional>
 #include <map>
+#include <mutex>
 #include <vector>
 
 #include "../../common/Dto/dto.h"
+#include "../../common/car_config.h"
 #include "../../common/queue.h"
 
 #include "game_room.h"
 
-/*
-    (Monitor) Gestiona las partidas
-*/
-
 class GameMonitor {
 private:
-    std::mutex mtx;
-    // clienteId y GameRoom
+    mutable std::mutex mtx;
     std::map<int, std::shared_ptr<GameRoom>> clientToRoom;
     std::map<int, std::string> clientUsernames;
     std::map<std::string, CarConfig> availableCars;
     std::map<std::string, std::shared_ptr<GameRoom>> activeGames;
-    std::map<int, std::function<void(std::shared_ptr<GameRoom>)>> startNotifiers;
-    std::map<int, bool> pendingGameStarts;
 
 public:
     GameMonitor();
     bool createGameRoom(const std::string& roomName, int hostId,
-                        Queue<std::shared_ptr<Dto>>& hostQueue, int maxPlayers = 8);
+                        Player* hostPlayer, int maxPlayers = 8);
     bool joinGameRoom(const std::string& roomName, int clientId,
-                      Queue<std::shared_ptr<Dto>>& clientQueue);
+                      Player* clientPlayer);
     std::vector<std::string> getAvailableRooms();
-    bool startGameByClientId(int clientId);
-    Queue<std::shared_ptr<Dto>>& getGameQueueForClient(int clientId);
-    bool chooseCarByClientId(int clientId, const CarConfig& car);
-    std::vector<std::string> getPlayersInRoomByClient(int clientId);
+    bool startGameRoom(int clientId);
+    bool isGameStarted(int clientId);
+    Queue<std::shared_ptr<Dto>>& getGameQueue(int clientId);
+    bool choosePlayerCar(int clientId, const CarConfig& car);
+    std::vector<std::string> getPlayersInRoom(int clientId);
     bool setUsername(int clientId, const std::string& username);
-    std::string getUsername(int clientId) const;
-    bool isGameStartedByClient(int clientId);
-    void registerStartNotifier(int clientId,
-                               std::function<void(std::shared_ptr<GameRoom>)> notifier);
-    std::shared_ptr<GameRoom> getRoomByClient(int clientId);
+    std::shared_ptr<GameRoom> getRoom(int clientId);
     void removeClient(int clientId);
+    void closeAll();
     ~GameMonitor();
 };
 
 #endif
-#include <memory>
-#include <string>

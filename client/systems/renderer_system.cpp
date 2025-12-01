@@ -1,10 +1,13 @@
 #include "renderer_system.h"
 
+#include "../events/upgrade_car_event.h"
+
 RendererSystem::RendererSystem(SDL2pp::Renderer& renderer, SpriteSheet& cars, World& world,
-                               EventBus& bus):
+                               EventBus& bus, ProgressManager& progress):
         renderer_(renderer),
         carSprites_(cars),
         world_(world),
+        progress_(progress),
         text_(renderer, LOBBY_ASSETS_DIR "/Tektur-SemiBold.ttf", 14),
         background_(renderer),
         playerRenderer_(renderer, cars, nullptr),
@@ -12,7 +15,7 @@ RendererSystem::RendererSystem(SDL2pp::Renderer& renderer, SpriteSheet& cars, Wo
         checkpointRenderer_(renderer),
         hudRenderer_(renderer, text_),
         screenRenderer_(renderer, text_),
-        controller_(bus, particleRenderer_, world, state_, screenRenderer_),
+        controller_(bus, particleRenderer_, world, state_, screenRenderer_, progress),
         checkpointIndicator_(renderer),
         speedometer_(renderer, ASSETS_DIR "/cars/speedometer.png",
                      ASSETS_DIR "/cars/speedometer_needle.png") {
@@ -49,13 +52,29 @@ void RendererSystem::Render(const World& world, Map& map, const Camera& camera, 
     if (state_.showFinalResultsScreen) {
         screenRenderer_.RenderRaceFinished(world);
         renderer_.Present();
+
+        int mx, my;
+        Uint32 mouseState = SDL_GetMouseState(&mx, &my);
+        bool pressed = mouseState & SDL_BUTTON(SDL_BUTTON_LEFT);
+
+        UpgradeChoice choice = screenRenderer_.HandleUpgradeInput(mx, my, pressed);
+
+        if (choice == UpgradeChoice::CONFIRM) {
+            bool h = screenRenderer_.IsHealthSelected();
+            bool s = screenRenderer_.IsSpeedSelected();
+
+            eventBus_.Publish(UpgradeCarEvent(world_.GetLocalPlayer().GetUsername(), h, s));
+
+            screenRenderer_.LockUpgrades();
+        }
+
+        SDL_Delay(16);
         return;
     }
 
-    checkpointRenderer_.Draw(world.GetCheckpoints(),
-                             world.GetActiveCheckpointFor(world.GetLocalPlayer().GetUsername()),
-                             world.GetPassedCheckpointIdsFor(world.GetLocalPlayer().GetUsername()),
-                             camera);
+
+    checkpointRenderer_.Draw(world.GetCheckpoints(), progress_.GetActiveCheckpoint(),
+                             progress_.GetPassedCheckpoints(), camera);
 
 
     for (auto& [id, player]: world.GetPlayers()) {
@@ -82,11 +101,11 @@ void RendererSystem::Render(const World& world, Map& map, const Camera& camera, 
         }
     }
 
-    minimap.Render(world, camera, map);
-    hudRenderer_.Render(world);
+    minimap.Render(world, camera, map, progress_);
+    hudRenderer_.Render(world, progress_);
 
     const auto& local = world.GetLocalPlayer();
-    const auto& nextCp = world.GetActiveCheckpointFor(local.GetUsername());
+    const auto& nextCp = progress_.GetActiveCheckpoint();
     checkpointIndicator_.Draw(camera, local, nextCp);
 
     float speed = world.GetLocalPlayer().GetSpeed();

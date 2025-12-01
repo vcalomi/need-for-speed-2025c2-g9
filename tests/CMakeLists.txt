@@ -26,6 +26,9 @@ add_executable(nfs_tests
   ../common/Dto/race_finished.cpp
   ../common/Dto/vehicle_exploded.cpp
   ../common/Dto/player_race_finished.cpp
+  ../common/Dto/infinite_health.cpp
+  ../common/Dto/end_race.cpp
+  ../common/Dto/vehicle_upgrade.cpp
 
   ../common/serializer/serializer.cpp
   ../common/serializer/player_serializer.cpp
@@ -45,6 +48,10 @@ add_executable(nfs_tests
   ../common/serializer/lobby_room_serializer.cpp
   ../common/serializer/lobby_room_state_serializer.cpp
   ../common/serializer/lobby_choose_car_serializer.cpp
+  ../common/serializer/lobby_maps_serializer.cpp
+  ../common/serializer/vehicle_upgrade_serializer.cpp
+  ../common/serializer/infinite_health_serializer.cpp
+  ../common/serializer/end_race_serializer.cpp
 )
 
 target_link_libraries(nfs_tests PRIVATE

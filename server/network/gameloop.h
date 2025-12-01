@@ -15,6 +15,7 @@
 #include "../../common/queue.h"
 #include "../../common/thread.h"
 #include "../LevelSetup.h"
+#include "../CarUpgrades.h"
 
 struct PlayerRaceProgress {
     int currentLap = 0;       
@@ -34,6 +35,7 @@ private:
     std::map<int, CarConfig>& chosenCars_;
     std::map<int, std::string>& playerUsernames_;
     Broadcaster& broadcaster_;
+    std::unordered_map<int, CarUpgrades> upgradesByUser_;
     std::optional<LevelSetup> setup;
     int maxPlayers;
     
@@ -45,7 +47,7 @@ private:
     bool pendingNextRace_ = false;
     std::unordered_map<int, PlayerRaceProgress> raceProgress_; 
     std::chrono::steady_clock::time_point raceStartTime_;
-
+    std::chrono::steady_clock::time_point nextRaceStartTime_;
     
     void handlerProcessCommand(std::shared_ptr<Dto> dto);
     Vehicle* getVehicleByPlayer(const std::string& username);
@@ -55,6 +57,7 @@ private:
     float computeCollisionDamage(float impactSpeed);
     void handleVehicleVehicleCollision(const RawVehicleVehicle& event);
     void handleVehicleWallCollision(const RawVehicleWall& event);
+    void handleVehicleBridgeToggle(const RawVehicleBridgeToggle& event);
     bool allPlayersFinished();
 
     void sendVehiclesPositions();
@@ -69,7 +72,7 @@ public:
     explicit GameLoop(Queue<std::shared_ptr<Dto>>& gameLoopQueue,
                       std::map<int, CarConfig>& chosenCars,
                       std::map<int, std::string>& playerUsernames, Broadcaster& broadcaster,
-                      int maxPlayers);
+                      int maxPlayers, const std::vector<std::string>& selectedMaps);
 
     void run() override;
     void processCommands();

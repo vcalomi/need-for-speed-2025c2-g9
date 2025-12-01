@@ -3,14 +3,19 @@
 
 #include "../world/camera.h"
 #include "../world/map.h"
+#include "../world/progress_manager.h"
 #include "../world/world.h"
 
 class Minimap {
 public:
-    Minimap(SDL2pp::Renderer& renderer, const Map& map, int width, int height);
-    void Render(const World& world, const Camera& camera, const Map& map);
+    Minimap(SDL2pp::Renderer& renderer, int width, int height);
+
+    void Render(const World& world, const Camera& camera, const Map& map,
+                ProgressManager& progress);
 
 private:
     SDL2pp::Renderer& renderer_;
-    int miniWidth, miniHeight;
+    SDL2pp::Texture minimapTexture_;
+    int miniWidth;
+    int miniHeight;
 };

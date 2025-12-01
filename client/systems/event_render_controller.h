@@ -2,6 +2,7 @@
 #include "../events/event.h"
 #include "../graphics/particle_renderer.h"
 #include "../graphics/screen_renderer.h"
+#include "../world/progress_manager.h"
 #include "../world/world.h"
 
 struct RenderState {
@@ -19,7 +20,8 @@ struct RenderState {
 class EventRenderController {
 public:
     EventRenderController(EventBus& bus, ParticleRenderer& particles, World& world,
-                          RenderState& state, ScreenRenderer& screenRenderer);
+                          RenderState& state, ScreenRenderer& screenRenderer,
+                          ProgressManager& progress);
 
 private:
     void RegisterEvents();
@@ -29,4 +31,5 @@ private:
     World& world_;
     RenderState& state_;
     ScreenRenderer& screenRenderer_;
+    ProgressManager& progress_;
 };

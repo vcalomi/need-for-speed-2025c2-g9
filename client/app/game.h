@@ -11,6 +11,7 @@
 #include "../systems/network_system.h"
 #include "../systems/renderer_system.h"
 #include "../world/map.h"
+#include "../world/progress_manager.h"
 #include "../world/world.h"
 #include "./engine.h"
 
@@ -26,6 +27,7 @@ private:
     ResourceLoader resources_;
     EventBus eventBus_;
     World world_;
+    ProgressManager progress_;
     InputSystem inputSystem_;
     RendererSystem rendererSystem_;
     NetworkSystem networkSystem_;

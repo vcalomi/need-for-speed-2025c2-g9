@@ -16,14 +16,14 @@
 
 #include "YamlParser.h"
 #include "constants.h"
-
+#include "CarUpgrades.h"
 #include "./physics/PhysicsEventCollector.h"
 
 class LevelSetup {
 
 public:
     explicit LevelSetup(const std::string& level_json_path, const std::string& vehicle_specs_path,
-                        const std::map<int, CarConfig>& chosenCars);
+                        const std::map<int, CarConfig>& chosenCars, std::unordered_map<int, CarUpgrades>& upgradesByUser);
 
     void buildVehicles();
     std::vector<RawEvent> stepAndDrainEvents(float dt);
@@ -39,6 +39,7 @@ public:
 
 private:
     void create_vehicles();
+    void applyUpgradesToSpec(VehicleSpec& spec, const CarUpgrades& up);
     const std::map<int, CarConfig>& chosenCarsRef_; 
     std::unordered_map<std::string, VehicleSpec> config_map_;
     b2WorldId world_{b2_nullWorldId};
@@ -50,4 +51,5 @@ private:
     std::deque<FixtureTag> vehicle_tags_;
     int totalLaps_ = 1;
     PhysicsEventCollector collector_;
+    const std::unordered_map<int, CarUpgrades>& upgradesByUserRef_;
 };
