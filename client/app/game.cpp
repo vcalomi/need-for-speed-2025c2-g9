@@ -50,9 +50,10 @@ void Game::Run() {
             eventBus_.Publish(InfiniteHealthEvent(this->world_.GetLocalPlayer().GetUsername()));
         }
 
-        if (inputSystem_.IsKeyPressed(SDL_SCANCODE_E)) {
-            eventBus_.Publish(CheatEndRaceEvent(this->world_.GetLocalPlayer().GetUsername()));
+        if (inputSystem_.WasKeyPressed(SDL_SCANCODE_E)) {
+            eventBus_.Publish(CheatEndRaceEvent(world_.GetLocalPlayer().GetUsername()));
         }
+
 
         PlayerMoveDto input =
                 inputSystem_.GetInputByte(this->world_.GetLocalPlayer().GetUsername());

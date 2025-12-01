@@ -9,6 +9,8 @@ void InputSystem::PollEvents(bool& running) {
         if (e.type == SDL_QUIT)
             running = false;
     }
+
+    keyboardState_ = SDL_GetKeyboardState(NULL);
 }
 
 PlayerMoveDto InputSystem::GetInputByte(std::string username) const {
@@ -34,4 +36,15 @@ PlayerMoveDto InputSystem::GetInputByte(std::string username) const {
 bool InputSystem::IsKeyPressed(SDL_Scancode key) const {
     const Uint8* keys = SDL_GetKeyboardState(NULL);
     return keys[key] != 0;
+}
+
+bool InputSystem::WasKeyPressed(SDL_Scancode key) {
+    bool isPressed = IsKeyPressed(key);
+    bool wasPressedBefore = previousKeyState_[key];
+
+    bool justPressed = (isPressed && !wasPressedBefore);
+
+    previousKeyState_[key] = isPressed;
+
+    return justPressed;
 }
