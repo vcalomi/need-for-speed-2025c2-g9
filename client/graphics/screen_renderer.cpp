@@ -99,6 +99,44 @@ void ScreenRenderer::RenderRaceFinished(const World& world) {
     RenderUpgradeOptions();
 }
 
+void ScreenRenderer::RenderCountdown(float countdownTimer, int countdownNumber) {
+    std::string text;
+
+    if (countdownNumber > 0) {
+        text = std::to_string(countdownNumber);
+    } else {
+        text = "GO!";
+    }
+
+    int fontSize = 180;
+    SDL_Color color = {255, 255, 255, 255};
+
+
+    if (countdownNumber == 0) {
+        float t = std::clamp(countdownTimer * -1.0f, 0.0f, 1.0f);
+        color.a = (Uint8)((1.0f - t) * 255);
+    }
+
+    RenderCenteredText(text, fontSize, color);
+}
+
+void ScreenRenderer::RenderCenteredText(const std::string& text, int size, SDL_Color color) {
+    SDL2pp::Font font("../client/lobby/assets/Tektur-SemiBold.ttf", size);
+    SDL2pp::Surface surface(font.RenderText_Blended(text, color));
+    SDL2pp::Texture texture(renderer_, surface);
+
+    int w, h;
+    SDL_QueryTexture(texture.Get(), nullptr, nullptr, &w, &h);
+
+    int sw, sh;
+    SDL_GetRendererOutputSize(renderer_.Get(), &sw, &sh);
+
+    SDL_Rect dst{(sw - w) / 2, (sh - h) / 2, w, h};
+
+    renderer_.Copy(texture, SDL2pp::NullOpt, dst);
+}
+
+
 void ScreenRenderer::RenderUpgradeOptions() {
 
 

@@ -50,6 +50,7 @@ public:
 
     void LockUpgrades() { upgradesLocked_ = true; }
     bool UpgradesLocked() const { return upgradesLocked_; }
+    void RenderCountdown(float countdownTimer, int countdownNumber);
 
 
 private:
@@ -68,4 +69,5 @@ private:
     bool upgradesLocked_ = false;
     bool mouseWasPressed_ = false;
     void DrawCentered(const std::string& msg, int y);
+    void RenderCenteredText(const std::string& text, int size, SDL_Color color);
 };

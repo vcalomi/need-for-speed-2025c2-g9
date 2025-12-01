@@ -58,6 +58,9 @@ void EventRenderController::RegisterEvents() {
             progress_.Reset();
             return;
         }
+        state_.countdownActive = true;
+        state_.countdownTimer = 3.0f;
+        state_.countdownNumber = 3;
     });
 
 

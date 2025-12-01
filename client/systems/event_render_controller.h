@@ -15,6 +15,10 @@ struct RenderState {
     bool showExplosion = false;
     bool showFinalResultsScreen = false;
     bool showPlayerFinishedScreen = false;
+    bool countdownActive = false;
+    float countdownTimer = 0.0f;
+    int countdownNumber = 3;
+    float countdownGoTimer = 0.0f;
 };
 
 class EventRenderController {

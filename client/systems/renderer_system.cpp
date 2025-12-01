@@ -27,6 +27,34 @@ RendererSystem::RendererSystem(SDL2pp::Renderer& renderer, SpriteSheet& cars, Wo
 void RendererSystem::Render(const World& world, Map& map, const Camera& camera, Minimap& minimap) {
     renderer_.Clear();
 
+    if (state_.countdownActive) {
+        float dt = 0.016f;
+
+        state_.countdownTimer -= dt;
+
+        int newNum = std::ceil(state_.countdownTimer);
+
+        if (newNum != state_.countdownNumber && newNum > 0) {
+            state_.countdownNumber = newNum;
+        }
+
+        if (state_.countdownTimer <= 0.0f) {
+            state_.countdownActive = false;
+            state_.countdownNumber = 0;
+            state_.countdownGoTimer = 1.0f;
+        }
+    } else if (state_.countdownNumber == 0) {
+
+        float dt = 0.016f;
+
+        state_.countdownGoTimer -= dt;
+
+        if (state_.countdownGoTimer <= 0.0f) {
+            state_.countdownNumber = -1;
+        }
+    }
+
+
     background_.RenderBackground(map, camera);
 
     if (state_.localPlayerExploded) {
@@ -111,6 +139,10 @@ void RendererSystem::Render(const World& world, Map& map, const Camera& camera, 
 
     float speed = world.GetLocalPlayer().GetSpeed();
     speedometer_.Render(speed, 200.0f);
+
+    if (state_.countdownActive || state_.countdownNumber >= 0) {
+        screenRenderer_.RenderCountdown(state_.countdownTimer, state_.countdownNumber);
+    }
 
     renderer_.Present();
 }
