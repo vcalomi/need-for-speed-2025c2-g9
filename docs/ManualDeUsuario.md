@@ -184,7 +184,8 @@ Por ejemplo, un camión tendrá una velocidad y aceleración menores que un auto
 ---
 
 <h2 id="mapas">5. 🗺️ Editor de Mapas (Race Track Editor)</h2>
-El editor permite crear circuitos personalizados que luego pueden jugarse en el servidor. Estos serán visualizados cuando se crea una partida en la página donde hay que seleccionar los recorridos que contendrá la partida.
+
+El editor permite **crear circuitos personalizados** que luego pueden jugarse en el servidor. Estos serán visualizados cuando se crea una partida en la página donde hay que seleccionar los recorridos que contendrá la partida.
 
 Puede abrirse desde:
 
@@ -234,7 +235,7 @@ Para realizar el circuito puedes:
 | **Retroceder / Marcha atrás** | **s ⬇️** |
 
 ### 😶‍🌫️ Cheats
-En cualquier momento de la partida podés activar distintos cheats para probar el juego o facilitar la experiencia. 
+En **cualquier momento de la partida** podés activar distintos cheats para probar el juego o facilitar la experiencia. 
 
 **Cheats disponibles**:
 | Acción | Tecla(s) |
@@ -253,6 +254,7 @@ Al finalizar cada carrera y hasta unos 10 segundos de arrancar la siguiente, **c
 
 
 <h2 id="objetivo">7. 🎯 Dinámica y Objetivo del Juego</h2>
+
 **¡Bienvenido a la pista!** Cada partida puede incluir una sola carrera... o una verdadera maratón de circuitos consecutivos.
 Tu misión no es solo manejar: es sobrevivir a la velocidad, a los giros cerrados y a tus rivales.
 
