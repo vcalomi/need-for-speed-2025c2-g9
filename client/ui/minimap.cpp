@@ -20,7 +20,8 @@ Minimap::Minimap(SDL2pp::Renderer& renderer, const Map& map, int width, int heig
         renderer_(renderer), miniWidth(width), miniHeight(height) {}
 
 
-void Minimap::Render(const World& world, const Camera& camera, const Map& map) {
+void Minimap::Render(const World& world, const Camera& camera, const Map& map,
+                     ProgressManager& progress) {
     SDL2pp::Texture* mapTexture = const_cast<SDL2pp::Texture*>(map.GetBackgroundTexture());
     if (!mapTexture)
         return;
@@ -74,8 +75,8 @@ void Minimap::Render(const World& world, const Camera& camera, const Map& map) {
     // Checkpoints
     if (!world.GetCheckpoints().empty() && world.HasPlayers()) {
         const auto& localPlayer = world.GetLocalPlayer();
-        const auto& activeCp = world.GetActiveCheckpointFor(localPlayer.GetUsername());
-        const auto passed = world.GetPassedCheckpointIdsFor(localPlayer.GetUsername());
+        const auto& activeCp = progress.GetActiveCheckpoint();
+        const auto passed = progress.GetPassedCheckpoints();
 
         for (const auto& cp: world.GetCheckpoints()) {
             float relX = (cp.x - srcX) * scaleX;

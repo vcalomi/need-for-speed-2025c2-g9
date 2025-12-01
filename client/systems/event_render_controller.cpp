@@ -51,7 +51,6 @@ void EventRenderController::RegisterEvents() {
             state_.showExplosion = false;
             state_.showFinalResultsScreen = false;
             state_.showPlayerFinishedScreen = false;
-            world_.resetRace();
             return;
         }
     });
@@ -62,7 +61,6 @@ void EventRenderController::RegisterEvents() {
         state_.showPlayerFinishedScreen = false;
         state_.showFinalResultsScreen = true;
         world_.ResetPlayersExploded();
-        world_.resetRace();
     });
 
 

@@ -22,7 +22,9 @@ Game::Game(Client& client):
         eventBus_(),
         inputSystem_(),
         world_(eventBus_),
-        rendererSystem_(engine_.GetRenderer(), resources_.GetCarSprites(), world_, eventBus_),
+        progress_(eventBus_),
+        rendererSystem_(engine_.GetRenderer(), resources_.GetCarSprites(), world_, eventBus_,
+                        progress_),
         networkSystem_(client_, eventBus_),
         dtoHandlerSystem_(client_, eventBus_),
         map_(engine_.GetRenderer(), eventBus_) {
@@ -41,6 +43,9 @@ void Game::Run() {
             dtoHandlerSystem_.Process(dto);
         }
     }
+
+    progress_.SetCheckpoints(world_.GetCheckpoints());
+    progress_.SetLocalPlayer(world_.GetLocalPlayer().GetUsername());
 
     while (running) {
 

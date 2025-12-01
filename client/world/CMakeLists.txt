@@ -5,6 +5,7 @@ add_library(world
     player.cpp
     world.cpp
     map.cpp
+    progress_manager.cpp
 )
 
 target_include_directories(world
