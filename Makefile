@@ -29,6 +29,8 @@ dependencies:
 		sudo apt-get install -y qt6-base-dev qt6-multimedia-dev; \
 		echo "Instalando SDL2..."; \
 		sudo apt-get install -y libsdl2-2.0-0 libsdl2-dev libsdl2-image-2.0-0 libsdl2-image-dev libsdl2-mixer-2.0-0 libsdl2-mixer-dev libsdl2-ttf-2.0-0 libsdl2-ttf-dev; \
+		echo "Instalando dependencias de audio para SDL2_mixer..."; \
+		sudo apt-get install -y libopusfile-dev libopus-dev libogg-dev libflac-dev libmpg123-dev libvorbis-dev; \
 		echo "Configurando archivos CMake de SDL2..."; \
 		if [ ! -e "/usr/lib/x86_64-linux-gnu/cmake/SDL2_image" ]; then \
 			sudo mkdir -p /usr/lib/x86_64-linux-gnu/cmake/SDL2_image; \
@@ -48,6 +50,8 @@ dependencies:
 		sudo pacman -S --noconfirm base-devel cmake pkg-config git; \
 		sudo pacman -S --noconfirm qt6-base qt6-multimedia; \
 		sudo pacman -S --noconfirm sdl2 sdl2_image sdl2_mixer sdl2_ttf; \
+		echo "Instalando codecs de audio..."; \
+		sudo pacman -S --noconfirm opusfile opus libogg flac mpg123 libvorbis; \
 		echo "✓ Dependencias instaladas."; \
 	else \
 		echo "Distro no soportada"; \
