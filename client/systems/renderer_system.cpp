@@ -1,5 +1,7 @@
 #include "renderer_system.h"
 
+#include "../events/upgrade_car_event.h"
+
 RendererSystem::RendererSystem(SDL2pp::Renderer& renderer, SpriteSheet& cars, World& world,
                                EventBus& bus):
         renderer_(renderer),
@@ -15,7 +17,8 @@ RendererSystem::RendererSystem(SDL2pp::Renderer& renderer, SpriteSheet& cars, Wo
         controller_(bus, particleRenderer_, world, state_, screenRenderer_),
         checkpointIndicator_(renderer),
         speedometer_(renderer, "../client/assets/need-for-speed/cars/speedometer.png",
-                     "../client/assets/need-for-speed/cars/speedometer_needle.png") {
+                     "../client/assets/need-for-speed/cars/speedometer_needle.png"),
+        eventBus_(bus) {
     checkpointIndicator_.SetTexture("../client/assets/need-for-speed/cars/arrow.png");
 }
 
@@ -49,8 +52,26 @@ void RendererSystem::Render(const World& world, Map& map, const Camera& camera, 
     if (state_.showFinalResultsScreen) {
         screenRenderer_.RenderRaceFinished(world);
         renderer_.Present();
+
+        int mx, my;
+        Uint32 mouseState = SDL_GetMouseState(&mx, &my);
+        bool pressed = mouseState & SDL_BUTTON(SDL_BUTTON_LEFT);
+
+        UpgradeChoice choice = screenRenderer_.HandleUpgradeInput(mx, my, pressed);
+
+        if (choice == UpgradeChoice::CONFIRM) {
+            bool h = screenRenderer_.IsHealthSelected();
+            bool s = screenRenderer_.IsSpeedSelected();
+
+            eventBus_.Publish(UpgradeCarEvent(world_.GetLocalPlayer().GetUsername(), h, s));
+
+            screenRenderer_.LockUpgrades();
+        }
+
+        SDL_Delay(16);
         return;
     }
+
 
     checkpointRenderer_.Draw(world.GetCheckpoints(),
                              world.GetActiveCheckpointFor(world.GetLocalPlayer().GetUsername()),

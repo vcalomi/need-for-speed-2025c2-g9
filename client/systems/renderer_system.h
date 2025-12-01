@@ -2,6 +2,7 @@
 
 #include <SDL2pp/Renderer.hh>
 
+#include "../events/event.h"
 #include "../graphics/background_renderer.h"
 #include "../graphics/checkpoint_renderer.h"
 #include "../graphics/hud_renderer.h"
@@ -37,7 +38,7 @@ private:
     ScreenRenderer screenRenderer_;
     CheckpointIndicator checkpointIndicator_;
     Speedometer speedometer_;
-
+    EventBus& eventBus_;
     RenderState state_;
     EventRenderController controller_;
 };

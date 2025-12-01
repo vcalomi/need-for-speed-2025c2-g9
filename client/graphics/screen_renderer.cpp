@@ -78,25 +78,97 @@ void ScreenRenderer::RenderPlayerLost() {
 }
 
 void ScreenRenderer::RenderRaceFinished(const World& world) {
-    int w, h;
-    SDL_GetRendererOutputSize(renderer_.Get(), &w, &h);
+    int sw, sh;
+    SDL_GetRendererOutputSize(renderer_.Get(), &sw, &sh);
 
-    SDL_SetRenderDrawColor(renderer_.Get(), 0, 0, 0, 200);
-    SDL_Rect bg{0, 0, w, h};
+    SDL_SetRenderDrawColor(renderer_.Get(), 0, 0, 0, 160);
+    SDL_Rect bg{0, 0, sw, sh};
     SDL_RenderFillRect(renderer_.Get(), &bg);
+    DrawCentered("RACE FINISHED!", sh / 4);
 
-    DrawCentered("RACE FINISHED", 60);
-
-    // Si el mundo tuviera resultados finales del servidor:
-    // auto results = world.GetFinalResults();
-    // int y = 120;
-    // for (const auto& r : results) {
-    //     std::string line = std::to_string(r.position) + ". " + r.username + " - " +
-    //     Format(r.time); DrawCentered(line, y); y += 40;
+    int y = sh / 4 + 80;
+    // int pos = 1;
+    // for (const auto& [id, player]: world.GetPlayers()) {
+    //     std::string line = std::to_string(pos) + ". " + id + "  -  " +
+    //                        std::to_string(player.GetFinishTime()) + "s";
+    //     DrawCentered(line, y);
+    //     y += 30;
+    //     pos++;
     // }
 
-    DrawCentered("Waiting for next race...", h - 100);
+    RenderUpgradeOptions();
 }
+
+void ScreenRenderer::RenderUpgradeOptions() {
+
+
+    int sw, sh;
+    SDL_GetRendererOutputSize(renderer_.Get(), &sw, &sh);
+
+    int btnWidth = 300;
+    int btnHeight = 60;
+    int x = (sw - btnWidth) / 2;
+
+    int yHealth = sh - 260;
+    int ySpeed = sh - 180;
+    int yConfirm = sh - 80;
+
+    if (upgradesLocked_) {
+        DrawCentered("Upgrades confirmed!", sh - 150);
+        return;
+    }
+
+    healthButton_ = {x, yHealth, btnWidth, btnHeight};
+    speedButton_ = {x, ySpeed, btnWidth, btnHeight};
+    confirmButton_ = {x, yConfirm, btnWidth, btnHeight};
+
+    auto drawButton = [&](SDL_Rect r, bool selected, const std::string& txt) {
+        if (selected)
+            renderer_.SetDrawColor(60, 180, 60, 200);  // verde si seleccionado
+        else
+            renderer_.SetDrawColor(80, 80, 80, 180);
+
+        renderer_.FillRect(r);
+        text_.Draw(txt, r.x + 15, r.y + 20);
+    };
+
+    drawButton(healthButton_, selectedHealth_, "Improve Health (+1s)");
+    drawButton(speedButton_, selectedSpeed_, "Improve Speed (+1s)");
+    drawButton(confirmButton_, false, "Confirm Upgrades");
+}
+
+
+UpgradeChoice ScreenRenderer::HandleUpgradeInput(int mx, int my, bool mousePressed) {
+    if (upgradesLocked_) {
+        mouseWasPressed_ = mousePressed;
+        return UpgradeChoice::NONE;
+    }
+
+    bool justClicked = (mousePressed && !mouseWasPressed_);
+    mouseWasPressed_ = mousePressed;
+
+    if (!justClicked)
+        return UpgradeChoice::NONE;
+
+    SDL_Point p{mx, my};
+
+    if (SDL_PointInRect(&p, &healthButton_)) {
+        selectedHealth_ = !selectedHealth_;
+        return UpgradeChoice::HEALTH;
+    }
+
+    if (SDL_PointInRect(&p, &speedButton_)) {
+        selectedSpeed_ = !selectedSpeed_;
+        return UpgradeChoice::SPEED;
+    }
+
+    if (SDL_PointInRect(&p, &confirmButton_)) {
+        return UpgradeChoice::CONFIRM;
+    }
+
+    return UpgradeChoice::NONE;
+}
+
 
 void ScreenRenderer::DrawCentered(const std::string& msg, int y) {
     int w, h;
