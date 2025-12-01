@@ -3,8 +3,8 @@
 ScreenRenderer::ScreenRenderer(SDL2pp::Renderer& renderer, TextRenderer& text):
         renderer_(renderer),
         text_(text),
-        explosionTexture_(std::make_unique<SDL2pp::Texture>(
-                renderer, ASSETS_DIR "/cars/explosion.png")) {}
+        explosionTexture_(
+                std::make_unique<SDL2pp::Texture>(renderer, ASSETS_DIR "/cars/explosion.png")) {}
 
 
 void ScreenRenderer::RenderExplosion(const Camera& camera, float dt) {

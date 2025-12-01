@@ -287,7 +287,7 @@ void MainWindow::updateMapItemStyle(QListWidgetItem* item) {
 
 void MainWindow::handleSelectMaps() {
     QStringList selectedMapNames;
-    
+
     for (int i = 0; i < ui->listMaps->count(); ++i) {
         QListWidgetItem* item = ui->listMaps->item(i);
         if (item->checkState() == Qt::Checked) {
@@ -298,12 +298,12 @@ void MainWindow::handleSelectMaps() {
             selectedMapNames.push_back(mapName);
         }
     }
-    
+
     if (selectedMapNames.empty()) {
         QMessageBox::warning(this, "Selección vacía", "Debes seleccionar al menos un recorrido.");
         return;
     }
-    
+
     qDebug() << "Mapas seleccionados:" << selectedMapNames.size();
     player.selectedMaps = selectedMapNames;
     handleCreateButton();
@@ -358,7 +358,7 @@ void MainWindow::handleJoinGame() {
 
 void MainWindow::handleCreateGame() {
     player.isHost = true;
-    handleOpenMapsPage(); // Ir directamente a selección de mapas
+    handleOpenMapsPage();  // Ir directamente a selección de mapas
 }
 
 void MainWindow::handleCreateButton() {
@@ -422,7 +422,7 @@ void MainWindow::handleContinueToWait() {
         return;
     }
     player.maxPlayers = ui->comboMaxPlayers->currentText().toUInt();
-    
+
     try {
         if (!this->lobbySvc->createRoom(player.roomCode, player.maxPlayers)) {
             QMessageBox::critical(this, "Create Room", "Failed to create room on server.");
@@ -431,16 +431,16 @@ void MainWindow::handleContinueToWait() {
 
         if (player.isHost && !player.selectedMaps.empty()) {
             std::vector<std::string> mapsToSend;
-            for (const QString& map : player.selectedMaps) {
+            for (const QString& map: player.selectedMaps) {
                 mapsToSend.push_back(map.toStdString());
             }
-            
+
             if (!this->lobbySvc->selectMaps(mapsToSend)) {
-                QMessageBox::warning(this, "Map Selection", 
+                QMessageBox::warning(this, "Map Selection",
                                      "Failed to send map selection, but room was created.");
             }
         }
-        
+
     } catch (const std::exception& e) {
         QMessageBox::critical(this, "Create Room", QString("Error: %1").arg(e.what()));
         return;
@@ -501,16 +501,18 @@ void MainWindow::updateLobbyStatus() {
 }
 
 void MainWindow::handleRefreshPlayers() {
-    if (inFlight) return;
+    if (inFlight)
+        return;
     inFlight = true;
     try {
         auto vm = lobbySvc->listPlayers();
         ui->listPlayers->clear();
-        for (const auto& p : vm.players) {
+        for (const auto& p: vm.players) {
             ui->listPlayers->addItem(p);
         }
         player.currentPlayers = static_cast<unsigned>(vm.players.size());
-        if (vm.maxPlayers > 0) player.maxPlayers = vm.maxPlayers;
+        if (vm.maxPlayers > 0)
+            player.maxPlayers = vm.maxPlayers;
         updateLobbyStatus();
     } catch (const std::exception& e) {
         QMessageBox::warning(this, "Refresh Players",

@@ -3,10 +3,10 @@
 
 #include <cstdint>
 #include <cstring>
+#include <string>
 #include <vector>
 
 #include <netinet/in.h>
-#include <string>
 
 namespace SerializerUtils {
 
@@ -77,9 +77,10 @@ inline bool readBool(const std::vector<uint8_t>& buffer, size_t& pos) {
     return readByte(buffer, pos) != 0;
 }
 
-inline void writeStringVector(std::vector<uint8_t>& buffer, size_t& pos, const std::vector<std::string>& vec) {
+inline void writeStringVector(std::vector<uint8_t>& buffer, size_t& pos,
+                              const std::vector<std::string>& vec) {
     writeInt(buffer, pos, static_cast<int>(vec.size()));
-    for (const auto& str : vec) {
+    for (const auto& str: vec) {
         writeString(buffer, pos, str);
     }
 }
@@ -96,15 +97,16 @@ inline std::vector<std::string> readStringVector(const std::vector<uint8_t>& buf
 
 inline size_t calculateStringVectorSize(const std::vector<std::string>& vec) {
     size_t total_size = sizeof(int);
-    for (const auto& str : vec) {
+    for (const auto& str: vec) {
         total_size += STRING_LENGTH_SIZE + str.length();
     }
     return total_size;
 }
 
-inline void writeByteVector(std::vector<uint8_t>& buffer, size_t& pos, const std::vector<uint8_t>& vec) {
+inline void writeByteVector(std::vector<uint8_t>& buffer, size_t& pos,
+                            const std::vector<uint8_t>& vec) {
     writeInt(buffer, pos, static_cast<int>(vec.size()));
-    for (uint8_t value : vec) {
+    for (uint8_t value: vec) {
         writeByte(buffer, pos, value);
     }
 }
@@ -123,6 +125,6 @@ inline size_t calculateByteVectorSize(const std::vector<uint8_t>& vec) {
     return sizeof(int) + vec.size() * sizeof(uint8_t);
 }
 
-}
+}  // namespace SerializerUtils
 
 #endif
