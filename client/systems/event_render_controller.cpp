@@ -10,12 +10,14 @@
 
 EventRenderController::EventRenderController(EventBus& bus, ParticleRenderer& particles,
                                              World& world, RenderState& state,
-                                             ScreenRenderer& screenRenderer):
+                                             ScreenRenderer& screenRenderer,
+                                             ProgressManager& progress):
         eventBus_(bus),
         particles_(particles),
         world_(world),
         state_(state),
-        screenRenderer_(screenRenderer) {
+        screenRenderer_(screenRenderer),
+        progress_(progress) {
     RegisterEvents();
 }
 
@@ -51,6 +53,9 @@ void EventRenderController::RegisterEvents() {
             state_.showExplosion = false;
             state_.showFinalResultsScreen = false;
             state_.showPlayerFinishedScreen = false;
+
+            world_.SetCheckpoints({});
+            progress_.Reset();
             return;
         }
     });

@@ -15,7 +15,7 @@ RendererSystem::RendererSystem(SDL2pp::Renderer& renderer, SpriteSheet& cars, Wo
         checkpointRenderer_(renderer),
         hudRenderer_(renderer, text_),
         screenRenderer_(renderer, text_),
-        controller_(bus, particleRenderer_, world, state_, screenRenderer_),
+        controller_(bus, particleRenderer_, world, state_, screenRenderer_, progress),
         checkpointIndicator_(renderer),
         speedometer_(renderer, "../client/assets/need-for-speed/cars/speedometer.png",
                      "../client/assets/need-for-speed/cars/speedometer_needle.png"),
