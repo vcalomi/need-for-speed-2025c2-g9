@@ -13,12 +13,17 @@
 #include "../common/Dto/lobby_room_state.h"
 #include "../common/Dto/lap_completed.h"
 #include "../common/Dto/race_finished.h"
+#include "../common/Dto/player_race_finished.h"
 #include "../common/Dto/vehicle_checkpoint.h"
 #include "../common/Dto/vehicle.h"
 #include "../common/Dto/vehicle_collision.h"
 #include "../common/Dto/vehicle_wall_collision.h"
 #include "../common/Dto/vehicle_exploded.h"
 #include "../common/Dto/checkpoint.h"
+#include "../common/Dto/player.h"
+#include "../common/Dto/vehicle_upgrade.h"
+#include "../common/Dto/end_race.h"
+#include "../common/Dto/infinite_health.h"
 
 const char* SERVER_TEST_PORT = "18083";
 const char* IP = "localhost";
@@ -193,7 +198,8 @@ TEST_F(ProtocolTest, GAMEPLAY_VEHICLE_DTO) {
     EXPECT_FLOAT_EQ(vehicle->x, 100.5f);
     EXPECT_FLOAT_EQ(vehicle->y, 200.3f);
     EXPECT_FLOAT_EQ(vehicle->rotation, 45.0f);
-    EXPECT_TRUE(vehicle->isAboveBridge);
+    EXPECT_FLOAT_EQ(vehicle->speed, 150.0f);
+    EXPECT_FALSE(vehicle->isAboveBridge);
 }
 
 TEST_F(ProtocolTest, GAMEPLAY_RACE_EVENTS) {
@@ -248,4 +254,121 @@ TEST_F(ProtocolTest, GAMEPLAY_COLLISION_EVENTS) {
     auto exploded = std::dynamic_pointer_cast<VehicleExplodedDto>(receivedExploded);
     ASSERT_NE(exploded, nullptr);
     EXPECT_EQ(exploded->username, "player1");
+}
+
+TEST_F(ProtocolTest, PLAYER_JOINING_RACE_WITH_CAR_SELECTION) {
+    auto authDto = std::make_shared<AuthDto>(static_cast<uint8_t>(ActionCode::SEND_USERNAME));
+    authDto->username = "speed_racer";
+    client_protocol->sendDTO(authDto);
+    
+    auto authReq = server_protocol->receiveDTO();
+    auto authOk = std::make_shared<AuthDto>(static_cast<uint8_t>(ActionCode::USERNAME_OK));
+    server_protocol->sendDTO(authOk);
+    client_protocol->receiveDTO();
+
+    auto joinDto = std::make_shared<RoomDto>(static_cast<uint8_t>(ActionCode::JOIN_ROOM));
+    joinDto->roomCode = "RACE_ROOM";
+    client_protocol->sendDTO(joinDto);
+    
+    auto joinReq = server_protocol->receiveDTO();
+    auto joinOk = std::make_shared<RoomDto>(static_cast<uint8_t>(ActionCode::JOIN_OK));
+    server_protocol->sendDTO(joinOk);
+    client_protocol->receiveDTO();
+
+    auto playerDto = std::make_shared<PlayerDto>("speed_racer", VehicleTipe::FERRARI_F40, 100.0f);
+    ASSERT_NO_THROW(server_protocol->sendDTO(playerDto));
+    
+    auto receivedPlayer = client_protocol->receiveDTO();
+    ASSERT_NE(receivedPlayer, nullptr);
+    EXPECT_EQ(static_cast<ActionCode>(receivedPlayer->return_code()), ActionCode::SEND_PLAYER);
+    
+    auto player = std::dynamic_pointer_cast<PlayerDto>(receivedPlayer);
+    ASSERT_NE(player, nullptr);
+    EXPECT_EQ(player->username, "speed_racer");
+    EXPECT_EQ(player->Type, VehicleTipe::FERRARI_F40);
+    EXPECT_FLOAT_EQ(player->car_hp, 100.0f);
+}
+
+TEST_F(ProtocolTest, VEHICLE_UPGRADE_DTO_SERIALIZATION) {
+    auto authDto = std::make_shared<AuthDto>(static_cast<uint8_t>(ActionCode::SEND_USERNAME));
+    authDto->username = "test_user";
+    client_protocol->sendDTO(authDto);
+    
+    auto authReq = server_protocol->receiveDTO();
+    auto authOk = std::make_shared<AuthDto>(static_cast<uint8_t>(ActionCode::USERNAME_OK));
+    server_protocol->sendDTO(authOk);
+    client_protocol->receiveDTO();
+
+    auto upgradeDto = std::make_shared<VehicleUpgradeDto>("player1", true, false);
+    ASSERT_NO_THROW(server_protocol->sendDTO(upgradeDto));
+    
+    auto receivedUpgrade = client_protocol->receiveDTO();
+    ASSERT_NE(receivedUpgrade, nullptr);
+    EXPECT_EQ(static_cast<ActionCode>(receivedUpgrade->return_code()), ActionCode::SEND_VEHICLE_UPGRADE);
+    
+    auto upgrade = std::dynamic_pointer_cast<VehicleUpgradeDto>(receivedUpgrade);
+    ASSERT_NE(upgrade, nullptr);
+    EXPECT_EQ(upgrade->username, "player1");
+    EXPECT_TRUE(upgrade->healthUpgrade);
+    EXPECT_FALSE(upgrade->speedUpgrade);
+}
+
+TEST_F(ProtocolTest, RACE_COMPLETION_WITH_WINNER) {
+    auto authDto = std::make_shared<AuthDto>(static_cast<uint8_t>(ActionCode::SEND_USERNAME));
+    authDto->username = "race_winner";
+    client_protocol->sendDTO(authDto);
+    
+    auto authReq = server_protocol->receiveDTO();
+    auto authOk = std::make_shared<AuthDto>(static_cast<uint8_t>(ActionCode::USERNAME_OK));
+    server_protocol->sendDTO(authOk);
+    client_protocol->receiveDTO();
+
+    auto lapDto = std::make_shared<LapCompletedDto>("race_winner", 3);
+    server_protocol->sendDTO(lapDto);
+    client_protocol->receiveDTO();
+
+    auto raceFinishedDto = std::make_shared<PlayerRaceFinishedDto>("race_winner", 125.5f, 1);
+    server_protocol->sendDTO(raceFinishedDto);
+    client_protocol->receiveDTO();
+
+    auto endRaceDto = std::make_shared<EndRaceDto>("race_winner");
+    ASSERT_NO_THROW(server_protocol->sendDTO(endRaceDto));
+    
+    auto receivedEndRace = client_protocol->receiveDTO();
+    ASSERT_NE(receivedEndRace, nullptr);
+    EXPECT_EQ(static_cast<ActionCode>(receivedEndRace->return_code()), ActionCode::SEND_END_RACE);
+    
+    auto endRace = std::dynamic_pointer_cast<EndRaceDto>(receivedEndRace);
+    ASSERT_NE(endRace, nullptr);
+    EXPECT_EQ(endRace->username, "race_winner");
+}
+
+TEST_F(ProtocolTest, CHEAT_ACTIVATION_INFINITE_HEALTH) {
+    auto authDto = std::make_shared<AuthDto>(static_cast<uint8_t>(ActionCode::SEND_USERNAME));
+    authDto->username = "cheater_master";
+    client_protocol->sendDTO(authDto);
+    
+    auto authReq = server_protocol->receiveDTO();
+    auto authOk = std::make_shared<AuthDto>(static_cast<uint8_t>(ActionCode::USERNAME_OK));
+    server_protocol->sendDTO(authOk);
+    client_protocol->receiveDTO();
+
+    auto vehicleDto = std::make_shared<VehicleDto>("cheater_master", 0.0f, 0.0f, 0.0f, 100.0f, false);
+    server_protocol->sendDTO(vehicleDto);
+    client_protocol->receiveDTO();
+
+    auto collisionDto = std::make_shared<VehicleCollisionDto>("cheater_master", 60.0f, "wall", 0.0f);
+    server_protocol->sendDTO(collisionDto);
+    client_protocol->receiveDTO();
+
+    auto infiniteHealthDto = std::make_shared<InfiniteHealthDto>("cheater_master");
+    ASSERT_NO_THROW(server_protocol->sendDTO(infiniteHealthDto));
+    
+    auto receivedInfiniteHealth = client_protocol->receiveDTO();
+    ASSERT_NE(receivedInfiniteHealth, nullptr);
+    EXPECT_EQ(static_cast<ActionCode>(receivedInfiniteHealth->return_code()), ActionCode::SEND_INFINITE_HEALTH);
+    
+    auto infiniteHealth = std::dynamic_pointer_cast<InfiniteHealthDto>(receivedInfiniteHealth);
+    ASSERT_NE(infiniteHealth, nullptr);
+    EXPECT_EQ(infiniteHealth->username, "cheater_master");
 }
