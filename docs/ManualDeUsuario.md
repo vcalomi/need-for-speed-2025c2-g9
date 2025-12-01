@@ -17,13 +17,13 @@ Este documento explica cómo **instalar**, **compilar**, **configurar** y **usar
 
 ---
 
-## 1. ⚙️ Instalación y Requisitos {#instalacion}
+<h2 id="instalacion">1. ⚙️ Instalación y Requisitos</h2>
 
 El proyecto fue desarrollado y probado en **Ubuntu 22.04 / 24.04**. Se recomienda utilizar **Linux** para evitar problemas de compilación.
 
 ---
 
-## 2. 🔨 Instalación y Compilación {#compilacion}
+<h2 id="compilacion">2. 🔨 Instalación y Compilación</h2>
 
 Para instalar las dependencias necesarias, en la **raíz del proyecto** ejecuta:
 
@@ -45,7 +45,7 @@ make uninstall
 ```
 ---
 
-## 3. 🚀 Ejecución del Software {#ejecucion}
+<h2 id="ejecucion">3. 🚀 Ejecución del Software</h2>
 Ejecutar los siguientes comandos en terminales separadas desde la raíz del proyecto:
 
 **Levantar el servidor**
@@ -82,7 +82,7 @@ Podés abrirlo desde el lobby del cliente o directamente desde la terminal:
 
 ---
 
-## 4. 🎮 Uso del Juego: Lobby y Flujo General {#lobby}
+<h2 id="lobby">4. 🎮 Uso del Juego: Lobby y Flujo General</h2>
 Al abrir el cliente verás una pantalla inicial donde podrás conectarte al servidor. 
 
 ![Captura de pantalla página de conexion](../assets/images/Imagen1.png)
@@ -183,7 +183,7 @@ Por ejemplo, un camión tendrá una velocidad y aceleración menores que un auto
 
 ---
 
-## 5. 🗺️ Editor de Mapas (Race Track Editor) {#mapas}
+<h2 id="mapas">5. 🗺️ Editor de Mapas (Race Track Editor)</h2>
 El editor permite crear circuitos personalizados que luego pueden jugarse en el servidor. Estos serán visualizados cuando se crea una partida en la página donde hay que seleccionar los recorridos que contendrá la partida.
 
 Puede abrirse desde:
@@ -222,7 +222,7 @@ Para realizar el circuito puedes:
 - **Cargar**: Haz clic en Load Map y selecciona un archivo existente para seguir editando.
 
 ---
-## 6. 🕹️ Juego {#juego}
+<h2 id="juego">6. 🕹️ Juego</h2>
 
 ### 🎮 Controles del Juego
 
@@ -252,7 +252,7 @@ Al finalizar cada carrera y hasta unos 10 segundos de arrancar la siguiente, **c
 | **Aumentar velocidad** (Improve speed) | **+1s** |
 
 
-### 🎯 Dinámica y Objetivo del Juego {#objetivo}
+<h2 id="objetivo">7. 🎯 Dinámica y Objetivo del Juego</h2>
 **¡Bienvenido a la pista!** Cada partida puede incluir una sola carrera... o una verdadera maratón de circuitos consecutivos.
 Tu misión no es solo manejar: es sobrevivir a la velocidad, a los giros cerrados y a tus rivales.
 
@@ -272,5 +272,5 @@ Si la partida tiene varios circuitos, no te relajes: apenas termina uno… ¡arr
 **Velocidad, precisión y estrategia**: acá no gana el que acelera más… sino el que sabe cuándo hacerlo.
 
 ---
-## 7. 🌐 Servidor {#servidor}
+<h2 id="servidor">8. 🌐 Servidor</h2>
 Para cerrar el servidor, escribe la letra `q` en la terminal donde fue ejecutado.
