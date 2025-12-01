@@ -253,7 +253,7 @@ void MainWindow::handleOpenMapsPage() {
         ui->btnSelectMaps->setEnabled(false);
     } else {
         for (const QFileInfo& info: mapFiles) {
-            QListWidgetItem* item = new QListWidgetItem(info.baseName());
+            QListWidgetItem* item = new QListWidgetItem(info.fileName());
             item->setFlags(item->flags() | Qt::ItemIsUserCheckable | Qt::ItemIsSelectable |
                            Qt::ItemIsEnabled);
             item->setData(Qt::UserRole, info.absoluteFilePath());
@@ -291,9 +291,6 @@ void MainWindow::handleSelectMaps() {
         QListWidgetItem* item = ui->listMaps->item(i);
         if (item->checkState() == Qt::Checked) {
             QString mapName = item->text();
-            if (mapName.contains(" - ")) {
-                mapName = mapName.split(" - ").last();
-            }
             selectedMapNames.push_back(mapName);
         }
     }
