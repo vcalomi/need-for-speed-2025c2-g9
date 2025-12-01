@@ -1,5 +1,7 @@
 #include "renderer_system.h"
 
+#include "../events/countdown_down_event.h"
+#include "../events/countdown_go_event.h"
 #include "../events/upgrade_car_event.h"
 
 RendererSystem::RendererSystem(SDL2pp::Renderer& renderer, SpriteSheet& cars, World& world,
@@ -36,12 +38,14 @@ void RendererSystem::Render(const World& world, Map& map, const Camera& camera, 
 
         if (newNum != state_.countdownNumber && newNum > 0) {
             state_.countdownNumber = newNum;
+            eventBus_.Publish(CountdownDownEvent());
         }
 
         if (state_.countdownTimer <= 0.0f) {
             state_.countdownActive = false;
             state_.countdownNumber = 0;
             state_.countdownGoTimer = 1.0f;
+            eventBus_.Publish(CountdownGoEvent());
         }
     } else if (state_.countdownNumber == 0) {
 

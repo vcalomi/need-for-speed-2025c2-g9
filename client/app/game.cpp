@@ -17,9 +17,9 @@
 Game::Game(Client& client):
         client_(client),
         engine_(),
-        audioSystem_(),
         resources_(engine_.GetRenderer()),
         eventBus_(),
+        audioSystem_(eventBus_),
         inputSystem_(),
         world_(eventBus_),
         progress_(eventBus_),
