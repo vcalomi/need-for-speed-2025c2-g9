@@ -42,9 +42,6 @@ void Map::RenderBackground(const Camera& camera) {
     int rw, rh;
     SDL_GetRendererOutputSize(renderer_.Get(), &rw, &rh);
 
-    std::cout << "Viewport real = " << rw << " x " << rh << "\n";
-    std::cout << "Camera viewport = " << camera.GetViewportWidth() << " x "
-              << camera.GetViewportHeight() << "\n";
     if (!backgroundTexture_)
         return;
 
