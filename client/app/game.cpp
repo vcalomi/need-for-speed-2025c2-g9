@@ -70,6 +70,9 @@ void Game::Run() {
             dtoHandlerSystem_.Process(dto);
         }
 
+        int realW, realH;
+        SDL_GetRendererOutputSize(engine_.GetRenderer().Get(), &realW, &realH);
+        camera.SetViewport(realW, realH);
         camera.Follow(world_.GetLocalPlayerX(), world_.GetLocalPlayerY(), map_.GetWidth(),
                       map_.GetHeight());
 

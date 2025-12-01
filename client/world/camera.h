@@ -11,6 +11,7 @@ public:
     void Clamp(int mapW, int mapH);
     int GetViewportWidth() const;
     int GetViewportHeight() const;
+    void SetViewport(int w, int h);
 
 private:
     int viewportWidth;

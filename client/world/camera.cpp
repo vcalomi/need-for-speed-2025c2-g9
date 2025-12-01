@@ -6,6 +6,12 @@ float Camera::getX() const { return x; }
 
 float Camera::getY() const { return y; }
 
+void Camera::SetViewport(int w, int h) {
+    viewportWidth = w;
+    viewportHeight = h;
+}
+
+
 void Camera::SetPosition(float newX, float newY) {
     x = newX;
     y = newY;
