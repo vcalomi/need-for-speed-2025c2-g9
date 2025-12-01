@@ -7,6 +7,7 @@ RendererSystem::RendererSystem(SDL2pp::Renderer& renderer, SpriteSheet& cars, Wo
         renderer_(renderer),
         carSprites_(cars),
         world_(world),
+        eventBus_(bus),
         progress_(progress),
         text_(renderer, LOBBY_ASSETS_DIR "/Tektur-SemiBold.ttf", 14),
         background_(renderer),

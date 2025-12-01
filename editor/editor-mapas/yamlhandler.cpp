@@ -17,7 +17,7 @@ static QPointF normalize(const QPointF& p, const QSize& canvas) {
 }
 
 QString YamlHandler::getOpenFilename(QWidget* parent) {
-    QString baseDir = QDir::cleanPath(QDir::currentPath() + "/../server/maps");
+    QString baseDir = QDir::cleanPath(QDir::currentPath() + "/server/maps");
 
     QFileDialog dialog(parent, "Open track", baseDir, "YAML files (*.yaml *.yml)");
     dialog.setOption(QFileDialog::DontUseNativeDialog, true);
@@ -44,7 +44,7 @@ static QPointF denormalize(const QPointF& n, const QSize& size) {
 }
 
 QString YamlHandler::getSaveFilename(QWidget* parent) {
-    QString baseDir = QDir::cleanPath(QDir::currentPath() + "/../server/maps");
+    QString baseDir = QDir::cleanPath(QDir::currentPath() + "/server/maps");
 
     // Crear carpeta si no existe
     QDir().mkpath(baseDir);
