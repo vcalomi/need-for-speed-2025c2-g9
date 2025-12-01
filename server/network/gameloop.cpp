@@ -66,6 +66,7 @@ void GameLoop::run() {
 
             if (!raceActive_ && pendingNextRace_) {
                 if (currentLevelIndex_ == 0 && levels_.size() > 1) {
+                    std::this_thread::sleep_for(std::chrono::seconds(10));
                     startRace(1);
                 }
             }
