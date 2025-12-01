@@ -34,11 +34,11 @@ AudioSystem::AudioSystem(EventBus& bus): eventBus_(bus), audioEnabled_(true) {
         audioEnabled_ = false;
     }
 
-    eventBus_.Subscribe<VehicleExplodedEvent>([this](const VehicleExplodedEvent& e) {
+    eventBus_.Subscribe<VehicleExplodedEvent>([this](const VehicleExplodedEvent&) {
         PlaySoundEffect("../client/assets/need-for-speed/music/explosion.wav");
     });
 
-    eventBus_.Subscribe<CheckPointCompletedEvent>([this](const CheckPointCompletedEvent& e) {
+    eventBus_.Subscribe<CheckPointCompletedEvent>([this](const CheckPointCompletedEvent&) {
         PlaySoundEffect("../client/assets/need-for-speed/music/checkpoint_reached.wav");
     });
 
@@ -53,11 +53,11 @@ AudioSystem::AudioSystem(EventBus& bus): eventBus_(bus), audioEnabled_(true) {
         // }
     });
 
-    eventBus_.Subscribe<CountdownDownEvent>([this](const CountdownDownEvent& e) {
+    eventBus_.Subscribe<CountdownDownEvent>([this](const CountdownDownEvent&) {
         PlaySoundEffect("../client/assets/need-for-speed/music/countdown_beep.wav");
     });
 
-    eventBus_.Subscribe<CountdownGoEvent>([this](const CountdownGoEvent& e) {
+    eventBus_.Subscribe<CountdownGoEvent>([this](const CountdownGoEvent&) {
         PlaySoundEffect("../client/assets/need-for-speed/music/countdown_start.wav");
     });
 }
