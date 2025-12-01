@@ -15,13 +15,13 @@
 #include "../../common/queue.h"
 #include "../../common/thread.h"
 #include "../LevelSetup.h"
+#include "../CarUpgrades.h"
 
 struct PlayerRaceProgress {
     int currentLap = 0;       
     int nextCheckpoint = 0;     
     bool finished = false;
     std::optional<std::chrono::steady_clock::time_point> finishTime;
-    bool underBrigde = false;
 };
 
 struct LevelInfo {
@@ -35,6 +35,7 @@ private:
     std::map<int, CarConfig>& chosenCars_;
     std::map<int, std::string>& playerUsernames_;
     Broadcaster& broadcaster_;
+    std::unordered_map<int, CarUpgrades> upgradesByUser_;
     std::optional<LevelSetup> setup;
     int maxPlayers;
     
@@ -46,7 +47,7 @@ private:
     bool pendingNextRace_ = false;
     std::unordered_map<int, PlayerRaceProgress> raceProgress_; 
     std::chrono::steady_clock::time_point raceStartTime_;
-
+    std::chrono::steady_clock::time_point nextRaceStartTime_;
     
     void handlerProcessCommand(std::shared_ptr<Dto> dto);
     Vehicle* getVehicleByPlayer(const std::string& username);

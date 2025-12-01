@@ -23,6 +23,7 @@
 #include "../../common/Dto/race_finished.h"
 #include "../../common/Dto/end_race.h"
 #include "../../common/Dto/infinite_health.h"
+#include "../../common/Dto/vehicle_upgrade.h"
 #include "../../common/common_codes.h"
 #include "../../common/vehicle_type_utils.h"
 #include "../YamlParser.h"
@@ -66,9 +67,10 @@ void GameLoop::run() {
             }
 
             if (!raceActive_ && pendingNextRace_) {
-                if (currentLevelIndex_ == 0 && levels_.size() > 1) {
-                    std::this_thread::sleep_for(std::chrono::seconds(10));
-                    startRace(1);
+                if (Clock::now() >= nextRaceStartTime_) {
+                    if (currentLevelIndex_ == 0 && levels_.size() > 1) {
+                        startRace(1);
+                    }
                 }
             }
 
@@ -91,7 +93,7 @@ void GameLoop::startRace(int levelIndex) {
     const std::string vehiclesYaml = "../server/vehicles_specs/vehicle_specs.yaml";
     LevelInfo level = levels_[levelIndex];
 
-    setup.emplace(level.dir, vehiclesYaml, chosenCars_);
+    setup.emplace(level.dir, vehiclesYaml, chosenCars_, upgradesByUser_);
 
     raceProgress_.clear();
     for (const auto& [playerId, _]: chosenCars_) {
@@ -146,11 +148,21 @@ void GameLoop::processCommands() {
 }
 
 void GameLoop::handlerProcessCommand(std::shared_ptr<Dto> command) {
-    Vehicle* vehicle = getVehicleByPlayer(command->get_username());
-
     switch (static_cast<ActionCode>(command->return_code())) {
         case ActionCode::SEND_PLAYER_MOVE: {
             auto player_move_dto = std::dynamic_pointer_cast<PlayerMoveDto>(command);
+            if (!player_move_dto) {
+                std::cerr << "[GameLoop] SEND_PLAYER_MOVE: bad dto cast\n";
+                break;
+            }
+
+            Vehicle* vehicle = getVehicleByPlayer(command->get_username());
+            if (!vehicle) {
+                std::cerr << "[GameLoop] SEND_PLAYER_MOVE: no vehicle for user "
+                          << command->get_username() << "\n";
+                break;
+            }
+
             uint8_t mask = player_move_dto->move;
 
             if (mask & static_cast<uint8_t>(MoveMask::ACCELERATE))
@@ -167,17 +179,77 @@ void GameLoop::handlerProcessCommand(std::shared_ptr<Dto> command) {
             break;
         }
         case ActionCode::SEND_INFINITE_HEALTH: {
-            auto player_infinite_health = std::dynamic_pointer_cast<InfiniteHealthDto>(command);
+            auto player_infinite_health =
+                std::dynamic_pointer_cast<InfiniteHealthDto>(command);
+            if (!player_infinite_health) {
+                std::cerr << "[GameLoop] SEND_INFINITE_HEALTH: bad dto cast\n";
+                break;
+            }
+
             auto player_vehicle = getVehicleByPlayer(player_infinite_health->username);
+            if (!player_vehicle) {
+                std::cerr << "[GameLoop] SEND_INFINITE_HEALTH: no vehicle for user "
+                          << player_infinite_health->username << "\n";
+                break;
+            }
+
             player_vehicle->setInfiniteHp();
             break;
         }
         case ActionCode::SEND_END_RACE: {
             auto player_end_race = std::dynamic_pointer_cast<EndRaceDto>(command);
+            if (!player_end_race) {
+                std::cerr << "[GameLoop] SEND_END_RACE: bad dto cast\n";
+                break;
+            }
+
             auto player_vehicle = getVehicleByPlayer(player_end_race->username);
+            if (!player_vehicle) {
+                std::cerr << "[GameLoop] SEND_END_RACE: no vehicle for user "
+                          << player_end_race->username << "\n";
+                break;
+            }
+
             int vehicleId = player_vehicle->getVehicleId();
             auto it = raceProgress_.find(vehicleId);
-            onPlayerFinished(vehicleId, it->second);
+            if (it != raceProgress_.end()) {
+                onPlayerFinished(vehicleId, it->second);
+            } else {
+                std::cerr << "[GameLoop] SEND_END_RACE: no raceProgress for vehicleId "
+                          << vehicleId << "\n";
+            }
+            break;
+        }
+        case ActionCode::SEND_VEHICLE_UPGRADE: {
+            auto upgradeDto = std::dynamic_pointer_cast<VehicleUpgradeDto>(command);
+            if (!upgradeDto) {
+                std::cerr << "[GameLoop] SEND_VEHICLE_UPGRADE: bad dto cast\n";
+                break;
+            }
+
+            Vehicle* vehicle = getVehicleByPlayer(upgradeDto->username);
+            if (!vehicle) {
+                std::cerr << "[GameLoop] SEND_VEHICLE_UPGRADE: no vehicle for user "
+                          << upgradeDto->username << "\n";
+                break;
+            }
+
+            int vehicleId = vehicle->getVehicleId();
+
+            auto& up = upgradesByUser_[vehicleId];
+
+            if (upgradeDto->healthUpgrade) {
+                up.armorLevel += 1;
+                std::cout << "[GameLoop] " << upgradeDto->username
+                          << " upgraded ARMOR. New level=" << up.armorLevel << "\n";
+            }
+
+            if (upgradeDto->speedUpgrade) {
+                up.engineLevel += 1;
+                std::cout << "[GameLoop] " << upgradeDto->username
+                          << " upgraded ENGINE. New level=" << up.engineLevel << "\n";
+            }
+
             break;
         }
         default:
@@ -185,6 +257,7 @@ void GameLoop::handlerProcessCommand(std::shared_ptr<Dto> command) {
             break;
     }
 }
+
 
 void GameLoop::sendVehiclesPositions() {
 
@@ -296,7 +369,7 @@ void GameLoop::onPlayerFinished(int vehicleId, PlayerRaceProgress& prog) {
         std::cout << "[onPlayerFinished] -> allPlayersFinished() == true, ENVIANDO RaceFinishedDto\n";
         raceActive_ = false;
         pendingNextRace_ = true;
-
+        nextRaceStartTime_ = Clock::now() + std::chrono::seconds(10);
         auto raceFinish = std::make_shared<RaceFinishedDto>();
         broadcaster_.broadcast(raceFinish);
     }
@@ -353,7 +426,7 @@ void GameLoop::handleVehicleExplosion(int vehicleId) {
         std::cout << "[handleVehicleExplosion] -> allPlayersFinished() == true, ENVIANDO RaceFinishedDto\n";
         raceActive_ = false;
         pendingNextRace_ = true;
-
+        nextRaceStartTime_ = Clock::now() + std::chrono::seconds(10);
         auto raceFinish = std::make_shared<RaceFinishedDto>();
         broadcaster_.broadcast(raceFinish);
     }

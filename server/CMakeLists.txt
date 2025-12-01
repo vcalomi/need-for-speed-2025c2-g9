@@ -26,6 +26,7 @@ target_sources(nfs_server
     vehicleDTO.h
     YamlParser.h
     VehicleSpec.h
+    CarUpgrades.h
     network/command_dispatcher.h
     network/player.h
     network/receiver.h
@@ -41,4 +42,5 @@ target_sources(nfs_server
     physics/spawn.h
     physics/vehicle.h
     physics/PhysicsEventCollector.h
+
     )
