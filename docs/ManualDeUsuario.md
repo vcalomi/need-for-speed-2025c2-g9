@@ -6,50 +6,47 @@ Este documento explica cómo **instalar**, **compilar**, **configurar** y **usar
 
 ## 📑 Índice
 
-* [1. Instalación y Requisitos](#1-instalación-y-requisitos)
-* [2. Instalación y Compilación](#2-instalación-y-compilación)
-* [3. Ejecución del Software](#3-ejecución-del-software)
-* [4. Uso del Juego: Lobby y Flujo General](#4-uso-del-juego-lobby-y-flujo-general)
-* [5. Editor de Mapas (Race Track Editor)](#5-editor-de-mapas-race-track-editor)
-* [6. Controles del Juego](#6-controles-del-juego)
-* [7. Objetivo y Dinámica del Juego](#7-objetivo-y-dinámica-del-juego)
-* [8. Servidor](#8-servidor)
+* [1. Instalación y Requisitos](#instalacion)
+* [2. Instalación y Compilación](#compilacion)
+* [3. Ejecución del Software](#ejecucion)
+* [4. Uso del Juego: Lobby y Flujo General](#lobby)
+* [5. Editor de Mapas (Race Track Editor)](#mapas)
+* [6. Controles del Juego](#juego)
+* [7. Objetivo y Dinámica del Juego](#objetivo)
+* [8. Servidor](#servidor)
 
 ---
 
-## 1. ⚙️ Instalación y Requisitos
+## 1. ⚙️ Instalación y Requisitos {#instalacion}
 
 El proyecto fue desarrollado y probado en **Ubuntu 22.04 / 24.04**. Se recomienda utilizar **Linux** para evitar problemas de compilación.
 
 ---
 
-## 2. 🔨 Instalación y Compilación
+## 2. 🔨 Instalación y Compilación {#compilacion}
 
-Para instalar las dependencias necesarias, en la raíz del proyecto ejecuta:
+Para instalar las dependencias necesarias, en la **raíz del proyecto** ejecuta:
 
 ```bash
-chmod +x install_all.sh
-sudo ./install_all.sh
+make install
 ```
-Este script instala automáticamente todas las dependencias necesarias.
+El target se encargará de **instalar las dependencias necesarias para el juego, compilarlo** y finalmente **instalar el juego** en el sistema.
 
-Compilar el proyecto
-Ejecuta el script de compilación:
+**Limpiar compilación**:
 
 ```bash
-chmod +x build_game.sh
-./build_game.sh
+make clean
 ```
 
-Si el script no te deja dentro de build/, podés entrar manualmente:
+**Desinstalar**:
 
 ```bash
-cd build
+make uninstall
 ```
 ---
 
-## 3. 🚀 Ejecución del Software
-Todos los comandos se ejecutan desde la carpeta `build/`
+## 3. 🚀 Ejecución del Software {#ejecucion}
+Ejecutar los siguientes comandos en terminales separadas desde la raíz del proyecto:
 
 **Levantar el servidor**
 ```bash
@@ -85,7 +82,7 @@ Podés abrirlo desde el lobby del cliente o directamente desde la terminal:
 
 ---
 
-## 4. 🎮 Uso del Juego: Lobby y Flujo General
+## 4. 🎮 Uso del Juego: Lobby y Flujo General {#lobby}
 Al abrir el cliente verás una pantalla inicial donde podrás conectarte al servidor. 
 
 ![Captura de pantalla página de conexion](../assets/images/Imagen1.png)
@@ -186,7 +183,7 @@ Por ejemplo, un camión tendrá una velocidad y aceleración menores que un auto
 
 ---
 
-## 5. 🗺️ Editor de Mapas (Race Track Editor)
+## 5. 🗺️ Editor de Mapas (Race Track Editor) {#mapas}
 El editor permite crear circuitos personalizados que luego pueden jugarse en el servidor. Estos serán visualizados cuando se crea una partida en la página donde hay que seleccionar los recorridos que contendrá la partida.
 
 Puede abrirse desde:
@@ -225,28 +222,37 @@ Para realizar el circuito puedes:
 - **Cargar**: Haz clic en Load Map y selecciona un archivo existente para seguir editando.
 
 ---
-## 6. 🕹️ Juego
+## 6. 🕹️ Juego {#juego}
 
 ### 🎮 Controles del Juego
 
 | Acción | Tecla(s) |
 |--------|----------|
-| Avanzar / Acelerar   |   **W ⬆️** |
-| Girar a la izquierda | **W + A ⬆️⬅️** |
-| Girar a la derecha   | **W + D ⬆️➡️** |
-| Retroceder / Marcha atrás | **S ⬇️** |
+| **Avanzar / Acelerar**   |   **w ⬆️** |
+| **Girar a la izquierda** | **w + a ⬆️⬅️** |
+| **Girar a la derecha**   | **w + d ⬆️➡️** |
+| **Retroceder / Marcha atrás** | **s ⬇️** |
 
 ### 😶‍🌫️ Cheats
+En cualquier momento de la partida podés activar distintos cheats para probar el juego o facilitar la experiencia. 
+
+**Cheats disponibles**:
+| Acción | Tecla(s) |
+|--------|----------|
+|  **Vida infinita**   |   **q** |
+| **Finalizar carrera para tu juagor** | **e** |
+
+### ⚡ Mejoras
 Al finalizar cada carrera y hasta unos 10 segundos de arrancar la siguiente, **cada jugador podrá mejorar algunas de las propiedades de su auto**. Por ejemplo, podrá hacerlo un poco más rápido. Cada mejora tiene un **costo** que se computa como una **penalización** del tiempo de llegada de la siguiente carrera. 
 
 **Mejoras disponibles**:
-- una
-- dos
-- tres
+| Acción | Penalización |
+|--------|----------|
+|  **Aumentar Salud** (Improve health)  |   **+1s** |
+| **Aumentar velocidad** (Improve speed) | **+1s** |
 
 
-
-### 🎯 Dinámica y Objetivo del Juego
+### 🎯 Dinámica y Objetivo del Juego {#objetivo}
 **¡Bienvenido a la pista!** Cada partida puede incluir una sola carrera... o una verdadera maratón de circuitos consecutivos.
 Tu misión no es solo manejar: es sobrevivir a la velocidad, a los giros cerrados y a tus rivales.
 
@@ -266,5 +272,5 @@ Si la partida tiene varios circuitos, no te relajes: apenas termina uno… ¡arr
 **Velocidad, precisión y estrategia**: acá no gana el que acelera más… sino el que sabe cuándo hacerlo.
 
 ---
-## 7. 🌐 Servidor
+## 7. 🌐 Servidor {#servidor}
 Para cerrar el servidor, escribe la letra `q` en la terminal donde fue ejecutado.
