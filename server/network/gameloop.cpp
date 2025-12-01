@@ -22,6 +22,7 @@
 #include "../../common/Dto/initial_race_map.h"
 #include "../../common/Dto/race_finished.h"
 #include "../../common/Dto/end_race.h"
+#include "../../common/Dto/infinite_health.h"
 #include "../../common/common_codes.h"
 #include "../../common/vehicle_type_utils.h"
 #include "../YamlParser.h"
@@ -165,33 +166,17 @@ void GameLoop::handlerProcessCommand(std::shared_ptr<Dto> command) {
                 vehicle->turn(TurnDir::Right);
             break;
         }
-        //case ActionCode::SEND_INFINITE_HEALTH: {
-        //    break;
-        //}
+        case ActionCode::SEND_INFINITE_HEALTH: {
+            auto player_infinite_health = std::dynamic_pointer_cast<InfiniteHealthDto>(command);
+            auto player_vehicle = getVehicleByPlayer(player_infinite_health->username);
+            player_vehicle->setInfiniteHp();
+            break;
+        }
         case ActionCode::SEND_END_RACE: {
             auto player_end_race = std::dynamic_pointer_cast<EndRaceDto>(command);
-            if (!player_end_race) {
-                std::cerr << "[SEND_END_RACE] cast a EndRaceDto falló\n";
-                return;
-            }
-
             auto player_vehicle = getVehicleByPlayer(player_end_race->username);
-            if (!player_vehicle) {
-                std::cerr << "[SEND_END_RACE] no vehicle para username "
-                        << player_end_race->username << "\n";
-                return;
-            }
-
             int vehicleId = player_vehicle->getVehicleId();
-
             auto it = raceProgress_.find(vehicleId);
-            if (it == raceProgress_.end()) {
-                std::cerr << "[SEND_END_RACE] no entry en raceProgress_ para vehicleId "
-                        << vehicleId << "\n";
-                return;
-            }
-
-            std::cerr << "[SEND_END_RACE] for vehicleId=" << vehicleId << "\n";
             onPlayerFinished(vehicleId, it->second);
             break;
         }

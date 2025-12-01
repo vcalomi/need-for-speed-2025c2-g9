@@ -98,9 +98,9 @@ void Vehicle::setFixtureTag(FixtureTag* tag) {
 }
 
 void Vehicle::applyDamage(float damage){
+    if (infinite_hp_) return;
     if (vehicle_hp_ <= 0.0f) return;
     vehicle_hp_ -= damage;
     if (vehicle_hp_ < 0.0f) vehicle_hp_ = 0.0f;
 }
-
 
