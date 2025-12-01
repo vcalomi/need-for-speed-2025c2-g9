@@ -275,4 +275,5 @@ Si la partida tiene varios circuitos, no te relajes: apenas termina uno… ¡arr
 
 ---
 <h2 id="servidor">8. 🌐 Servidor</h2>
+
 Para cerrar el servidor, escribe la letra `q` en la terminal donde fue ejecutado.
