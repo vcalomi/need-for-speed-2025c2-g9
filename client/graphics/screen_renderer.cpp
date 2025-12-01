@@ -170,8 +170,8 @@ void ScreenRenderer::RenderUpgradeOptions() {
         text_.Draw(txt, r.x + 15, r.y + 20);
     };
 
-    drawButton(healthButton_, selectedHealth_, "Improve Health (+1s)");
-    drawButton(speedButton_, selectedSpeed_, "Improve Speed (+1s)");
+    drawButton(healthButton_, selectedHealth_, "Improve Health (+3s)");
+    drawButton(speedButton_, selectedSpeed_, "Improve Speed (+3s)");
     drawButton(confirmButton_, false, "Confirm Upgrades");
 }
 

@@ -56,8 +56,8 @@ void EventRenderController::RegisterEvents() {
 
             world_.SetCheckpoints({});
             progress_.Reset();
-            return;
         }
+        screenRenderer_.ResetSelections();
         state_.countdownActive = true;
         state_.countdownTimer = 3.0f;
         state_.countdownNumber = 3;
