@@ -46,9 +46,7 @@ void RendererSystem::Render(const World& world, Map& map, const Camera& camera, 
             state_.countdownNumber = 0;
             state_.countdownGoTimer = 1.0f;
             eventBus_.Publish(CountdownGoEvent());
-            return;
         }
-        return;
     } else if (state_.countdownNumber == 0) {
 
         float dt = 0.016f;

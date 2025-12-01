@@ -35,23 +35,23 @@ AudioSystem::AudioSystem(EventBus& bus): eventBus_(bus), audioEnabled_(true) {
     }
 
     eventBus_.Subscribe<VehicleExplodedEvent>([this](const VehicleExplodedEvent&) {
-        PlaySoundEffect("../client/assets/need-for-speed/music/explosion.wav");
+        PlaySoundEffect("../client/assets/need-for-speed/music/car_explosion.wav");
     });
 
     eventBus_.Subscribe<CheckPointCompletedEvent>([this](const CheckPointCompletedEvent&) {
         PlaySoundEffect("../client/assets/need-for-speed/music/checkpoint_reached.wav");
     });
 
-    eventBus_.Subscribe<PlayerMoveEvent>([this](const PlayerMoveEvent& e) {
-        auto mask = static_cast<uint8_t>(e.move);
+    // eventBus_.Subscribe<PlayerMoveEvent>([this](const PlayerMoveEvent& e) {
+    //     auto mask = static_cast<uint8_t>(e.move);
 
-        if (mask == static_cast<uint8_t>(MoveMask::ACCELERATE)) {
-            PlaySoundEffect("../client/assets/need-for-speed/music/car_engine.wav");
-        }
-        // } else if (mask == static_cast<uint8_t>(MoveMask::BRAKE)) {
-        //     PlaySoundEffect("../client/assets/need-for-speed/music/engine_brake.wav");
-        // }
-    });
+    //     if (mask == static_cast<uint8_t>(MoveMask::ACCELERATE)) {
+    //         PlaySoundEffect("../client/assets/need-for-speed/music/car_engine.wav");
+    //     }
+    //     // } else if (mask == static_cast<uint8_t>(MoveMask::BRAKE)) {
+    //     //     PlaySoundEffect("../client/assets/need-for-speed/music/engine_brake.wav");
+    //     // }
+    // });
 
     eventBus_.Subscribe<CountdownDownEvent>([this](const CountdownDownEvent&) {
         PlaySoundEffect("../client/assets/need-for-speed/music/countdown_beep.wav");
@@ -87,8 +87,12 @@ void AudioSystem::PlaySoundEffect(const std::string& filepath, int loops) {
         return;
 
     try {
-        SDL2pp::Chunk sound(filepath);
-        mixer_->PlayChannel(-1, sound, loops);
+        if (!cache_.count(filepath)) {
+            cache_[filepath] = std::make_unique<SDL2pp::Chunk>(filepath);
+        }
+
+        mixer_->PlayChannel(-1, *cache_[filepath], loops);
+
     } catch (const SDL2pp::Exception& e) {
         std::cerr << "[AudioSystem] Error playing sound effect: " << e.GetSDLFunction() << " - "
                   << e.GetSDLError() << "\n";

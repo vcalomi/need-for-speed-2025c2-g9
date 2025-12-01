@@ -23,9 +23,9 @@ public:
 private:
     Client& client_;
     Engine engine_;
-    AudioSystem audioSystem_;
     ResourceLoader resources_;
     EventBus eventBus_;
+    AudioSystem audioSystem_;
     World world_;
     ProgressManager progress_;
     InputSystem inputSystem_;
