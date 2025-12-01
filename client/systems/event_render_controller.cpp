@@ -41,30 +41,36 @@ void EventRenderController::RegisterEvents() {
     });
 
     eventBus_.Subscribe<RaceInfoEvent>([this](const RaceInfoEvent&) {
-        state_.raceFinished = false;
-        state_.localPlayerFinished = false;
-        state_.localPlayerExploded = false;
-        state_.localFinishPosition = -1;
-        state_.localFinishTime = 0.0f;
-        state_.explosionTimer = 0.0f;
-        state_.showExplosion = false;
-        state_.showFinalResultsScreen = false;
-        state_.showPlayerFinishedScreen = false;
+        if (state_.raceFinished) {
+            state_.raceFinished = false;
+            state_.localPlayerFinished = false;
+            state_.localPlayerExploded = false;
+            state_.localFinishPosition = -1;
+            state_.localFinishTime = 0.0f;
+            state_.explosionTimer = 0.0f;
+            state_.showExplosion = false;
+            state_.showFinalResultsScreen = false;
+            state_.showPlayerFinishedScreen = false;
+            world_.resetRace();
+            return;
+        }
     });
+
 
     eventBus_.Subscribe<RaceFinishedEvent>([this](const RaceFinishedEvent&) {
         state_.raceFinished = true;
+        state_.showPlayerFinishedScreen = false;
         state_.showFinalResultsScreen = true;
         world_.ResetPlayersExploded();
         world_.resetRace();
     });
+
 
     eventBus_.Subscribe<PlayerRaceFinishedEvent>([this](const PlayerRaceFinishedEvent& e) {
         if (e.username == world_.GetLocalPlayer().GetUsername()) {
             state_.localPlayerFinished = true;
             state_.localFinishPosition = e.finalPosition;
             state_.localFinishTime = e.finishTime;
-
             state_.showPlayerFinishedScreen = true;
         }
     });
