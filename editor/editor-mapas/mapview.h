@@ -12,15 +12,7 @@
 class MapView: public QGraphicsView {
     Q_OBJECT
 public:
-    enum class Tool {
-        Select,
-        PlaceCheckpoint,
-        PlaceHint,
-        PlaceSpawn,
-        PlaceStart,
-        PlaceFinish,
-        Erase
-    };
+    enum class Tool { Select, PlaceCheckpoint, PlaceSpawn, PlaceStart, PlaceFinish, Erase };
 
     explicit MapView(QWidget* parent = nullptr);
 

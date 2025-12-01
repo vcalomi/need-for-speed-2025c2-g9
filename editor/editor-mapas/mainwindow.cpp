@@ -28,7 +28,6 @@ MainWindow::MainWindow(QWidget* parent):
 
     // Botones
     connect(ui->checkpointToolBtn, &QPushButton::clicked, this, &MainWindow::toolCheckpoint);
-    connect(ui->hintToolBtn, &QPushButton::clicked, this, &MainWindow::toolHint);
     connect(ui->spawnToolBtn, &QPushButton::clicked, this, &MainWindow::toolSpawn);
     connect(ui->startToolBtn, &QPushButton::clicked, this, &MainWindow::toolStart);
     connect(ui->finishToolBtn, &QPushButton::clicked, this, &MainWindow::toolFinish);
@@ -153,7 +152,6 @@ QPixmap MainWindow::mapForCity(const QString& cityId) const {
 }
 
 void MainWindow::toolCheckpoint() { view->setTool(MapView::Tool::PlaceCheckpoint); }
-void MainWindow::toolHint() { view->setTool(MapView::Tool::PlaceHint); }
 void MainWindow::toolSpawn() { view->setTool(MapView::Tool::PlaceSpawn); }
 void MainWindow::toolStart() { view->setTool(MapView::Tool::PlaceStart); }
 void MainWindow::toolFinish() { view->setTool(MapView::Tool::PlaceFinish); }

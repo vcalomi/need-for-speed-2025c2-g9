@@ -32,7 +32,6 @@ private slots:
     void loadMapFromCity();
     void onUndo();
     void toolCheckpoint();
-    void toolHint();
     void toolSpawn();
     void toolStart();
     void toolFinish();

@@ -148,9 +148,6 @@ void MapView::placeItemAt(const QPointF& scenePos) {
         case Tool::PlaceCheckpoint:
             k = MarkerKind::Checkpoint;
             break;
-        case Tool::PlaceHint:
-            k = MarkerKind::Hint;
-            break;
         case Tool::PlaceSpawn:
             k = MarkerKind::Spawn;
             break;

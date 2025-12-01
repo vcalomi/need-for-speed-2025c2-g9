@@ -146,7 +146,6 @@ QGraphicsView {
         </widget>
        </item>
        <item><widget class="QPushButton" name="checkpointToolBtn"><property name="text"><string>Checkpoint</string></property></widget></item>
-       <item><widget class="QPushButton" name="hintToolBtn"><property name="text"><string>Hint (Arrow)</string></property></widget></item>
        <item><widget class="QPushButton" name="spawnToolBtn"><property name="text"><string>Player Spawn</string></property></widget></item>
        <item><widget class="QPushButton" name="startToolBtn"><property name="text"><string>Start</string></property></widget></item>
        <item><widget class="QPushButton" name="finishToolBtn"><property name="text"><string>Finish</string></property></widget></item>
