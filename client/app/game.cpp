@@ -35,7 +35,7 @@ Game::Game(Client& client):
 void Game::Run() {
     bool running = true;
     Camera camera(engine_.getWindowWidth(), engine_.getWindowHeight());
-    Minimap minimap(engine_.GetRenderer(), map_, 100, 100);
+
 
     while (map_.IsLoaded() == false && world_.HasPlayers() == false) {
         std::shared_ptr<Dto> dto = nullptr;
@@ -43,7 +43,7 @@ void Game::Run() {
             dtoHandlerSystem_.Process(dto);
         }
     }
-
+    Minimap minimap(engine_.GetRenderer(), map_, 100, 100);
     progress_.SetCheckpoints(world_.GetCheckpoints());
     progress_.SetLocalPlayer(world_.GetLocalPlayer().GetUsername());
 
