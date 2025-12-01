@@ -7,10 +7,11 @@
 
 class VehicleUpgradeDto: public Dto {
 public:
+    std::string username;
     bool healthUpgrade;
     bool speedUpgrade;
 
-    VehicleUpgradeDto(bool healthUpgrade, bool speedUpgrade);
+    VehicleUpgradeDto(const std::string& username, bool healthUpgrade, bool speedUpgrade);
 };
 
 #endif
