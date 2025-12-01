@@ -43,7 +43,7 @@ void Game::Run() {
             dtoHandlerSystem_.Process(dto);
         }
     }
-    Minimap minimap(engine_.GetRenderer(), map_, 100, 100);
+    Minimap minimap(engine_.GetRenderer(), 100, 100);
     progress_.SetCheckpoints(world_.GetCheckpoints());
     progress_.SetLocalPlayer(world_.GetLocalPlayer().GetUsername());
 
