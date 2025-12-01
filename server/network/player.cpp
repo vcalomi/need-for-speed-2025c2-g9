@@ -3,7 +3,7 @@
 #include <iostream>
 
 Player::Player(std::shared_ptr<ServerProtocol> protocol, int clientId)
-    : protocol(protocol), clientId(clientId), state(State::IN_LOBBY), sendQueue() {}
+    : protocol(protocol), clientId(clientId), state(State::IN_LOBBY), sendQueue(), is_ready(false) {}
 
 void Player::beginGame(Queue<std::shared_ptr<Dto>>& gameCommands) {
     if (state == State::IN_GAME) return;
@@ -14,6 +14,7 @@ void Player::beginGame(Queue<std::shared_ptr<Dto>>& gameCommands) {
         sender = std::make_unique<Sender>(*protocol, sendQueue);
         sender->start();
         state = State::IN_GAME;
+        is_ready = true;
     } catch (const std::exception& e) {
         std::cout << "Player " << clientId << ": Error starting game: " << e.what() << std::endl;
         throw;
@@ -22,7 +23,7 @@ void Player::beginGame(Queue<std::shared_ptr<Dto>>& gameCommands) {
 
 void Player::stopGame() {
     if (state != State::IN_GAME) return;
-    
+    is_ready = false;
     try { 
         sendQueue.close(); 
     } catch (...) {}

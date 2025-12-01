@@ -58,7 +58,7 @@ public:
     
     Queue<std::shared_ptr<Dto>>& getGameQueue() { return gameQueue; }
     void setSelectedMaps(const std::vector<std::string>& mapNames);
-    
+    bool areAllPlayersReady() const;
     void stopAllPlayers();
     ~GameRoom();
 };

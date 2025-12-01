@@ -18,6 +18,7 @@ private:
     int clientId;
     State state;
     Queue<std::shared_ptr<Dto>> sendQueue;
+    std::atomic<bool> is_ready;
     std::unique_ptr<Receiver> receiver;
     std::unique_ptr<Sender> sender;
     
@@ -29,6 +30,7 @@ public:
     
     bool isGameActive() const { return state == State::IN_GAME; }
     Queue<std::shared_ptr<Dto>>& getSendQueue() { return sendQueue; }
+    bool isReady() const { return is_ready; }
     
     ~Player();
 };

@@ -96,7 +96,21 @@ void GameRoom::startGame(int clientId) {
     }
 }
 
+
+bool GameRoom::areAllPlayersReady() const {
+    for (const auto& [id, player] : players) {
+        if (!player->isReady()) {
+            return false;
+        }
+    }
+    return true;
+}
+
 void GameRoom::startLoop() {
+    if (!areAllPlayersReady()) {
+        return;
+    }
+    
     bool allInGame = true;
     for (const auto& [id, player] : players) {
         if (!player->isGameActive()) {
