@@ -9,8 +9,9 @@
 class PlayerHitNPCDto: public Dto {
 public:
     std::string username;
+    int id;
 
-    PlayerHitNPCDto(const std::string& username);
+    PlayerHitNPCDto(const std::string& username, int id);
 };
 
 #endif

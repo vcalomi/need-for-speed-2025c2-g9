@@ -11,7 +11,7 @@
 #include "progress_manager.h"
 
 struct Npc {
-    std::string id;
+    int id;
     float x;
     float y;
     std::string spriteName;
@@ -46,8 +46,14 @@ public:
 
     void OnCollision(const Event& e);
     const auto& GetNpcs() const { return npcs_; }
-    void AddNpc(const std::string& id, float x, float y, const std::string& sprite) {
+    void AddNpc(const int id, float x, float y, const std::string& sprite) {
         npcs_[id] = Npc{id, x, y, sprite};
+    }
+    void RemoveNpcById(int npcId) {
+        auto it = npcs_.find(npcId);
+        if (it != npcs_.end()) {
+            npcs_.erase(it);
+        }
     }
 
 
@@ -56,5 +62,5 @@ private:
     std::string localUsername_;
     std::vector<Checkpoint> checkpoints_;
     EventBus& eventBus_;
-    std::unordered_map<std::string, Npc> npcs_;
+    std::unordered_map<int, Npc> npcs_;
 };

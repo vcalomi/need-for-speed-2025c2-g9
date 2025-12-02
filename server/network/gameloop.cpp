@@ -615,7 +615,7 @@ void GameLoop::handleVehicleNpcCollision(const RawVehicleNpc& event) {
     if (it == playerUsernames_.end())
         return;
 
-    auto dto = std::make_shared<PlayerHitNPCDto>(it->second);
+    auto dto = std::make_shared<PlayerHitNPCDto>(it->second, event.npcId);
     broadcaster_.broadcast(dto);
 }
 

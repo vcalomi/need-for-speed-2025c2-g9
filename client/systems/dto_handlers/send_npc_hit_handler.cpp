@@ -13,5 +13,5 @@ std::shared_ptr<Event> SendNpcHitHandler::Handle(const std::shared_ptr<Dto>& dto
     std::cout << "[SendNpcHitHandler] Handling PlayerHitNPCDto for username: " << d->username
               << "\n";
 
-    return std::make_shared<NpcHitEvent>(d->username);
+    return std::make_shared<NpcHitEvent>(d->username, d->id);
 }

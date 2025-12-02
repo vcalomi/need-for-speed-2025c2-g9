@@ -36,7 +36,7 @@ RendererSystem::RendererSystem(SDL2pp::Renderer& renderer, SpriteSheet& cars, Sp
 
         std::string spriteName = "npc_" + std::to_string(spriteId);
 
-        world_.AddNpc(std::to_string(e.id), e.x, e.y, spriteName);
+        world_.AddNpc(e.id, e.x, e.y, spriteName);
 
         std::cout << "[RendererSystem] Spawn NPC e.id=" << e.id << " uses sprite " << spriteName
                   << "\n";
@@ -45,6 +45,7 @@ RendererSystem::RendererSystem(SDL2pp::Renderer& renderer, SpriteSheet& cars, Sp
     eventBus_.Subscribe<NpcHitEvent>([this](const NpcHitEvent& e) {
         auto player = world_.GetPlayer(e.username);
         particleRenderer_.Emit(player.GetX(), player.GetY(), 0.0f, 0.0f, ParticleType::BLOOD, 10);
+        world_.RemoveNpcById(e.npcId);
     });
 }
 
