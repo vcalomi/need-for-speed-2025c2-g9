@@ -4,12 +4,15 @@
 #include <SDL2/SDL_ttf.h>
 #include <SDL2pp/Renderer.hh>
 
+#include "../world/camera.h"
+#include "../world/player.h"
+
 class TextRenderer {
 public:
     TextRenderer(SDL2pp::Renderer& renderer, const std::string& fontPath, int size);
     ~TextRenderer();
     void Measure(const std::string& msg, int& w, int& h);
-
+    void DrawPlayerName(const Player& player, const Camera& camera);
     void Draw(const std::string& text, int x, int y, SDL_Color color = {255, 255, 255, 255});
 
 private:

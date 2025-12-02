@@ -24,6 +24,7 @@ public:
     RendererSystem(SDL2pp::Renderer& renderer, SpriteSheet& carSprites, World& world, EventBus& bus,
                    ProgressManager& progress);
     void Render(const World& world, Map& map, const Camera& camera, Minimap& minimap);
+    void DrawPlayerName(const Player& player, const Camera& camera);
 
 private:
     SDL2pp::Renderer& renderer_;

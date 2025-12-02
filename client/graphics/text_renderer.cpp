@@ -45,3 +45,23 @@ void TextRenderer::Draw(const std::string& text, int x, int y, SDL_Color color) 
     SDL_RenderCopy(renderer_.Get(), tex, nullptr, &dst);
     SDL_DestroyTexture(tex);
 }
+
+void TextRenderer::DrawPlayerName(const Player& player, const Camera& camera) {
+    float wx = player.GetX();
+    float wy = player.GetY();
+
+    int sx = static_cast<int>(wx - camera.getX());
+    int sy = static_cast<int>(wy - camera.getY());
+
+    std::string name = player.GetUsername();
+
+    int textW = 0, textH = 0;
+    Measure(name, textW, textH);
+
+    const int OFFSET_Y = -40;
+
+    int drawX = sx - (textW / 2);
+    int drawY = sy + OFFSET_Y;
+
+    Draw(name, drawX, drawY, SDL_Color{255, 255, 255, 255});
+}

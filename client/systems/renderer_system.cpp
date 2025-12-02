@@ -116,6 +116,7 @@ void RendererSystem::Render(const World& world, Map& map, const Camera& camera, 
         }
         if (!player.IsAboveBridge()) {
             playerRenderer_.Draw(player, camera);
+            text_.DrawPlayerName(player, camera);
         }
     }
 
@@ -131,6 +132,7 @@ void RendererSystem::Render(const World& world, Map& map, const Camera& camera, 
         }
         if (player.IsAboveBridge()) {
             playerRenderer_.Draw(player, camera);
+            text_.DrawPlayerName(player, camera);
         }
     }
 
