@@ -71,13 +71,13 @@ void EventRenderController::RegisterEvents() {
         state_.showPlayerFinishedScreen = false;
         state_.showFinalResultsScreen = true;
         world_.ResetPlayersExploded();
+        world_.SetCheckpoints({});
+        progress_.Reset();
     });
 
 
     eventBus_.Subscribe<PlayerRaceFinishedEvent>([this](const PlayerRaceFinishedEvent& e) {
-        if (e.username == world_.GetLocalPlayer().GetUsername()) {
-            world_.SetCheckpoints({});
-            progress_.Reset();
+                if (e.username == world_.GetLocalPlayer().GetUsername()) {
             state_.localPlayerFinished = true;
             state_.localFinishPosition = e.finalPosition;
             state_.localFinishTime = e.finishTime;
