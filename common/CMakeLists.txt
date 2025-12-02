@@ -31,6 +31,7 @@ target_sources(nfs_common
     serializer/end_race_serializer.cpp    
     serializer/npc_serializer.cpp
     serializer/player_hit_npc_serializer.cpp
+    serializer/player_game_finished_serializer.cpp
     Dto/dto.cpp
     Dto/vehicle.cpp
     Dto/player.cpp
@@ -49,6 +50,7 @@ target_sources(nfs_common
     Dto/end_race.cpp
     Dto/npc.cpp
     Dto/player_hit_npc.cpp
+    Dto/player_game_finished.cpp
     PUBLIC
     # .h files
     liberror.h
@@ -84,6 +86,8 @@ target_sources(nfs_common
     serializer/end_race_serializer.h
     serializer/npc_serializer.h
     serializer/player_hit_npc_serializer.h
+    serializer/player_game_finished_serializer.h
+    serializer/game_finished_serializer.h
     Dto/dto.h
     Dto/vehicle.h
     Dto/player.h
@@ -110,4 +114,6 @@ target_sources(nfs_common
     Dto/end_race.h
     Dto/npc.h
     Dto/player_hit_npc.h
+    Dto/player_game_finished.h
+    Dto/game_finished.h
 )
