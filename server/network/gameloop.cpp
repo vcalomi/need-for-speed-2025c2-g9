@@ -10,11 +10,13 @@
 
 #include "../../common/Dto/checkpoint.h"
 #include "../../common/Dto/end_race.h"
+#include "../../common/Dto/game_finished.h"
 #include "../../common/Dto/infinite_health.h"
 #include "../../common/Dto/initial_race_map.h"
 #include "../../common/Dto/lap_completed.h"
 #include "../../common/Dto/npc.h"
 #include "../../common/Dto/player.h"
+#include "../../common/Dto/player_game_finished.h"
 #include "../../common/Dto/player_hit_npc.h"
 #include "../../common/Dto/player_move.h"
 #include "../../common/Dto/player_race_finished.h"
@@ -72,8 +74,8 @@ void GameLoop::run() {
                     if (nextRaceIndex < (int)races_.size()) {
                         startRace(nextRaceIndex);
                     } else {
-                        // No hay más carreras configuradas
                         pendingNextRace_ = false;
+                        sendFinalResults();
                         // mandar un dto de "fin del torneo"
                     }
                 }
@@ -85,6 +87,41 @@ void GameLoop::run() {
         return;
     }
 }
+
+void GameLoop::sendFinalResults() {
+    std::cerr << "\n================= [sendFinalResults] =================\n";
+    std::cerr << "Cantidad de jugadores en playerResults_: " << playerResults_.size() << "\n";
+
+    for (const auto& [vehicleId, result]: playerResults_) {
+        std::cerr << "[sendFinalResults] Procesando vehicleId=" << vehicleId << "\n";
+
+        if (playerUsernames_.find(vehicleId) == playerUsernames_.end()) {
+            std::cerr << "  ERROR: vehicleId " << vehicleId
+                      << " NO existe en playerUsernames_. Saltando...\n";
+            continue;
+        }
+
+        const std::string& username = playerUsernames_.at(vehicleId);
+
+        std::cerr << "  → username=" << username << "\n";
+        std::cerr << "  → totalTimeSeconds=" << result.totalTimeSeconds << "\n";
+        std::cerr << "  → totalPenaltySeconds=" << result.totalPenaltySeconds << "\n";
+
+        auto finalResultDto = std::make_shared<PlayerGameFinishedDto>(
+                username, result.totalTimeSeconds, result.totalPenaltySeconds,
+                1  // posición, supongo que después vas a reemplazarlo
+        );
+
+        std::cerr << "  Enviando PlayerGameFinishedDto a broadcaster...\n";
+        broadcaster_.broadcast(finalResultDto);
+    }
+
+    std::cerr << "[sendFinalResults] Enviando GameFinishedDto...\n";
+    broadcaster_.broadcast(std::make_shared<GameFinishedDto>());
+
+    std::cerr << "================= [/sendFinalResults] =================\n\n";
+}
+
 
 void GameLoop::buildRacesFromSelectedMaps() {
     if (!races_.empty())
@@ -331,12 +368,14 @@ void GameLoop::handlerProcessCommand(std::shared_ptr<Dto> command) {
 
             if (upgradeDto->healthUpgrade) {
                 up.armorLevel += 1;
+                playerResults_[vehicleId].totalPenaltySeconds += 3.0f;
                 std::cout << "[GameLoop] " << upgradeDto->username
                           << " upgraded ARMOR. New level=" << up.armorLevel << "\n";
             }
 
             if (upgradeDto->speedUpgrade) {
                 up.engineLevel += 1;
+                playerResults_[vehicleId].totalPenaltySeconds += 3.0f;
                 std::cout << "[GameLoop] " << upgradeDto->username
                           << " upgraded ENGINE. New level=" << up.engineLevel << "\n";
             }
@@ -445,6 +484,7 @@ void GameLoop::onPlayerFinished(int vehicleId, PlayerRaceProgress& prog) {
     float seconds = static_cast<float>(ms) / 1000.0f;
 
     int position = computePlayerPosition(vehicleId);
+    playerResults_[vehicleId].totalTimeSeconds = seconds;
 
     auto finishDto = std::make_shared<PlayerRaceFinishedDto>(playerUsernames_.at(vehicleId),
                                                              seconds, position);

@@ -100,6 +100,9 @@ void EventRenderController::RegisterEvents() {
     });
 
     eventBus_.Subscribe<PlayerGameFinishedEvent>([this](const PlayerGameFinishedEvent& e) {
+        std::cout << "[EventRenderController] Stored final result: " << e.username
+                  << " pos=" << e.finalPosition << " time=" << e.totalRaceTime
+                  << " penalties=" << e.totalPenalties << "\n";
         PlayerFinalResult result;
         result.username = e.username;
         result.totalRaceTime = e.totalRaceTime;
@@ -107,12 +110,13 @@ void EventRenderController::RegisterEvents() {
         result.finalPosition = e.finalPosition;
 
         state_.finalResults.push_back(result);
-
-        std::cout << "[EventRenderController] Stored final result: " << e.username
-                  << " pos=" << e.finalPosition << " time=" << e.totalRaceTime
-                  << " penalties=" << e.totalPenalties << "\n";
     });
 
-    eventBus_.Subscribe<GameFinishedEvent>(
-            [this](const GameFinishedEvent&) { state_.showFinalGameResultsScreen = true; });
+    eventBus_.Subscribe<GameFinishedEvent>([this](const GameFinishedEvent&) {
+        std::cout << "[EventRenderController] Game finished event received. Showing final results "
+                     "screen.\n";
+        state_.showFinalGameResultsScreen = true;
+        state_.showFinalResultsScreen = false;
+        state_.showPlayerFinishedScreen = false;
+    });
 }

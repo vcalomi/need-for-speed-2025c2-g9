@@ -1,12 +1,12 @@
 #ifndef GAMELOOP_H
 #define GAMELOOP_H
 
+#include <chrono>
 #include <map>
 #include <memory>
 #include <optional>
 #include <string>
 #include <vector>
-#include <chrono>
 
 #include "../../common/Dto/dto.h"
 #include "../../common/broadcaster.h"
@@ -14,14 +14,19 @@
 #include "../../common/common_codes.h"
 #include "../../common/queue.h"
 #include "../../common/thread.h"
-#include "../LevelSetup.h"
 #include "../CarUpgrades.h"
+#include "../LevelSetup.h"
 
 struct PlayerRaceProgress {
-    int currentLap = 0;       
-    int nextCheckpoint = 0;     
+    int currentLap = 0;
+    int nextCheckpoint = 0;
     bool finished = false;
     std::optional<std::chrono::steady_clock::time_point> finishTime;
+};
+
+struct PlayerResult {
+    float totalTimeSeconds;
+    float totalPenaltySeconds;
 };
 
 
@@ -34,8 +39,8 @@ private:
     std::unordered_map<int, CarUpgrades> upgradesByUser_;
     std::optional<LevelSetup> setup;
     int maxPlayers;
-    std::vector<std::string> selectedMaps_; 
-    std::vector<RaceInfo> races_;  
+    std::vector<std::string> selectedMaps_;
+    std::vector<RaceInfo> races_;
     int currentRaceIndex_ = -1;
 
 
@@ -43,9 +48,10 @@ private:
 
     bool raceActive_ = false;
     bool pendingNextRace_ = false;
-    std::unordered_map<int, PlayerRaceProgress> raceProgress_; 
+    std::unordered_map<int, PlayerRaceProgress> raceProgress_;
     std::chrono::steady_clock::time_point raceStartTime_;
     std::chrono::steady_clock::time_point nextRaceStartTime_;
+    std::unordered_map<int, PlayerResult> playerResults_;
 
     bool countdownActive_ = false;
     std::chrono::steady_clock::time_point countdownStartTime_;
@@ -63,7 +69,7 @@ private:
     void handleVehicleBridgeToggle(const RawVehicleBridgeToggle& event);
     void handleVehicleNpcCollision(const RawVehicleNpc& event);
     bool allPlayersFinished();
-    
+
 
     void sendVehiclesPositions();
     void sendInitialPlayersCars();
@@ -75,6 +81,7 @@ private:
 
     int computePlayerPosition(int vehicleId);
     void onPlayerFinished(int vehicleId, PlayerRaceProgress& prog);
+    void sendFinalResults();
 
 public:
     explicit GameLoop(Queue<std::shared_ptr<Dto>>& gameLoopQueue,
@@ -87,7 +94,6 @@ public:
     void processGameEvents();
     void startRace(int levelIndex);
     void addSelectedMapPath(const std::string& path);
-
 
 
     ~GameLoop();
