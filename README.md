@@ -76,9 +76,9 @@ https://www.youtube.com/watch?v=JTv96m46JTE
 
 ## Documentación
 
-- [Manual de usuario](/docs/DocumentacionTecnica.md)
+- [Documentación técnica](/docs/DocumentacionTecnica.md)
 - [Manual de proyecto](/docs/ManualProyecto.md)
-- [Documentación técnica](/docs/ManualDeUsuario.md)
+- [Manual de usuario](/docs/ManualDeUsuario.md)
 
 ## Créditos
 
