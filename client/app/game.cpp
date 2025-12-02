@@ -8,6 +8,7 @@
 #include "../../common/Dto/player_move.h"
 #include "../../common/Dto/vehicle.h"
 #include "../events/cheat_end_race_event.h"
+#include "../events/close_game_event.h"
 #include "../events/infinite_health_event.h"
 #include "../events/player_events.h"
 #include "../events/player_left_event.h"
@@ -17,18 +18,23 @@
 Game::Game(Client& client):
         client_(client),
         engine_(),
-        audioSystem_(),
         resources_(engine_.GetRenderer()),
         eventBus_(),
+        audioSystem_(eventBus_),
         inputSystem_(),
         world_(eventBus_),
         progress_(eventBus_),
-        rendererSystem_(engine_.GetRenderer(), resources_.GetCarSprites(), world_, eventBus_,
-                        progress_),
+        rendererSystem_(engine_.GetRenderer(), resources_.GetCarSprites(),
+                        resources_.GetNpcSprites(), world_, eventBus_, progress_),
         networkSystem_(client_, eventBus_),
         dtoHandlerSystem_(client_, eventBus_),
         map_(engine_.GetRenderer(), eventBus_) {
     audioSystem_.PlayBackgroundMusic(ASSETS_DIR "/music/background.wav");
+
+    eventBus_.Subscribe<CloseGameEvent>([this](const CloseGameEvent& e) {
+        std::cout << "[Game] CloseGameEvent received. Stopping the game loop.\n";
+        client_.stop();
+    });
 }
 
 
@@ -39,8 +45,12 @@ void Game::Run() {
 
     while (map_.IsLoaded() == false && world_.HasPlayers() == false) {
         std::shared_ptr<Dto> dto = nullptr;
-        while (client_.getRecvQueue().try_pop(dto)) {
-            dtoHandlerSystem_.Process(dto);
+        try {
+            while (client_.getRecvQueue().try_pop(dto)) {
+                dtoHandlerSystem_.Process(dto);
+            }
+        } catch (const ClosedQueue&) {
+            break;
         }
     }
     Minimap minimap(engine_.GetRenderer(), 100, 100);
@@ -52,7 +62,9 @@ void Game::Run() {
         inputSystem_.PollEvents(running);
 
         if (inputSystem_.IsKeyPressed(SDL_SCANCODE_Q)) {
-            eventBus_.Publish(InfiniteHealthEvent(this->world_.GetLocalPlayer().GetUsername()));
+            const auto username = this->world_.GetLocalPlayer().GetUsername();
+            eventBus_.Publish(InfiniteHealthEvent(username));
+            this->world_.GetPlayer(username).setInfiniteHealth(true);
         }
 
         if (inputSystem_.WasKeyPressed(SDL_SCANCODE_E)) {
@@ -66,8 +78,12 @@ void Game::Run() {
                                           static_cast<ActionCode>(input.move)));
 
         std::shared_ptr<Dto> dto = nullptr;
-        while (client_.getRecvQueue().try_pop(dto)) {
-            dtoHandlerSystem_.Process(dto);
+        try {
+            while (client_.getRecvQueue().try_pop(dto)) {
+                dtoHandlerSystem_.Process(dto);
+            }
+        } catch (const ClosedQueue&) {
+            break;
         }
 
         int realW, realH;

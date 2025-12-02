@@ -10,7 +10,6 @@
 
 struct RaceInfoEvent: public Event {
     std::string map;
-    // std::vector<Checkpoint> checkpoints;
 
 
     explicit RaceInfoEvent(std::string map): map(std::move(map)) {}

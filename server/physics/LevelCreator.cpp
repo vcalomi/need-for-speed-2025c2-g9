@@ -120,6 +120,7 @@ Matrix LevelCreator::BuildLevelMatrix(const std::filesystem::path& file_path) {
 }
 
 void LevelCreator::processDirectoryLevel(const std::string& directory_path) {
+    currentMapName_ = directory_path;
     std::error_code ec;
     if (!std::filesystem::exists(directory_path, ec) ||
         !std::filesystem::is_directory(directory_path, ec)) {
@@ -166,7 +167,17 @@ static void createTileCollider(b2WorldId world, float x_px, float y_px, float si
 }
 
 void LevelCreator::createLevelCollision(b2WorldId world, const std::vector<Matrix>& levels) {
-    const int tile_px = TILE_SIZE_PX; // 2 px
+    float tile_px = TILE_SIZE_PX; // 2 px
+
+    if (currentMapName_.find("Liberty") != std::string::npos ||
+        currentMapName_.find("Liberty_City") != std::string::npos) {
+
+        tile_px = 4.0f;
+
+    } else if (currentMapName_.find("San_Andreas") != std::string::npos) {
+
+        tile_px = 4.55f;
+    }
 
     if (levels.empty()) {
         std::cerr << "[ERROR] createLevelCollision: levels vacío\n";
@@ -207,12 +218,6 @@ void LevelCreator::createLevelCollision(b2WorldId world, const std::vector<Matri
                     offset_x_px + x * tile_px + tile_px * 0.5f;
                 const float world_y_px =
                     offset_y_px + y * tile_px + tile_px * 0.5f;
-
-                if (v == 3 || v == 4 || v == 5 || v == 6) {
-                    spawn_points.push_back(
-                        Spawn{world_x_px / PPM, world_y_px / PPM, tileIdToAngle(v)});
-                    continue;
-                }
 
                 if (v == 18 || v == 19) {
                     int xStart = x;
@@ -261,19 +266,17 @@ void LevelCreator::createLevelCollision(b2WorldId world, const std::vector<Matri
 
                     continue;
                 }
-
-                if (v >= 7) {
-                    const int checkpointIndex = v - 7;  // 7->0, 8->1, etc.
-
+                if (v == 20) {
                     const float cx_m = world_x_px / PPM;
                     const float cy_m = world_y_px / PPM;
-                    const float radius_m = CHECKPOINT_RADIUS_PX / PPM;   
+
+                    // radio del sensor del NPC (podés tunearlo)
+                    const float radius_m = (TILE_SIZE_PX * 0.5f) / PPM; // o un NPC_RADIUS_PX
 
                     b2BodyDef bodyDef = b2DefaultBodyDef();
                     bodyDef.type = b2_staticBody;
                     bodyDef.position = {cx_m, cy_m};
                     b2BodyId body = b2CreateBody(world, &bodyDef);
-
 
                     b2Circle circle{};
                     circle.center = {0.0f, 0.0f};
@@ -281,15 +284,22 @@ void LevelCreator::createLevelCollision(b2WorldId world, const std::vector<Matri
 
                     b2ShapeDef shapeDef = b2DefaultShapeDef();
                     shapeDef.isSensor = true;
-                    shapeDef.enableSensorEvents = true; 
-                    
-                    FixtureTag* tag = makeTag(checkpoint_tags_, EntityKind::Checkpoint, checkpointIndex, 0);
+                    shapeDef.enableSensorEvents = true;
+
+                    int npcId = static_cast<int>(npcs_.size());
+                    FixtureTag* tag = makeTag(npc_tags_, EntityKind::Npc, npcId, 0);
                     shapeDef.userData = tag;
+
                     b2CreateCircleShape(body, &shapeDef, &circle);
 
-                    checkpoints_.push_back(CheckpointInfo{world_x_px, world_y_px, checkpointIndex});
-
-                    continue; 
+                    npcs_.push_back(NpcInfo{
+                        world_x_px,
+                        world_y_px,
+                        npcId,
+                        true   
+                    });
+                    std::cout << "NPC CREADO PAPU\n";
+                    continue;
                 }
 
                 createTileCollider(world, world_x_px, world_y_px, tile_px);
@@ -301,39 +311,62 @@ void LevelCreator::createLevelCollision(b2WorldId world, const std::vector<Matri
     std::cout << "[INFO] colisiones creadas\n";
 }
 
-void LevelCreator::drawDebugCheckpoints(SDL_Renderer* r,
-                                        float camX_px,
-                                        float camY_px,
-                                        float zoom)
-{
-    SDL_SetRenderDrawBlendMode(r, SDL_BLENDMODE_BLEND);
-    SDL_SetRenderDrawColor(r, 0, 0, 255, 200);  // azul semitransparente
+void LevelCreator::createCheckpoints( b2WorldId world, const std::vector<CheckpointInfo>& input, std::vector<CheckpointInfo>& outCheckpoints) {
+    outCheckpoints.clear();
+    outCheckpoints.reserve(input.size());
 
-    const int SEGMENTS = 24;
-    const float radius_px = CHECKPOINT_RADIUS_PX;  
+    for (size_t i = 0; i < input.size(); ++i) {
+        const auto& cp = input[i];
 
-    for (const auto& cp : checkpoints_) {
-        const float cx_px = cp.x_px;
-        const float cy_px = cp.y_px;
-        const float cx = (cx_px - camX_px) * zoom;
-        const float cy = (cy_px - camY_px) * zoom;
-        const float rad = radius_px * zoom;
+        const float world_x_px = cp.x_px;
+        const float world_y_px = cp.y_px;
 
-        float prev_x = cx + rad;
-        float prev_y = cy;
+        const float cx_m = world_x_px / PPM;
+        const float cy_m = world_y_px / PPM;
+        const float radius_m = CHECKPOINT_RADIUS_PX / PPM;
 
-        for (int i = 1; i <= SEGMENTS; ++i) {
-            float theta = (2.0f * 3.14159265358979323846f * i) / SEGMENTS;
-            float x = cx + rad * std::cos(theta);
-            float y = cy + rad * std::sin(theta);
-            SDL_RenderDrawLineF(r, prev_x, prev_y, x, y);
-            prev_x = x;
-            prev_y = y;
-        }
+        b2BodyDef bodyDef = b2DefaultBodyDef();
+        bodyDef.type = b2_staticBody;
+        bodyDef.position = {cx_m, cy_m};
+        b2BodyId body = b2CreateBody(world, &bodyDef);
 
-        // opcional: número del checkpoint
-        SDL_SetRenderDrawColor(r, 255, 255, 255, 220);
-        SDL_FRect rect = {cx - 2, cy - 2, 4, 4};
-        SDL_RenderFillRectF(r, &rect);
+        b2Circle circle{};
+        circle.center = {0.0f, 0.0f};
+        circle.radius = radius_m;
+
+        b2ShapeDef shapeDef = b2DefaultShapeDef();
+        shapeDef.isSensor = true;
+        shapeDef.enableSensorEvents = true;
+
+        int checkpointIndex = static_cast<int>(i);  
+
+        FixtureTag* tag =
+            makeTag(checkpoint_tags_, EntityKind::Checkpoint, checkpointIndex, 0);
+        shapeDef.userData = tag;
+
+        b2CreateCircleShape(body, &shapeDef, &circle);
+
+        outCheckpoints.push_back(CheckpointInfo{
+            world_x_px,
+            world_y_px,
+            checkpointIndex
+        });
+    }
+}
+
+void LevelCreator::createSpawns(const std::vector<Spawn>& input,
+                                std::vector<Spawn>& outSpawns) {
+    outSpawns.clear();
+    outSpawns.reserve(input.size());
+
+    for (const auto& sp : input) {
+        const float x = sp.x / PPM;
+        const float y = sp.y / PPM;
+
+        outSpawns.push_back(Spawn{
+            x,
+            y,
+            sp.angle
+        });
     }
 }

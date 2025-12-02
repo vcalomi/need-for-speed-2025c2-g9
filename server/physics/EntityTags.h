@@ -6,6 +6,7 @@ enum class EntityKind {
     Vehicle,
     Checkpoint,
     BridgeToggle,
+    Npc,
 };
 
 struct FixtureTag {

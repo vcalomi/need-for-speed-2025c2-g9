@@ -1,11 +1,18 @@
 #include "renderer_system.h"
 
+#include <string>
+
+#include "../events/countdown_down_event.h"
+#include "../events/countdown_go_event.h"
+#include "../events/new_npc_event.h"
+#include "../events/npc_hit_event.h"
 #include "../events/upgrade_car_event.h"
 
-RendererSystem::RendererSystem(SDL2pp::Renderer& renderer, SpriteSheet& cars, World& world,
-                               EventBus& bus, ProgressManager& progress):
+RendererSystem::RendererSystem(SDL2pp::Renderer& renderer, SpriteSheet& cars, SpriteSheet& npcs,
+                               World& world, EventBus& bus, ProgressManager& progress):
         renderer_(renderer),
         carSprites_(cars),
+        npcSprites_(npcs),
         world_(world),
         eventBus_(bus),
         progress_(progress),
@@ -18,14 +25,70 @@ RendererSystem::RendererSystem(SDL2pp::Renderer& renderer, SpriteSheet& cars, Wo
         screenRenderer_(renderer, text_),
         controller_(bus, particleRenderer_, world, state_, screenRenderer_, progress),
         checkpointIndicator_(renderer),
-        speedometer_(renderer, ASSETS_DIR "/cars/speedometer.png",
-                     ASSETS_DIR "/cars/speedometer_needle.png") {
-    checkpointIndicator_.SetTexture(ASSETS_DIR "/cars/arrow.png");
+        speedometer_(renderer, "../client/assets/need-for-speed/cars/speedometer.png",
+                     "../client/assets/need-for-speed/cars/speedometer_needle.png"),
+        eventBus_(bus) {
+    checkpointIndicator_.SetTexture("../client/assets/need-for-speed/cars/arrow.png");
+
+    eventBus_.Subscribe<NewNpcEvent>([this](const NewNpcEvent& e) {
+        int spriteId = (e.id % 12);
+        if (spriteId == 0)
+            spriteId = 12;
+
+        std::string spriteName = "npc_" + std::to_string(spriteId);
+
+        world_.AddNpc(e.id, e.x, e.y, spriteName);
+
+        std::cout << "[RendererSystem] Spawn NPC e.id=" << e.id << " uses sprite " << spriteName
+                  << "\n";
+    });
+
+    eventBus_.Subscribe<NpcHitEvent>([this](const NpcHitEvent& e) {
+        auto player = world_.GetPlayer(e.username);
+        particleRenderer_.Emit(player.GetX(), player.GetY(), 0.0f, 0.0f, ParticleType::BLOOD, 10);
+        world_.RemoveNpcById(e.npcId);
+    });
 }
 
 
 void RendererSystem::Render(const World& world, Map& map, const Camera& camera, Minimap& minimap) {
     renderer_.Clear();
+
+    if (state_.showFinalGameResultsScreen) {
+        screenRenderer_.RenderGameFinalResults(state_.finalResults);
+        renderer_.Present();
+        return;
+    }
+
+    if (state_.countdownActive) {
+        float dt = 0.016f;
+
+        state_.countdownTimer -= dt;
+
+        int newNum = std::ceil(state_.countdownTimer);
+
+        if (newNum != state_.countdownNumber && newNum > 0) {
+            state_.countdownNumber = newNum;
+            eventBus_.Publish(CountdownDownEvent());
+        }
+
+        if (state_.countdownTimer <= 0.0f) {
+            state_.countdownActive = false;
+            state_.countdownNumber = 0;
+            state_.countdownGoTimer = 1.0f;
+            eventBus_.Publish(CountdownGoEvent());
+        }
+    } else if (state_.countdownNumber == 0) {
+
+        float dt = 0.016f;
+
+        state_.countdownGoTimer -= dt;
+
+        if (state_.countdownGoTimer <= 0.0f) {
+            state_.countdownNumber = -1;
+        }
+    }
+
 
     background_.RenderBackground(map, camera);
 
@@ -51,7 +114,7 @@ void RendererSystem::Render(const World& world, Map& map, const Camera& camera, 
     }
 
     if (state_.showFinalResultsScreen) {
-        screenRenderer_.RenderRaceFinished(world);
+        screenRenderer_.RenderRaceFinished(state_.localFinishPosition, state_.localFinishTime);
         renderer_.Present();
 
         int mx, my;
@@ -84,8 +147,21 @@ void RendererSystem::Render(const World& world, Map& map, const Camera& camera, 
         }
         if (!player.IsAboveBridge()) {
             playerRenderer_.Draw(player, camera);
+            text_.DrawPlayerName(player, camera);
         }
     }
+
+    for (const auto& [id, npc]: world.GetNpcs()) {
+        auto sprite = npcSprites_.GetSprite(npc.spriteName);
+        auto rect = sprite.area;
+        auto tex = sprite.texture;
+
+        int sx = static_cast<int>(npc.x - camera.getX());
+        int sy = static_cast<int>(npc.y - camera.getY());
+
+        renderer_.Copy(*tex, rect, SDL2pp::Rect(sx, sy, sprite.width, sprite.height));
+    }
+
 
     particleRenderer_.Update(0.016f);
     particleRenderer_.Render(camera);
@@ -99,6 +175,7 @@ void RendererSystem::Render(const World& world, Map& map, const Camera& camera, 
         }
         if (player.IsAboveBridge()) {
             playerRenderer_.Draw(player, camera);
+            text_.DrawPlayerName(player, camera);
         }
     }
 
@@ -111,6 +188,10 @@ void RendererSystem::Render(const World& world, Map& map, const Camera& camera, 
 
     float speed = world.GetLocalPlayer().GetSpeed();
     speedometer_.Render(speed, 200.0f);
+
+    if (state_.countdownActive || state_.countdownNumber >= 0) {
+        screenRenderer_.RenderCountdown(state_.countdownTimer, state_.countdownNumber);
+    }
 
     renderer_.Present();
 }

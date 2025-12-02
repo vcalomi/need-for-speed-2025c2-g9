@@ -1,7 +1,10 @@
 #include "event_render_controller.h"
 
+#include "../events/game_finished_event.h"
+#include "../events/new_npc_event.h"
 #include "../events/player_collision_event.h"
 #include "../events/player_events.h"
+#include "../events/player_game_finished_event.h"
 #include "../events/player_race_finished_event.h"
 #include "../events/race_finished_event.h"
 #include "../events/race_info_event.h"
@@ -54,10 +57,12 @@ void EventRenderController::RegisterEvents() {
             state_.showFinalResultsScreen = false;
             state_.showPlayerFinishedScreen = false;
 
-            world_.SetCheckpoints({});
-            progress_.Reset();
-            return;
+            std::cout << "Resetting final results and progress for new race." << std::endl;
         }
+        screenRenderer_.ResetSelections();
+        state_.countdownActive = true;
+        state_.countdownTimer = 3.0f;
+        state_.countdownNumber = 3;
     });
 
 
@@ -66,11 +71,13 @@ void EventRenderController::RegisterEvents() {
         state_.showPlayerFinishedScreen = false;
         state_.showFinalResultsScreen = true;
         world_.ResetPlayersExploded();
+        world_.SetCheckpoints({});
+        progress_.Reset();
     });
 
 
     eventBus_.Subscribe<PlayerRaceFinishedEvent>([this](const PlayerRaceFinishedEvent& e) {
-        if (e.username == world_.GetLocalPlayer().GetUsername()) {
+                if (e.username == world_.GetLocalPlayer().GetUsername()) {
             state_.localPlayerFinished = true;
             state_.localFinishPosition = e.finalPosition;
             state_.localFinishTime = e.finishTime;
@@ -93,4 +100,23 @@ void EventRenderController::RegisterEvents() {
             p.setExploded(true);
         }
     });
+
+    eventBus_.Subscribe<PlayerGameFinishedEvent>([this](const PlayerGameFinishedEvent& e) {
+        PlayerFinalResult result;
+        result.username = e.username;
+        result.totalRaceTime = e.totalRaceTime;
+        result.totalPenalties = e.totalPenalties;
+        result.finalPosition = e.finalPosition;
+
+        state_.finalResults.push_back(result);
+    });
+
+    eventBus_.Subscribe<GameFinishedEvent>([this](const GameFinishedEvent&) {
+        state_.showFinalGameResultsScreen = true;
+        state_.showFinalResultsScreen = false;
+        state_.showPlayerFinishedScreen = false;
+    });
+
+    eventBus_.Subscribe<NewNpcEvent>(
+            [this](const NewNpcEvent&) { progress_.SetCheckpoints(world_.GetCheckpoints()); });
 }

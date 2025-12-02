@@ -36,9 +36,17 @@ std::string Player::VehicleTipeToString(VehicleTipe type) const {
     }
 }
 
-void Player::UpdateFromNetwork(float x, float y, float angleRad, float speed, bool isAboveBridge) {
+void Player::UpdateFromNetwork(float x, float y, float angleRad, float speed, float health,
+                               bool isAboveBridge) {
     x_ = x;
     y_ = y;
+
+    if (health >= maxHealth_) {
+        health_ = maxHealth_;
+        health_ = health;
+    } else {
+        health_ = health;
+    }
 
     float angleDeg = angleRad * 180.0f / M_PI;
 

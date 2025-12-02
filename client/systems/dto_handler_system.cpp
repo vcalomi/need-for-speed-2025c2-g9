@@ -22,8 +22,13 @@
 #include "../events/wall_collision_event.h"
 #include "dto_handlers/send_cars_handler.h"
 #include "dto_handlers/send_checkpoints_handler.h"
+#include "dto_handlers/send_close_game_handler.h"
+#include "dto_handlers/send_game_finished_handler.h"
 #include "dto_handlers/send_initial_race_map_handler.h"
 #include "dto_handlers/send_lap_completed_handler.h"
+#include "dto_handlers/send_npc_handler.h"
+#include "dto_handlers/send_npc_hit_handler.h"
+#include "dto_handlers/send_player_game_finished_handler.h"
 #include "dto_handlers/send_player_handler.h"
 #include "dto_handlers/send_player_race_finished_handler.h"
 #include "dto_handlers/send_race_finished_handler.h"
@@ -69,6 +74,20 @@ void DtoHandlerSystem::RegisterHandlers() {
 
     handlers_[static_cast<uint8_t>(ActionCode::SEND_INITIAL_RACE_MAP)] =
             std::make_unique<SendInitialRaceMapHandler>();
+
+    handlers_[static_cast<uint8_t>(ActionCode::SEND_NPC)] = std::make_unique<SendNpcHandler>();
+
+    handlers_[static_cast<uint8_t>(ActionCode::SEND_PLAYER_HIT_NPC)] =
+            std::make_unique<SendNpcHitHandler>();
+
+    handlers_[static_cast<uint8_t>(ActionCode::SEND_PLAYER_GAME_FINISHED)] =
+            std::make_unique<SendPlayerGameFinishedHandler>();
+
+    handlers_[static_cast<uint8_t>(ActionCode::SEND_GAME_FINISHED)] =
+            std::make_unique<SendGameFinishedHandler>();
+
+    handlers_[static_cast<uint8_t>(ActionCode::SEND_CLOSE_GAME)] =
+            std::make_unique<SendCloseGameHandler>();
 }
 
 

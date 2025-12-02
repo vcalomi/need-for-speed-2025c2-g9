@@ -1,5 +1,6 @@
 #include "game_monitor.h"
 
+#include <memory>
 #include <iostream>
 #include <utility>
 #include <vector>
@@ -17,7 +18,7 @@ std::shared_ptr<GameRoom> GameMonitor::getRoom(int clientId) {
 }
 
 bool GameMonitor::createGameRoom(const std::string& roomName, int hostId,
-                                 Player* hostPlayer, int maxPlayers) {
+                                 std::unique_ptr<Player> hostPlayer, int maxPlayers) {
     std::lock_guard<std::mutex> lock(mtx);
 
     if (activeGames.count(roomName)) {
@@ -28,7 +29,7 @@ bool GameMonitor::createGameRoom(const std::string& roomName, int hostId,
     activeGames[roomName] = newRoom;
     clientToRoom[hostId] = newRoom;
 
-    newRoom->addPlayer(hostId, hostPlayer);
+    newRoom->addPlayer(hostId, std::move(hostPlayer));
     
     auto it = clientUsernames.find(hostId);
     if (it != clientUsernames.end()) {
@@ -39,7 +40,7 @@ bool GameMonitor::createGameRoom(const std::string& roomName, int hostId,
 }
 
 bool GameMonitor::joinGameRoom(const std::string& roomName, int clientId,
-                               Player* clientPlayer) {
+                               std::unique_ptr<Player> clientPlayer) {
     std::lock_guard<std::mutex> lock(mtx);
 
     if (!activeGames.count(roomName)) {
@@ -51,7 +52,7 @@ bool GameMonitor::joinGameRoom(const std::string& roomName, int clientId,
         return false;
     }
 
-    room->addPlayer(clientId, clientPlayer);
+    room->addPlayer(clientId, std::move(clientPlayer));
     clientToRoom[clientId] = room;
     
     auto it = clientUsernames.find(clientId);

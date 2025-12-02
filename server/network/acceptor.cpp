@@ -13,9 +13,7 @@ Acceptor::Acceptor(const std::string& port, GameMonitor& gameMonitor):
 void Acceptor::run() {
     while (should_keep_running()) {
         try {
-            std::cout << "Acceptor: Esperando nueva conexión..." << std::endl;
             Socket socket = acceptor.accept();
-            std::cout << "Acceptor: ¡Nueva conexión aceptada!" << std::endl;
             if (!should_keep_running()) {
                 break;
             }
@@ -36,20 +34,21 @@ void Acceptor::run() {
 
 void Acceptor::reap() {
     auto new_end = std::remove_if(lobbies.begin(), lobbies.end(), [](Lobby* l) {
-        bool is_dead = !l->is_alive() && !l->isGameStarted();
-        if (is_dead) {
-            l->join();
+        bool finished = !l->is_alive();
+        if (finished) {
+            try { l->join(); } catch (...) {}
             delete l;
+            return true;
         }
-        return is_dead;
+        return false;
     });
     lobbies.erase(new_end, lobbies.end());
 }
 
 void Acceptor::clear() {
     for (auto& lobby: lobbies) {
-        lobby->stop();
-        lobby->join();
+        try { lobby->stop(); } catch (...) {}
+        try { lobby->join(); } catch (...) {}
         delete lobby;
     }
     lobbies.clear();
@@ -62,3 +61,4 @@ void Acceptor::close() {
 }
 
 Acceptor::~Acceptor() {}
+

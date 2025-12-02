@@ -14,10 +14,13 @@ public:
     explicit ResourceLoader(SDL2pp::Renderer& renderer);
 
     SpriteSheet& GetCarSprites();
+    SpriteSheet& GetNpcSprites();
 
 private:
     void LoadCarSprites();
+    void LoadNpcSprites();
 
     SDL2pp::Renderer& renderer_;
     SpriteSheet carSprites_;
+    SpriteSheet npcSprites_;
 };

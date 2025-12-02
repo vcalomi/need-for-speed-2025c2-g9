@@ -9,10 +9,14 @@ static bool FileExists(const std::string& p) { return std::ifstream(p).good(); }
 Map::Map(SDL2pp::Renderer& renderer, EventBus& eventBus):
         renderer_(renderer), eventBus_(eventBus), width_(0), height_(0) {
     eventBus_.Subscribe<RaceInfoEvent>([this](const RaceInfoEvent& e) {
-        std::string assetsPath = ASSETS_DIR "/cities/";
-        std::string assetsFileType = ".png";
-        std::string backgroundpath = assetsPath + e.map + assetsFileType;
-        std::string foregroundpath = assetsPath + e.map + "_foreground" + assetsFileType;
+        std::string assetsPath = "../client/assets/need-for-speed/cities/";
+        std::string backgroundpath = assetsPath + e.map;
+        std::string base = e.map;
+        if (base.size() > 4 && base.substr(base.size() - 4) == ".png") {
+            base = base.substr(0, base.size() - 4);
+        }
+
+        std::string foregroundpath = assetsPath + base + "_foreground.png";
 
         if (FileExists(backgroundpath)) {
             backgroundTexture_.emplace(renderer_, backgroundpath);

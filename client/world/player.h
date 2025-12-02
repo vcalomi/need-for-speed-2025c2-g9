@@ -10,7 +10,8 @@ class Player {
 public:
     Player(std::string username, VehicleTipe carType, float x, float y, float health);
 
-    void UpdateFromNetwork(float x, float y, float angle, float speed, bool isAboveBridge);
+    void UpdateFromNetwork(float x, float y, float angle, float speed, float health,
+                           bool isAboveBridge);
 
     float GetX() const { return x_; }
     float GetY() const { return y_; }
@@ -27,6 +28,8 @@ public:
     void updateHealth(float health) { health_ = health; }
     void setExploded(bool exploded) { exploded_ = exploded; }
     bool isExploded() const { return exploded_; }
+    void setInfiniteHealth(bool v) { infiniteHealth_ = v; }
+    bool hasInfiniteHealth() const { return infiniteHealth_; }
 
 private:
     std::string username_;
@@ -40,4 +43,5 @@ private:
     float speed_;
     bool isAboveBridge_;
     bool exploded_ = false;
+    bool infiniteHealth_ = false;
 };

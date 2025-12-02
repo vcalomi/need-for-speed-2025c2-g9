@@ -30,11 +30,20 @@ void Server::stop() {
         acceptor.close();
     } catch (...) {}
     try {
-        acceptor.join();
+        if (acceptor.is_alive()) {
+            acceptor.join();
+        }
     } catch (...) {}
     
     try {
         gameMonitor.closeAll();
+    } catch (...) {}
+
+    try {
+        inputHandler.stop();
+        if (inputHandler.is_alive()) {
+            inputHandler.join();
+        }
     } catch (...) {}
 }
 

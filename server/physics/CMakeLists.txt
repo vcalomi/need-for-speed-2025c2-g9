@@ -10,4 +10,5 @@ target_sources(nfs_server
     spawn.h
     vehicle.h
     EntityTags.h
+    NpcInfo.h
     )

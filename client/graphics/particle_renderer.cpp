@@ -31,6 +31,9 @@ void ParticleRenderer::Emit(float x, float y, float angle, float offset, Particl
             case ParticleType::SPARK_VEHICLE:
                 baseSpeed = 150.0f;
                 break;
+            case ParticleType::BLOOD:
+                baseSpeed = 30.0f;
+                break;
         }
 
         float speed = baseSpeed + static_cast<float>(rand() % 100) / 10.0f;
@@ -69,6 +72,13 @@ void ParticleRenderer::Emit(float x, float y, float angle, float offset, Particl
                 p.b = 255;
                 p.size = 2.0f;
                 p.lifetime = 0.3f;
+                break;
+            case ParticleType::BLOOD:
+                p.r = 180;
+                p.g = 0;
+                p.b = 0;
+                p.size = 10.0f;
+                p.lifetime = 0.8f;
                 break;
         }
 

@@ -27,3 +27,28 @@ sprites:
     sheet_path: /usr/local/share/nfs/assets/cars/truck.png
     frames:
       base: { x: 0, y: 0, w: 20, h: 48 }
+npcs:
+  - id: npc_1
+    sheet_path: ../client/assets/need-for-speed/people/npc_1.png
+  - id: npc_2
+    sheet_path: ../client/assets/need-for-speed/people/npc_2.png
+  - id: npc_3
+    sheet_path: ../client/assets/need-for-speed/people/npc_3.png
+  - id: npc_4
+    sheet_path: ../client/assets/need-for-speed/people/npc_4.png
+  - id: npc_5
+    sheet_path: ../client/assets/need-for-speed/people/npc_5.png
+  - id: npc_6
+    sheet_path: ../client/assets/need-for-speed/people/npc_6.png
+  - id: npc_7
+    sheet_path: ../client/assets/need-for-speed/people/npc_7.png
+  - id: npc_8
+    sheet_path: ../client/assets/need-for-speed/people/npc_8.png
+  - id: npc_9
+    sheet_path: ../client/assets/need-for-speed/people/npc_9.png
+  - id: npc_10
+    sheet_path: ../client/assets/need-for-speed/people/npc_10.png
+  - id: npc_11
+    sheet_path: ../client/assets/need-for-speed/people/npc_11.png
+  - id: npc_12
+    sheet_path: ../client/assets/need-for-speed/people/npc_12.png

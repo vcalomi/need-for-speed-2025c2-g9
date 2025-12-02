@@ -80,7 +80,6 @@ void YamlHandler::saveSceneAsTrack(const QString& filename, QGraphicsScene* scen
         mapImage = "vice_city.png";
 
     QList<MarkerItem*> checkpoints;
-    QList<MarkerItem*> hints;
     QList<MarkerItem*> spawns;
 
     MarkerItem* start = nullptr;
@@ -95,9 +94,6 @@ void YamlHandler::saveSceneAsTrack(const QString& filename, QGraphicsScene* scen
         switch (mi->kindOf()) {
             case MarkerKind::Checkpoint:
                 checkpoints.append(mi);
-                break;
-            case MarkerKind::Hint:
-                hints.append(mi);
                 break;
             case MarkerKind::Spawn:
                 spawns.append(mi);
@@ -125,20 +121,6 @@ void YamlHandler::saveSceneAsTrack(const QString& filename, QGraphicsScene* scen
         out << YAML::BeginMap;
         out << YAML::Key << "position" << YAML::Value << YAML::Flow << YAML::BeginSeq << n.x()
             << n.y() << YAML::EndSeq;
-
-        out << YAML::Key << "hints" << YAML::Value << YAML::BeginSeq;
-
-        for (auto* h: hints) {
-            if ((h->pos() - cp->pos()).manhattanLength() < 40) {
-                QPointF hn = normalize(h->sceneBoundingRect().center(), mapPixelSize);
-                out << YAML::BeginMap;
-                out << YAML::Key << "position" << YAML::Value << YAML::Flow << YAML::BeginSeq
-                    << hn.x() << hn.y() << YAML::EndSeq;
-                out << YAML::EndMap;
-            }
-        }
-
-        out << YAML::EndSeq;
         out << YAML::EndMap;
     }
 
@@ -150,6 +132,7 @@ void YamlHandler::saveSceneAsTrack(const QString& filename, QGraphicsScene* scen
         out << YAML::BeginMap;
         out << YAML::Key << "position" << YAML::Value << YAML::Flow << YAML::BeginSeq << n.x()
             << n.y() << YAML::EndSeq;
+        out << YAML::Key << "angle" << YAML::Value << s->angle();
         out << YAML::EndMap;
     }
     out << YAML::EndSeq;
@@ -245,18 +228,6 @@ bool YamlHandler::loadSceneFromTrack(const QString& filename, QGraphicsScene* sc
             auto* it = new MarkerItem(MarkerKind::Checkpoint);
             it->setPos(d);
             scene->addItem(it);
-
-            if (cp["hints"]) {
-                for (const auto& h: cp["hints"]) {
-                    auto pos2 = h["position"];
-                    QPointF hp(pos2[0].as<double>(), pos2[1].as<double>());
-                    QPointF hd = denormalize(hp, actualMapSize);
-
-                    auto* hint = new MarkerItem(MarkerKind::Hint);
-                    hint->setPos(hd);
-                    scene->addItem(hint);
-                }
-            }
         }
     }
 
@@ -268,6 +239,9 @@ bool YamlHandler::loadSceneFromTrack(const QString& filename, QGraphicsScene* sc
 
             auto* it = new MarkerItem(MarkerKind::Spawn);
             it->setPos(d);
+            if (sp["angle"]) {
+                it->setAngle(sp["angle"].as<float>());
+            }
             scene->addItem(it);
         }
     }

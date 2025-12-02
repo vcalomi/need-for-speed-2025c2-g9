@@ -16,7 +16,6 @@ void Player::beginGame(Queue<std::shared_ptr<Dto>>& gameCommands) {
         state = State::IN_GAME;
         is_ready = true;
     } catch (const std::exception& e) {
-        std::cout << "Player " << clientId << ": Error starting game: " << e.what() << std::endl;
         throw;
     }
 }
@@ -28,21 +27,27 @@ void Player::stopGame() {
         sendQueue.close(); 
     } catch (...) {}
     
-    if (receiver) {
-        try {
-            receiver->stop();
-            if (receiver->is_alive()) {
-                receiver->join();
-            }
-        } catch (...) {}
-    }
-    
     if (sender) {
         try {
             sender->stop();
-            if (sender->is_alive()) {
+            try {
                 sender->join();
-            }
+            } catch (...) {}
+            sender.reset();
+        } catch (...) {}
+    }
+
+    if (protocol) {
+        protocol.reset();
+    }
+    
+    if (receiver) {
+        try {
+            receiver->stop();
+            try {
+                receiver->join();
+            } catch (...) {}
+            receiver.reset();
         } catch (...) {}
     }
     

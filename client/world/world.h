@@ -1,6 +1,7 @@
 #pragma once
 #include <map>
 #include <string>
+#include <unordered_map>
 #include <vector>
 
 #include "../../common/common_codes.h"
@@ -8,6 +9,13 @@
 #include "./player.h"
 
 #include "progress_manager.h"
+
+struct Npc {
+    int id;
+    float x;
+    float y;
+    std::string spriteName;
+};
 
 class World {
 public:
@@ -25,7 +33,7 @@ public:
     const std::map<std::string, Player>& GetPlayers() const;
 
     void UpdateFromServer(std::string username, float x, float y, float angle, float speed,
-                          bool isAboveBridge);
+                          float health, bool isAboveBridge);
 
     const Player& GetPlayer(const std::string& username) const;
     Player& GetPlayer(const std::string& username);
@@ -37,10 +45,22 @@ public:
     const std::vector<Checkpoint>& GetCheckpoints() const;
 
     void OnCollision(const Event& e);
+    const auto& GetNpcs() const { return npcs_; }
+    void AddNpc(const int id, float x, float y, const std::string& sprite) {
+        npcs_[id] = Npc{id, x, y, sprite};
+    }
+    void RemoveNpcById(int npcId) {
+        auto it = npcs_.find(npcId);
+        if (it != npcs_.end()) {
+            npcs_.erase(it);
+        }
+    }
+
 
 private:
     std::map<std::string, Player> players_;
     std::string localUsername_;
     std::vector<Checkpoint> checkpoints_;
     EventBus& eventBus_;
+    std::unordered_map<int, Npc> npcs_;
 };

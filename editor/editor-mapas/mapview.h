@@ -12,20 +12,14 @@
 class MapView: public QGraphicsView {
     Q_OBJECT
 public:
-    enum class Tool {
-        Select,
-        PlaceCheckpoint,
-        PlaceHint,
-        PlaceSpawn,
-        PlaceStart,
-        PlaceFinish,
-        Erase
-    };
+    enum class Tool { Select, PlaceCheckpoint, PlaceSpawn, PlaceStart, PlaceFinish, Erase };
 
     explicit MapView(QWidget* parent = nullptr);
 
     void setTool(Tool t) { currentTool = t; }
     Tool tool() const { return currentTool; }
+    void setCurrentSpawnAngle(float a) { currentSpawnAngle = a; }
+    float currentSpawnAngleValue() const { return currentSpawnAngle; }
 
     void loadMap(const QPixmap& pm);
     void clearAll();
@@ -63,6 +57,7 @@ private:
     void fitMap();
     void placeItemAt(const QPointF& scenePos);
     QList<QGraphicsLineItem*> cpLines;
+    float currentSpawnAngle = 0.0f;
 };
 
 #endif  // MAPVIEW_H

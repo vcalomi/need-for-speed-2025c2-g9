@@ -1,6 +1,11 @@
 #pragma once
 #include <string>
 #include <unordered_map>
+#include <vector>
+
+#include "network/race_info.h"
+#include "physics/CheckpointInfo.h"
+#include "physics/spawn.h"
 
 #include "VehicleSpec.h"
 
@@ -9,6 +14,6 @@ public:
     YamlParser() = default;
     ~YamlParser() = default;
 
-    // Add public methods for parsing YAML files here
     std::unordered_map<std::string, VehicleSpec> parse(const std::string& filename);
+    RaceInfo parseRaceInfo(const std::string& filename);
 };

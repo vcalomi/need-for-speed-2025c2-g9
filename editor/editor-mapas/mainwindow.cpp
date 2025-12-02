@@ -23,12 +23,17 @@ MainWindow::MainWindow(QWidget* parent):
 
     ui->comboCity->addItems({"Liberty City", "San Andreas", "Vice City"});
 
+    ui->spawnDirectionCombo->clear();
+    ui->spawnDirectionCombo->addItem("south \342\x86\x93");
+    ui->spawnDirectionCombo->addItem("east \342\x86\x92");
+    ui->spawnDirectionCombo->addItem("west \342\x86\x90");
+    ui->spawnDirectionCombo->addItem("north \342\x86\x91");
+
     QTimer::singleShot(0, this, &MainWindow::loadMapFromCity);
     connect(ui->comboCity, &QComboBox::currentTextChanged, this, &MainWindow::loadMapFromCity);
 
     // Botones
     connect(ui->checkpointToolBtn, &QPushButton::clicked, this, &MainWindow::toolCheckpoint);
-    connect(ui->hintToolBtn, &QPushButton::clicked, this, &MainWindow::toolHint);
     connect(ui->spawnToolBtn, &QPushButton::clicked, this, &MainWindow::toolSpawn);
     connect(ui->startToolBtn, &QPushButton::clicked, this, &MainWindow::toolStart);
     connect(ui->finishToolBtn, &QPushButton::clicked, this, &MainWindow::toolFinish);
@@ -47,6 +52,33 @@ MainWindow::MainWindow(QWidget* parent):
     connect(view, &MapView::itemRemoved, this, [this](QGraphicsItem* it) {
         history.push({Command::Remove, it});
     });
+
+    auto updateSpawnAngleFromCombo = [this](int index) {
+        float pi = 3.14159265358979323846f;
+        float angle = 0.0f;
+        switch (index) {
+            case 3:  // north
+                angle = pi;
+                break;
+            case 0:  // south
+                angle = 0.0f;
+                break;
+            case 1:  // east
+                angle = -0.5f * pi;
+                break;
+            case 2:  // west
+                angle = 0.5f * pi;
+                break;
+            default:
+                angle = 0.0f;
+                break;
+        }
+        view->setCurrentSpawnAngle(angle);
+    };
+
+    updateSpawnAngleFromCombo(ui->spawnDirectionCombo->currentIndex());
+    connect(ui->spawnDirectionCombo, QOverload<int>::of(&QComboBox::currentIndexChanged), this,
+            updateSpawnAngleFromCombo);
 }
 
 MainWindow::~MainWindow() { delete ui; }
@@ -107,6 +139,21 @@ void MainWindow::on_saveMapBtn_clicked() {
     if (fname.isEmpty())
         return;
 
+    int spawnCount = 0;
+    for (auto* it: view->scenePtr()->items()) {
+        if (auto* mi = dynamic_cast<MarkerItem*>(it)) {
+            if (mi->kindOf() == MarkerKind::Spawn)
+                ++spawnCount;
+        }
+    }
+
+    if (spawnCount != 8) {
+        QMessageBox::warning(this, "Invalid map",
+                             QString("The track must have exactly 8 player spawns. Current: %1")
+                                     .arg(spawnCount));
+        return;
+    }
+
     YamlHandler::saveSceneAsTrack(fname, view->scenePtr(), view->mapPixelSize(), currentCityId());
     QMessageBox::information(this, "Saved", "Track saved successfully.");
 }
@@ -153,7 +200,6 @@ QPixmap MainWindow::mapForCity(const QString& cityId) const {
 }
 
 void MainWindow::toolCheckpoint() { view->setTool(MapView::Tool::PlaceCheckpoint); }
-void MainWindow::toolHint() { view->setTool(MapView::Tool::PlaceHint); }
 void MainWindow::toolSpawn() { view->setTool(MapView::Tool::PlaceSpawn); }
 void MainWindow::toolStart() { view->setTool(MapView::Tool::PlaceStart); }
 void MainWindow::toolFinish() { view->setTool(MapView::Tool::PlaceFinish); }

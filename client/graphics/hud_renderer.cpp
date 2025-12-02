@@ -52,8 +52,12 @@ void HUDRenderer::RenderHealthBar(const World& world) {
 
     SDL_Rect hp{barX, barY, int(barW * ratio), barH};
 
-    SDL_SetRenderDrawColor(renderer_.Get(), ratio < 0.3 ? 255 : (ratio < 0.6 ? 255 : 0),
-                           ratio < 0.3 ? 40 : (ratio < 0.6 ? 165 : 255), ratio < 0.3 ? 40 : 0, 255);
+    if (local.hasInfiniteHealth()) {
+        SDL_SetRenderDrawColor(renderer_.Get(), 0, 235, 255, 255);
+    } else {
+        SDL_SetRenderDrawColor(renderer_.Get(), ratio < 0.3 ? 255 : (ratio < 0.6 ? 255 : 0),
+                               ratio < 0.3 ? 40 : (ratio < 0.6 ? 165 : 255), ratio < 0.3 ? 40 : 0, 255);
+    }
 
     SDL_RenderFillRect(renderer_.Get(), &hp);
 

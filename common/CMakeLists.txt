@@ -28,7 +28,10 @@ target_sources(nfs_common
     serializer/lobby_maps_serializer.cpp
     serializer/vehicle_upgrade_serializer.cpp
     serializer/infinite_health_serializer.cpp
-    serializer/end_race_serializer.cpp
+    serializer/end_race_serializer.cpp    
+    serializer/npc_serializer.cpp
+    serializer/player_hit_npc_serializer.cpp
+    serializer/player_game_finished_serializer.cpp
     Dto/dto.cpp
     Dto/vehicle.cpp
     Dto/player.cpp
@@ -45,6 +48,9 @@ target_sources(nfs_common
     Dto/vehicle_upgrade.cpp
     Dto/infinite_health.cpp
     Dto/end_race.cpp
+    Dto/npc.cpp
+    Dto/player_hit_npc.cpp
+    Dto/player_game_finished.cpp
     PUBLIC
     # .h files
     liberror.h
@@ -78,6 +84,11 @@ target_sources(nfs_common
     serializer/vehicle_upgrade_serializer.h
     serializer/infinite_health_serializer.h
     serializer/end_race_serializer.h
+    serializer/npc_serializer.h
+    serializer/player_hit_npc_serializer.h
+    serializer/player_game_finished_serializer.h
+    serializer/game_finished_serializer.h
+    serializer/close_game_serializer.h
     Dto/dto.h
     Dto/vehicle.h
     Dto/player.h
@@ -102,4 +113,9 @@ target_sources(nfs_common
     Dto/vehicle_upgrade.h
     Dto/infinite_health.h
     Dto/end_race.h
+    Dto/npc.h
+    Dto/player_hit_npc.h
+    Dto/player_game_finished.h
+    Dto/game_finished.h
+    Dto/close_game.h
 )

@@ -77,27 +77,64 @@ void ScreenRenderer::RenderPlayerLost() {
     text_.Draw("Waiting for next race...", w / 2 - 120, h - 100);
 }
 
-void ScreenRenderer::RenderRaceFinished(const World& world) {
+void ScreenRenderer::RenderRaceFinished(int finalPosition, float finalTimeSecs) {
     int sw, sh;
     SDL_GetRendererOutputSize(renderer_.Get(), &sw, &sh);
 
     SDL_SetRenderDrawColor(renderer_.Get(), 0, 0, 0, 160);
     SDL_Rect bg{0, 0, sw, sh};
     SDL_RenderFillRect(renderer_.Get(), &bg);
-    DrawCentered("RACE FINISHED!", sh / 4);
 
-    int y = sh / 4 + 80;
-    // int pos = 1;
-    // for (const auto& [id, player]: world.GetPlayers()) {
-    //     std::string line = std::to_string(pos) + ". " + id + "  -  " +
-    //                        std::to_string(player.GetFinishTime()) + "s";
-    //     DrawCentered(line, y);
-    //     y += 30;
-    //     pos++;
-    // }
+    DrawCentered("RACE FINISHED!", sh / 6);
+
+    std::string posStr = "Your position: " + std::to_string(finalPosition);
+    DrawCentered(posStr, sh / 6 + 60);
+
+    char timeBuf[64];
+    std::snprintf(timeBuf, sizeof(timeBuf), "Your time: %.2f s", finalTimeSecs);
+    DrawCentered(timeBuf, sh / 6 + 110);
 
     RenderUpgradeOptions();
 }
+
+
+void ScreenRenderer::RenderCountdown(float countdownTimer, int countdownNumber) {
+    std::string text;
+
+    if (countdownNumber > 0) {
+        text = std::to_string(countdownNumber);
+    } else {
+        text = "GO!";
+    }
+
+    int fontSize = 180;
+    SDL_Color color = {255, 255, 255, 255};
+
+
+    if (countdownNumber == 0) {
+        float t = std::clamp(countdownTimer * -1.0f, 0.0f, 1.0f);
+        color.a = (Uint8)((1.0f - t) * 255);
+    }
+
+    RenderCenteredText(text, fontSize, color);
+}
+
+void ScreenRenderer::RenderCenteredText(const std::string& text, int size, SDL_Color color) {
+    SDL2pp::Font font("../client/lobby/assets/Tektur-SemiBold.ttf", size);
+    SDL2pp::Surface surface(font.RenderText_Blended(text, color));
+    SDL2pp::Texture texture(renderer_, surface);
+
+    int w, h;
+    SDL_QueryTexture(texture.Get(), nullptr, nullptr, &w, &h);
+
+    int sw, sh;
+    SDL_GetRendererOutputSize(renderer_.Get(), &sw, &sh);
+
+    SDL_Rect dst{(sw - w) / 2, (sh - h) / 2, w, h};
+
+    renderer_.Copy(texture, SDL2pp::NullOpt, dst);
+}
+
 
 void ScreenRenderer::RenderUpgradeOptions() {
 
@@ -114,7 +151,7 @@ void ScreenRenderer::RenderUpgradeOptions() {
     int yConfirm = sh - 80;
 
     if (upgradesLocked_) {
-        DrawCentered("Upgrades confirmed!", sh - 150);
+        DrawCentered("Upgrades confirmed! Waiting for next race...", sh - 150);
         return;
     }
 
@@ -132,8 +169,8 @@ void ScreenRenderer::RenderUpgradeOptions() {
         text_.Draw(txt, r.x + 15, r.y + 20);
     };
 
-    drawButton(healthButton_, selectedHealth_, "Improve Health (+1s)");
-    drawButton(speedButton_, selectedSpeed_, "Improve Speed (+1s)");
+    drawButton(healthButton_, selectedHealth_, "Improve Health (+3s)");
+    drawButton(speedButton_, selectedSpeed_, "Improve Speed (+3s)");
     drawButton(confirmButton_, false, "Confirm Upgrades");
 }
 
@@ -198,4 +235,41 @@ void ScreenRenderer::RenderPlayerFinished(int position, float timeSeconds) {
     DrawCentered(buffer, 200);
 
     DrawCentered("Waiting for all players to finish...", h - 120);
+}
+
+void ScreenRenderer::RenderGameFinalResults(const std::vector<PlayerFinalResult>& results) {
+    int sw, sh;
+    SDL_GetRendererOutputSize(renderer_.Get(), &sw, &sh);
+
+    SDL_SetRenderDrawColor(renderer_.Get(), 0, 0, 0, 200);
+    SDL_Rect bg{0, 0, sw, sh};
+    SDL_RenderFillRect(renderer_.Get(), &bg);
+
+    DrawCentered("FINAL GAME RESULTS", 60);
+
+    int startY = 150;
+    int lineHeight = 40;
+
+    text_.Draw("POS", 120, startY);
+    text_.Draw("PLAYER", 220, startY);
+    text_.Draw("PENALTIES", 500, startY);
+    text_.Draw("TIME (s)", 720, startY);
+
+    int y = startY + 50;
+
+    auto sorted = results;
+    std::sort(sorted.begin(), sorted.end(),
+              [](const auto& a, const auto& b) { return a.finalPosition < b.finalPosition; });
+
+    for (const auto& r: sorted) {
+        text_.Draw(std::to_string(r.finalPosition), 120, y);
+        text_.Draw(r.username, 220, y);
+        text_.Draw(std::to_string(r.totalPenalties), 500, y);
+
+        char buf[32];
+        snprintf(buf, sizeof(buf), "%.2f", r.totalRaceTime);
+        text_.Draw(buf, 720, y);
+
+        y += lineHeight;
+    }
 }

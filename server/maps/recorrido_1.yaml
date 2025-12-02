@@ -1,0 +1,4 @@
+city_id: liberty_city
+map_image: liberty_city.png
+checkpoints:
+  - position: [0.15346582115404542, 0.1775705072536501]

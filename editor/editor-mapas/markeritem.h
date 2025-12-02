@@ -4,7 +4,7 @@
 #include <QGraphicsItem>
 #include <QPainter>
 
-enum class MarkerKind { Checkpoint, Hint, Spawn, Start, Finish };
+enum class MarkerKind { Checkpoint, Spawn, Start, Finish };
 
 class MarkerItem: public QGraphicsItem {
 public:
@@ -26,13 +26,6 @@ public:
                 p->setBrush(Qt::red);
                 p->drawEllipse(-6, -6, 12, 12);
                 break;
-            case MarkerKind::Hint: {
-                p->setBrush(Qt::yellow);
-                QPolygonF arrow;
-                arrow << QPointF(0, -6) << QPointF(6, 6) << QPointF(-6, 6);
-                p->drawPolygon(arrow);
-                break;
-            }
             case MarkerKind::Spawn:
                 p->setBrush(Qt::blue);
                 p->drawRect(-6, -6, 12, 12);
@@ -51,9 +44,12 @@ public:
     }
 
     MarkerKind kindOf() const { return kind; }
+    float angle() const { return spawnAngle; }
+    void setAngle(float a) { spawnAngle = a; }
 
 private:
     MarkerKind kind;
+    float spawnAngle = 0.0f;
 };
 
 #endif  // MARKERITEM_H

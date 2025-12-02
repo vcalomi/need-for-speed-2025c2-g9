@@ -61,11 +61,10 @@ private slots:
 private:
     Ui::Lobby* ui;
     PlayerInfo player;
-    ClientProtocol& protocol;  // conexión TCP al servidor
+    ClientProtocol& protocol;
     bool& game_started;
     std::string& username;
 
-    QTimer* refreshTimer;
     QMediaPlayer* backgroundMusic;
     QAudioOutput* audioOutput;
 
@@ -80,7 +79,7 @@ private:
     void showPage(int page);
     void goToPage(QWidget* page);
     void updateCarImage();
-    void connectToServer();  // función privada que usará el botón
+    void connectToServer();
     void onWaitTimerTickHost();
     void onWaitTimerTickJoin();
 

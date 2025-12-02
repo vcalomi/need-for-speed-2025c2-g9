@@ -29,6 +29,9 @@ add_executable(nfs_tests
   ../common/Dto/infinite_health.cpp
   ../common/Dto/end_race.cpp
   ../common/Dto/vehicle_upgrade.cpp
+  ../common/Dto/npc.cpp
+  ../common/Dto/player_hit_npc.cpp
+  ../common/Dto/player_game_finished.cpp
 
   ../common/serializer/serializer.cpp
   ../common/serializer/player_serializer.cpp
@@ -52,6 +55,9 @@ add_executable(nfs_tests
   ../common/serializer/vehicle_upgrade_serializer.cpp
   ../common/serializer/infinite_health_serializer.cpp
   ../common/serializer/end_race_serializer.cpp
+  ../common/serializer/npc_serializer.cpp
+  ../common/serializer/player_hit_npc_serializer.cpp
+  ../common/serializer/player_game_finished_serializer.cpp
 )
 
 target_link_libraries(nfs_tests PRIVATE

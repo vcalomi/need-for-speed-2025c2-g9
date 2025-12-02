@@ -18,12 +18,15 @@
 #include "constants.h"
 #include "CarUpgrades.h"
 #include "./physics/PhysicsEventCollector.h"
+#include "./physics/CheckpointInfo.h"
+#include "./physics/NpcInfo.h"
 
 class LevelSetup {
 
 public:
     explicit LevelSetup(const std::string& level_json_path, const std::string& vehicle_specs_path,
-                        const std::map<int, CarConfig>& chosenCars, std::unordered_map<int, CarUpgrades>& upgradesByUser);
+                        const std::map<int, CarConfig>& chosenCars, std::unordered_map<int, CarUpgrades>& upgradesByUser, 
+                        const std::vector<CheckpointInfo>& checkpoints_input,  const std::vector<Spawn>& spawn_input);
 
     void buildVehicles();
     std::vector<RawEvent> stepAndDrainEvents(float dt);
@@ -36,7 +39,9 @@ public:
     int totalCheckpoints() const { return static_cast<int>(checkpoints_.size());}
     int totalLaps() const {return totalLaps_;}
     float getVehicleSpeed(int vehicle_id);
-
+    bool isNpcAlive(int npcId) const;
+    void markNpcDead(int npcId);
+    const std::vector<NpcInfo>& getNpcs() const {return npcs_;}
 private:
     void create_vehicles();
     void applyUpgradesToSpec(VehicleSpec& spec, const CarUpgrades& up);
@@ -52,4 +57,5 @@ private:
     int totalLaps_ = 1;
     PhysicsEventCollector collector_;
     const std::unordered_map<int, CarUpgrades>& upgradesByUserRef_;
+    std::vector<NpcInfo> npcs_;
 };

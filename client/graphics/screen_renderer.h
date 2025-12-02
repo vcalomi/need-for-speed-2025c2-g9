@@ -6,6 +6,7 @@
 
 #include <SDL2pp/Renderer.hh>
 
+#include "../systems/player_final_results.h"
 #include "../world/camera.h"
 #include "../world/world.h"
 
@@ -34,7 +35,7 @@ public:
     void RenderPlayerLost();
     void RenderPlayerFinished(int position, float timeSeconds);
 
-    void RenderRaceFinished(const World& world);
+    void RenderRaceFinished(int finalPosition, float finalTimeSecs);
     void RenderUpgradeOptions();
 
     UpgradeChoice HandleUpgradeInput(int mouseX, int mouseY, bool mousePressed);
@@ -50,7 +51,8 @@ public:
 
     void LockUpgrades() { upgradesLocked_ = true; }
     bool UpgradesLocked() const { return upgradesLocked_; }
-
+    void RenderCountdown(float countdownTimer, int countdownNumber);
+    void RenderGameFinalResults(const std::vector<PlayerFinalResult>& results);
 
 private:
     SDL2pp::Renderer& renderer_;
@@ -68,4 +70,5 @@ private:
     bool upgradesLocked_ = false;
     bool mouseWasPressed_ = false;
     void DrawCentered(const std::string& msg, int y);
+    void RenderCenteredText(const std::string& text, int size, SDL_Color color);
 };

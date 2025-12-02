@@ -10,7 +10,7 @@
 
 using SDL2pp::Renderer;
 
-enum class ParticleType { SMOKE_ACCEL, SMOKE_BRAKE, SPARK_WALL, SPARK_VEHICLE };
+enum class ParticleType { SMOKE_ACCEL, SMOKE_BRAKE, SPARK_WALL, SPARK_VEHICLE, BLOOD };
 
 struct Particle {
     float x, y;

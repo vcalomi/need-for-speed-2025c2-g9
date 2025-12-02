@@ -1,6 +1,7 @@
 #include "player_race_finished_serializer.h"
 
 #include <cstring>
+#include <iostream>
 #include <memory>
 #include <vector>
 
@@ -11,7 +12,8 @@
 std::vector<uint8_t> PlayerRaceFinishedSerializer::serialize(const Dto& dto) const {
     const PlayerRaceFinishedDto& raceFinishedDto = static_cast<const PlayerRaceFinishedDto&>(dto);
     size_t username_len = raceFinishedDto.username.length();
-    std::vector<uint8_t> buffer(1 + username_len + sizeof(float) + sizeof(int));
+    std::vector<uint8_t> buffer(SerializerUtils::STRING_LENGTH_SIZE + username_len + sizeof(float) +
+                                sizeof(int));
     size_t pos = 0;
 
     SerializerUtils::writeString(buffer, pos, raceFinishedDto.username);

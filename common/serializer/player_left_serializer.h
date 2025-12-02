@@ -6,9 +6,9 @@
 
 class PlayerLeftSerializer : public Serializer {
 public:
+    PlayerLeftSerializer() {}
     std::vector<uint8_t> serialize(const Dto& dto) const override;
     std::shared_ptr<Dto> deserialize(const std::vector<uint8_t>& buffer) const override;
-    ~PlayerLeftSerializer() override = default;
 };
 
 #endif

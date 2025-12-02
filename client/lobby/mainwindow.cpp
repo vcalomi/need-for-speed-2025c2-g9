@@ -16,6 +16,7 @@
 #include <QUrl>
 #include <QtMath>
 #include <string>
+#include <vector>
 
 #include "background_music.h"
 #include "car_selection_controller.h"
@@ -58,8 +59,7 @@ MainWindow::MainWindow(ClientProtocol& protocol, bool& game_started_ref, std::st
         carCtrl(nullptr),
         music(nullptr),
         game_started(game_started_ref),
-        username(username_ref),
-        refreshTimer(nullptr) {
+        username(username_ref) {
     ui->setupUi(this);
 
     QTimer::singleShot(0, this, [this] {
@@ -184,8 +184,6 @@ MainWindow::MainWindow(ClientProtocol& protocol, bool& game_started_ref, std::st
 
     connect(ui->btnBackToLobby, &QPushButton::clicked, this,
             [this]() { ui->stackedWidget->setCurrentWidget(ui->page_wait); });
-    refreshTimer = new QTimer(this);
-    connect(refreshTimer, &QTimer::timeout, this, &MainWindow::handleRefreshPlayers);
 
     // Centrar ventana
     QRect screenGeometry = QGuiApplication::primaryScreen()->geometry();
@@ -253,7 +251,7 @@ void MainWindow::handleOpenMapsPage() {
         ui->btnSelectMaps->setEnabled(false);
     } else {
         for (const QFileInfo& info: mapFiles) {
-            QListWidgetItem* item = new QListWidgetItem(info.baseName());
+            QListWidgetItem* item = new QListWidgetItem(info.fileName());
             item->setFlags(item->flags() | Qt::ItemIsUserCheckable | Qt::ItemIsSelectable |
                            Qt::ItemIsEnabled);
             item->setData(Qt::UserRole, info.absoluteFilePath());
@@ -291,9 +289,6 @@ void MainWindow::handleSelectMaps() {
         QListWidgetItem* item = ui->listMaps->item(i);
         if (item->checkState() == Qt::Checked) {
             QString mapName = item->text();
-            if (mapName.contains(" - ")) {
-                mapName = mapName.split(" - ").last();
-            }
             selectedMapNames.push_back(mapName);
         }
     }

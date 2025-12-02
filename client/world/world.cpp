@@ -20,7 +20,7 @@ World::World(EventBus& eventBus): eventBus_(eventBus) {
             [this](const PlayerLeftEvent& e) { RemovePlayer(e.username); });
 
     eventBus_.Subscribe<PlayerStateUpdatedEvent>([this](const PlayerStateUpdatedEvent& e) {
-        UpdateFromServer(e.username, e.x, e.y, e.angle, e.speed, e.isAboveBridge);
+        UpdateFromServer(e.username, e.x, e.y, e.angle, e.speed, e.health, e.isAboveBridge);
     });
 
     eventBus_.Subscribe<PlayerCollisionEvent>(
@@ -67,13 +67,13 @@ bool World::HasPlayer(const std::string& username) const {
 }
 
 void World::UpdateFromServer(std::string username, float x, float y, float angle, float speed,
-                             bool isAboveBridge) {
+                             float health, bool isAboveBridge) {
     auto it = players_.find(username);
     if (it == players_.end()) {
         std::cerr << "[World] Warning: update for unknown player " << username << "\n";
         return;
     }
-    it->second.UpdateFromNetwork(x, y, angle, speed, isAboveBridge);
+    it->second.UpdateFromNetwork(x, y, angle, speed, health, isAboveBridge);
 }
 
 void World::ResetPlayersExploded() {

@@ -31,10 +31,10 @@ public:
     bool getUnderBridge() { return under_bridge; }
 
     void setUnderBridge(bool setter) { under_bridge = setter; }
-    int getVehicleId() { return vehicle_id_; }
-
-    void setInfiniteHp() { infinite_hp_ = true; }
-
+    int getVehicleId(){return vehicle_id_; }
+    void setInfiniteHp() { infinite_hp_ = true;}
+    void CarHitNpc() {vehicle_hp_ = vehicle_hp_ - 50.0f;}
+    
 private:
     bool controlsEnabled_ = true;
     b2WorldId world_id_;
@@ -43,6 +43,6 @@ private:
     int vehicle_id_;
     b2BodyId body_;
     float vehicle_hp_;
-    bool under_bridge;
+    bool under_bridge = false;
     bool infinite_hp_ = false;
 };

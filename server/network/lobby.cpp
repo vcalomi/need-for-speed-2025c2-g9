@@ -1,7 +1,10 @@
 #include "lobby.h"
 
 #include <iostream>
+#include <memory>
 #include <utility>
+
+#include <sys/socket.h>
 
 #include "../../common/common_codes.h"
 #include "../../common/Dto/lobby_auth.h"
@@ -70,9 +73,9 @@ void Lobby::handleCreateRoom(std::shared_ptr<Dto> dto) {
     }
     std::string roomName = roomDto->roomCode;
     int maxPlayers = static_cast<int>(roomDto->maxPlayers);
-    Player* player = new Player(protocol, clientId);
+    auto player = std::make_unique<Player>(protocol, clientId);
     
-    if (gameMonitor.createGameRoom(roomName, clientId, player, maxPlayers)) {
+    if (gameMonitor.createGameRoom(roomName, clientId, std::move(player), maxPlayers)) {
         auto out = std::make_shared<RoomDto>(static_cast<uint8_t>(ActionCode::ROOM_CREATED));
         protocol->sendDTO(out);
     } else {
@@ -90,9 +93,9 @@ void Lobby::handleJoinRoom(std::shared_ptr<Dto> dto) {
         protocol->sendDTO(err);
         return;
     }
-    Player* player = new Player(protocol, clientId);
+    auto player = std::make_unique<Player>(protocol, clientId);
     
-    if (gameMonitor.joinGameRoom(roomDto->roomCode, clientId, player)) {
+    if (gameMonitor.joinGameRoom(roomDto->roomCode, clientId, std::move(player))) {
         auto out = std::make_shared<RoomDto>(static_cast<uint8_t>(ActionCode::JOIN_OK));
         protocol->sendDTO(out);
     } else {
@@ -178,6 +181,7 @@ void Lobby::handleListState(std::shared_ptr<Dto>) {
     if (started) {
         room->startGame(clientId);
         game_started = true;
+        protocol.reset();
         stop();
     }
 }
@@ -189,6 +193,7 @@ void Lobby::handleStartGame(std::shared_ptr<Dto>) {
     if (gameMonitor.startGameRoom(clientId)) {
         room->startGame(clientId);
         game_started = true;
+        protocol.reset();
         stop();
     } else {
         auto err = std::make_shared<AuthDto>(static_cast<uint8_t>(ActionCode::SEND_ERROR_MSG));
