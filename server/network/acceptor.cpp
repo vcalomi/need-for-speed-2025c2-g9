@@ -36,23 +36,24 @@ void Acceptor::run() {
 
 void Acceptor::reap() {
     auto new_end = std::remove_if(lobbies.begin(), lobbies.end(), [](Lobby* l) {
-        bool can_reap = !l->is_alive() && !l->isGameStarted();
-        if (can_reap) {
-            l->join();
+        // Reaper: si el hilo terminó, siempre liberar la memoria
+        bool finished = !l->is_alive();
+        if (finished) {
+            try { l->join(); } catch (...) {}
             delete l;
+            return true;
         }
-        return can_reap;
+        return false;
     });
     lobbies.erase(new_end, lobbies.end());
 }
 
 void Acceptor::clear() {
     for (auto& lobby: lobbies) {
-        if (!lobby->isGameStarted()) {
-            lobby->stop();
-            lobby->join();
-            delete lobby;
-        }
+        // En clear, detener y liberar todas las lobbies seguras
+        try { lobby->stop(); } catch (...) {}
+        try { lobby->join(); } catch (...) {}
+        delete lobby;
     }
     lobbies.clear();
 }
