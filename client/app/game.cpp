@@ -23,8 +23,8 @@ Game::Game(Client& client):
         inputSystem_(),
         world_(eventBus_),
         progress_(eventBus_),
-        rendererSystem_(engine_.GetRenderer(), resources_.GetCarSprites(), world_, eventBus_,
-                        progress_),
+        rendererSystem_(engine_.GetRenderer(), resources_.GetCarSprites(),
+                        resources_.GetNpcSprites(), world_, eventBus_, progress_),
         networkSystem_(client_, eventBus_),
         dtoHandlerSystem_(client_, eventBus_),
         map_(engine_.GetRenderer(), eventBus_) {

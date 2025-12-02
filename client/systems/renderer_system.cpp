@@ -1,13 +1,17 @@
 #include "renderer_system.h"
 
+#include <string>
+
 #include "../events/countdown_down_event.h"
 #include "../events/countdown_go_event.h"
+#include "../events/new_npc_event.h"
 #include "../events/upgrade_car_event.h"
 
-RendererSystem::RendererSystem(SDL2pp::Renderer& renderer, SpriteSheet& cars, World& world,
-                               EventBus& bus, ProgressManager& progress):
+RendererSystem::RendererSystem(SDL2pp::Renderer& renderer, SpriteSheet& cars, SpriteSheet& npcs,
+                               World& world, EventBus& bus, ProgressManager& progress):
         renderer_(renderer),
         carSprites_(cars),
+        npcSprites_(npcs),
         world_(world),
         progress_(progress),
         text_(renderer, "../client/lobby/assets/Tektur-SemiBold.ttf", 14),
@@ -23,6 +27,19 @@ RendererSystem::RendererSystem(SDL2pp::Renderer& renderer, SpriteSheet& cars, Wo
                      "../client/assets/need-for-speed/cars/speedometer_needle.png"),
         eventBus_(bus) {
     checkpointIndicator_.SetTexture("../client/assets/need-for-speed/cars/arrow.png");
+
+    eventBus_.Subscribe<NewNpcEvent>([this](const NewNpcEvent& e) {
+        int spriteId = (e.id % 12);
+        if (spriteId == 0)
+            spriteId = 12;
+
+        std::string spriteName = "npc_" + std::to_string(spriteId);
+
+        world_.AddNpc(std::to_string(e.id), e.x, e.y, spriteName);
+
+        std::cout << "[RendererSystem] Spawn NPC e.id=" << e.id << " uses sprite " << spriteName
+                  << "\n";
+    });
 }
 
 
@@ -119,6 +136,18 @@ void RendererSystem::Render(const World& world, Map& map, const Camera& camera, 
             text_.DrawPlayerName(player, camera);
         }
     }
+
+    for (const auto& [id, npc]: world.GetNpcs()) {
+        auto sprite = npcSprites_.GetSprite(npc.spriteName);
+        auto rect = sprite.area;
+        auto tex = sprite.texture;
+
+        int sx = static_cast<int>(npc.x - camera.getX());
+        int sy = static_cast<int>(npc.y - camera.getY());
+
+        renderer_.Copy(*tex, rect, SDL2pp::Rect(sx, sy, sprite.width, sprite.height));
+    }
+
 
     particleRenderer_.Update(0.016f);
     particleRenderer_.Render(camera);
