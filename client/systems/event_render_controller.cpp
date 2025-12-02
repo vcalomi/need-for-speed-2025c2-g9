@@ -1,6 +1,7 @@
 #include "event_render_controller.h"
 
 #include "../events/game_finished_event.h"
+#include "../events/new_npc_event.h"
 #include "../events/player_collision_event.h"
 #include "../events/player_events.h"
 #include "../events/player_game_finished_event.h"
@@ -56,8 +57,7 @@ void EventRenderController::RegisterEvents() {
             state_.showFinalResultsScreen = false;
             state_.showPlayerFinishedScreen = false;
 
-            world_.SetCheckpoints({});
-            progress_.Reset();
+            std::cout << "Resetting final results and progress for new race." << std::endl;
         }
         screenRenderer_.ResetSelections();
         state_.countdownActive = true;
@@ -75,6 +75,8 @@ void EventRenderController::RegisterEvents() {
 
 
     eventBus_.Subscribe<PlayerRaceFinishedEvent>([this](const PlayerRaceFinishedEvent& e) {
+        world_.SetCheckpoints({});
+        progress_.Reset();
         if (e.username == world_.GetLocalPlayer().GetUsername()) {
             state_.localPlayerFinished = true;
             state_.localFinishPosition = e.finalPosition;
@@ -114,4 +116,7 @@ void EventRenderController::RegisterEvents() {
         state_.showFinalResultsScreen = false;
         state_.showPlayerFinishedScreen = false;
     });
+
+    eventBus_.Subscribe<NewNpcEvent>(
+            [this](const NewNpcEvent&) { progress_.SetCheckpoints(world_.GetCheckpoints()); });
 }
