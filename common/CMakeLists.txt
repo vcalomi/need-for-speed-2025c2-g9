@@ -88,6 +88,7 @@ target_sources(nfs_common
     serializer/player_hit_npc_serializer.h
     serializer/player_game_finished_serializer.h
     serializer/game_finished_serializer.h
+    serializer/close_game_serializer.h
     Dto/dto.h
     Dto/vehicle.h
     Dto/player.h
@@ -116,4 +117,5 @@ target_sources(nfs_common
     Dto/player_hit_npc.h
     Dto/player_game_finished.h
     Dto/game_finished.h
+    Dto/close_game.h
 )

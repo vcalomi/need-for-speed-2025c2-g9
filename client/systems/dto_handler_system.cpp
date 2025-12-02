@@ -22,6 +22,7 @@
 #include "../events/wall_collision_event.h"
 #include "dto_handlers/send_cars_handler.h"
 #include "dto_handlers/send_checkpoints_handler.h"
+#include "dto_handlers/send_close_game_handler.h"
 #include "dto_handlers/send_game_finished_handler.h"
 #include "dto_handlers/send_initial_race_map_handler.h"
 #include "dto_handlers/send_lap_completed_handler.h"
@@ -84,6 +85,9 @@ void DtoHandlerSystem::RegisterHandlers() {
 
     handlers_[static_cast<uint8_t>(ActionCode::SEND_GAME_FINISHED)] =
             std::make_unique<SendGameFinishedHandler>();
+
+    handlers_[static_cast<uint8_t>(ActionCode::SEND_CLOSE_GAME)] =
+            std::make_unique<SendCloseGameHandler>();
 }
 
 

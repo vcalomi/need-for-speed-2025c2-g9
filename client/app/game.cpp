@@ -8,6 +8,7 @@
 #include "../../common/Dto/player_move.h"
 #include "../../common/Dto/vehicle.h"
 #include "../events/cheat_end_race_event.h"
+#include "../events/close_game_event.h"
 #include "../events/infinite_health_event.h"
 #include "../events/player_events.h"
 #include "../events/player_left_event.h"
@@ -29,6 +30,11 @@ Game::Game(Client& client):
         dtoHandlerSystem_(client_, eventBus_),
         map_(engine_.GetRenderer(), eventBus_) {
     audioSystem_.PlayBackgroundMusic("../client/assets/need-for-speed/music/background.wav");
+
+    eventBus_.Subscribe<CloseGameEvent>([this](const CloseGameEvent& e) {
+        std::cout << "[Game] CloseGameEvent received. Stopping the game loop.\n";
+        client_.stop();
+    });
 }
 
 

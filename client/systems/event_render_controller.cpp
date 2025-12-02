@@ -110,8 +110,6 @@ void EventRenderController::RegisterEvents() {
     });
 
     eventBus_.Subscribe<GameFinishedEvent>([this](const GameFinishedEvent&) {
-        std::cout << "[EventRenderController] Game finished event received. Showing final results "
-                     "screen.\n";
         state_.showFinalGameResultsScreen = true;
         state_.showFinalResultsScreen = false;
         state_.showPlayerFinishedScreen = false;

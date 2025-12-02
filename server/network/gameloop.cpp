@@ -9,6 +9,7 @@
 #include <netinet/in.h>
 
 #include "../../common/Dto/checkpoint.h"
+#include "../../common/Dto/close_game.h"
 #include "../../common/Dto/end_race.h"
 #include "../../common/Dto/game_finished.h"
 #include "../../common/Dto/infinite_health.h"
@@ -58,8 +59,16 @@ void GameLoop::run() {
         if (!races_.empty()) {
             startRace(0);  // primera carrera
         }
+        bool closingGame = false;
+        Clock::time_point closeGameTime;
 
         while (should_keep_running()) {
+            if (closingGame) {
+                if (Clock::now() >= closeGameTime) {
+                    std::cout << "[GameLoop] Closing game loop and notifying clients.\n";
+                    broadcaster_.broadcast(std::make_shared<CloseGameDto>());
+                }
+            }
             processCommands();
 
             if (raceActive_ && setup.has_value()) {
@@ -71,15 +80,19 @@ void GameLoop::run() {
             if (!raceActive_ && pendingNextRace_) {
                 if (Clock::now() >= nextRaceStartTime_) {
                     int nextRaceIndex = currentRaceIndex_ + 1;
+
                     if (nextRaceIndex < (int)races_.size()) {
                         startRace(nextRaceIndex);
+
                     } else {
                         pendingNextRace_ = false;
                         sendFinalResults();
-                        // mandar un dto de "fin del torneo"
+                        closingGame = true;
+                        closeGameTime = Clock::now() + std::chrono::seconds(5);
                     }
                 }
             }
+
 
             std::this_thread::sleep_for(std::chrono::milliseconds(GAME_TICK_MS));
         }
@@ -87,6 +100,7 @@ void GameLoop::run() {
         return;
     }
 }
+
 
 void GameLoop::sendFinalResults() {
     for (const auto& [vehicleId, result]: playerResults_) {

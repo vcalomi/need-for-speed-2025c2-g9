@@ -45,7 +45,8 @@ enum class ActionCode : uint8_t {
     SEND_NPC = 0x34,
     SEND_PLAYER_HIT_NPC = 0x35,
     SEND_PLAYER_GAME_FINISHED = 0x36,
-    SEND_GAME_FINISHED = 0x37
+    SEND_GAME_FINISHED = 0x37,
+    SEND_CLOSE_GAME = 0x38
 };
 
 enum class MoveMask : uint8_t {
