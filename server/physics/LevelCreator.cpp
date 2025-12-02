@@ -169,13 +169,21 @@ static void createTileCollider(b2WorldId world, float x_px, float y_px, float si
 void LevelCreator::createLevelCollision(b2WorldId world, const std::vector<Matrix>& levels) {
     float tile_px = TILE_SIZE_PX;  // 2 px
 
+    std::cout << "[DEBUG] currentMapName_ = \"" 
+          << currentMapName_ 
+          << "\"\n";
+
     if (currentMapName_.find("Liberty") != std::string::npos ||
         currentMapName_.find("Liberty_City") != std::string::npos) {
 
         tile_px = 4.0f;
 
-    } else if (currentMapName_.find("San_Andreas") != std::string::npos) {
+    } else if (currentMapName_.find("San_Andreas") != std::string::npos || 
+                currentMapName_.find("San") != std::string::npos) {
 
+        tile_px = 4.55f;
+    }  else if (currentMapName_.find("Vice_City") != std::string::npos || 
+                currentMapName_.find("Vice") != std::string::npos) {
         tile_px = 4.55f;
     }
 
@@ -266,8 +274,7 @@ void LevelCreator::createLevelCollision(b2WorldId world, const std::vector<Matri
                     const float cx_m = world_x_px / PPM;
                     const float cy_m = world_y_px / PPM;
 
-                    // radio del sensor del NPC (podés tunearlo)
-                    const float radius_m = (TILE_SIZE_PX * 0.5f) / PPM;  // o un NPC_RADIUS_PX
+                    const float radius_m = (TILE_SIZE_PX * 0.5f) / PPM; 
 
                     b2BodyDef bodyDef = b2DefaultBodyDef();
                     bodyDef.type = b2_staticBody;

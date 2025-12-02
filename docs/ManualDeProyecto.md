@@ -65,7 +65,7 @@ Durante la **sexta y séptima semana** implementamos los últimos detalles y req
 
 ### Reflexión sobre el proyecto y las dificultades
 
-Desde el lado de los hilos y el protocolo ... 
+Desde el lado de los hilos y el protocolo, los primeros dos TPs fueron de mucha ayuda para entender la base y plantear las ideas del proyecto. Lo más complicado fue mantener el modelo monohilo hasta que iniciara la partida, sin crear un sender ni receiver antes de tiempo.
 
 Desde el lado del Cliente el principio fue complicado porque habia que aprender a utilizar la libreria SDL2pp la cual tiene una documentacion complicada y escueta. Sin embargo una vez aprendidas las bases del funcionamiento de la libreria todo fue mas sencillo y se pudo sacar funcionalidades a la par del servidor.
 
@@ -75,19 +75,20 @@ Desde el lado del Servidor las complicaciones fueron que habia demasiadas respon
 
 ### ¿Qué contenidos podrían incorporarse en Taller?
 
-Estrategias de trabajo colaborativo y organizacion basica de un proyecto.
+Estrategias de trabajo colaborativo y organización básica de un proyecto.
 
 ### ¿Pudimos llegar con todo?
 
-Si, pero se podrian mejorar varios aspectos del juego con mas tiempo.
+Si, pero se podrían mejorar varios aspectos del juego con más tiempo. Nos faltó terminar de editar el video promocional para la audiencia potencial, falta mostrar el editor de mapas, mostrar las mejoras disponibles, los cheats y el podio al finalizar la aprtida.
 
 ### Errores conocidos
 
-- No se puede dar marcha atras y girar
+- No se puede dar marcha atrás y girar
 - Algunos puentes se dibujan por debajo del jugador
 - Los puentes en los que se puede cruzar por arriba y por abajo no tienen la colision correcta
-- Hay un error que a veces los checkpoints quedan desactualizados en la ui y entonces la flecha que apunta al proximo no funciona correctamente
+- Hay un error que a veces los checkpoints quedan desactualizados en la ui y entonces la flecha que apunta al próximo no funciona correctamente
+- El tiempo empieza a contar a partir de que se pasa por el primer checkpoint
 
 ### ¿Qué cambiaríamos si lo hiciéramos de nuevo?
 
-La division de tareas. Consideramos que la carga horaria no fue equitativa y por tanto si lo hiciesemos de nuevo apostariamos mas por un enfoque colaborativo en varias partes del trabajo en vez de ir por separado en cuatro partes distintas.
+La división de tareas. Consideramos que la carga horaria no fue equitativa y por tanto si lo hiciesemos de nuevo apostaríamos más por un enfoque colaborativo en varias partes del trabajo en vez de ir por separado en cuatro partes distintas.
