@@ -43,6 +43,6 @@ target_sources(nfs_server
     physics/vehicle.h
     physics/PhysicsEventCollector.h
     physics/CheckpointInfo.h
-    physucs/NpcInfo.h
+    physics/NpcInfo.h
 
     )
