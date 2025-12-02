@@ -24,6 +24,7 @@
 #include "dto_handlers/send_checkpoints_handler.h"
 #include "dto_handlers/send_initial_race_map_handler.h"
 #include "dto_handlers/send_lap_completed_handler.h"
+#include "dto_handlers/send_npc_handler.h"
 #include "dto_handlers/send_player_handler.h"
 #include "dto_handlers/send_player_race_finished_handler.h"
 #include "dto_handlers/send_race_finished_handler.h"
@@ -69,6 +70,8 @@ void DtoHandlerSystem::RegisterHandlers() {
 
     handlers_[static_cast<uint8_t>(ActionCode::SEND_INITIAL_RACE_MAP)] =
             std::make_unique<SendInitialRaceMapHandler>();
+
+    handlers_[static_cast<uint8_t>(ActionCode::SEND_NPC)] = std::make_unique<SendNpcHandler>();
 }
 
 
