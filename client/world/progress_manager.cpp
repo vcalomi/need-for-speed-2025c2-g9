@@ -33,6 +33,8 @@ void ProgressManager::OnLocalCheckpoint(int checkpointId) {
     if (progress_.currentCheckpointIndex >= checkpoints_.size()) {
         progress_.currentCheckpointIndex = 0;
         progress_.lapsCompleted++;
+
+        progress_.passedCheckpoints.clear();
     }
 }
 
