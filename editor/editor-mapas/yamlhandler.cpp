@@ -121,8 +121,6 @@ void YamlHandler::saveSceneAsTrack(const QString& filename, QGraphicsScene* scen
         out << YAML::BeginMap;
         out << YAML::Key << "position" << YAML::Value << YAML::Flow << YAML::BeginSeq << n.x()
             << n.y() << YAML::EndSeq;
-
-        out << YAML::EndSeq;
         out << YAML::EndMap;
     }
 
@@ -244,7 +242,6 @@ bool YamlHandler::loadSceneFromTrack(const QString& filename, QGraphicsScene* sc
             if (sp["angle"]) {
                 it->setAngle(sp["angle"].as<float>());
             }
-            scene->addItem(it);
             scene->addItem(it);
         }
     }
