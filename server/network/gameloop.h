@@ -27,6 +27,7 @@ struct PlayerRaceProgress {
 struct PlayerResult {
     float totalTimeSeconds;
     float totalPenaltySeconds;
+    int explosions = 0;
 };
 
 

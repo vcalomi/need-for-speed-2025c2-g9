@@ -1,5 +1,4 @@
 #include "gameloop.h"
-#include "ranking_calculator.h"
 
 #include <algorithm>
 #include <cstdint>
@@ -34,6 +33,8 @@
 #include "../YamlParser.h"
 #include "../constants.h"
 #include "../physics/LevelCreator.h"
+
+#include "ranking_calculator.h"
 
 #define GAME_TICK_MS 16
 
@@ -104,19 +105,52 @@ void GameLoop::run() {
 
 bool GameLoop::isLastRace() const { return currentRaceIndex_ == (int)races_.size() - 1; }
 
-
 void GameLoop::sendFinalResults() {
+    float bestFinish = std::numeric_limits<float>::infinity();
+
+    for (auto& [id, result]: playerResults_) {
+        if (result.explosions == 0 && result.totalTimeSeconds > 0.0f) {
+            bestFinish = std::min(bestFinish, result.totalTimeSeconds);
+        }
+    }
+
+    if (bestFinish == std::numeric_limits<float>::infinity()) {
+        for (auto& [id, result]: playerResults_) {
+            bestFinish = std::min(bestFinish, result.totalTimeSeconds);
+        }
+    }
+
+    const float K = 2.0f;
+
+    for (auto& [id, result]: playerResults_) {
+
+        if (result.explosions > 0) {
+
+            float Tex = result.totalTimeSeconds;
+            float diff = bestFinish - Tex;
+            if (diff < 0)
+                diff = 0;
+
+            float penalty = diff * K * result.explosions;
+
+            result.totalPenaltySeconds = penalty;
+            result.totalTimeSeconds = Tex + penalty;
+        }
+    }
+
     auto rankings = RankingCalculator::calculateRankings(playerResults_, playerUsernames_);
 
     int position = 1;
-    for (const auto& e : rankings) {
-        auto finalResultDto = std::make_shared<PlayerGameFinishedDto>(
-                e.username, e.totalTime, e.penalties, position);
+    for (const auto& e: rankings) {
+        auto finalResultDto = std::make_shared<PlayerGameFinishedDto>(e.username, e.totalTime,
+                                                                      e.penalties, position);
         broadcaster_.broadcast(finalResultDto);
         position++;
     }
+
     broadcaster_.broadcast(std::make_shared<GameFinishedDto>());
 }
+
 
 void GameLoop::buildRacesFromSelectedMaps() {
     if (!races_.empty())
@@ -545,24 +579,24 @@ void GameLoop::handleVehicleExplosion(int vehicleId) {
 
     vehicle->disableControl();
 
-    auto explDto = std::make_shared<VehicleExplodedDto>(playerUsernames_.at(vehicleId));
-    broadcaster_.broadcast(explDto);
+    broadcaster_.broadcast(std::make_shared<VehicleExplodedDto>(playerUsernames_.at(vehicleId)));
 
-    auto it = raceProgress_.find(vehicleId);
-    if (it != raceProgress_.end()) {
-        it->second.finished = true;
-    }
+    auto elapsed = Clock::now() - raceStartTime_;
+    float seconds = std::chrono::duration_cast<Milliseconds>(elapsed).count() / 1000.0f;
+
+    raceProgress_[vehicleId].finished = true;
+
+    playerResults_[vehicleId].totalTimeSeconds = seconds;
+    playerResults_[vehicleId].explosions += 1;
 
     if (allPlayersFinished()) {
-        std::cout << "[handleVehicleExplosion] -> allPlayersFinished() == true, ENVIANDO "
-                     "RaceFinishedDto\n";
         raceActive_ = false;
         pendingNextRace_ = true;
         nextRaceStartTime_ = Clock::now() + std::chrono::seconds(10);
-        auto raceFinish = std::make_shared<RaceFinishedDto>();
-        broadcaster_.broadcast(raceFinish);
+        broadcaster_.broadcast(std::make_shared<RaceFinishedDto>());
     }
 }
+
 
 float GameLoop::computeCollisionDamage(float impactSpeed) {
     const float minSpeed = 5.0f;
