@@ -24,10 +24,6 @@ option(NFS_MAKE_WARNINGS_AS_ERRORS "Enable / disable warnings as errors." ON)
 
 message(CMAKE_CXX_COMPILER_ID="${CMAKE_CXX_COMPILER_ID}")
 
-# ============================================================================
-# CONFIGURACIÓN DE RUTAS
-# ============================================================================
-
 set(PROJECT_SOURCE_DIR "${CMAKE_SOURCE_DIR}")
 set(MAPS_DIR "/usr/local/share/nfs/maps")
 set(ASSETS_DIR "/usr/local/share/nfs/assets")
@@ -35,6 +31,7 @@ set(LOBBY_ASSETS_DIR "/usr/local/share/nfs/lobby_assets")
 set(VEHICLES_SPECS_DIR "/usr/local/share/nfs/vehicles")
 set(PHYSICS_LEVELS_DIR "${CMAKE_SOURCE_DIR}/server/physics/Levels")
 set(EDITOR_DIR "${CMAKE_SOURCE_DIR}/editor/editor-mapas")
+set(RESOURCES_DIR "/usr/local/share/nfs/resources")
 
 add_definitions(-DPROJECT_SOURCE_DIR="${PROJECT_SOURCE_DIR}")
 add_definitions(-DMAPS_DIR="${MAPS_DIR}")
@@ -43,6 +40,7 @@ add_definitions(-DLOBBY_ASSETS_DIR="${LOBBY_ASSETS_DIR}")
 add_definitions(-DVEHICLES_SPECS_DIR="${VEHICLES_SPECS_DIR}")
 add_definitions(-DPHYSICS_LEVELS_DIR="${PHYSICS_LEVELS_DIR}")
 add_definitions(-DEDITOR_DIR="${EDITOR_DIR}")
+add_definitions(-DRESOURCES_DIR="${RESOURCES_DIR}")
 
 message(STATUS "Ruta de mapas: ${MAPS_DIR}")
 message(STATUS "Ruta de assets: ${ASSETS_DIR}")
@@ -51,15 +49,7 @@ message(STATUS "Ruta de vehículos: ${VEHICLES_SPECS_DIR}")
 message(STATUS "Ruta de niveles de física: ${PHYSICS_LEVELS_DIR}")
 message(STATUS "Ruta del editor: ${EDITOR_DIR}")
 
-# ============================================================================
-# DEPENDENCIAS BÁSICAS
-# ============================================================================
-
 find_package(Threads REQUIRED)
-
-# ============================================================================
-# YAML-CPP
-# ============================================================================
 
 include(FetchContent)
 
@@ -74,10 +64,6 @@ set(YAML_CPP_BUILD_TOOLS OFF CACHE BOOL "" FORCE)
 
 FetchContent_MakeAvailable(yaml-cpp)
 
-# ============================================================================
-# BIBLIOTECA COMÚN
-# ============================================================================
-
 add_library(nfs_common STATIC)
 add_subdirectory(common/)
 
@@ -87,10 +73,6 @@ include(cmake/CompilerWarnings.cmake)
 set_project_warnings(nfs_common ${NFS_MAKE_WARNINGS_AS_ERRORS} FALSE)
 
 target_include_directories(nfs_common PUBLIC .)
-
-# ============================================================================
-# DEPENDENCIAS SDL2 (PARA CLIENTE, EDITOR Y SERVIDOR)
-# ============================================================================
 
 if(NFS_CLIENT OR NFS_EDITOR OR NFS_SERVER)
     include(FetchContent)
@@ -110,10 +92,6 @@ if(NFS_CLIENT OR NFS_EDITOR OR NFS_SERVER)
     message(STATUS "SDL2pp configurado (incluye SDL2 automáticamente)")
 endif()
 
-# ============================================================================
-# QT6 (SOLO PARA CLIENTE Y EDITOR)
-# ============================================================================
-
 if(NFS_CLIENT OR NFS_EDITOR)
     list(APPEND CMAKE_PREFIX_PATH "/usr/lib/x86_64-linux-gnu/cmake/Qt6")
     find_package(Qt6 REQUIRED COMPONENTS Core Widgets Multimedia)
@@ -128,10 +106,6 @@ if(NFS_CLIENT OR NFS_EDITOR)
     
     message(STATUS "Qt6 configurado para cliente y editor (compatibilidad habilitada)")
 endif()
-
-# ============================================================================
-# DEPENDENCIAS PARA SERVIDOR (Box2D)
-# ============================================================================
 
 if(NFS_SERVER)
     include(FetchContent)
@@ -159,10 +133,6 @@ if(NFS_SERVER)
     message(STATUS "Box2D configurado para servidor")
 endif()
 
-# ============================================================================
-# PROGRAMA CLIENTE
-# ============================================================================
-
 if(NFS_CLIENT)
     add_executable(nfs_client)
     add_dependencies(nfs_client nfs_common SDL2pp::SDL2pp)
@@ -184,10 +154,6 @@ if(NFS_CLIENT)
 
     message(STATUS "Cliente configurado")
 endif()
-
-# ============================================================================
-# PROGRAMA SERVIDOR (CON SDL)
-# ============================================================================
 
 if(NFS_SERVER)
     add_executable(nfs_server)
@@ -242,10 +208,6 @@ if(NFS_SERVER)
     message(STATUS "Servidor configurado (con SDL2pp - más rápido)")
 endif()
 
-# ============================================================================
-# PROGRAMA EDITOR
-# ============================================================================
-
 if(NFS_EDITOR)
     add_executable(nfs_editor
         editor/main.cpp
@@ -277,10 +239,6 @@ if(NFS_EDITOR)
     message(STATUS "Editor configurado")
 endif()
 
-# ============================================================================
-# TESTING SECTION
-# ============================================================================
-
 if(NFS_TESTS)
     include(FetchContent)
     FetchContent_Declare(
@@ -308,10 +266,6 @@ if(NFS_TESTS)
     )
 endif()
 
-# ============================================================================
-# INSTALACIÓN
-# ============================================================================
-
 install(TARGETS 
     nfs_server 
     nfs_client 
@@ -329,10 +283,6 @@ install(DIRECTORY client/assets/need-for-speed/ DESTINATION share/nfs/assets)
 install(DIRECTORY client/lobby/assets/ DESTINATION share/nfs/lobby_assets)
 install(DIRECTORY server/vehicles_specs/ DESTINATION share/nfs/vehicles)
 install(DIRECTORY client/resources/static/ DESTINATION share/nfs/resources)
-
-# ============================================================================
-# RESUMEN FINAL
-# ============================================================================
 
 message(STATUS "")
 message(STATUS "=== CONFIGURACIÓN COMPLETADA ===")

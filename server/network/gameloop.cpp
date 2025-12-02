@@ -5,6 +5,8 @@
 #include <cstring>
 #include <iostream>
 #include <vector>
+#include <filesystem>
+#include <cstdlib>
 
 #include <netinet/in.h>
 
@@ -158,8 +160,19 @@ void GameLoop::buildRacesFromSelectedMaps() {
 
     YamlParser parser;
 
-    for (const auto& filename: selectedMaps_) {
-        RaceInfo info = parser.parseRaceInfo("../server/maps/" + filename);
+    for (const auto& entry: selectedMaps_) {
+        const std::string name = entry;
+        namespace fs = std::filesystem;
+
+        fs::path resolved;
+        fs::path candidate = fs::path(name);
+        if (candidate.is_absolute() && fs::exists(candidate) && fs::is_regular_file(candidate)) {
+            resolved = candidate;
+        } else {
+            resolved = fs::path(std::string(MAPS_DIR)) / name;
+        }
+
+        RaceInfo info = parser.parseRaceInfo(resolved.string());
         races_.push_back(std::move(info));
     }
 
@@ -177,7 +190,7 @@ void GameLoop::startRace(int raceIndex) {
     currentRaceIndex_ = raceIndex;
     pendingNextRace_ = false;
 
-    const std::string vehiclesYaml = "../server/vehicles_specs/vehicle_specs.yaml";
+    const std::string vehiclesYaml = std::string(VEHICLES_SPECS_DIR) + "/vehicle_specs.yaml";
     const RaceInfo& race = races_[raceIndex];
 
     // conseguimos el path de físicas a partir del nombre del mapa
@@ -186,6 +199,10 @@ void GameLoop::startRace(int raceIndex) {
     // usamos los checkpoints y spawns que vinieron del archivo
     setup.emplace(direccion, vehiclesYaml, chosenCars_, upgradesByUser_, race.checkpoints,
                   race.spawns);
+
+    for (auto& [playerId, vehicle] : setup->getVehicleMap()) {
+        if (vehicle) vehicle->resetInfiniteHp();
+    }
 
     raceProgress_.clear();
     for (const auto& [playerId, _]: chosenCars_) {
@@ -212,18 +229,18 @@ std::string GameLoop::levelDirForMap(const std::string& mapName) {
         id = id.substr(0, id.size() - 4);
     }
     if (id == "liberty_city") {
-        return "../server/physics/Levels/Liberty_City";
+        return std::string(PHYSICS_LEVELS_DIR) + "/Liberty_City";
     }
     if (id == "san_andreas") {
-        return "../server/physics/Levels/San_Andreas";
+        return std::string(PHYSICS_LEVELS_DIR) + "/San_Andreas";
     }
     if (id == "vice_city") {
-        return "../server/physics/Levels/Vice_City";
+        return std::string(PHYSICS_LEVELS_DIR) + "/Vice_City";
     }
 
     std::cerr << "[GameLoop] levelDirForMap: unknown mapName " << mapName << "\n";
     // fallback para no crashear:
-    return "../server/physics/Levels/Liberty_City";
+    return std::string(PHYSICS_LEVELS_DIR) + "/Liberty_City";
 }
 
 

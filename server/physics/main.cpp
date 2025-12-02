@@ -34,7 +34,7 @@ int main() {
     LevelCreator lc;
 
     // Ojo con el path / mayúsculas (ajustá según tu carpeta real)
-    lc.processDirectoryLevel("../server/physics/Levels/San_Andreas");
+    lc.processDirectoryLevel(PHYSICS_LEVELS_DIR + std::string("/San_Andreas"));
     lc.createLevelCollision(world, lc.levels());
 
     // --- Cámara / zoom ---

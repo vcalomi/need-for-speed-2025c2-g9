@@ -13,6 +13,7 @@
 #include "EntityTags.h"
 #include "CheckpointInfo.h"
 #include "NpcInfo.h"
+#include "spawn.h"
 
 class LevelCreator {
 public:

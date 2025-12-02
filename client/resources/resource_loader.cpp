@@ -1,6 +1,7 @@
 #include "./resource_loader.h"
 
 #include <iostream>
+#include <filesystem>
 
 #include <yaml-cpp/yaml.h>
 
@@ -12,7 +13,12 @@ ResourceLoader::ResourceLoader(SDL2pp::Renderer& renderer): renderer_(renderer) 
 
 void ResourceLoader::LoadCarSprites() {
     try {
-        YAML::Node config = YAML::LoadFile("./client/resources/static/cars.yaml");
+        YAML::Node config;
+        try {
+            config = YAML::LoadFile(std::string(RESOURCES_DIR) + "/static/cars.yaml");
+        } catch (const YAML::Exception&) {
+            config = YAML::LoadFile(std::string(PROJECT_SOURCE_DIR) + "/client/resources/static/cars.yaml");
+        }
 
         YAML::Node sprites = config["sprites"];
         if (!sprites) {
@@ -62,7 +68,12 @@ void ResourceLoader::LoadCarSprites() {
 
 void ResourceLoader::LoadNpcSprites() {
     try {
-        YAML::Node config = YAML::LoadFile("./client/resources/static/cars.yaml");
+        YAML::Node config;
+        try {
+            config = YAML::LoadFile(std::string(RESOURCES_DIR) + "/static/cars.yaml");
+        } catch (const YAML::Exception&) {
+            config = YAML::LoadFile(std::string(PROJECT_SOURCE_DIR) + "/client/resources/static/cars.yaml");
+        }
 
         YAML::Node npcs = config["npcs"];
         if (!npcs) {

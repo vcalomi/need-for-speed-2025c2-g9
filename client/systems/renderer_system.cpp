@@ -26,8 +26,7 @@ RendererSystem::RendererSystem(SDL2pp::Renderer& renderer, SpriteSheet& cars, Sp
         controller_(bus, particleRenderer_, world, state_, screenRenderer_, progress),
         checkpointIndicator_(renderer),
         speedometer_(renderer, "../client/assets/need-for-speed/cars/speedometer.png",
-                     "../client/assets/need-for-speed/cars/speedometer_needle.png"),
-        eventBus_(bus) {
+                     "../client/assets/need-for-speed/cars/speedometer_needle.png") {
     checkpointIndicator_.SetTexture("../client/assets/need-for-speed/cars/arrow.png");
 
     eventBus_.Subscribe<NewNpcEvent>([this](const NewNpcEvent& e) {

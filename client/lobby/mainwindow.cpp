@@ -80,7 +80,7 @@ MainWindow::MainWindow(ClientProtocol& protocol, bool& game_started_ref, std::st
     carCtrl = std::make_unique<CarSelectionController>(*lobbySvc, ui);
 
     carCtrl->initCars();
-    music = std::make_unique<BackgroundMusic>(this);
+    music = std::make_unique<BackgroundMusic>(nullptr);
 
     music->start();
     game_started = false;
@@ -227,15 +227,27 @@ void MainWindow::openEditorMap() {
 }
 
 void MainWindow::handleOpenMapsPage() {
-    QString mapsPath = QDir::cleanPath(QDir::currentPath() + "/server/maps");
+    QStringList candidates;
+    candidates << QString::fromUtf8(MAPS_DIR);
+    candidates << QDir::cleanPath(QString::fromUtf8(PROJECT_SOURCE_DIR) + "/server/maps");
+    candidates << QDir::homePath() + "/.local/share/nfs/maps";
 
-    qDebug() << "Buscando mapas en:" << mapsPath;
+    QStringList scanned;
+    QMap<QString, QString> byName;
 
-    QDir dir(mapsPath);
-    if (!dir.exists()) {
-        QMessageBox::warning(this, "Error", "No se encontró la carpeta de mapas:\n" + mapsPath);
-        return;
+    for (const QString& p : candidates) {
+        QDir d(p);
+        if (!d.exists()) continue;
+        scanned << p;
+        d.setFilter(QDir::Files | QDir::NoDotAndDotDot);
+        QFileInfoList files = d.entryInfoList();
+        for (const QFileInfo& info : files) {
+            QString name = info.fileName();
+            if (!byName.contains(name)) byName.insert(name, info.absoluteFilePath());
+        }
     }
+
+    qDebug() << "Buscando mapas en:" << scanned.join(", ");
 
     ui->listMaps->clear();
     ui->listMaps->setSpacing(8);
@@ -243,18 +255,14 @@ void MainWindow::handleOpenMapsPage() {
     ui->listMaps->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     ui->listMaps->setViewMode(QListView::ListMode);
 
-    dir.setFilter(QDir::Files | QDir::NoDotAndDotDot);
-    QFileInfoList mapFiles = dir.entryInfoList();
-
-    if (mapFiles.isEmpty()) {
+    if (byName.isEmpty()) {
         ui->listMaps->addItem("No se encontraron recorridos disponibles.");
         ui->btnSelectMaps->setEnabled(false);
     } else {
-        for (const QFileInfo& info: mapFiles) {
-            QListWidgetItem* item = new QListWidgetItem(info.fileName());
-            item->setFlags(item->flags() | Qt::ItemIsUserCheckable | Qt::ItemIsSelectable |
-                           Qt::ItemIsEnabled);
-            item->setData(Qt::UserRole, info.absoluteFilePath());
+        for (auto it = byName.constBegin(); it != byName.constEnd(); ++it) {
+            QListWidgetItem* item = new QListWidgetItem(it.key());
+            item->setFlags(item->flags() | Qt::ItemIsUserCheckable | Qt::ItemIsSelectable | Qt::ItemIsEnabled);
+            item->setData(Qt::UserRole, it.value());
             item->setCheckState(Qt::Unchecked);
             item->setData(Qt::UserRole + 1, false);
             ui->listMaps->addItem(item);
@@ -284,12 +292,19 @@ void MainWindow::updateMapItemStyle(QListWidgetItem* item) {
 
 void MainWindow::handleSelectMaps() {
     QStringList selectedMapNames;
+    QDir mapsDir(QString::fromUtf8(MAPS_DIR));
+    const QString mapsDirPath = mapsDir.absolutePath();
 
     for (int i = 0; i < ui->listMaps->count(); ++i) {
         QListWidgetItem* item = ui->listMaps->item(i);
         if (item->checkState() == Qt::Checked) {
-            QString mapName = item->text();
-            selectedMapNames.push_back(mapName);
+            const QString srcPath = QFileInfo(item->data(Qt::UserRole).toString()).absoluteFilePath();
+            const QString fileName = QFileInfo(srcPath).fileName();
+            if (srcPath.startsWith(mapsDirPath + "/")) {
+                selectedMapNames.push_back(fileName);
+            } else {
+                selectedMapNames.push_back(srcPath);
+            }
         }
     }
 
