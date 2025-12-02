@@ -14,6 +14,8 @@ private:
     bool audioEnabled_;
     EventBus& eventBus_;
     std::unordered_map<std::string, std::unique_ptr<SDL2pp::Chunk>> cache_;
+    bool enginePlaying_ = false;
+    int engineChannel_ = -1;
 
 public:
     explicit AudioSystem(EventBus& bus);
