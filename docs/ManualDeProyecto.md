@@ -83,7 +83,10 @@ Si, pero se podrian mejorar varios aspectos del juego con mas tiempo.
 
 ### Errores conocidos
 
-No se puede dar marcha atras y girar. Algunos puentes se dibujan por debajo del jugador. Los puentes en los que se puede cruzar por arriba y por abajo no tienen la colision correcta.
+- No se puede dar marcha atras y girar
+- Algunos puentes se dibujan por debajo del jugador
+- Los puentes en los que se puede cruzar por arriba y por abajo no tienen la colision correcta
+- Hay un error que a veces los checkpoints quedan desactualizados en la ui y entonces la flecha que apunta al proximo no funciona correctamente
 
 ### ¿Qué cambiaríamos si lo hiciéramos de nuevo?
 
