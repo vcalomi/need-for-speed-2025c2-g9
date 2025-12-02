@@ -1,12 +1,12 @@
-#ifndef PLAYER_LEFT_SERIALIZER_H
-#define PLAYER_LEFT_SERIALIZER_H
+#ifndef PLAYER_HIT_NPC_SERIALIZER_H
+#define PLAYER_HIT_NPC_SERIALIZER_H
 
 #include "serializer.h"
-#include "../Dto/player_left.h"
+#include "../Dto/player_hit_npc.h"
 
-class PlayerLeftSerializer : public Serializer {
+class PlayerHitNPCSerializer : public Serializer {
 public:
-    PlayerLeftSerializer() {}
+    PlayerHitNPCSerializer() {}
     std::vector<uint8_t> serialize(const Dto& dto) const override;
     std::shared_ptr<Dto> deserialize(const std::vector<uint8_t>& buffer) const override;
 };

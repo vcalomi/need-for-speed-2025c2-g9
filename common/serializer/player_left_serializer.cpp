@@ -6,7 +6,7 @@
 
 std::vector<uint8_t> PlayerLeftSerializer::serialize(const Dto& dto) const {
     const PlayerLeftDto& playerLeftDto = static_cast<const PlayerLeftDto&>(dto);
-    size_t size = SerializerUtils::STRING_LENGTH_SIZE + playerLeftDto.username.size();
+    size_t size = SerializerUtils::STRING_LENGTH_SIZE + playerLeftDto.username.length() + 1;
     std::vector<uint8_t> buffer(size);
     size_t pos = 0;
     SerializerUtils::writeString(buffer, pos, playerLeftDto.username);

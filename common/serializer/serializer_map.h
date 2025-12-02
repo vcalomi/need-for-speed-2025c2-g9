@@ -29,6 +29,10 @@
 #include "vehicle_upgrade_serializer.h"
 #include "infinite_health_serializer.h"
 #include "end_race_serializer.h"
+#include "player_hit_npc_serializer.h"
+#include "npc_serializer.h"
+#include "game_finished_serializer.h"
+#include "player_game_finished_serializer.h"
 
 class SerializerMap {
 public:
@@ -97,6 +101,14 @@ public:
                 std::make_unique<InfiniteHealthSerializer>();
         serializers[static_cast<uint8_t>(ActionCode::SEND_END_RACE)] =
                 std::make_unique<EndRaceSerializer>();
+        serializers[static_cast<uint8_t>(ActionCode::SEND_NPC)] =
+                std::make_unique<NPCSerializer>();
+        serializers[static_cast<uint8_t>(ActionCode::SEND_PLAYER_HIT_NPC)] =
+                std::make_unique<PlayerHitNPCSerializer>();
+        serializers[static_cast<uint8_t>(ActionCode::SEND_GAME_FINISHED)] =
+                std::make_unique<GameFinishedSerializer>();
+        serializers[static_cast<uint8_t>(ActionCode::SEND_PLAYER_GAME_FINISHED)] =
+                std::make_unique<PlayerGameFinishedSerializer>();
 
         return serializers;
     }

@@ -93,27 +93,6 @@ inline size_t calculateStringVectorSize(const std::vector<std::string>& vec) {
     return total_size;
 }
 
-inline void writeByteVector(std::vector<uint8_t>& buffer, size_t& pos, const std::vector<uint8_t>& vec) {
-    writeInt(buffer, pos, static_cast<int>(vec.size()));
-    for (uint8_t value : vec) {
-        writeByte(buffer, pos, value);
-    }
-}
-
-inline std::vector<uint8_t> readByteVector(const std::vector<uint8_t>& buffer, size_t& pos) {
-    int count = readInt(buffer, pos);
-    std::vector<uint8_t> result;
-    result.reserve(count);
-    for (int i = 0; i < count && pos < buffer.size(); ++i) {
-        result.push_back(readByte(buffer, pos));
-    }
-    return result;
-}
-
-inline size_t calculateByteVectorSize(const std::vector<uint8_t>& vec) {
-    return sizeof(int) + vec.size() * sizeof(uint8_t);
-}
-
 }
 
 #endif
