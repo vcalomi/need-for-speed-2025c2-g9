@@ -1,7 +1,5 @@
 #include "send_player_handler.h"
 
-#include <iostream>
-
 SendPlayerHandler::SendPlayerHandler(Client& client): client_(client) {}
 
 std::shared_ptr<Event> SendPlayerHandler::Handle(const std::shared_ptr<Dto>& dto) {

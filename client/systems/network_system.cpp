@@ -1,6 +1,5 @@
 #include "./network_system.h"
 
-#include <iostream>
 #include <memory>
 
 #include "../../common/Dto/end_race.h"
@@ -53,8 +52,8 @@ NetworkSystem::NetworkSystem(Client& client, EventBus& eventBus):
 
     eventBus_.Subscribe<UpgradeCarEvent>([this](const UpgradeCarEvent& e) {
         try {
-            client_.getSenderQueue().try_push(
-                    std::make_shared<VehicleUpgradeDto>(e.username, e.upgradeHealth, e.upgradeSpeed));
+            client_.getSenderQueue().try_push(std::make_shared<VehicleUpgradeDto>(
+                    e.username, e.upgradeHealth, e.upgradeSpeed));
         } catch (const ClosedQueue&) {
             return;
         }

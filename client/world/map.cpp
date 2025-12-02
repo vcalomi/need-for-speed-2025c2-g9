@@ -24,8 +24,6 @@ Map::Map(SDL2pp::Renderer& renderer, EventBus& eventBus):
             SDL2pp::Point size = backgroundTexture_->GetSize();
             width_ = size.x;
             height_ = size.y;
-
-            std::cout << "[Map] Background loaded: " << backgroundpath << "\n";
         } else {
             std::cerr << "[Map] ERROR: Background not found: " << backgroundpath << "\n";
             return;
@@ -33,9 +31,8 @@ Map::Map(SDL2pp::Renderer& renderer, EventBus& eventBus):
 
         if (FileExists(foregroundpath)) {
             foregroundTexture_.emplace(renderer_, foregroundpath);
-            std::cout << "[Map] Foreground loaded: " << foregroundpath << "\n";
         } else {
-            std::cout << "[Map] No foreground found for: " << e.map << "\n";
+            std::cerr << "[Map] No foreground found for: " << e.map << "\n";
             foregroundTexture_.reset();
         }
     });

@@ -37,9 +37,6 @@ RendererSystem::RendererSystem(SDL2pp::Renderer& renderer, SpriteSheet& cars, Sp
         std::string spriteName = "npc_" + std::to_string(spriteId);
 
         world_.AddNpc(e.id, e.x, e.y, spriteName);
-
-        std::cout << "[RendererSystem] Spawn NPC e.id=" << e.id << " uses sprite " << spriteName
-                  << "\n";
     });
 
     eventBus_.Subscribe<NpcHitEvent>([this](const NpcHitEvent& e) {
