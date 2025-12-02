@@ -84,6 +84,7 @@ private:
     void onPlayerFinished(int vehicleId, PlayerRaceProgress& prog);
     void sendFinalResults();
     bool isLastRace() const;
+    void forceEndRaceDueToTimeout();
 
 public:
     explicit GameLoop(Queue<std::shared_ptr<Dto>>& gameLoopQueue,

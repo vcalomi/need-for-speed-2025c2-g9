@@ -76,6 +76,12 @@ void GameLoop::run() {
                 updateCountdown();
                 sendVehiclesPositions();
                 processGameEvents();
+
+                auto now = Clock::now();
+                auto elapsed = std::chrono::duration_cast<Seconds>(now - raceStartTime_).count();
+                if (elapsed >= 600) {
+                    forceEndRaceDueToTimeout();
+                }
             }
 
             if (!raceActive_ && pendingNextRace_) {
@@ -101,6 +107,30 @@ void GameLoop::run() {
         return;
     }
 }
+
+void GameLoop::forceEndRaceDueToTimeout() {
+
+    raceActive_ = false;
+    pendingNextRace_ = true;
+    nextRaceStartTime_ = Clock::now() + std::chrono::seconds(10);
+
+    const float TIMEOUT_SECONDS = 600.0f;
+
+    for (auto& [vehicleId, prog]: raceProgress_) {
+
+        if (!prog.finished) {
+            prog.finished = true;
+
+            playerResults_[vehicleId].totalTimeSeconds = TIMEOUT_SECONDS;
+        }
+    }
+
+    if (!isLastRace()) {
+        auto raceFinish = std::make_shared<RaceFinishedDto>();
+        broadcaster_.broadcast(raceFinish);
+    }
+}
+
 
 bool GameLoop::isLastRace() const { return currentRaceIndex_ == (int)races_.size() - 1; }
 
