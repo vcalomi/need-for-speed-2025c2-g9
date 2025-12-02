@@ -6,6 +6,7 @@
 #include <vector>
 #include <memory>
 #include <mutex>
+#include <atomic>
 
 #include "player.h"
 #include "../../common/broadcaster.h"
@@ -36,6 +37,7 @@ private:
     Queue<std::shared_ptr<Dto>> gameQueue;
     Broadcaster broadcaster;
     GameLoop gameLoop;
+    std::atomic<bool> stopping;
 
 public:
     GameRoom(const std::string& roomName, int hostId, int maxPlayers);

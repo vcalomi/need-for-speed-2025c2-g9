@@ -14,7 +14,8 @@ GameRoom::GameRoom(const std::string& roomName, int hostId, int maxPlayers):
         state(RoomState::WAITING_FOR_PLAYERS),
         gameQueue(),
         broadcaster(),
-        gameLoop(gameQueue, chosenCars, playerUsernames, broadcaster, maxPlayers) {}
+        gameLoop(gameQueue, chosenCars, playerUsernames, broadcaster, maxPlayers),
+        stopping(false) {}
 
 bool GameRoom::addPlayer(int clientId, Player* player) {
     std::lock_guard<std::mutex> lock(mtx);
@@ -168,7 +169,23 @@ void GameRoom::setSelectedMaps(const std::vector<std::string>& mapNames) {
 }
 
 void GameRoom::stopAllPlayers() {
+    if (stopping.exchange(true)) {
+        return;
+    }
+
     std::lock_guard<std::mutex> lock(mtx);
+
+    try {
+        std::cout << "[GameRoom] Stopping GameLoop...\n";
+        if (gameLoop.is_alive()) {
+            gameLoop.stop();
+            std::cout << "[GameRoom] Joining GameLoop thread...\n";
+            gameLoop.join();
+            std::cout << "[GameRoom] GameLoop thread joined.\n";
+        } else {
+            gameLoop.stop();
+        }
+    } catch (...) {}
 
     try {
         gameQueue.close();
@@ -177,22 +194,24 @@ void GameRoom::stopAllPlayers() {
     for (auto& [id, player]: players) {
         if (player) {
             try {
+                broadcaster.removeQueue(&player->getSendQueue());
+            } catch (...) {}
+            try {
                 player->stopGame();
             } catch (...) {}
         }
     }
     players.clear();
-
-    try {
-        gameLoop.stop();
-        if (gameLoop.is_alive()) {
-            gameLoop.join();
-        }
-    } catch (...) {}
+    std::cout << "[GameRoom] stopAllPlayers completed.\n";
 }
 
 GameRoom::~GameRoom() {
     try {
-        stopAllPlayers();
+        if (!stopping.load()) {
+            std::cout << "[GameRoom] Destructor: stopping all players...\n";
+            stopAllPlayers();
+        } else {
+            std::cout << "[GameRoom] Destructor: already stopped, skipping.\n";
+        }
     } catch (...) {}
 }

@@ -18,9 +18,11 @@ target_sources(nfs_server
     network/game_monitor.cpp
     network/game_room.cpp
     network/gameloop.cpp
+    network/ranking_calculator.cpp
     LevelSetup.cpp
     PUBLIC
     LevelSetup.h
+    network/ranking_calculator.h
     network/acceptor.h
     constants.h
     vehicleDTO.h

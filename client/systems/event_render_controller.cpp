@@ -75,9 +75,9 @@ void EventRenderController::RegisterEvents() {
 
 
     eventBus_.Subscribe<PlayerRaceFinishedEvent>([this](const PlayerRaceFinishedEvent& e) {
-        world_.SetCheckpoints({});
-        progress_.Reset();
         if (e.username == world_.GetLocalPlayer().GetUsername()) {
+            world_.SetCheckpoints({});
+            progress_.Reset();
             state_.localPlayerFinished = true;
             state_.localFinishPosition = e.finalPosition;
             state_.localFinishTime = e.finishTime;

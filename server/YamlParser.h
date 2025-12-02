@@ -5,7 +5,7 @@
 
 #include "network/race_info.h"
 #include "physics/CheckpointInfo.h"
-#include "physics/Spawn.h"
+#include "physics/spawn.h"
 
 #include "VehicleSpec.h"
 

@@ -1,4 +1,5 @@
 #include "gameloop.h"
+#include "ranking_calculator.h"
 
 #include <algorithm>
 #include <cstdint>
@@ -105,11 +106,14 @@ bool GameLoop::isLastRace() const { return currentRaceIndex_ == (int)races_.size
 
 
 void GameLoop::sendFinalResults() {
-    for (const auto& [vehicleId, result]: playerResults_) {
+    auto rankings = RankingCalculator::calculateRankings(playerResults_, playerUsernames_);
+
+    int position = 1;
+    for (const auto& e : rankings) {
         auto finalResultDto = std::make_shared<PlayerGameFinishedDto>(
-                playerUsernames_.at(vehicleId), result.totalTimeSeconds, result.totalPenaltySeconds,
-                1);
+                e.username, e.totalTime, e.penalties, position);
         broadcaster_.broadcast(finalResultDto);
+        position++;
     }
     broadcaster_.broadcast(std::make_shared<GameFinishedDto>());
 }
@@ -169,13 +173,17 @@ void GameLoop::startRace(int raceIndex) {
 }
 
 std::string GameLoop::levelDirForMap(const std::string& mapName) {
-    if (mapName == "liberty_city") {
+    std::string id = mapName;
+    if (id.size() > 4 && id.substr(id.size() - 4) == ".png") {
+        id = id.substr(0, id.size() - 4);
+    }
+    if (id == "liberty_city") {
         return "../server/physics/Levels/Liberty_City";
     }
-    if (mapName == "san_andreas") {
+    if (id == "san_andreas") {
         return "../server/physics/Levels/San_Andreas";
     }
-    if (mapName == "vice_city") {
+    if (id == "vice_city") {
         return "../server/physics/Levels/Vice_City";
     }
 
@@ -475,7 +483,7 @@ void GameLoop::onPlayerFinished(int vehicleId, PlayerRaceProgress& prog) {
     float seconds = static_cast<float>(ms) / 1000.0f;
 
     int position = computePlayerPosition(vehicleId);
-    playerResults_[vehicleId].totalTimeSeconds = seconds;
+    playerResults_[vehicleId].totalTimeSeconds += seconds;
 
     auto finishDto = std::make_shared<PlayerRaceFinishedDto>(playerUsernames_.at(vehicleId),
                                                              seconds, position);

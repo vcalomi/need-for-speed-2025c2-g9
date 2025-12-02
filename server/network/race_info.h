@@ -4,7 +4,7 @@
 #include <vector>
 
 #include "../physics/CheckpointInfo.h"
-#include "../physics/Spawn.h"
+#include "../physics/spawn.h"
 
 struct RaceInfo {
     std::string mapName;  // "liberty_city", "san_andreas", "vice_city"
