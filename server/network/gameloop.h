@@ -24,10 +24,13 @@ struct PlayerRaceProgress {
     std::optional<std::chrono::steady_clock::time_point> finishTime;
 };
 
+<<<<<<< Updated upstream
 struct LevelInfo {
     std::string dir;
     std::string mapName;
 };
+=======
+>>>>>>> Stashed changes
 
 class GameLoop: public Thread {
 private:
@@ -40,7 +43,7 @@ private:
     int maxPlayers;
     std::vector<std::string> selectedMapsPaths_;
 
-    std::vector<LevelInfo> levels_;
+
     int currentLevelIndex_ = 0;
     std::string currentMapName_;
 

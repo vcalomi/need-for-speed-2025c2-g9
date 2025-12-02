@@ -46,17 +46,30 @@ GameLoop::GameLoop(Queue<std::shared_ptr<Dto>>& gameLoopQueue, std::map<int, Car
         broadcaster_(broadcaster),
         maxPlayers(maxPlayers),
         raceActive_(false),
-        pendingNextRace_(false) {
-    levels_.push_back(LevelInfo{"../server/physics/Levels/Liberty_City", "liberty_city"});
-    levels_.push_back(LevelInfo{"../server/physics/Levels/San_Andreas", "san_andreas"});
-    levels_.push_back(LevelInfo{"../server/physics/Levels/Vice_City", "vice_city"});
+        pendingNextRace_(false),
+        selectedMaps_(selectedMaps)
+{
+    RaceParser parser;
+    for (const auto& filename : selectedMaps_) {
+        RaceInfo info = parser.parseRaceFile(filename);
+        races_.push_back(std::move(info));
+    }
+
+    if (races_.empty()) { 
+        std::cout << "Warning there arent races in races_\n";
+    }
+    
+    // POngo esto para evitar el warning
+    (void)selectedMaps;
 }
 
 void GameLoop::addSelectedMapPath(const std::string& path) { selectedMapsPaths_.push_back(path); }
 
 void GameLoop::run() {
     try {
-        startRace(0);
+        if (!races_.empty()) {
+            startRace(0);  // primera carrera
+        }
 
         while (should_keep_running()) {
             processCommands();
@@ -69,8 +82,13 @@ void GameLoop::run() {
 
             if (!raceActive_ && pendingNextRace_) {
                 if (Clock::now() >= nextRaceStartTime_) {
-                    if (currentLevelIndex_ == 0 && levels_.size() > 1) {
-                        startRace(1);
+                    int nextRaceIndex = currentRaceIndex_ + 1;
+                    if (nextRaceIndex < (int)races_.size()) {
+                        startRace(nextRaceIndex);
+                    } else {
+                        // No hay más carreras configuradas
+                        pendingNextRace_ = false;
+                        //mandar un dto de "fin del torneo"
                     }
                 }
             }
@@ -82,44 +100,37 @@ void GameLoop::run() {
     }
 }
 
-void GameLoop::startRace(int levelIndex) {
-    if (levelIndex < 0 || levelIndex >= (int)levels_.size()) {
-        std::cerr << "[GameLoop] invalid levelIndex " << levelIndex << "\n";
+
+void GameLoop::startRace(int raceIndex) {
+    if (raceIndex < 0 || raceIndex >= (int)races_.size()) {
+        std::cerr << "[GameLoop] invalid raceIndex " << raceIndex << "\n";
         return;
     }
 
-    std::cout << "selectedMapsPaths_ size: " << selectedMapsPaths_.size() << "\n";
-    for (const auto& map: selectedMapsPaths_) {
-        std::cout << "Cargando mapa desde path: " << map << "\n";
-        YamlParser parser;
-        RaceInfo raceInfo = parser.parseRaceInfo("../server/maps/" + map);
-        std::cout << "Mapa cargado: " << raceInfo.mapName << " con " << raceInfo.checkpoints.size()
-                  << " checkpoints y " << raceInfo.spawns.size() << " spawns.\n";
-    }
-
-    currentLevelIndex_ = levelIndex;
+    currentRaceIndex_ = raceIndex;
     pendingNextRace_ = false;
 
     const std::string vehiclesYaml = "../server/vehicles_specs/vehicle_specs.yaml";
-    LevelInfo level = levels_[levelIndex];
+    const RaceInfo& race = races_[raceIndex];
 
-    std::vector<CheckpointInfo> checkpoints_input;
-    checkpoints_input.push_back(CheckpointInfo{1104.0f, 831.0f, 0});  // CP 0
-    checkpoints_input.push_back(CheckpointInfo{1466.0f, 827.0f, 1});  // CP 1
-    checkpoints_input.push_back(CheckpointInfo{1447.0f, 307.0f, 2});  // CP 2
+    // conseguimos el path de físicas a partir del nombre del mapa
+    std::string direccion = levelDirForMap(race.mapName);
 
-    std::vector<Spawn> spawnpoint_input;
-    spawnpoint_input.push_back(Spawn{75.0f, 820.0f, 0.0f});
-
-    setup.emplace(level.dir, vehiclesYaml, chosenCars_, upgradesByUser_, checkpoints_input,
-                  spawnpoint_input);
+    // usamos los checkpoints y spawns que vinieron del archivo
+    setup.emplace(direccion,
+                  vehiclesYaml,
+                  chosenCars_,
+                  upgradesByUser_,
+                  race.checkpoints,
+                  race.spawns);
 
     raceProgress_.clear();
     for (const auto& [playerId, _]: chosenCars_) {
         raceProgress_[playerId] = {};
     }
 
-    sendMapName(level.mapName);
+    // nombre visible de mapa para el cliente
+    sendMapName(race.mapName);
     sendCheckpoints();
     sendInitialPlayersCars();
     sendNpcPositions();
@@ -131,7 +142,6 @@ void GameLoop::startRace(int levelIndex) {
     raceActive_ = true;
     raceStartTime_ = Clock::now();
 }
-
 
 std::string GameLoop::levelDirForMap(const std::string& mapName) {
     if (mapName == "liberty_city") {
