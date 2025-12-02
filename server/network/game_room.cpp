@@ -162,13 +162,9 @@ std::vector<int> GameRoom::getPlayerIds() {
 void GameRoom::setSelectedMaps(const std::vector<std::string>& mapNames) {
     std::lock_guard<std::mutex> lock(mtx);
     selectedMaps = mapNames;
-
-    std::cout << "[GameRoom] Maps selected: ";
     for (const auto& mapName: selectedMaps) {
-        std::cout << "\"" << mapName << "\" ";
         gameLoop.addSelectedMapPath(mapName);
     }
-    std::cout << std::endl;
 }
 
 void GameRoom::stopAllPlayers() {
@@ -179,13 +175,10 @@ void GameRoom::stopAllPlayers() {
     std::lock_guard<std::mutex> lock(mtx);
 
     try {
-        std::cout << "[GameRoom] Stopping GameLoop...\n";
         if (loopStarted && !loopJoined) {
             gameLoop.stop();
-            std::cout << "[GameRoom] Joining GameLoop thread...\n";
             gameLoop.join();
             loopJoined = true;
-            std::cout << "[GameRoom] GameLoop thread joined.\n";
         } else {
             gameLoop.stop();
         }
@@ -206,16 +199,13 @@ void GameRoom::stopAllPlayers() {
         }
     }
     players.clear();
-    std::cout << "[GameRoom] stopAllPlayers completed.\n";
 }
 
 GameRoom::~GameRoom() {
     try {
         if (!stopping.load()) {
-            std::cout << "[GameRoom] Destructor: stopping all players...\n";
             stopAllPlayers();
         } else {
-            std::cout << "[GameRoom] Destructor: already stopped, skipping.\n";
         }
     } catch (...) {}
 }

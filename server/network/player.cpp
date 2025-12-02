@@ -16,7 +16,6 @@ void Player::beginGame(Queue<std::shared_ptr<Dto>>& gameCommands) {
         state = State::IN_GAME;
         is_ready = true;
     } catch (const std::exception& e) {
-        std::cout << "Player " << clientId << ": Error starting game: " << e.what() << std::endl;
         throw;
     }
 }

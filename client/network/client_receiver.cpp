@@ -22,7 +22,6 @@ void ClientReceiver::run() {
     } catch (const ClosedQueue& e) {
         return;
     } catch (const std::exception& e) {
-        std::cerr << "ClientReceiver error: " << e.what() << std::endl;
         return;
     }
 }

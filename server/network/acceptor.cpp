@@ -13,9 +13,7 @@ Acceptor::Acceptor(const std::string& port, GameMonitor& gameMonitor):
 void Acceptor::run() {
     while (should_keep_running()) {
         try {
-            std::cout << "Acceptor: Esperando nueva conexión..." << std::endl;
             Socket socket = acceptor.accept();
-            std::cout << "Acceptor: ¡Nueva conexión aceptada!" << std::endl;
             if (!should_keep_running()) {
                 break;
             }
@@ -63,3 +61,4 @@ void Acceptor::close() {
 }
 
 Acceptor::~Acceptor() {}
+

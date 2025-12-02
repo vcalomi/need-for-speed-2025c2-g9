@@ -18,14 +18,11 @@ Client::Client(ClientProtocol& protocol, const std::string& username):
 void Client::run() {
     sender.start();
     receiver.start();
-    std::cout << "Client: Game communication started" << std::endl;
     
     try {
         Game game(*this);
         game.Run();
-    } catch (const std::exception& e) {
-        std::cerr << "Client fatal error: " << e.what() << std::endl;
-    }
+    } catch (const std::exception& e) {}
     stop();
 }
 
