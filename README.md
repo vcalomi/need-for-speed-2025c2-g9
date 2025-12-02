@@ -7,7 +7,7 @@
 
 ### Integrantes del Equipo 
 
-* **Calomino, Valentínr** — Padrón: 109665 
+* **Calomino, Valentín** — Padrón: 109665 
 * **Galli Orellana, Juana Eva** — Padrón: 111710 
 * **Lema, Mora** — Padrón: 111831
 * **Scopel, Ignacio Nicolás** — Padrón: 111305
