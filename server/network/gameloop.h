@@ -82,6 +82,7 @@ private:
     int computePlayerPosition(int vehicleId);
     void onPlayerFinished(int vehicleId, PlayerRaceProgress& prog);
     void sendFinalResults();
+    bool isLastRace() const;
 
 public:
     explicit GameLoop(Queue<std::shared_ptr<Dto>>& gameLoopQueue,

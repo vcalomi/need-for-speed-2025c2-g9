@@ -101,6 +101,8 @@ void GameLoop::run() {
     }
 }
 
+bool GameLoop::isLastRace() const { return currentRaceIndex_ == (int)races_.size() - 1; }
+
 
 void GameLoop::sendFinalResults() {
     for (const auto& [vehicleId, result]: playerResults_) {
@@ -489,8 +491,10 @@ void GameLoop::onPlayerFinished(int vehicleId, PlayerRaceProgress& prog) {
         raceActive_ = false;
         pendingNextRace_ = true;
         nextRaceStartTime_ = Clock::now() + std::chrono::seconds(10);
-        auto raceFinish = std::make_shared<RaceFinishedDto>();
-        broadcaster_.broadcast(raceFinish);
+        if (!isLastRace()) {
+            auto raceFinish = std::make_shared<RaceFinishedDto>();
+            broadcaster_.broadcast(raceFinish);
+        }
     }
 }
 
