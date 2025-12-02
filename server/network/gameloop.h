@@ -38,7 +38,8 @@ private:
     std::unordered_map<int, CarUpgrades> upgradesByUser_;
     std::optional<LevelSetup> setup;
     int maxPlayers;
-    
+    std::vector<std::string> selectedMaps_; 
+
     std::vector<LevelInfo> levels_;
     int currentLevelIndex_ = 0;
     std::string currentMapName_;
@@ -71,6 +72,8 @@ private:
     void sendCheckpoints();
     void sendMapName(std::string mapName);
     void sendNpcPositions();
+
+    static std::string levelDirForMap(const std::string& mapName);
 
     int computePlayerPosition(int vehicleId);
     void onPlayerFinished(int vehicleId, PlayerRaceProgress& prog);

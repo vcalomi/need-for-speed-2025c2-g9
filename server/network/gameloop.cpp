@@ -47,10 +47,12 @@ GameLoop::GameLoop(Queue<std::shared_ptr<Dto>>& gameLoopQueue, std::map<int, Car
         broadcaster_(broadcaster),
         maxPlayers(maxPlayers),
         raceActive_(false),
-        pendingNextRace_(false)
+        pendingNextRace_(false),
+        selectedMaps_(selectedMaps)
 {
     levels_.push_back(LevelInfo{"../server/physics/Levels/Liberty_City", "liberty_city"});
-    levels_.push_back(LevelInfo{"../server/physics/Levels/San_Andreas", "liberty_city"});
+    levels_.push_back(LevelInfo{"../server/physics/Levels/San_Andreas", "san_andreas"});
+    levels_.push_back(LevelInfo{"../server/physics/Levels/Vice_City", "vice_city"});
     
     // POngo esto para evitar el warning
     (void)selectedMaps;
@@ -123,6 +125,24 @@ void GameLoop::startRace(int levelIndex) {
     raceActive_ = true;
     raceStartTime_ = Clock::now();
 }
+
+
+static std::string GameLoop::levelDirForMap(const std::string& mapName) {
+    if (mapName == "liberty_city") {
+        return "../server/physics/Levels/Liberty_City";
+    }
+    if (mapName == "san_andreas") {
+        return "../server/physics/Levels/San_Andreas";
+    }
+    if (mapName == "vice_city") {
+        return "../server/physics/Levels/Vice_City";
+    }
+
+    std::cerr << "[GameLoop] levelDirForMap: unknown mapName " << mapName << "\n";
+    // fallback para no crashear:
+    return "../server/physics/Levels/Liberty_City";
+}
+
 
 void GameLoop::updateCountdown() {
     if (!countdownActive_)
