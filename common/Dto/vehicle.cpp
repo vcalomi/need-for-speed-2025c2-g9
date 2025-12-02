@@ -3,7 +3,7 @@
 #include "../common_codes.h"
 
 VehicleDto::VehicleDto(const std::string& username, float x, float y, float v, float speed,
-                       bool isAboveBridge):
+                       float health, bool isAboveBridge):
 
         Dto(uint8_t(ActionCode::SEND_CARS)),
         username(username),
@@ -11,4 +11,5 @@ VehicleDto::VehicleDto(const std::string& username, float x, float y, float v, f
         y(y),
         rotation(v),
         speed(speed),
+        health(health),
         isAboveBridge(isAboveBridge) {}

@@ -25,15 +25,17 @@ struct PlayerStateUpdatedEvent: public Event {
     float y;
     float angle;
     float speed;
+    float health;
     bool isAboveBridge;
 
     PlayerStateUpdatedEvent(std::string username, float x, float y, float angle, float speed,
-                            bool isAboveBridge):
+                            float health, bool isAboveBridge):
             username(std::move(username)),
             x(x),
             y(y),
             angle(angle),
             speed(speed),
+            health(health),
             isAboveBridge(isAboveBridge) {}
 
     std::string GetType() const override { return Type(); }

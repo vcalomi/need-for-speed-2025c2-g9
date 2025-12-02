@@ -10,8 +10,9 @@ public:
     float y;
     float rotation;
     float speed;
+    float health;
     bool isAboveBridge;
-    VehicleDto(const std::string& username, float x, float y, float v, float speed,
+    VehicleDto(const std::string& username, float x, float y, float v, float speed, float health,
                bool isAboveBridge = false);
 };
 

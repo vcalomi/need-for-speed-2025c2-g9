@@ -10,7 +10,8 @@ class Player {
 public:
     Player(std::string username, VehicleTipe carType, float x, float y, float health);
 
-    void UpdateFromNetwork(float x, float y, float angle, float speed, bool isAboveBridge);
+    void UpdateFromNetwork(float x, float y, float angle, float speed, float health,
+                           bool isAboveBridge);
 
     float GetX() const { return x_; }
     float GetY() const { return y_; }

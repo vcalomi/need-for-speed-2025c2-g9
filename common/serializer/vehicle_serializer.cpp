@@ -12,7 +12,8 @@
 std::vector<uint8_t> VehicleSerializer::serialize(const Dto& dto) const {
     const VehicleDto& vehicleDto = static_cast<const VehicleDto&>(dto);
     size_t username_len = vehicleDto.username.length();
-    std::vector<uint8_t> buffer(SerializerUtils::STRING_LENGTH_SIZE + username_len + 4 * sizeof(float) + sizeof(bool));
+    std::vector<uint8_t> buffer(SerializerUtils::STRING_LENGTH_SIZE + username_len +
+                                5 * sizeof(float) + sizeof(bool));
     size_t pos = 0;
 
     SerializerUtils::writeString(buffer, pos, vehicleDto.username);
@@ -20,6 +21,7 @@ std::vector<uint8_t> VehicleSerializer::serialize(const Dto& dto) const {
     SerializerUtils::writeFloat(buffer, pos, vehicleDto.y);
     SerializerUtils::writeFloat(buffer, pos, vehicleDto.rotation);
     SerializerUtils::writeFloat(buffer, pos, vehicleDto.speed);
+    SerializerUtils::writeFloat(buffer, pos, vehicleDto.health);
     SerializerUtils::writeBool(buffer, pos, vehicleDto.isAboveBridge);
     return buffer;
 }
@@ -32,6 +34,7 @@ std::shared_ptr<Dto> VehicleSerializer::deserialize(const std::vector<uint8_t>& 
     float y = SerializerUtils::readFloat(buffer, pos);
     float rotation = SerializerUtils::readFloat(buffer, pos);
     float speed = SerializerUtils::readFloat(buffer, pos);
+    float health = SerializerUtils::readFloat(buffer, pos);
     bool isAboveBridge = SerializerUtils::readBool(buffer, pos);
-    return std::make_shared<VehicleDto>(username, x, y, rotation, speed ,isAboveBridge);
+    return std::make_shared<VehicleDto>(username, x, y, rotation, speed, health, isAboveBridge);
 }

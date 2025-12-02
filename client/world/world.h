@@ -33,7 +33,7 @@ public:
     const std::map<std::string, Player>& GetPlayers() const;
 
     void UpdateFromServer(std::string username, float x, float y, float angle, float speed,
-                          bool isAboveBridge);
+                          float health, bool isAboveBridge);
 
     const Player& GetPlayer(const std::string& username) const;
     Player& GetPlayer(const std::string& username);
