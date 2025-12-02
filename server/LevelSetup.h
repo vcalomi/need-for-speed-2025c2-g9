@@ -11,41 +11,44 @@
 #include <box2d/box2d.h>
 
 #include "../common/car_config.h"
+#include "./physics/CheckpointInfo.h"
 #include "./physics/LevelCreator.h"
+#include "./physics/NpcInfo.h"
+#include "./physics/PhysicsEventCollector.h"
 #include "./physics/vehicle.h"
 
+#include "CarUpgrades.h"
 #include "YamlParser.h"
 #include "constants.h"
-#include "CarUpgrades.h"
-#include "./physics/PhysicsEventCollector.h"
-#include "./physics/CheckpointInfo.h"
-#include "./physics/NpcInfo.h"
 
 class LevelSetup {
 
 public:
     explicit LevelSetup(const std::string& level_json_path, const std::string& vehicle_specs_path,
-                        const std::map<int, CarConfig>& chosenCars, std::unordered_map<int, CarUpgrades>& upgradesByUser, 
-                        const std::vector<CheckpointInfo>& checkpoints_input,  const std::vector<Spawn>& spawn_input);
+                        const std::map<int, CarConfig>& chosenCars,
+                        std::unordered_map<int, CarUpgrades>& upgradesByUser,
+                        const std::vector<CheckpointInfo>& checkpoints_input,
+                        const std::vector<Spawn>& spawn_input);
 
     void buildVehicles();
     std::vector<RawEvent> stepAndDrainEvents(float dt);
-    
+
     const std::unordered_map<int, std::unique_ptr<Vehicle>>& getVehicleMap() const {
         return player_vehicle_map_;
     }
 
-    const std::vector<CheckpointInfo>& getCheckpoints() const  { return checkpoints_;}
-    int totalCheckpoints() const { return static_cast<int>(checkpoints_.size());}
-    int totalLaps() const {return totalLaps_;}
+    const std::vector<CheckpointInfo>& getCheckpoints() const { return checkpoints_; }
+    int totalCheckpoints() const { return static_cast<int>(checkpoints_.size()); }
+    int totalLaps() const { return totalLaps_; }
     float getVehicleSpeed(int vehicle_id);
     bool isNpcAlive(int npcId) const;
     void markNpcDead(int npcId);
-    const std::vector<NpcInfo>& getNpcs() const {return npcs_;}
+    const std::vector<NpcInfo>& getNpcs() const { return npcs_; }
+
 private:
     void create_vehicles();
     void applyUpgradesToSpec(VehicleSpec& spec, const CarUpgrades& up);
-    const std::map<int, CarConfig>& chosenCarsRef_; 
+    const std::map<int, CarConfig>& chosenCarsRef_;
     std::unordered_map<std::string, VehicleSpec> config_map_;
     b2WorldId world_{b2_nullWorldId};
     LevelCreator levelCreator_;
@@ -54,7 +57,7 @@ private:
     std::unordered_map<int, std::unique_ptr<Vehicle>> player_vehicle_map_;
     std::mt19937 rng_;
     std::deque<FixtureTag> vehicle_tags_;
-    int totalLaps_ = 1;
+    int totalLaps_ = 3;
     PhysicsEventCollector collector_;
     const std::unordered_map<int, CarUpgrades>& upgradesByUserRef_;
     std::vector<NpcInfo> npcs_;

@@ -71,8 +71,7 @@ Desde el lado del Cliente el principio fue complicado porque habia que aprender 
 
 Desde el lado del lobby y el editor de mapas, no tuve demasiadas dificultades para avanzar. Siguiendo los tutoriales, leyendo la documentación y conociendo la programación orientada a objetos, gran parte del trabajo resultó bastante llevadero. Las complicaciones más notorias aparecieron al momento de familiarizarme con Qt, especialmente con la estructura de los .ui, los layouts y los estilos; ajustar detalles visuales o de usabilidad en Qt, que a veces llevan mucho tiempo para algo pequeño. Pero son desafíos normales cuando se aprende una herramienta completamente nueva.
 
-
-Desde el lado del Servidor ...
+Desde el lado del Servidor las complicaciones fueron que habia demasiadas responsabilidades diferentes. El tener que aprender el funcionamiento de una libreria compleja como Box2D, el aprender a como se deben definir las colisiones desde cero y el manejar toda la logica del juego contribuyeron en una sobrecarga de responsabilidades en una persona.
 
 ### ¿Qué contenidos podrían incorporarse en Taller?
 
@@ -80,8 +79,14 @@ Estrategias de trabajo colaborativo y organizacion basica de un proyecto.
 
 ### ¿Pudimos llegar con todo?
 
+Si, pero se podrian mejorar varios aspectos del juego con mas tiempo.
 
 ### Errores conocidos
+
+- No se puede dar marcha atras y girar
+- Algunos puentes se dibujan por debajo del jugador
+- Los puentes en los que se puede cruzar por arriba y por abajo no tienen la colision correcta
+- Hay un error que a veces los checkpoints quedan desactualizados en la ui y entonces la flecha que apunta al proximo no funciona correctamente
 
 ### ¿Qué cambiaríamos si lo hiciéramos de nuevo?
 

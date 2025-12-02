@@ -4,6 +4,7 @@
 #include <box2d/box2d.h>
 
 #include "../constants.h"
+
 #include "LevelCreator.h"
 
 constexpr int WIN_W = 800;
@@ -15,15 +16,14 @@ int main() {
     // --- Init SDL ---
     SDL sdl(SDL_INIT_VIDEO);
 
-    Window window("Debug Colisiones", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
-                  WIN_W, WIN_H, SDL_WINDOW_SHOWN);
+    Window window("Debug Colisiones", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, WIN_W, WIN_H,
+                  SDL_WINDOW_SHOWN);
     Renderer renderer(window, -1, SDL_RENDERER_ACCELERATED);
 
     // --- Cargar imagen de fondo ---
     Texture bgTex(renderer, PHYSICS_LEVELS_DIR "/../city.png");
     int bgW = bgTex.GetWidth();
     int bgH = bgTex.GetHeight();
-    std::cout << "Fondo cargado: " << bgW << "x" << bgH << std::endl;
 
     // --- Mundo físico (solo porque LevelCreator lo necesita) ---
     b2WorldDef wdef = b2DefaultWorldDef();
@@ -40,7 +40,7 @@ int main() {
     // --- Cámara / zoom ---
     float camX_px = 0.0f;
     float camY_px = 0.0f;
-    float zoom    = 1.0f;
+    float zoom = 1.0f;
 
     bool running = true;
     SDL_Event e;
@@ -62,7 +62,7 @@ int main() {
         const Uint8* ks = SDL_GetKeyboardState(nullptr);
 
         // Mover cámara con WASD
-        float camSpeed = 400.0f; // px/seg
+        float camSpeed = 400.0f;  // px/seg
         if (ks[SDL_SCANCODE_W])
             camY_px -= camSpeed * elapsed;
         if (ks[SDL_SCANCODE_S])
@@ -74,23 +74,19 @@ int main() {
 
         // Zoom simple con Q/E (opcional)
         if (ks[SDL_SCANCODE_Q])
-            zoom *= 1.0f + 0.5f * elapsed;   // zoom in
+            zoom *= 1.0f + 0.5f * elapsed;  // zoom in
         if (ks[SDL_SCANCODE_E])
-            zoom *= 1.0f - 0.5f * elapsed;   // zoom out
+            zoom *= 1.0f - 0.5f * elapsed;  // zoom out
 
-        if (zoom < 0.1f) zoom = 0.1f;
+        if (zoom < 0.1f)
+            zoom = 0.1f;
 
         // --- Render ---
         renderer.SetDrawColor(20, 20, 20, 255);
         renderer.Clear();
 
         // Dibujar fondo con cámara y zoom
-        SDL_FRect dstBg{
-            -camX_px * zoom,
-            -camY_px * zoom,
-            bgW * zoom,
-            bgH * zoom
-        };
+        SDL_FRect dstBg{-camX_px * zoom, -camY_px * zoom, bgW * zoom, bgH * zoom};
         SDL_RenderCopyF(renderer.Get(), bgTex.Get(), nullptr, &dstBg);
 
         // Dibujar tiles de colisión encima

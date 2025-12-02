@@ -1,6 +1,5 @@
 #include "send_vehicle_wall_collision_handler.h"
 
-#include <iostream>
 #include <memory>
 
 std::shared_ptr<Event> SendVehicleWallCollisionHandler::Handle(const std::shared_ptr<Dto>& dto) {

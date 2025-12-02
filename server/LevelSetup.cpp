@@ -8,11 +8,13 @@
 #include "./physics/EntityTags.h"
 
 LevelSetup::LevelSetup(const std::string& level_json_path, const std::string& vehicle_specs_path,
-                       const std::map<int, CarConfig>& chosenCars, 
-                       std::unordered_map<int, CarUpgrades>& upgradesByUser, 
+                       const std::map<int, CarConfig>& chosenCars,
+                       std::unordered_map<int, CarUpgrades>& upgradesByUser,
                        const std::vector<CheckpointInfo>& checkpoints_input,
-                        const std::vector<Spawn>& spawn_input):
-        chosenCarsRef_(chosenCars), config_map_(YamlParser{}.parse(vehicle_specs_path)), upgradesByUserRef_(upgradesByUser) {
+                       const std::vector<Spawn>& spawn_input):
+        chosenCarsRef_(chosenCars),
+        config_map_(YamlParser{}.parse(vehicle_specs_path)),
+        upgradesByUserRef_(upgradesByUser) {
 
     // Create empty world
     b2WorldDef wdef = b2DefaultWorldDef();
@@ -29,11 +31,6 @@ LevelSetup::LevelSetup(const std::string& level_json_path, const std::string& ve
 }
 
 void LevelSetup::buildVehicles() {
-    std::cout << "[LevelSetup] chosenCars.size=" << chosenCarsRef_.size() << '\n';
-    for (const auto& [id, cfg]: chosenCarsRef_) {
-        std::cout << "  " << id << " -> " << cfg.carType << '\n';
-    }
-
     player_vehicle_map_.clear();
 
     // barajá spawns con rng_
@@ -89,7 +86,7 @@ std::vector<RawEvent> LevelSetup::stepAndDrainEvents(float dt) {
 
     collector_.collect(world_);
 
-    return collector_.drain();  
+    return collector_.drain();
 }
 
 float LevelSetup::getVehicleSpeed(int vehicle_id) {

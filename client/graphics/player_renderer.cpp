@@ -1,6 +1,5 @@
 #include "player_renderer.h"
 
-#include <iostream>
 
 PlayerRenderer::PlayerRenderer(SDL2pp::Renderer& renderer, SpriteSheet& cars, TTF_Font* font):
         renderer_(renderer), cars_(cars), font_(font) {}
@@ -13,7 +12,6 @@ void PlayerRenderer::Draw(const Player& player, const Camera& camera) {
 
 
     if (!cars_.HasSprite(spriteName)) {
-        std::cerr << "[PlayerRenderer] Sprite not found: " << spriteName << "\n";
         return;
     }
 

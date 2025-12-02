@@ -98,7 +98,6 @@ void DtoHandlerSystem::Process(const std::shared_ptr<Dto>& dto) {
     auto it = handlers_.find(dto->return_code());
 
     if (it == handlers_.end()) {
-        std::cout << "[DtoHandler] Unhandled DTO code=" << (int)dto->return_code() << std::endl;
         return;
     }
 

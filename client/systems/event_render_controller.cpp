@@ -56,8 +56,6 @@ void EventRenderController::RegisterEvents() {
             state_.showExplosion = false;
             state_.showFinalResultsScreen = false;
             state_.showPlayerFinishedScreen = false;
-
-            std::cout << "Resetting final results and progress for new race." << std::endl;
         }
         screenRenderer_.ResetSelections();
         state_.countdownActive = true;
@@ -77,7 +75,7 @@ void EventRenderController::RegisterEvents() {
 
 
     eventBus_.Subscribe<PlayerRaceFinishedEvent>([this](const PlayerRaceFinishedEvent& e) {
-                if (e.username == world_.GetLocalPlayer().GetUsername()) {
+        if (e.username == world_.GetLocalPlayer().GetUsername()) {
             state_.localPlayerFinished = true;
             state_.localFinishPosition = e.finalPosition;
             state_.localFinishTime = e.finishTime;

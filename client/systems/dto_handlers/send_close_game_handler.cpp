@@ -8,6 +8,5 @@ std::shared_ptr<Event> SendCloseGameHandler::Handle(const std::shared_ptr<Dto>& 
     if (!closeGameDto) {
         return nullptr;
     }
-    std::cout << "[SendCloseGameHandler] Close game DTO received. Creating CloseGameEvent.\n";
     return std::make_shared<CloseGameEvent>();
 }

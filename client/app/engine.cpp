@@ -1,7 +1,5 @@
 #include "./engine.h"
 
-#include <iostream>
-
 using SDL2pp::Renderer;
 
 #define WINDOW_TITLE "Need for Speed - Simulation"
@@ -14,17 +12,11 @@ Engine::Engine():
                 WINDOW_HEIGHT, SDL_WINDOW_SHOWN),
         renderer_(window_, -1, SDL_RENDERER_ACCELERATED) {
     if (TTF_Init() == -1) {
-        std::cerr << "[Engine] Failed to initialize SDL_ttf: " << TTF_GetError() << std::endl;
         throw std::runtime_error("Failed to initialize SDL_ttf");
     }
-
-    std::cout << "[Engine] SDL_ttf initialized successfully.\n";
 }
 
-Engine::~Engine() {
-    TTF_Quit();
-    std::cout << "[Engine] SDL_ttf cleaned up.\n";
-}
+Engine::~Engine() { TTF_Quit(); }
 
 Renderer& Engine::GetRenderer() { return renderer_; }
 

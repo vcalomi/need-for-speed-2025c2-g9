@@ -142,7 +142,7 @@ void LevelCreator::processDirectoryLevel(const std::string& directory_path) {
 
         int idx = *idxOpt;
         if (idx < 0 || idx >= 4)
-            continue; 
+            continue;
 
         Matrix m = BuildLevelMatrix(entry.path());
         if (m.empty())
@@ -167,7 +167,7 @@ static void createTileCollider(b2WorldId world, float x_px, float y_px, float si
 }
 
 void LevelCreator::createLevelCollision(b2WorldId world, const std::vector<Matrix>& levels) {
-    float tile_px = TILE_SIZE_PX; // 2 px
+    float tile_px = TILE_SIZE_PX;  // 2 px
 
     if (currentMapName_.find("Liberty") != std::string::npos ||
         currentMapName_.find("Liberty_City") != std::string::npos) {
@@ -190,7 +190,7 @@ void LevelCreator::createLevelCollision(b2WorldId world, const std::vector<Matri
         if (lvl >= (int)levels.size())
             continue;
 
-        Matrix& M =  mutableLevels[lvl];
+        Matrix& M = mutableLevels[lvl];
         if (M.empty())
             continue;
 
@@ -199,7 +199,7 @@ void LevelCreator::createLevelCollision(b2WorldId world, const std::vector<Matri
         if (w == 0)
             continue;
 
-        const int chunk_w_px = w * tile_px; 
+        const int chunk_w_px = w * tile_px;
         const int chunk_h_px = h * tile_px;
 
         const int offset_x_px = (lvl % 2) * chunk_w_px;
@@ -212,16 +212,14 @@ void LevelCreator::createLevelCollision(b2WorldId world, const std::vector<Matri
             for (int x = 0; x < w; ++x) {
                 int v = M[y][x];
                 if (v == 0)
-                    continue; // sin colisión
+                    continue;  // sin colisión
 
-                const float world_x_px =
-                    offset_x_px + x * tile_px + tile_px * 0.5f;
-                const float world_y_px =
-                    offset_y_px + y * tile_px + tile_px * 0.5f;
+                const float world_x_px = offset_x_px + x * tile_px + tile_px * 0.5f;
+                const float world_y_px = offset_y_px + y * tile_px + tile_px * 0.5f;
 
                 if (v == 18 || v == 19) {
                     int xStart = x;
-                    int xEnd   = x;
+                    int xEnd = x;
 
                     // greedy: agrandamos hacia la derecha mientras sea el mismo tile
                     while (xEnd + 1 < w && M[y][xEnd + 1] == v) {
@@ -230,11 +228,10 @@ void LevelCreator::createLevelCollision(b2WorldId world, const std::vector<Matri
 
                     const int numTiles = (xEnd - xStart + 1);
 
-                    const float center_x_px =
-                        offset_x_px + ((xStart + xEnd + 1) * 0.5f) * tile_px;
+                    const float center_x_px = offset_x_px + ((xStart + xEnd + 1) * 0.5f) * tile_px;
                     const float center_y_px = world_y_px;
 
-                    const float halfWidth_m  = (numTiles * tile_px) * 0.5f / PPM;
+                    const float halfWidth_m = (numTiles * tile_px) * 0.5f / PPM;
                     const float halfHeight_m = tile_px * 0.5f / PPM;
 
                     const float cx_m = center_x_px / PPM;
@@ -253,8 +250,7 @@ void LevelCreator::createLevelCollision(b2WorldId world, const std::vector<Matri
 
                     // data: 1 = down (18), 0 = up (19)
                     int data = (v == 18) ? 1 : 0;
-                    FixtureTag* tag =
-                        makeTag(bridge_tags_, EntityKind::BridgeToggle, 0 ,data);
+                    FixtureTag* tag = makeTag(bridge_tags_, EntityKind::BridgeToggle, 0, data);
                     shapeDef.userData = tag;
 
                     b2CreatePolygonShape(body, &shapeDef, &box);
@@ -271,7 +267,7 @@ void LevelCreator::createLevelCollision(b2WorldId world, const std::vector<Matri
                     const float cy_m = world_y_px / PPM;
 
                     // radio del sensor del NPC (podés tunearlo)
-                    const float radius_m = (TILE_SIZE_PX * 0.5f) / PPM; // o un NPC_RADIUS_PX
+                    const float radius_m = (TILE_SIZE_PX * 0.5f) / PPM;  // o un NPC_RADIUS_PX
 
                     b2BodyDef bodyDef = b2DefaultBodyDef();
                     bodyDef.type = b2_staticBody;
@@ -292,13 +288,7 @@ void LevelCreator::createLevelCollision(b2WorldId world, const std::vector<Matri
 
                     b2CreateCircleShape(body, &shapeDef, &circle);
 
-                    npcs_.push_back(NpcInfo{
-                        world_x_px,
-                        world_y_px,
-                        npcId,
-                        true   
-                    });
-                    std::cout << "NPC CREADO PAPU\n";
+                    npcs_.push_back(NpcInfo{world_x_px, world_y_px, npcId, true});
                     continue;
                 }
 
@@ -307,11 +297,10 @@ void LevelCreator::createLevelCollision(b2WorldId world, const std::vector<Matri
             }
         }
     }
-
-    std::cout << "[INFO] colisiones creadas\n";
 }
 
-void LevelCreator::createCheckpoints( b2WorldId world, const std::vector<CheckpointInfo>& input, std::vector<CheckpointInfo>& outCheckpoints) {
+void LevelCreator::createCheckpoints(b2WorldId world, const std::vector<CheckpointInfo>& input,
+                                     std::vector<CheckpointInfo>& outCheckpoints) {
     outCheckpoints.clear();
     outCheckpoints.reserve(input.size());
 
@@ -338,35 +327,25 @@ void LevelCreator::createCheckpoints( b2WorldId world, const std::vector<Checkpo
         shapeDef.isSensor = true;
         shapeDef.enableSensorEvents = true;
 
-        int checkpointIndex = static_cast<int>(i);  
+        int checkpointIndex = static_cast<int>(i);
 
-        FixtureTag* tag =
-            makeTag(checkpoint_tags_, EntityKind::Checkpoint, checkpointIndex, 0);
+        FixtureTag* tag = makeTag(checkpoint_tags_, EntityKind::Checkpoint, checkpointIndex, 0);
         shapeDef.userData = tag;
 
         b2CreateCircleShape(body, &shapeDef, &circle);
 
-        outCheckpoints.push_back(CheckpointInfo{
-            world_x_px,
-            world_y_px,
-            checkpointIndex
-        });
+        outCheckpoints.push_back(CheckpointInfo{world_x_px, world_y_px, checkpointIndex});
     }
 }
 
-void LevelCreator::createSpawns(const std::vector<Spawn>& input,
-                                std::vector<Spawn>& outSpawns) {
+void LevelCreator::createSpawns(const std::vector<Spawn>& input, std::vector<Spawn>& outSpawns) {
     outSpawns.clear();
     outSpawns.reserve(input.size());
 
-    for (const auto& sp : input) {
+    for (const auto& sp: input) {
         const float x = sp.x / PPM;
         const float y = sp.y / PPM;
 
-        outSpawns.push_back(Spawn{
-            x,
-            y,
-            sp.angle
-        });
+        outSpawns.push_back(Spawn{x, y, sp.angle});
     }
 }

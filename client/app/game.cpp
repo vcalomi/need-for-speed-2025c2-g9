@@ -31,10 +31,7 @@ Game::Game(Client& client):
         map_(engine_.GetRenderer(), eventBus_) {
     audioSystem_.PlayBackgroundMusic(ASSETS_DIR "/music/background.wav");
 
-    eventBus_.Subscribe<CloseGameEvent>([this](const CloseGameEvent& e) {
-        std::cout << "[Game] CloseGameEvent received. Stopping the game loop.\n";
-        client_.stop();
-    });
+    eventBus_.Subscribe<CloseGameEvent>([this](const CloseGameEvent& e) { client_.stop(); });
 }
 
 

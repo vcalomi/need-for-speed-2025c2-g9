@@ -8,7 +8,6 @@
 ResourceLoader::ResourceLoader(SDL2pp::Renderer& renderer): renderer_(renderer) {
     LoadCarSprites();
     LoadNpcSprites();
-    std::cout << "[ResourceLoader] Loaded car sprites and NPC sprites\n";
 }
 
 void ResourceLoader::LoadCarSprites() {
@@ -56,9 +55,6 @@ void ResourceLoader::LoadCarSprites() {
             std::string spriteName = vehicle + "_Base";
 
             carSprites_.AddSprite(spriteName, texture, SDL2pp::Rect(x, y, w, h));
-
-            std::cout << "[ResourceLoader] Loaded BASE sprite for " << vehicle << " from "
-                      << sheetPath << std::endl;
         }
 
     } catch (const YAML::Exception& e) {
@@ -77,7 +73,6 @@ void ResourceLoader::LoadNpcSprites() {
 
         YAML::Node npcs = config["npcs"];
         if (!npcs) {
-            std::cout << "[ResourceLoader] No NPCs found in YAML\n";
             return;
         }
 
@@ -97,8 +92,6 @@ void ResourceLoader::LoadNpcSprites() {
 
 
             npcSprites_.AddSprite(id, texture, SDL2pp::Rect(0, 0, w, h));
-
-            std::cout << "[ResourceLoader] Loaded NPC sprite: " << id << " (" << sheetPath << ")\n";
         }
 
     } catch (const YAML::Exception& e) {
