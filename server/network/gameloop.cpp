@@ -24,6 +24,8 @@
 #include "../../common/Dto/end_race.h"
 #include "../../common/Dto/infinite_health.h"
 #include "../../common/Dto/vehicle_upgrade.h"
+#include "../../common/Dto/player_hit_npc.h"
+#include "../../common/Dto/npc.h"
 #include "../../common/common_codes.h"
 #include "../../common/vehicle_type_utils.h"
 #include "../YamlParser.h"
@@ -62,6 +64,7 @@ void GameLoop::run() {
             processCommands();
 
             if (raceActive_ && setup.has_value()) {
+                updateCountdown(); 
                 sendVehiclesPositions();
                 processGameEvents();
             }
@@ -93,7 +96,15 @@ void GameLoop::startRace(int levelIndex) {
     const std::string vehiclesYaml = "../server/vehicles_specs/vehicle_specs.yaml";
     LevelInfo level = levels_[levelIndex];
 
-    setup.emplace(level.dir, vehiclesYaml, chosenCars_, upgradesByUser_);
+    std::vector<CheckpointInfo> checkpoints_input;
+    checkpoints_input.push_back(CheckpointInfo{1104.0f, 831.0f, 0}); // CP 0
+    checkpoints_input.push_back(CheckpointInfo{1466.0f, 827.0f, 1}); // CP 1
+    checkpoints_input.push_back(CheckpointInfo{1447.0f, 307.0f, 2}); // CP 2
+
+    std::vector<Spawn> spawnpoint_input;
+    spawnpoint_input.push_back(Spawn{75.0f, 820.0f, 0.0f});
+
+    setup.emplace(level.dir, vehiclesYaml, chosenCars_, upgradesByUser_, checkpoints_input, spawnpoint_input);
 
     raceProgress_.clear();
     for (const auto& [playerId, _]: chosenCars_) {
@@ -103,10 +114,57 @@ void GameLoop::startRace(int levelIndex) {
     sendMapName(level.mapName);
     sendCheckpoints();
     sendInitialPlayersCars();
+    sendNpcPositions();
 
+    setVehiclesControlEnabled(false);
+    countdownActive_ = true;
+    countdownStartTime_ = Clock::now();
 
     raceActive_ = true;
     raceStartTime_ = Clock::now();
+}
+
+void GameLoop::updateCountdown() {
+    if (!countdownActive_)
+        return;
+
+    auto now = Clock::now();
+    auto elapsedMs =
+        std::chrono::duration_cast<std::chrono::milliseconds>(now - countdownStartTime_).count();
+
+    if (elapsedMs >= 7000) {   // 3 segundos
+        setVehiclesControlEnabled(true);
+        countdownActive_ = false;
+    }
+}   
+
+
+void GameLoop::setVehiclesControlEnabled(bool enabled) {
+    if (!setup.has_value())
+        return;
+
+    for (auto& [player_id, vehicle] : setup->getVehicleMap()) {
+        if (!vehicle)
+            continue;
+
+        if (enabled) {
+            vehicle->enableControl();
+        } else {
+            vehicle->disableControl();
+        }
+    }
+}
+
+void GameLoop::sendNpcPositions() {
+    if (!setup.has_value())
+        return;
+    auto npcs = setup->getNpcs();
+
+    for (const auto& npc : npcs) {
+        std::cout << "mandando npc positionn \n";
+        auto dto = std::make_shared<NPCDto>(npc.id, npc.x_px, npc.y_px);
+        broadcaster_.broadcast(dto);
+    }
 }
 
 void GameLoop::sendMapName(std::string mapName){
@@ -501,9 +559,31 @@ void GameLoop::handleVehicleBridgeToggle(const RawVehicleBridgeToggle& event){
     if (!vehicle)
         return;
     vehicle->setUnderBridge(event.under);
-    std::cout << "[BridgeToggle] Vehicle " << event.vehicleId
-              << " is now " << (event.under ? "UNDER" : "OVER")
-              << " the bridge.\n";
+}
+
+void GameLoop::handleVehicleNpcCollision(const RawVehicleNpc& event){
+    if (!setup.has_value())
+        return;
+
+    Vehicle* vehicle = getVehicleById(event.vehicleId);
+    if (!vehicle)
+        return;
+
+    LevelSetup& level = setup.value();
+    if (!level.isNpcAlive(event.npcId)) {
+        return;
+    }
+
+    std::cout << "PISANTE NPC\n";
+    level.markNpcDead(event.npcId);
+    vehicle->CarHitNpc();
+
+    auto it = playerUsernames_.find(event.vehicleId);
+    if (it == playerUsernames_.end())
+        return;
+
+    auto dto = std::make_shared<PlayerHitNPCDto>(it->second);
+    broadcaster_.broadcast(dto);
 }
 
 void GameLoop::processGameEvents() {
@@ -523,6 +603,9 @@ void GameLoop::processGameEvents() {
             handleVehicleWallCollision(*vehicle_wall);
         } else if (auto* vehicle_BridgeToggle = std::get_if<RawVehicleBridgeToggle>(&event) ){
             handleVehicleBridgeToggle(*vehicle_BridgeToggle);
+
+        } else if (auto* vehicle_npc = std::get_if<RawVehicleNpc>(&event) ){
+            handleVehicleNpcCollision(*vehicle_npc);
         }
     }
 }

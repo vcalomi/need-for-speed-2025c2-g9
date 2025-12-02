@@ -42,5 +42,7 @@ target_sources(nfs_server
     physics/spawn.h
     physics/vehicle.h
     physics/PhysicsEventCollector.h
+    physics/CheckpointInfo.h
+    physucs/NpcInfo.h
 
     )

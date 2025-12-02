@@ -208,12 +208,6 @@ void LevelCreator::createLevelCollision(b2WorldId world, const std::vector<Matri
                 const float world_y_px =
                     offset_y_px + y * tile_px + tile_px * 0.5f;
 
-                if (v == 3 || v == 4 || v == 5 || v == 6) {
-                    spawn_points.push_back(
-                        Spawn{world_x_px / PPM, world_y_px / PPM, tileIdToAngle(v)});
-                    continue;
-                }
-
                 if (v == 18 || v == 19) {
                     int xStart = x;
                     int xEnd   = x;
@@ -261,19 +255,17 @@ void LevelCreator::createLevelCollision(b2WorldId world, const std::vector<Matri
 
                     continue;
                 }
-
-                if (v >= 7) {
-                    const int checkpointIndex = v - 7;  // 7->0, 8->1, etc.
-
+                if (v == 20) {
                     const float cx_m = world_x_px / PPM;
                     const float cy_m = world_y_px / PPM;
-                    const float radius_m = CHECKPOINT_RADIUS_PX / PPM;   
+
+                    // radio del sensor del NPC (podés tunearlo)
+                    const float radius_m = (TILE_SIZE_PX * 0.5f) / PPM; // o un NPC_RADIUS_PX
 
                     b2BodyDef bodyDef = b2DefaultBodyDef();
                     bodyDef.type = b2_staticBody;
                     bodyDef.position = {cx_m, cy_m};
                     b2BodyId body = b2CreateBody(world, &bodyDef);
-
 
                     b2Circle circle{};
                     circle.center = {0.0f, 0.0f};
@@ -281,15 +273,22 @@ void LevelCreator::createLevelCollision(b2WorldId world, const std::vector<Matri
 
                     b2ShapeDef shapeDef = b2DefaultShapeDef();
                     shapeDef.isSensor = true;
-                    shapeDef.enableSensorEvents = true; 
-                    
-                    FixtureTag* tag = makeTag(checkpoint_tags_, EntityKind::Checkpoint, checkpointIndex, 0);
+                    shapeDef.enableSensorEvents = true;
+
+                    int npcId = static_cast<int>(npcs_.size());
+                    FixtureTag* tag = makeTag(npc_tags_, EntityKind::Npc, npcId, 0);
                     shapeDef.userData = tag;
+
                     b2CreateCircleShape(body, &shapeDef, &circle);
 
-                    checkpoints_.push_back(CheckpointInfo{world_x_px, world_y_px, checkpointIndex});
-
-                    continue; 
+                    npcs_.push_back(NpcInfo{
+                        world_x_px,
+                        world_y_px,
+                        npcId,
+                        true   
+                    });
+                    std::cout << "NPC CREADO PAPU\n";
+                    continue;
                 }
 
                 createTileCollider(world, world_x_px, world_y_px, tile_px);
@@ -301,6 +300,66 @@ void LevelCreator::createLevelCollision(b2WorldId world, const std::vector<Matri
     std::cout << "[INFO] colisiones creadas\n";
 }
 
+void LevelCreator::createCheckpoints( b2WorldId world, const std::vector<CheckpointInfo>& input, std::vector<CheckpointInfo>& outCheckpoints) {
+    outCheckpoints.clear();
+    outCheckpoints.reserve(input.size());
+
+    for (size_t i = 0; i < input.size(); ++i) {
+        const auto& cp = input[i];
+
+        const float world_x_px = cp.x_px;
+        const float world_y_px = cp.y_px;
+
+        const float cx_m = world_x_px / PPM;
+        const float cy_m = world_y_px / PPM;
+        const float radius_m = CHECKPOINT_RADIUS_PX / PPM;
+
+        b2BodyDef bodyDef = b2DefaultBodyDef();
+        bodyDef.type = b2_staticBody;
+        bodyDef.position = {cx_m, cy_m};
+        b2BodyId body = b2CreateBody(world, &bodyDef);
+
+        b2Circle circle{};
+        circle.center = {0.0f, 0.0f};
+        circle.radius = radius_m;
+
+        b2ShapeDef shapeDef = b2DefaultShapeDef();
+        shapeDef.isSensor = true;
+        shapeDef.enableSensorEvents = true;
+
+        int checkpointIndex = static_cast<int>(i);  
+
+        FixtureTag* tag =
+            makeTag(checkpoint_tags_, EntityKind::Checkpoint, checkpointIndex, 0);
+        shapeDef.userData = tag;
+
+        b2CreateCircleShape(body, &shapeDef, &circle);
+
+        outCheckpoints.push_back(CheckpointInfo{
+            world_x_px,
+            world_y_px,
+            checkpointIndex
+        });
+    }
+}
+
+void LevelCreator::createSpawns(const std::vector<Spawn>& input,
+                                std::vector<Spawn>& outSpawns) {
+    outSpawns.clear();
+    outSpawns.reserve(input.size());
+
+    for (const auto& sp : input) {
+        const float x = sp.x / PPM;
+        const float y = sp.y / PPM;
+
+        outSpawns.push_back(Spawn{
+            x,
+            y,
+            sp.angle
+        });
+    }
+}
+/*
 void LevelCreator::drawDebugCheckpoints(SDL_Renderer* r,
                                         float camX_px,
                                         float camY_px,
@@ -336,4 +395,4 @@ void LevelCreator::drawDebugCheckpoints(SDL_Renderer* r,
         SDL_FRect rect = {cx - 2, cy - 2, 4, 4};
         SDL_RenderFillRectF(r, &rect);
     }
-}
+}*/

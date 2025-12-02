@@ -11,9 +11,10 @@ struct RawVehicleCheckpoint { int vehicleId; int checkpointIndex; };
 struct RawVehicleVehicle   { int a; int b; float speedA; float speedB; };
 struct RawVehicleWall      { int vehicleId; float speedBeforeImpact; };
 struct RawVehicleBridgeToggle { int vehicleId; bool under; };
+struct RawVehicleNpc {int vehicleId; int npcId; };
 
 
-using RawEvent = std::variant<RawVehicleCheckpoint, RawVehicleVehicle, RawVehicleWall, RawVehicleBridgeToggle>;
+using RawEvent = std::variant<RawVehicleCheckpoint, RawVehicleVehicle, RawVehicleWall, RawVehicleBridgeToggle, RawVehicleNpc>;
 
 class PhysicsEventCollector {
 

@@ -8,7 +8,10 @@
 #include "./physics/EntityTags.h"
 
 LevelSetup::LevelSetup(const std::string& level_json_path, const std::string& vehicle_specs_path,
-                       const std::map<int, CarConfig>& chosenCars, std::unordered_map<int, CarUpgrades>& upgradesByUser):
+                       const std::map<int, CarConfig>& chosenCars, 
+                       std::unordered_map<int, CarUpgrades>& upgradesByUser, 
+                       const std::vector<CheckpointInfo>& checkpoints_input,
+                        const std::vector<Spawn>& spawn_input):
         chosenCarsRef_(chosenCars), config_map_(YamlParser{}.parse(vehicle_specs_path)), upgradesByUserRef_(upgradesByUser) {
 
     // Create empty world
@@ -19,9 +22,9 @@ LevelSetup::LevelSetup(const std::string& level_json_path, const std::string& ve
     // Create level hitboxes
     levelCreator_.processDirectoryLevel(level_json_path);
     levelCreator_.createLevelCollision(world_, levelCreator_.levels());
-
-    spawns_ = levelCreator_.getSpawnPoints();
-    checkpoints_ = levelCreator_.get_checkpoints();
+    levelCreator_.createCheckpoints(world_, checkpoints_input, checkpoints_);
+    levelCreator_.createSpawns(spawn_input, spawns_);
+    npcs_ = levelCreator_.getNpcs();
     buildVehicles();
 }
 
@@ -73,7 +76,8 @@ void LevelSetup::buildVehicles() {
 void LevelSetup::applyUpgradesToSpec(VehicleSpec& spec, const CarUpgrades& up) {
     // +10% por nivel
     spec.engine_force_N *= (1.0f + 0.10f * up.engineLevel);
-    spec.health *= (1.0f + 0.10f * up.armorLevel);
+    // +20% por nivel
+    spec.health *= (1.0f + 0.20f * up.armorLevel);
 }
 
 
@@ -95,4 +99,16 @@ float LevelSetup::getVehicleSpeed(int vehicle_id) {
         return it->second;
     }
     return 0.0f;
+}
+
+bool LevelSetup::isNpcAlive(int npcId) const {
+    if (npcId < 0 || npcId >= (int)npcs_.size())
+        return false;
+    return npcs_[npcId].alive;
+}
+
+void LevelSetup::markNpcDead(int npcId) {
+    if (npcId < 0 || npcId >= (int)npcs_.size())
+        return;
+    npcs_[npcId].alive = false;
 }

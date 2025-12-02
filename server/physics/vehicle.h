@@ -31,8 +31,9 @@ public:
 
     void setUnderBridge(bool setter) { under_bridge = setter; }
     int getVehicleId(){return vehicle_id_; }
-    
     void setInfiniteHp() { infinite_hp_ = true;}
+    void CarHitNpc() {vehicle_hp_ = vehicle_hp_ - 50.0f;}
+    
 private:
     bool controlsEnabled_ = true;
     b2WorldId world_id_;

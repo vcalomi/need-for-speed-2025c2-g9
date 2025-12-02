@@ -65,6 +65,15 @@ void PhysicsEventCollector::collect(b2WorldId world)
                 RawVehicleBridgeToggle{visitorTag->id, under}
             );
         }
+
+        if (sensorTag->kind == EntityKind::Npc &&
+            visitorTag->kind == EntityKind::Vehicle) {
+
+            events_.emplace_back(
+                RawVehicleNpc{visitorTag->id, sensorTag->id}
+            );
+        }
+
     }
 }
 

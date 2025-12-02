@@ -48,6 +48,11 @@ private:
     std::unordered_map<int, PlayerRaceProgress> raceProgress_; 
     std::chrono::steady_clock::time_point raceStartTime_;
     std::chrono::steady_clock::time_point nextRaceStartTime_;
+
+    bool countdownActive_ = false;
+    std::chrono::steady_clock::time_point countdownStartTime_;
+    void setVehiclesControlEnabled(bool enabled);
+    void updateCountdown();
     
     void handlerProcessCommand(std::shared_ptr<Dto> dto);
     Vehicle* getVehicleByPlayer(const std::string& username);
@@ -58,12 +63,14 @@ private:
     void handleVehicleVehicleCollision(const RawVehicleVehicle& event);
     void handleVehicleWallCollision(const RawVehicleWall& event);
     void handleVehicleBridgeToggle(const RawVehicleBridgeToggle& event);
+    void handleVehicleNpcCollision(const RawVehicleNpc& event);
     bool allPlayersFinished();
 
     void sendVehiclesPositions();
     void sendInitialPlayersCars();
     void sendCheckpoints();
     void sendMapName(std::string mapName);
+    void sendNpcPositions();
 
     int computePlayerPosition(int vehicleId);
     void onPlayerFinished(int vehicleId, PlayerRaceProgress& prog);

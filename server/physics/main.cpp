@@ -16,6 +16,7 @@ constexpr int WIN_W = 800;
 constexpr int WIN_H = 600;
 
 int main() {
+    /*
     using namespace SDL2pp;
 
     // --- Init SDL y SDL_image ---
@@ -51,7 +52,7 @@ int main() {
     VehicleSpec ferrari_spec = mapa_config["ferrari_F40"];
 
     std::deque<FixtureTag> vehicle_tags;
-    auto* vtag = makeTag(vehicle_tags, EntityKind::Vehicle, /*playerId=*/0);
+    auto* vtag = makeTag(vehicle_tags, EntityKind::Vehicle, 0);
 
     Vehicle vehicle(world, ferrari_spec, spawn, 0, vtag);
     
@@ -145,4 +146,6 @@ int main() {
     }
 
     b2DestroyWorld(world);
+    */
+   return 0;
 }
