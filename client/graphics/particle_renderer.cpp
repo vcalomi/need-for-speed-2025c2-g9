@@ -77,7 +77,7 @@ void ParticleRenderer::Emit(float x, float y, float angle, float offset, Particl
                 p.r = 180;
                 p.g = 0;
                 p.b = 0;
-                p.size = 3.0f;
+                p.size = 10.0f;
                 p.lifetime = 0.8f;
                 break;
         }
