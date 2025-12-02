@@ -40,22 +40,23 @@ using Seconds = std::chrono::seconds;
 
 GameLoop::GameLoop(Queue<std::shared_ptr<Dto>>& gameLoopQueue, std::map<int, CarConfig>& chosenCars,
                    std::map<int, std::string>& playerUsernames, Broadcaster& broadcaster,
-                   int maxPlayers, const std::vector<std::string>& selectedMaps):
+                   int maxPlayers):
         gameLoopQueue(gameLoopQueue),
         chosenCars_(chosenCars),
         playerUsernames_(playerUsernames),
         broadcaster_(broadcaster),
         maxPlayers(maxPlayers),
         raceActive_(false),
-        pendingNextRace_(false),
-        selectedMaps_(selectedMaps)
+        pendingNextRace_(false)
 {
     levels_.push_back(LevelInfo{"../server/physics/Levels/Liberty_City", "liberty_city"});
     levels_.push_back(LevelInfo{"../server/physics/Levels/San_Andreas", "san_andreas"});
     levels_.push_back(LevelInfo{"../server/physics/Levels/Vice_City", "vice_city"});
     
-    // POngo esto para evitar el warning
-    (void)selectedMaps;
+}
+
+void GameLoop::addSelectedMapPath(const std::string& path) {
+    selectedMapsPaths_.push_back(path);
 }
 
 void GameLoop::run() {
@@ -127,7 +128,7 @@ void GameLoop::startRace(int levelIndex) {
 }
 
 
-static std::string GameLoop::levelDirForMap(const std::string& mapName) {
+std::string GameLoop::levelDirForMap(const std::string& mapName) {
     if (mapName == "liberty_city") {
         return "../server/physics/Levels/Liberty_City";
     }

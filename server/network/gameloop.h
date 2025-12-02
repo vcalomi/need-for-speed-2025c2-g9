@@ -38,8 +38,8 @@ private:
     std::unordered_map<int, CarUpgrades> upgradesByUser_;
     std::optional<LevelSetup> setup;
     int maxPlayers;
-    std::vector<std::string> selectedMaps_; 
-
+    std::vector<std::string> selectedMapsPaths_;
+    
     std::vector<LevelInfo> levels_;
     int currentLevelIndex_ = 0;
     std::string currentMapName_;
@@ -82,13 +82,13 @@ public:
     explicit GameLoop(Queue<std::shared_ptr<Dto>>& gameLoopQueue,
                       std::map<int, CarConfig>& chosenCars,
                       std::map<int, std::string>& playerUsernames, Broadcaster& broadcaster,
-                      int maxPlayers, const std::vector<std::string>& selectedMaps);
+                      int maxPlayers);
 
     void run() override;
     void processCommands();
     void processGameEvents();
     void startRace(int levelIndex);
-
+    void addSelectedMapPath(const std::string& path);
 
 
     ~GameLoop();

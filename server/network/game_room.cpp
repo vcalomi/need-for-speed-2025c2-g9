@@ -10,7 +10,7 @@
 GameRoom::GameRoom(const std::string& roomName, int hostId, int maxPlayers)
     : roomName(roomName), hostId(hostId), maxPlayers(maxPlayers), 
       state(RoomState::WAITING_FOR_PLAYERS), gameQueue(),
-      broadcaster(), gameLoop(gameQueue, chosenCars, playerUsernames, broadcaster, maxPlayers, selectedMaps) {}
+      broadcaster(), gameLoop(gameQueue, chosenCars, playerUsernames, broadcaster, maxPlayers) {}
 
 bool GameRoom::addPlayer(int clientId, Player* player) {
     std::lock_guard<std::mutex> lock(mtx);
@@ -156,10 +156,11 @@ std::vector<int> GameRoom::getPlayerIds() {
 void GameRoom::setSelectedMaps(const std::vector<std::string>& mapNames) {
     std::lock_guard<std::mutex> lock(mtx);
     selectedMaps = mapNames;
-
+    
     std::cout << "[GameRoom] Maps selected: ";
     for (const auto& mapName : selectedMaps) {
         std::cout << "\"" << mapName << "\" ";
+        gameLoop.addSelectedMapPath(mapName);
     }
     std::cout << std::endl;
 }
