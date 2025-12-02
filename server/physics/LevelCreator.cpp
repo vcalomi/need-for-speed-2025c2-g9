@@ -120,6 +120,7 @@ Matrix LevelCreator::BuildLevelMatrix(const std::filesystem::path& file_path) {
 }
 
 void LevelCreator::processDirectoryLevel(const std::string& directory_path) {
+    currentMapName_ = directory_path;
     std::error_code ec;
     if (!std::filesystem::exists(directory_path, ec) ||
         !std::filesystem::is_directory(directory_path, ec)) {
@@ -166,7 +167,17 @@ static void createTileCollider(b2WorldId world, float x_px, float y_px, float si
 }
 
 void LevelCreator::createLevelCollision(b2WorldId world, const std::vector<Matrix>& levels) {
-    const int tile_px = TILE_SIZE_PX; // 2 px
+    float tile_px = TILE_SIZE_PX; // 2 px
+
+    if (currentMapName_.find("Liberty") != std::string::npos ||
+        currentMapName_.find("Liberty_City") != std::string::npos) {
+
+        tile_px = 4.0f;
+
+    } else if (currentMapName_.find("San_Andreas") != std::string::npos) {
+
+        tile_px = 4.55f;
+    }
 
     if (levels.empty()) {
         std::cerr << "[ERROR] createLevelCollision: levels vacío\n";
@@ -359,40 +370,3 @@ void LevelCreator::createSpawns(const std::vector<Spawn>& input,
         });
     }
 }
-/*
-void LevelCreator::drawDebugCheckpoints(SDL_Renderer* r,
-                                        float camX_px,
-                                        float camY_px,
-                                        float zoom)
-{
-    SDL_SetRenderDrawBlendMode(r, SDL_BLENDMODE_BLEND);
-    SDL_SetRenderDrawColor(r, 0, 0, 255, 200);  // azul semitransparente
-
-    const int SEGMENTS = 24;
-    const float radius_px = CHECKPOINT_RADIUS_PX;  
-
-    for (const auto& cp : checkpoints_) {
-        const float cx_px = cp.x_px;
-        const float cy_px = cp.y_px;
-        const float cx = (cx_px - camX_px) * zoom;
-        const float cy = (cy_px - camY_px) * zoom;
-        const float rad = radius_px * zoom;
-
-        float prev_x = cx + rad;
-        float prev_y = cy;
-
-        for (int i = 1; i <= SEGMENTS; ++i) {
-            float theta = (2.0f * 3.14159265358979323846f * i) / SEGMENTS;
-            float x = cx + rad * std::cos(theta);
-            float y = cy + rad * std::sin(theta);
-            SDL_RenderDrawLineF(r, prev_x, prev_y, x, y);
-            prev_x = x;
-            prev_y = y;
-        }
-
-        // opcional: número del checkpoint
-        SDL_SetRenderDrawColor(r, 255, 255, 255, 220);
-        SDL_FRect rect = {cx - 2, cy - 2, 4, 4};
-        SDL_RenderFillRectF(r, &rect);
-    }
-}*/

@@ -36,4 +36,5 @@ private:
     std::deque<FixtureTag> bridge_tags_;
     std::deque<FixtureTag> npc_tags_;
     std::vector<NpcInfo> npcs_;
+    std::string currentMapName_;
 };
