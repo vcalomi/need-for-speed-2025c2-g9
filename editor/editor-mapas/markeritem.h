@@ -44,9 +44,12 @@ public:
     }
 
     MarkerKind kindOf() const { return kind; }
+    float angle() const { return spawnAngle; }
+    void setAngle(float a) { spawnAngle = a; }
 
 private:
     MarkerKind kind;
+    float spawnAngle = 0.0f;
 };
 
 #endif  // MARKERITEM_H

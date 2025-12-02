@@ -145,15 +145,30 @@ QGraphicsView {
          </property>
         </widget>
        </item>
-       <item><widget class="QPushButton" name="checkpointToolBtn"><property name="text"><string>Checkpoint</string></property></widget></item>
-       <item><widget class="QPushButton" name="spawnToolBtn"><property name="text"><string>Player Spawn</string></property></widget></item>
        <item><widget class="QPushButton" name="startToolBtn"><property name="text"><string>Start</string></property></widget></item>
        <item><widget class="QPushButton" name="finishToolBtn"><property name="text"><string>Finish</string></property></widget></item>
+       <item>
+        <widget class="QLabel" name="labelSpawnDirection">
+         <property name="text">
+          <string>Spawn direction:</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QComboBox" name="spawnDirectionCombo"/>
+       </item>
+       <item><widget class="QPushButton" name="spawnToolBtn"><property name="text"><string>Player Spawn</string></property></widget></item>
+       <item><widget class="QPushButton" name="checkpointToolBtn"><property name="text"><string>Checkpoint</string></property></widget></item>
+       <item>
+        <widget class="QLabel" name="labelTools">
+         <property name="text">
+          <string>Zoom:</string>
+         </property>
+        </widget>
+       </item>
        <item><widget class="QPushButton" name="zoomInBtn"><property name="text"><string>Zoom In (+)</string></property></widget></item>
         <item><widget class="QPushButton" name="zoomOutBtn"><property name="text"><string>Zoom Out (-)</string></property></widget></item>
         <item><widget class="QPushButton" name="resetZoomBtn"><property name="text"><string>Reset Zoom</string></property></widget></item>
-
-
        <item>
         <spacer name="verticalSpacer">
          <property name="orientation">

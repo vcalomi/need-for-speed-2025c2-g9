@@ -162,6 +162,9 @@ void MapView::placeItemAt(const QPointF& scenePos) {
     }
 
     auto* it = new MarkerItem(k);
+    if (k == MarkerKind::Spawn) {
+        it->setAngle(currentSpawnAngle);
+    }
     it->setPos(scenePos);
     scene()->addItem(it);
     emit itemAdded(it);
