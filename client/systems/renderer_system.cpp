@@ -5,6 +5,7 @@
 #include "../events/countdown_down_event.h"
 #include "../events/countdown_go_event.h"
 #include "../events/new_npc_event.h"
+#include "../events/npc_hit_event.h"
 #include "../events/upgrade_car_event.h"
 
 RendererSystem::RendererSystem(SDL2pp::Renderer& renderer, SpriteSheet& cars, SpriteSheet& npcs,
@@ -39,6 +40,11 @@ RendererSystem::RendererSystem(SDL2pp::Renderer& renderer, SpriteSheet& cars, Sp
 
         std::cout << "[RendererSystem] Spawn NPC e.id=" << e.id << " uses sprite " << spriteName
                   << "\n";
+    });
+
+    eventBus_.Subscribe<NpcHitEvent>([this](const NpcHitEvent& e) {
+        auto player = world_.GetPlayer(e.username);
+        particleRenderer_.Emit(player.GetX(), player.GetY(), 0.0f, 0.0f, ParticleType::BLOOD, 10);
     });
 }
 
