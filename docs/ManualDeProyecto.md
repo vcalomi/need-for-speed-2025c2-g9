@@ -87,6 +87,7 @@ Si, pero se podrían mejorar varios aspectos del juego con más tiempo. Nos falt
 - Algunos puentes se dibujan por debajo del jugador
 - Los puentes en los que se puede cruzar por arriba y por abajo no tienen la colision correcta
 - Hay un error que a veces los checkpoints quedan desactualizados en la ui y entonces la flecha que apunta al próximo no funciona correctamente
+- El tiempo empieza a contar a partir de que se pasa por el primer checkpoint
 
 ### ¿Qué cambiaríamos si lo hiciéramos de nuevo?
 
