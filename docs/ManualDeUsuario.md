@@ -193,7 +193,7 @@ Puede abrirse desde:
 
 - O desde la terminal → `./nfs_editor`
 
-![Captura de pantalla del editor de mapas](../assets/images/Imagen11.png)
+![Captura de pantalla del editor de mapas](../assets/images/Imagen11.jpeg)
 
 El recorrido consta de:
 
@@ -202,14 +202,13 @@ El recorrido consta de:
 - **Colocar los elementos del recorrido**:
 
     - `Start` → inicio de la carrera
+    
+    - `Finish` → meta final
 
-    - `Player Spawn` → posiciones iniciales de autos
+
+    - `Player Spawn` → posiciones iniciales de autos. Previamente se debe seleccionar que ángulo se desea que tenga cada posición.
 
     - `Checkpoints` → marcan el camino
-
-    - `Hints / Flechas` → para señalizar giros
-
-    - `Finish` → meta final
 
 Para realizar el circuito puedes:
 - Hacer **zoom** y desplazarte por el mapa, con los botones `Zoom In (+)` o `Zoom Out (-)`, o sino también con el touchpad.
@@ -219,8 +218,8 @@ Para realizar el circuito puedes:
 
 
 ### 💾 Guardar y Cargar Mapas:
-- **Guardar**: Haz clic en Save Map y solo elige el nombre del mapa! Por defecto se aplica la  extensión.yaml y se coloca el archivo en server/maps para que sea jugable. Si lo guardas en otro lugar no será utilizado.
-- **Cargar**: Haz clic en Load Map y selecciona un archivo existente para seguir editando.
+- **Guardar**: Haz clic en `Save Map` y solo elige el nombre del mapa! Por defecto se aplica la  extensión.yaml y se coloca el archivo en server/maps para que sea jugable. Si lo guardas en otro lugar no será utilizado.
+- **Cargar**: Haz clic en `Load Map` y selecciona un archivo existente para seguir editando.
 
 ---
 <h2 id="juego">6. 🕹️ Juego</h2>

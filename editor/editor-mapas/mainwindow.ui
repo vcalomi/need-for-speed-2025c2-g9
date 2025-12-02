@@ -115,6 +115,13 @@ QGraphicsView {
         </widget>
        </item>
        <item>
+        <widget class="QLabel" name="labelTools">
+         <property name="text">
+          <string>Clear:</string>
+         </property>
+        </widget>
+       </item>
+       <item>
         <widget class="QPushButton" name="undoBtn">
          <property name="text">
           <string>Undo (Ctrl+Z)</string>
