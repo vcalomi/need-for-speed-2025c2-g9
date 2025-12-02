@@ -1,3 +1,19 @@
+# Need for speed
+### Proyecto Final — Taller de Programación [TA045]
+
+➤ **Cátedra Veiga, 2C2025**
+
+![Captura de pantalla página de conexion](assets/images/Imagen1.png)
+
+### Integrantes del Equipo 
+
+* **Calomino, Valentínr** — Padrón: 109665 
+* **Galli Orellana, Juana Eva** — Padrón: 111710 
+* **Lema, Mora** — Padrón: 111831
+* **Scopel, Ignacio Nicolás** — Padrón: 111305
+
+---
+
 ## 2. 🔨 Instalación y Compilación
 
 Para instalar las dependencias necesarias, en la raíz del proyecto ejecuta:
@@ -52,3 +68,22 @@ nfs_editor
 ```bash
 nfs_tests
 ```
+---
+
+## Video Promocional
+
+https://www.youtube.com/watch?v=JTv96m46JTE
+
+## Documentación
+
+- [Manual de usuario](/docs/DocumentacionTecnica.md)
+- [Manual de proyecto](/docs/ManualProyecto.md)
+- [Documentación técnica](/docs/ManualDeUsuario.md)
+
+## Créditos
+
+Las clases Socket, Queue<T>, Thread y las funciones utilizadas en ellas fueron diseñadas y creadas por Di Paola Martín, docente de Taller de Programación [TA045], curso Veiga, Facultad de Ingeniería, Universidad de Buenos Aires.
+
+Licencia: GPL v2
+
+El código original puede consultarse en el repositorio oficial: [Threads](https://github.com/eldipa/hands-on-threads) y [Sockets](https://github.com/eldipa/hands-on-sockets-in-cpp).
