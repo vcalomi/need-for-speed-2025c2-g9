@@ -29,7 +29,7 @@ private:
     RoomState state;
     std::mutex mtx;
     
-    std::map<int, Player*> players;
+    std::map<int, std::unique_ptr<Player>> players;
     std::map<int, std::string> playerUsernames;
     std::map<int, CarConfig> chosenCars;
     std::vector<std::string> selectedMaps;
@@ -38,11 +38,13 @@ private:
     Broadcaster broadcaster;
     GameLoop gameLoop;
     std::atomic<bool> stopping;
+    std::atomic<bool> loopStarted;
+    std::atomic<bool> loopJoined;
 
 public:
     GameRoom(const std::string& roomName, int hostId, int maxPlayers);
     
-    bool addPlayer(int clientId, Player* player);
+    bool addPlayer(int clientId, std::unique_ptr<Player> player);
     bool setPlayerUsername(int clientId, const std::string& username);
     bool chooseCar(int clientId, const CarConfig& car);
     void removePlayer(int clientId);

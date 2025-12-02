@@ -35,7 +35,8 @@ inline void writeString(std::vector<uint8_t>& buffer, size_t& pos, const std::st
 }
 
 inline void writeBool(std::vector<uint8_t>& buffer, size_t& pos, bool value) {
-    writeByte(buffer, pos, value ? 1 : 0);
+    uint8_t byteValue = static_cast<uint8_t>(value ? 1 : 0);
+    writeByte(buffer, pos, byteValue);
 }
 
 inline int readInt(const std::vector<uint8_t>& buffer, size_t& pos) {

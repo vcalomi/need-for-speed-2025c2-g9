@@ -28,21 +28,27 @@ void Player::stopGame() {
         sendQueue.close(); 
     } catch (...) {}
     
-    if (receiver) {
-        try {
-            receiver->stop();
-            if (receiver->is_alive()) {
-                receiver->join();
-            }
-        } catch (...) {}
-    }
-    
     if (sender) {
         try {
             sender->stop();
-            if (sender->is_alive()) {
+            try {
                 sender->join();
-            }
+            } catch (...) {}
+            sender.reset();
+        } catch (...) {}
+    }
+
+    if (protocol) {
+        protocol.reset();
+    }
+    
+    if (receiver) {
+        try {
+            receiver->stop();
+            try {
+                receiver->join();
+            } catch (...) {}
+            receiver.reset();
         } catch (...) {}
     }
     

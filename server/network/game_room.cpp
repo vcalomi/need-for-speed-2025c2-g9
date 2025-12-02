@@ -15,17 +15,19 @@ GameRoom::GameRoom(const std::string& roomName, int hostId, int maxPlayers):
         gameQueue(),
         broadcaster(),
         gameLoop(gameQueue, chosenCars, playerUsernames, broadcaster, maxPlayers),
-        stopping(false) {}
+        stopping(false),
+        loopStarted(false),
+        loopJoined(false) {}
 
-bool GameRoom::addPlayer(int clientId, Player* player) {
+bool GameRoom::addPlayer(int clientId, std::unique_ptr<Player> player) {
     std::lock_guard<std::mutex> lock(mtx);
 
     if (!canJoin()) {
         return false;
     }
 
-    players[clientId] = player;
-    broadcaster.addQueue(&player->getSendQueue());
+    players[clientId] = std::move(player);
+    broadcaster.addQueue(&players[clientId]->getSendQueue());
     return true;
 }
 
@@ -127,6 +129,7 @@ void GameRoom::startLoop() {
 
     if (allInGame) {
         gameLoop.start();
+        loopStarted = true;
     }
 }
 
@@ -177,10 +180,11 @@ void GameRoom::stopAllPlayers() {
 
     try {
         std::cout << "[GameRoom] Stopping GameLoop...\n";
-        if (gameLoop.is_alive()) {
+        if (loopStarted && !loopJoined) {
             gameLoop.stop();
             std::cout << "[GameRoom] Joining GameLoop thread...\n";
             gameLoop.join();
+            loopJoined = true;
             std::cout << "[GameRoom] GameLoop thread joined.\n";
         } else {
             gameLoop.stop();

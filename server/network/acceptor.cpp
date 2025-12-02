@@ -36,21 +36,23 @@ void Acceptor::run() {
 
 void Acceptor::reap() {
     auto new_end = std::remove_if(lobbies.begin(), lobbies.end(), [](Lobby* l) {
-        bool is_dead = !l->is_alive() && !l->isGameStarted();
-        if (is_dead) {
+        bool can_reap = !l->is_alive() && !l->isGameStarted();
+        if (can_reap) {
             l->join();
             delete l;
         }
-        return is_dead;
+        return can_reap;
     });
     lobbies.erase(new_end, lobbies.end());
 }
 
 void Acceptor::clear() {
     for (auto& lobby: lobbies) {
-        lobby->stop();
-        lobby->join();
-        delete lobby;
+        if (!lobby->isGameStarted()) {
+            lobby->stop();
+            lobby->join();
+            delete lobby;
+        }
     }
     lobbies.clear();
 }

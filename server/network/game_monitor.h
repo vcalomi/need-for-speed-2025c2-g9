@@ -23,9 +23,9 @@ private:
 public:
     GameMonitor();
     bool createGameRoom(const std::string& roomName, int hostId,
-                        Player* hostPlayer, int maxPlayers = 8);
+                        std::unique_ptr<Player> hostPlayer, int maxPlayers = 8);
     bool joinGameRoom(const std::string& roomName, int clientId,
-                      Player* clientPlayer);
+                      std::unique_ptr<Player> clientPlayer);
     std::vector<std::string> getAvailableRooms();
     bool startGameRoom(int clientId);
     bool isGameStarted(int clientId);
