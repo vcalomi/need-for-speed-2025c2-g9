@@ -35,7 +35,7 @@ int main() {
     LevelCreator lc;
 
     // Ojo con el path / mayúsculas (ajustá según tu carpeta real)
-    lc.processDirectoryLevel("../server/physics/Levels/San_Andreas");
+    lc.processDirectoryLevel("../server/physics/Levels/Vice_City");
     lc.createLevelCollision(world, lc.levels());
 
     // --- Cámara / zoom ---
