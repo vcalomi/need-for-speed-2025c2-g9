@@ -9,8 +9,13 @@
 #include <netinet/in.h>
 
 #include "../../common/Dto/checkpoint.h"
+#include "../../common/Dto/end_race.h"
+#include "../../common/Dto/infinite_health.h"
+#include "../../common/Dto/initial_race_map.h"
 #include "../../common/Dto/lap_completed.h"
+#include "../../common/Dto/npc.h"
 #include "../../common/Dto/player.h"
+#include "../../common/Dto/player_hit_npc.h"
 #include "../../common/Dto/player_move.h"
 #include "../../common/Dto/player_race_finished.h"
 #include "../../common/Dto/race_finished.h"
@@ -18,14 +23,8 @@
 #include "../../common/Dto/vehicle_checkpoint.h"
 #include "../../common/Dto/vehicle_collision.h"
 #include "../../common/Dto/vehicle_exploded.h"
-#include "../../common/Dto/vehicle_wall_collision.h"
-#include "../../common/Dto/initial_race_map.h"
-#include "../../common/Dto/race_finished.h"
-#include "../../common/Dto/end_race.h"
-#include "../../common/Dto/infinite_health.h"
 #include "../../common/Dto/vehicle_upgrade.h"
-#include "../../common/Dto/player_hit_npc.h"
-#include "../../common/Dto/npc.h"
+#include "../../common/Dto/vehicle_wall_collision.h"
 #include "../../common/common_codes.h"
 #include "../../common/vehicle_type_utils.h"
 #include "../YamlParser.h"
@@ -47,17 +46,13 @@ GameLoop::GameLoop(Queue<std::shared_ptr<Dto>>& gameLoopQueue, std::map<int, Car
         broadcaster_(broadcaster),
         maxPlayers(maxPlayers),
         raceActive_(false),
-        pendingNextRace_(false)
-{
+        pendingNextRace_(false) {
     levels_.push_back(LevelInfo{"../server/physics/Levels/Liberty_City", "liberty_city"});
     levels_.push_back(LevelInfo{"../server/physics/Levels/San_Andreas", "san_andreas"});
     levels_.push_back(LevelInfo{"../server/physics/Levels/Vice_City", "vice_city"});
-    
 }
 
-void GameLoop::addSelectedMapPath(const std::string& path) {
-    selectedMapsPaths_.push_back(path);
-}
+void GameLoop::addSelectedMapPath(const std::string& path) { selectedMapsPaths_.push_back(path); }
 
 void GameLoop::run() {
     try {
@@ -67,7 +62,7 @@ void GameLoop::run() {
             processCommands();
 
             if (raceActive_ && setup.has_value()) {
-                updateCountdown(); 
+                updateCountdown();
                 sendVehiclesPositions();
                 processGameEvents();
             }
@@ -93,6 +88,15 @@ void GameLoop::startRace(int levelIndex) {
         return;
     }
 
+    std::cout << "selectedMapsPaths_ size: " << selectedMapsPaths_.size() << "\n";
+    for (const auto& map: selectedMapsPaths_) {
+        std::cout << "Cargando mapa desde path: " << map << "\n";
+        YamlParser parser;
+        RaceInfo raceInfo = parser.parseRaceInfo("../server/maps/" + map);
+        std::cout << "Mapa cargado: " << raceInfo.mapName << " con " << raceInfo.checkpoints.size()
+                  << " checkpoints y " << raceInfo.spawns.size() << " spawns.\n";
+    }
+
     currentLevelIndex_ = levelIndex;
     pendingNextRace_ = false;
 
@@ -100,14 +104,15 @@ void GameLoop::startRace(int levelIndex) {
     LevelInfo level = levels_[levelIndex];
 
     std::vector<CheckpointInfo> checkpoints_input;
-    checkpoints_input.push_back(CheckpointInfo{1104.0f, 831.0f, 0}); // CP 0
-    checkpoints_input.push_back(CheckpointInfo{1466.0f, 827.0f, 1}); // CP 1
-    checkpoints_input.push_back(CheckpointInfo{1447.0f, 307.0f, 2}); // CP 2
+    checkpoints_input.push_back(CheckpointInfo{1104.0f, 831.0f, 0});  // CP 0
+    checkpoints_input.push_back(CheckpointInfo{1466.0f, 827.0f, 1});  // CP 1
+    checkpoints_input.push_back(CheckpointInfo{1447.0f, 307.0f, 2});  // CP 2
 
     std::vector<Spawn> spawnpoint_input;
     spawnpoint_input.push_back(Spawn{75.0f, 820.0f, 0.0f});
 
-    setup.emplace(level.dir, vehiclesYaml, chosenCars_, upgradesByUser_, checkpoints_input, spawnpoint_input);
+    setup.emplace(level.dir, vehiclesYaml, chosenCars_, upgradesByUser_, checkpoints_input,
+                  spawnpoint_input);
 
     raceProgress_.clear();
     for (const auto& [playerId, _]: chosenCars_) {
@@ -151,20 +156,21 @@ void GameLoop::updateCountdown() {
 
     auto now = Clock::now();
     auto elapsedMs =
-        std::chrono::duration_cast<std::chrono::milliseconds>(now - countdownStartTime_).count();
+            std::chrono::duration_cast<std::chrono::milliseconds>(now - countdownStartTime_)
+                    .count();
 
-    if (elapsedMs >= 7000) {   // 3 segundos
+    if (elapsedMs >= 7000) {  // 3 segundos
         setVehiclesControlEnabled(true);
         countdownActive_ = false;
     }
-}   
+}
 
 
 void GameLoop::setVehiclesControlEnabled(bool enabled) {
     if (!setup.has_value())
         return;
 
-    for (auto& [player_id, vehicle] : setup->getVehicleMap()) {
+    for (auto& [player_id, vehicle]: setup->getVehicleMap()) {
         if (!vehicle)
             continue;
 
@@ -181,14 +187,14 @@ void GameLoop::sendNpcPositions() {
         return;
     auto npcs = setup->getNpcs();
 
-    for (const auto& npc : npcs) {
+    for (const auto& npc: npcs) {
         std::cout << "mandando npc positionn \n";
         auto dto = std::make_shared<NPCDto>(npc.id, npc.x_px, npc.y_px);
         broadcaster_.broadcast(dto);
     }
 }
 
-void GameLoop::sendMapName(std::string mapName){
+void GameLoop::sendMapName(std::string mapName) {
     auto dto = std::make_shared<InitialRaceMapDto>(mapName);
     broadcaster_.broadcast(dto);
 }
@@ -258,8 +264,7 @@ void GameLoop::handlerProcessCommand(std::shared_ptr<Dto> command) {
             break;
         }
         case ActionCode::SEND_INFINITE_HEALTH: {
-            auto player_infinite_health =
-                std::dynamic_pointer_cast<InfiniteHealthDto>(command);
+            auto player_infinite_health = std::dynamic_pointer_cast<InfiniteHealthDto>(command);
             if (!player_infinite_health) {
                 std::cerr << "[GameLoop] SEND_INFINITE_HEALTH: bad dto cast\n";
                 break;
@@ -294,8 +299,8 @@ void GameLoop::handlerProcessCommand(std::shared_ptr<Dto> command) {
             if (it != raceProgress_.end()) {
                 onPlayerFinished(vehicleId, it->second);
             } else {
-                std::cerr << "[GameLoop] SEND_END_RACE: no raceProgress for vehicleId "
-                          << vehicleId << "\n";
+                std::cerr << "[GameLoop] SEND_END_RACE: no raceProgress for vehicleId " << vehicleId
+                          << "\n";
             }
             break;
         }
@@ -344,7 +349,9 @@ void GameLoop::sendVehiclesPositions() {
         float x, y, angle;
         vehicle->getPosition(x, y, angle);
         std::string username = playerUsernames_.at(player_id);
-        auto dto = std::make_shared<VehicleDto>(username, x, y, angle, setup->getVehicleSpeed(player_id), vehicle->getUnderBridge());
+        auto dto = std::make_shared<VehicleDto>(username, x, y, angle,
+                                                setup->getVehicleSpeed(player_id),
+                                                vehicle->getUnderBridge());
         broadcaster_.broadcast(dto);
     }
 }
@@ -382,14 +389,12 @@ bool GameLoop::allPlayersFinished() {
     std::cerr << "  chosenCars_.size() = " << chosenCars_.size() << "\n";
 
     // Logueamos el estado de cada jugador
-    for (const auto& [playerId, _] : chosenCars_) {
+    for (const auto& [playerId, _]: chosenCars_) {
         auto it = raceProgress_.find(playerId);
         if (it == raceProgress_.end()) {
-            std::cerr << "  playerId " << playerId 
-                      << ": NO ENTRY in raceProgress_\n";
+            std::cerr << "  playerId " << playerId << ": NO ENTRY in raceProgress_\n";
         } else {
-            std::cerr << "  playerId " << playerId 
-                      << ": finished=" << it->second.finished << "\n";
+            std::cerr << "  playerId " << playerId << ": finished=" << it->second.finished << "\n";
         }
     }
 
@@ -407,11 +412,12 @@ bool GameLoop::allPlayersFinished() {
     return true;
 }
 
-int GameLoop::computePlayerPosition(int vehicleId){
+int GameLoop::computePlayerPosition(int vehicleId) {
     int finishedBefore = 0;
 
-    for (const auto& [id, st] : raceProgress_) {
-        if (id == vehicleId) continue;
+    for (const auto& [id, st]: raceProgress_) {
+        if (id == vehicleId)
+            continue;
         if (st.finished) {
             finishedBefore++;
         }
@@ -433,11 +439,8 @@ void GameLoop::onPlayerFinished(int vehicleId, PlayerRaceProgress& prog) {
 
     int position = computePlayerPosition(vehicleId);
 
-    auto finishDto = std::make_shared<PlayerRaceFinishedDto>(
-        playerUsernames_.at(vehicleId),
-        seconds,
-        position
-    );
+    auto finishDto = std::make_shared<PlayerRaceFinishedDto>(playerUsernames_.at(vehicleId),
+                                                             seconds, position);
     broadcaster_.broadcast(finishDto);
 
     if (auto* vehicle = getVehicleById(vehicleId)) {
@@ -445,7 +448,8 @@ void GameLoop::onPlayerFinished(int vehicleId, PlayerRaceProgress& prog) {
     }
 
     if (allPlayersFinished()) {
-        std::cout << "[onPlayerFinished] -> allPlayersFinished() == true, ENVIANDO RaceFinishedDto\n";
+        std::cout
+                << "[onPlayerFinished] -> allPlayersFinished() == true, ENVIANDO RaceFinishedDto\n";
         raceActive_ = false;
         pendingNextRace_ = true;
         nextRaceStartTime_ = Clock::now() + std::chrono::seconds(10);
@@ -502,7 +506,8 @@ void GameLoop::handleVehicleExplosion(int vehicleId) {
     }
 
     if (allPlayersFinished()) {
-        std::cout << "[handleVehicleExplosion] -> allPlayersFinished() == true, ENVIANDO RaceFinishedDto\n";
+        std::cout << "[handleVehicleExplosion] -> allPlayersFinished() == true, ENVIANDO "
+                     "RaceFinishedDto\n";
         raceActive_ = false;
         pendingNextRace_ = true;
         nextRaceStartTime_ = Clock::now() + std::chrono::seconds(10);
@@ -575,14 +580,14 @@ void GameLoop::handleVehicleWallCollision(const RawVehicleWall& event) {
     }
 }
 
-void GameLoop::handleVehicleBridgeToggle(const RawVehicleBridgeToggle& event){
+void GameLoop::handleVehicleBridgeToggle(const RawVehicleBridgeToggle& event) {
     Vehicle* vehicle = getVehicleById(event.vehicleId);
     if (!vehicle)
         return;
     vehicle->setUnderBridge(event.under);
 }
 
-void GameLoop::handleVehicleNpcCollision(const RawVehicleNpc& event){
+void GameLoop::handleVehicleNpcCollision(const RawVehicleNpc& event) {
     if (!setup.has_value())
         return;
 
@@ -622,10 +627,10 @@ void GameLoop::processGameEvents() {
         } else if (auto* vehicle_wall = std::get_if<RawVehicleWall>(&event)) {
 
             handleVehicleWallCollision(*vehicle_wall);
-        } else if (auto* vehicle_BridgeToggle = std::get_if<RawVehicleBridgeToggle>(&event) ){
+        } else if (auto* vehicle_BridgeToggle = std::get_if<RawVehicleBridgeToggle>(&event)) {
             handleVehicleBridgeToggle(*vehicle_BridgeToggle);
 
-        } else if (auto* vehicle_npc = std::get_if<RawVehicleNpc>(&event) ){
+        } else if (auto* vehicle_npc = std::get_if<RawVehicleNpc>(&event)) {
             handleVehicleNpcCollision(*vehicle_npc);
         }
     }

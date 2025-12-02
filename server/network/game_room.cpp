@@ -3,18 +3,22 @@
 #include <algorithm>
 #include <iostream>
 
-#include "../../common/Dto/vehicle.h"
-#include "../../common/Dto/player_left.h"
 #include "../../common/Dto/lobby_room_state.h"
+#include "../../common/Dto/player_left.h"
+#include "../../common/Dto/vehicle.h"
 
-GameRoom::GameRoom(const std::string& roomName, int hostId, int maxPlayers)
-    : roomName(roomName), hostId(hostId), maxPlayers(maxPlayers), 
-      state(RoomState::WAITING_FOR_PLAYERS), gameQueue(),
-      broadcaster(), gameLoop(gameQueue, chosenCars, playerUsernames, broadcaster, maxPlayers) {}
+GameRoom::GameRoom(const std::string& roomName, int hostId, int maxPlayers):
+        roomName(roomName),
+        hostId(hostId),
+        maxPlayers(maxPlayers),
+        state(RoomState::WAITING_FOR_PLAYERS),
+        gameQueue(),
+        broadcaster(),
+        gameLoop(gameQueue, chosenCars, playerUsernames, broadcaster, maxPlayers) {}
 
 bool GameRoom::addPlayer(int clientId, Player* player) {
     std::lock_guard<std::mutex> lock(mtx);
-    
+
     if (!canJoin()) {
         return false;
     }
@@ -26,7 +30,7 @@ bool GameRoom::addPlayer(int clientId, Player* player) {
 
 bool GameRoom::setPlayerUsername(int clientId, const std::string& username) {
     std::lock_guard<std::mutex> lock(mtx);
-    for (const auto& [id, existingUsername] : playerUsernames) {
+    for (const auto& [id, existingUsername]: playerUsernames) {
         if (existingUsername == username && id != clientId) {
             return false;
         }
@@ -37,14 +41,15 @@ bool GameRoom::setPlayerUsername(int clientId, const std::string& username) {
 
 bool GameRoom::chooseCar(int clientId, const CarConfig& car) {
     std::lock_guard<std::mutex> lock(mtx);
-    if (players.find(clientId) == players.end()) return false;
+    if (players.find(clientId) == players.end())
+        return false;
     chosenCars[clientId] = car;
     return true;
 }
 
 void GameRoom::removePlayer(int clientId) {
     std::lock_guard<std::mutex> lock(mtx);
-    
+
     std::string leftUsername;
     auto uIt = playerUsernames.find(clientId);
     if (uIt != playerUsernames.end()) {
@@ -56,10 +61,10 @@ void GameRoom::removePlayer(int clientId) {
         broadcaster.removeQueue(&playerIt->second->getSendQueue());
         players.erase(playerIt);
     }
-    
+
     playerUsernames.erase(clientId);
     chosenCars.erase(clientId);
-    
+
     if (!leftUsername.empty()) {
         auto dto = std::make_shared<PlayerLeftDto>(leftUsername);
         broadcaster.broadcast(dto);
@@ -68,12 +73,12 @@ void GameRoom::removePlayer(int clientId) {
 
 bool GameRoom::startRace() {
     std::lock_guard<std::mutex> lock(mtx);
-    
+
     if (state != RoomState::WAITING_FOR_PLAYERS) {
         return false;
     }
 
-    for (const auto& [id, player] : players) {
+    for (const auto& [id, player]: players) {
         if (chosenCars.find(id) == chosenCars.end()) {
             chosenCars[id] = CarConfig{"jeep"};
         }
@@ -98,7 +103,7 @@ void GameRoom::startGame(int clientId) {
 
 
 bool GameRoom::areAllPlayersReady() const {
-    for (const auto& [id, player] : players) {
+    for (const auto& [id, player]: players) {
         if (!player->isReady()) {
             return false;
         }
@@ -110,9 +115,9 @@ void GameRoom::startLoop() {
     if (!areAllPlayersReady()) {
         return;
     }
-    
+
     bool allInGame = true;
-    for (const auto& [id, player] : players) {
+    for (const auto& [id, player]: players) {
         if (!player->isGameActive()) {
             allInGame = false;
             break;
@@ -125,15 +130,12 @@ void GameRoom::startLoop() {
 }
 
 bool GameRoom::canJoin() const {
-    bool can = state == RoomState::WAITING_FOR_PLAYERS &&
-           int(players.size()) < maxPlayers;
-    
+    bool can = state == RoomState::WAITING_FOR_PLAYERS && int(players.size()) < maxPlayers;
+
     return can;
 }
 
-bool GameRoom::isHost(int clientId) const { 
-    return hostId == clientId; 
-}
+bool GameRoom::isHost(int clientId) const { return hostId == clientId; }
 
 std::string GameRoom::getCarType(int clientId) const {
     auto it = chosenCars.find(clientId);
@@ -147,7 +149,7 @@ std::vector<int> GameRoom::getPlayerIds() {
     std::lock_guard<std::mutex> lock(mtx);
     std::vector<int> ids;
     ids.reserve(players.size());
-    for (const auto& player : players) {
+    for (const auto& player: players) {
         ids.push_back(player.first);
     }
     return ids;
@@ -156,9 +158,9 @@ std::vector<int> GameRoom::getPlayerIds() {
 void GameRoom::setSelectedMaps(const std::vector<std::string>& mapNames) {
     std::lock_guard<std::mutex> lock(mtx);
     selectedMaps = mapNames;
-    
+
     std::cout << "[GameRoom] Maps selected: ";
-    for (const auto& mapName : selectedMaps) {
+    for (const auto& mapName: selectedMaps) {
         std::cout << "\"" << mapName << "\" ";
         gameLoop.addSelectedMapPath(mapName);
     }
@@ -168,11 +170,11 @@ void GameRoom::setSelectedMaps(const std::vector<std::string>& mapNames) {
 void GameRoom::stopAllPlayers() {
     std::lock_guard<std::mutex> lock(mtx);
 
-    try { 
-        gameQueue.close(); 
+    try {
+        gameQueue.close();
     } catch (...) {}
 
-    for (auto& [id, player] : players) {
+    for (auto& [id, player]: players) {
         if (player) {
             try {
                 player->stopGame();
