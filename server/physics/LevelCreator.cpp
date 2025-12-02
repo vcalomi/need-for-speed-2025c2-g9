@@ -274,6 +274,7 @@ void LevelCreator::createLevelCollision(b2WorldId world, const std::vector<Matri
                     const float cx_m = world_x_px / PPM;
                     const float cy_m = world_y_px / PPM;
 
+                    // radio del sensor del NPC (podés tunearlo)
                     const float radius_m = (TILE_SIZE_PX * 0.5f) / PPM; // o un NPC_RADIUS_PX
 
                     b2BodyDef bodyDef = b2DefaultBodyDef();
