@@ -113,3 +113,93 @@ Su arquitectura está compuesta por cuatro elementos principales:
 En conjunto, estos componentes permiten que el usuario diseñe recorridos visualmente y los exporte en un formato que el juego puede utilizar directamente.
 
 ![Diagrama clases editor](../assets/manual/diagrama-clases-editor.png)
+
+---
+
+## Arquitectura del cliente gráfico
+
+El cliente gráfico, construido sobre la biblioteca SDL2pp, es el responsable de recibir, interpretar y visualizar toda la información enviada por el servidor a través del protocolo de red.
+Para lograr un diseño flexible y desacoplado, el cliente utiliza principalmente un patrón de arquitectura Publisher–Subscriber:
+cuando llega un DTO desde la red, se publica un evento, y cada módulo del cliente puede suscribirse a él y actuar en consecuencia, evitando la necesidad de propagar manualmente los DTO a todas las clases interesadas.
+
+### Módulos principales del cliente:
+
+- **Engine**: Inicializa SDL2pp y crea los recursos base del motor gráfico, como la ventana y el renderer. Es la capa de bajo nivel sobre la que se apoya el resto del cliente.
+
+- **Game**: Es la clase que orquesta el funcionamiento del juego. Decide cuando ocurre cada cosa y asegura el correcto funcionamiento.
+
+- **Resource Loader**: Carga los recursos estáticos (spritesheets de vehículos y NPCs) desde archivos.
+
+- **Renderer System**: Coordina el pipeline de renderizado.
+Determina el orden en que se dibujan los distintos elementos del juego (mapa, vehículos, partículas, HUD, UI, etc.), y delega la tarea concreta a los distintos renderers especializados:
+BackgroundRenderer, PlayerRenderer, ParticleRenderer, HUDRenderer, ScreenRenderer, etc.
+
+- **DtoHandlerSystem**: Implementa el patrón Strategy para manejar cada tipo específico de DTO.
+Cada DTO recibido se procesa utilizando un handler particular que decide qué acciones ejecutar (por ejemplo, actualizar posiciones, crear NPCs, aplicar daños, etc.).
+Publica eventos hacia el EventBus.
+
+- **Network System**: Envía comandos desde el cliente hacia el servidor (por ejemplo, movimientos del jugador o eventos especiales).
+Funciona como la contraparte del DtoHandlerSystem.
+
+- **Event Bus y Event**: Son el corazón del sistema de comunicación interna.
+Permiten que cualquier módulo publique un evento y que otros módulos se suscriban para reaccionar sin acoplamiento directo.
+Algunos ejemplos:
+  - PlayerMoveEvent
+  - CheckpointCompletedEvent
+  - RaceInfoEvent
+  - VehicleExplodedEvent
+
+- **Audio System**: Reproduce efectos de sonido y música de fondo en respuesta a eventos del juego o entradas del usuario.
+
+- **Input System**: Detecta las teclas presionadas por el usuario y las transforma en acciones del juego (por ejemplo, acelerar, girar, activar cheats durante el desarrollo, etc.).
+
+### Clases encargadas del estado del juego
+
+- **World**: Es la clase principal encargada de gestionar el estado interno del juego:
+  - Lista de jugadores y su información
+  - NPCs presentes
+  - Posiciones, velocidades, ángulos
+  - Colisiones
+El World es actualizado mediante los DTOs recibidos desde el servidor.
+
+- **Player**: Representa a un jugador en la partida, incluyendo:
+  - Posición y orientación
+  - Vida
+  - Velocidad
+  - Vehículo utilizado
+  - Estado (explosionado, sobre puente, etc.)
+
+- **Camera**: Determina qué parte del mapa debe mostrarse en pantalla.
+Sigue la posición del jugador local y se asegura de no salirse de los límites del mapa.
+
+- **Progress Manager**: Maneja el estado del progreso del jugador:
+  - Checkpoint actual
+  - Checkpoints ya pasados
+  - Vueltas completadas
+  - Eventos de checkpoint para el HUD
+
+- **Map**: Carga las texturas del mapa (background y foreground) y provee su tamaño, necesario para la cámara y el renderizado.
+
+### Renderers especializados y UI
+
+Además del RendererSystem, existen renderers específicos que saben cómo dibujar cada tipo de entidad:
+
+- CheckpointRenderer → dibuja los checkpoints según estado
+
+- PlayerRenderer → renderiza cada jugador con su sprite y su dirección
+
+- ParticleRenderer → humo, explosiones, chispas, etc.
+
+- HUDRenderer → elementos superpuestos como texto, vidas, vueltas
+
+#### La UI está compuesta por elementos interactivos como:
+
+- Minimap: muestra la pista y la posición relativa de los jugadores
+
+- Speedometer: renderiza el velocímetro del vehículo
+
+- CheckpointIndicator: indica la dirección del próximo checkpoint
+
+Cada componente UI conoce cómo dibujarse y utiliza datos provenientes del World o del ProgressManager.
+
+![Diagrama clases cliente gráfico](../assets/manual/diagrama_clases_sdl.png)
