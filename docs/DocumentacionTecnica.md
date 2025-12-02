@@ -203,3 +203,145 @@ Además del RendererSystem, existen renderers específicos que saben cómo dibuj
 Cada componente UI conoce cómo dibujarse y utiliza datos provenientes del World o del ProgressManager.
 
 ![Diagrama clases cliente gráfico](../assets/manual/diagrama_clases_sdl.png)
+
+---
+
+## Arquitectura del servidor de fisicas
+
+### LevelSetup
+
+`LevelSetup` es el módulo encargado de construir el **mundo físico** con Box2D y preparar una carrera.  
+Sus responsabilidades principales son:
+
+- Inicializar el mundo (`b2World`) con su configuración.
+- Crear vehículos jugadores y NPCs.
+- Cargar configuraciones de autos (`VehicleSpec`) y aplicar mejoras (`CarUpgrades`) a cada jugador.
+- Construir el nivel utilizando `LevelCreator`, incluyendo:
+  - colisiones  
+  - checkpoints  
+  - spawns  
+  - NPCs  
+- Avanzar la simulación física mediante `stepAndDrainEvents`.
+- Registrar eventos físicos capturados por `PhysicsEventCollector`.
+- Proveer acceso a:
+  - vehículos (`getVehicleMap`)
+  - checkpoints
+  - NPCs vivos
+  - total de vueltas
+
+El objeto mantiene referencias a configuraciones externas, un generador aleatorio y las colecciones resultantes del nivel (vehículos, checkpoints y NPCs).
+
+## GameLoop
+
+`GameLoop` es el **núcleo del servidor de juego**.  
+Corre en su propio hilo (hereda de `Thread`) y ejecuta permanentemente:
+
+- Procesamiento de comandos entrantes (`processCommands`)
+- Avance de la simulación física (`processGameEvents`)
+- Manejo de lógica de carrera:
+  - vueltas  
+  - checkpoints  
+  - explosiones  
+  - posiciones  
+  - fin de carrera  
+  - penalizaciones  
+  - múltiples carreras (rotación de mapas)
+- Envío de actualizaciones al cliente:
+  - posiciones  
+  - checkpoints  
+  - autos iniciales  
+  - resultados finales  
+
+Utiliza una instancia de `LevelSetup`.  
+Mantiene el estado de cada jugador mediante:
+
+- `PlayerRaceProgress`
+- `PlayerResult`
+- `raceProgress_`
+- `playerResults_`
+
+Además gestiona control de vehículos (habilitar/deshabilitar), cuenta regresiva, explosiones, colisiones y transición entre carreras.
+
+## 👾 NpcInfo
+
+`NpcInfo` es una estructura liviana que representa un NPC dentro del mundo físico.
+
+Incluye:
+
+- posición en píxeles  
+- id  
+- estado (vivo / muerto)
+
+Es utilizada por `LevelSetup`, `LevelCreator` y por el servidor para enviar información del estado de los NPCs a los clientes.
+
+## PhysicsEventCollector
+
+`PhysicsEventCollector` recolecta los eventos generados durante la simulación física de Box2D, tales como:
+
+- colisiones entre vehículos  
+- colisiones con paredes  
+- paso por checkpoints  
+- colisión con NPCs  
+- entrada / salida de puentes  
+
+Métodos principales:
+
+- **`collect(world)`** → inspecciona los contactos de Box2D y genera eventos.  
+- **`drain()`** → devuelve y limpia todos los eventos acumulados.  
+- **`capturePreStepSpeeds(...)`** → almacena velocidades antes del paso físico.
+
+Los eventos se almacenan como `std::variant<RawEvent>` para representar distintos tipos de interacciones físicas.
+
+## Vehicle
+
+`Vehicle` representa un vehículo dentro del mundo físico.
+
+Responsabilidades:
+
+- Crear el cuerpo Box2D del vehículo.  
+- Ejecutar acciones: acelerar, frenar, girar.  
+- Obtener posición, ángulo y dimensiones.  
+- Aplicar daño y manejar los puntos de vida.  
+- Detectar si está debajo de un puente.  
+- Habilitar o deshabilitar control (por cuenta regresiva, explosión, etc.).  
+- Dibujar en modo debug.  
+
+Atributos clave:
+
+- `VehicleSpec` (especificación del auto)  
+- spawn inicial  
+- cuerpo físico (`b2BodyId`)  
+- estado de vida  
+- identificador del jugador  
+
+## 🏗️ LevelCreator
+
+`LevelCreator` es responsable de construir la **geometría del mapa**:
+
+- Leer matrices de nivel desde archivos.  
+- Crear colisiones en Box2D según el diseño del mapa.  
+- Generar checkpoints físicos.  
+- Crear ubicaciones de spawn válidas.  
+- Crear y posicionar NPCs.  
+- Renderizar tiles y checkpoints en modo debug.
+
+Mantiene:
+
+- matrices del nivel  
+- rectángulos de debug  
+- tags para colisiones  
+- NPCs generados  
+
+Es utilizado exclusivamente por `LevelSetup` para armar el escenario físico.
+
+## 📍 Spawn
+
+Estructura simple que representa la posición inicial y el ángulo de un vehículo:
+
+- `x`: posición X  
+- `y`: posición Y  
+- `angle`: ángulo de rotación inicial  
+
+Utilizado por `Vehicle`, `LevelCreator` y `LevelSetup`.
+
+![Diagrama clases servidor fisicas](../assets/manual/diagrama_clases_fisicas.png)
