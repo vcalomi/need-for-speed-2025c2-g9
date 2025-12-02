@@ -85,7 +85,30 @@ void ResourceLoader::LoadNpcSprites() {
             std::string id = npcNode["id"].as<std::string>();
             std::string sheetPath = npcNode["sheet_path"].as<std::string>();
 
-            auto texture = std::make_shared<SDL2pp::Texture>(renderer_, SDL2pp::Surface(sheetPath));
+            std::string resolved = sheetPath;
+            try {
+                if (!std::filesystem::exists(resolved)) {
+                    const auto filename = std::filesystem::path(sheetPath).filename().string();
+                    const std::string installed = std::string(ASSETS_DIR) + "/people/" + filename;
+                    if (std::filesystem::exists(installed)) {
+                        resolved = installed;
+                    } else {
+                        const std::string source = std::string(PROJECT_SOURCE_DIR) + "/client/assets/need-for-speed/people/" + filename;
+                        resolved = source;
+                    }
+                }
+            } catch (const std::exception& e) {
+                std::cerr << "[ResourceLoader] Error resolving NPC path '" << sheetPath
+                          << "': " << e.what() << "\n";
+            }
+
+            if (!std::filesystem::exists(resolved)) {
+                std::cerr << "[ResourceLoader] NPC texture not found: " << resolved << " (from "
+                          << sheetPath << ")\n";
+                continue;
+            }
+
+            auto texture = std::make_shared<SDL2pp::Texture>(renderer_, SDL2pp::Surface(resolved));
 
             int w = texture->GetWidth();
             int h = texture->GetHeight();

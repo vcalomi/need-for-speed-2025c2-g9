@@ -202,28 +202,26 @@ void MainWindow::openEditorMap() {
 
     qDebug() << "Intentando abrir el editor en:" << editorPath;
 
+    // Evitar múltiples lanzamientos por clics rápidos
+    if (ui && ui->btnMap) ui->btnMap->setEnabled(false);
+
     if (!QFile::exists(editorPath)) {
+        if (ui && ui->btnMap) ui->btnMap->setEnabled(true);
         QMessageBox::warning(this, "Error",
-                             "No se encontró el ejecutable del editor:\n" + editorPath);
+                             "No se encontró el ejecutable del editor en: " + editorPath +
+                                 "\nAsegúrate de compilar el objetivo 'nfs_editor' y (opcionalmente) instalarlo en /usr/local/bin.");
         return;
     }
 
-    // Crear proceso
-    QProcess* editorProcess = new QProcess(this);
-    editorProcess->setProgram(editorPath);
-
-    connect(editorProcess, QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished), this,
-            [this, editorProcess](int, QProcess::ExitStatus) {
-                editorProcess->deleteLater();
-                Navigation::goToPage(ui->page_menu, ui->stackedWidget, this);
-            });
-
-    editorProcess->start();
-
-    if (!editorProcess->waitForStarted(2000)) {
+    bool ok = QProcess::startDetached(editorPath);
+    if (!ok) {
+        if (ui && ui->btnMap) ui->btnMap->setEnabled(true);
         QMessageBox::warning(this, "Error", "No se pudo abrir el editor de mapas.");
-        delete editorProcess;
+        return;
     }
+
+    if (ui && ui->btnMap) ui->btnMap->setEnabled(true);
+    Navigation::goToPage(ui->page_menu, ui->stackedWidget, this);
 }
 
 void MainWindow::handleOpenMapsPage() {

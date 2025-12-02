@@ -120,7 +120,7 @@ void ScreenRenderer::RenderCountdown(float countdownTimer, int countdownNumber) 
 }
 
 void ScreenRenderer::RenderCenteredText(const std::string& text, int size, SDL_Color color) {
-    SDL2pp::Font font("../client/lobby/assets/Tektur-SemiBold.ttf", size);
+    SDL2pp::Font font(LOBBY_ASSETS_DIR "/Tektur-SemiBold.ttf", size);
     SDL2pp::Surface surface(font.RenderText_Blended(text, color));
     SDL2pp::Texture texture(renderer_, surface);
 
