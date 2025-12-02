@@ -109,6 +109,6 @@ RaceInfo YamlParser::parseRaceInfo(const std::string& filename) {
 
             info.spawns.push_back(s);
         }
-
-        return info;
     }
+    return info;
+}
