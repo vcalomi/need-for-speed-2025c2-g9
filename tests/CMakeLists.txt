@@ -29,6 +29,8 @@ add_executable(runTests
   ../common/Dto/infinite_health.cpp
   ../common/Dto/end_race.cpp
   ../common/Dto/vehicle_upgrade.cpp
+  ../common/Dto/npc.cpp
+  ../common/Dto/player_hit_npc.cpp
 
   ../common/serializer/serializer.cpp
   ../common/serializer/player_serializer.cpp
@@ -52,6 +54,8 @@ add_executable(runTests
   ../common/serializer/vehicle_upgrade_serializer.cpp
   ../common/serializer/infinite_health_serializer.cpp
   ../common/serializer/end_race_serializer.cpp
+  ../common/serializer/npc_serializer.cpp
+  ../common/serializer/player_hit_npc_serializer.cpp
 )
 
 find_package(GTest REQUIRED)
@@ -63,5 +67,4 @@ add_custom_command(TARGET runTests POST_BUILD
   COMMAND ${CMAKE_COMMAND} -E copy
           $<TARGET_FILE:runTests>
           ${CMAKE_BINARY_DIR}/nfs_tests
-  COMMENT "Copying runTests to ${CMAKE_BINARY_DIR}/nfs_tests"
-)
+  COMMENT "Copying runTests to ${CMAKE_BINARY_DIR}/nfs_tests")
