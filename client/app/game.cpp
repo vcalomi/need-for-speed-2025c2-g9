@@ -45,8 +45,12 @@ void Game::Run() {
 
     while (map_.IsLoaded() == false && world_.HasPlayers() == false) {
         std::shared_ptr<Dto> dto = nullptr;
-        while (client_.getRecvQueue().try_pop(dto)) {
-            dtoHandlerSystem_.Process(dto);
+        try {
+            while (client_.getRecvQueue().try_pop(dto)) {
+                dtoHandlerSystem_.Process(dto);
+            }
+        } catch (const ClosedQueue&) {
+            break;
         }
     }
     Minimap minimap(engine_.GetRenderer(), 100, 100);
@@ -72,8 +76,12 @@ void Game::Run() {
                                           static_cast<ActionCode>(input.move)));
 
         std::shared_ptr<Dto> dto = nullptr;
-        while (client_.getRecvQueue().try_pop(dto)) {
-            dtoHandlerSystem_.Process(dto);
+        try {
+            while (client_.getRecvQueue().try_pop(dto)) {
+                dtoHandlerSystem_.Process(dto);
+            }
+        } catch (const ClosedQueue&) {
+            break;
         }
 
         int realW, realH;

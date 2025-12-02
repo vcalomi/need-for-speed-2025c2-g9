@@ -18,25 +18,45 @@ NetworkSystem::NetworkSystem(Client& client, EventBus& eventBus):
     eventBus_.Subscribe<PlayerMoveEvent>([this](const PlayerMoveEvent& e) {
         uint8_t move_mask = static_cast<uint8_t>(e.move);
         if (move_mask != 0) {
-            client_.getSenderQueue().try_push(
-                    std::make_shared<PlayerMoveDto>(e.username, move_mask));
+            try {
+                client_.getSenderQueue().try_push(
+                        std::make_shared<PlayerMoveDto>(e.username, move_mask));
+            } catch (const ClosedQueue&) {
+                return;
+            }
         }
     });
 
     eventBus_.Subscribe<PlayerLeftEvent>([this](const PlayerLeftEvent& e) {
-        client_.getSenderQueue().try_push(std::make_shared<PlayerLeftDto>(e.username));
+        try {
+            client_.getSenderQueue().try_push(std::make_shared<PlayerLeftDto>(e.username));
+        } catch (const ClosedQueue&) {
+            return;
+        }
     });
 
     eventBus_.Subscribe<InfiniteHealthEvent>([this](const InfiniteHealthEvent& e) {
-        client_.getSenderQueue().try_push(std::make_shared<InfiniteHealthDto>(e.username));
+        try {
+            client_.getSenderQueue().try_push(std::make_shared<InfiniteHealthDto>(e.username));
+        } catch (const ClosedQueue&) {
+            return;
+        }
     });
 
     eventBus_.Subscribe<CheatEndRaceEvent>([this](const CheatEndRaceEvent& e) {
-        client_.getSenderQueue().try_push(std::make_shared<EndRaceDto>(e.username));
+        try {
+            client_.getSenderQueue().try_push(std::make_shared<EndRaceDto>(e.username));
+        } catch (const ClosedQueue&) {
+            return;
+        }
     });
 
     eventBus_.Subscribe<UpgradeCarEvent>([this](const UpgradeCarEvent& e) {
-        client_.getSenderQueue().try_push(
-                std::make_shared<VehicleUpgradeDto>(e.username, e.upgradeHealth, e.upgradeSpeed));
+        try {
+            client_.getSenderQueue().try_push(
+                    std::make_shared<VehicleUpgradeDto>(e.username, e.upgradeHealth, e.upgradeSpeed));
+        } catch (const ClosedQueue&) {
+            return;
+        }
     });
 }
