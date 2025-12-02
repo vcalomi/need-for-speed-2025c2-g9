@@ -100,9 +100,6 @@ void EventRenderController::RegisterEvents() {
     });
 
     eventBus_.Subscribe<PlayerGameFinishedEvent>([this](const PlayerGameFinishedEvent& e) {
-        std::cout << "[EventRenderController] Stored final result: " << e.username
-                  << " pos=" << e.finalPosition << " time=" << e.totalRaceTime
-                  << " penalties=" << e.totalPenalties << "\n";
         PlayerFinalResult result;
         result.username = e.username;
         result.totalRaceTime = e.totalRaceTime;

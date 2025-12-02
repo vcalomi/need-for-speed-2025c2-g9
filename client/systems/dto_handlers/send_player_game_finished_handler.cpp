@@ -9,6 +9,6 @@ std::shared_ptr<Event> SendPlayerGameFinishedHandler::Handle(const std::shared_p
         return nullptr;
     }
     return std::make_shared<PlayerGameFinishedEvent>(
-            dto->get_username(), playerGameFinishedDto->totalRaceTime,
+            playerGameFinishedDto->username, playerGameFinishedDto->totalRaceTime,
             playerGameFinishedDto->totalPenalties, playerGameFinishedDto->finalPosition);
 }

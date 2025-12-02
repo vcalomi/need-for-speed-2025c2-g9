@@ -89,39 +89,14 @@ void GameLoop::run() {
 }
 
 void GameLoop::sendFinalResults() {
-    std::cerr << "\n================= [sendFinalResults] =================\n";
-    std::cerr << "Cantidad de jugadores en playerResults_: " << playerResults_.size() << "\n";
-
     for (const auto& [vehicleId, result]: playerResults_) {
-        std::cerr << "[sendFinalResults] Procesando vehicleId=" << vehicleId << "\n";
-
-        if (playerUsernames_.find(vehicleId) == playerUsernames_.end()) {
-            std::cerr << "  ERROR: vehicleId " << vehicleId
-                      << " NO existe en playerUsernames_. Saltando...\n";
-            continue;
-        }
-
-        const std::string& username = playerUsernames_.at(vehicleId);
-
-        std::cerr << "  → username=" << username << "\n";
-        std::cerr << "  → totalTimeSeconds=" << result.totalTimeSeconds << "\n";
-        std::cerr << "  → totalPenaltySeconds=" << result.totalPenaltySeconds << "\n";
-
         auto finalResultDto = std::make_shared<PlayerGameFinishedDto>(
-                username, result.totalTimeSeconds, result.totalPenaltySeconds,
-                1  // posición, supongo que después vas a reemplazarlo
-        );
-
-        std::cerr << "  Enviando PlayerGameFinishedDto a broadcaster...\n";
+                playerUsernames_.at(vehicleId), result.totalTimeSeconds, result.totalPenaltySeconds,
+                1);
         broadcaster_.broadcast(finalResultDto);
     }
-
-    std::cerr << "[sendFinalResults] Enviando GameFinishedDto...\n";
     broadcaster_.broadcast(std::make_shared<GameFinishedDto>());
-
-    std::cerr << "================= [/sendFinalResults] =================\n\n";
 }
-
 
 void GameLoop::buildRacesFromSelectedMaps() {
     if (!races_.empty())
