@@ -100,7 +100,7 @@ void RendererSystem::Render(const World& world, Map& map, const Camera& camera, 
     }
 
     if (state_.showFinalResultsScreen) {
-        screenRenderer_.RenderRaceFinished(world);
+        screenRenderer_.RenderRaceFinished(state_.localFinishPosition, state_.localFinishTime);
         renderer_.Present();
 
         int mx, my;

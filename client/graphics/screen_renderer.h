@@ -34,7 +34,7 @@ public:
     void RenderPlayerLost();
     void RenderPlayerFinished(int position, float timeSeconds);
 
-    void RenderRaceFinished(const World& world);
+    void RenderRaceFinished(int finalPosition, float finalTimeSecs);
     void RenderUpgradeOptions();
 
     UpgradeChoice HandleUpgradeInput(int mouseX, int mouseY, bool mousePressed);

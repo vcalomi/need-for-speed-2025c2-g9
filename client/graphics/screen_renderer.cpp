@@ -77,27 +77,26 @@ void ScreenRenderer::RenderPlayerLost() {
     text_.Draw("Waiting for next race...", w / 2 - 120, h - 100);
 }
 
-void ScreenRenderer::RenderRaceFinished(const World& world) {
+void ScreenRenderer::RenderRaceFinished(int finalPosition, float finalTimeSecs) {
     int sw, sh;
     SDL_GetRendererOutputSize(renderer_.Get(), &sw, &sh);
 
     SDL_SetRenderDrawColor(renderer_.Get(), 0, 0, 0, 160);
     SDL_Rect bg{0, 0, sw, sh};
     SDL_RenderFillRect(renderer_.Get(), &bg);
-    DrawCentered("RACE FINISHED!", sh / 4);
 
-    int y = sh / 4 + 80;
-    // int pos = 1;
-    // for (const auto& [id, player]: world.GetPlayers()) {
-    //     std::string line = std::to_string(pos) + ". " + id + "  -  " +
-    //                        std::to_string(player.GetFinishTime()) + "s";
-    //     DrawCentered(line, y);
-    //     y += 30;
-    //     pos++;
-    // }
+    DrawCentered("RACE FINISHED!", sh / 6);
+
+    std::string posStr = "Your position: " + std::to_string(finalPosition);
+    DrawCentered(posStr, sh / 6 + 60);
+
+    char timeBuf[64];
+    std::snprintf(timeBuf, sizeof(timeBuf), "Your time: %.2f s", finalTimeSecs);
+    DrawCentered(timeBuf, sh / 6 + 110);
 
     RenderUpgradeOptions();
 }
+
 
 void ScreenRenderer::RenderCountdown(float countdownTimer, int countdownNumber) {
     std::string text;
@@ -152,7 +151,7 @@ void ScreenRenderer::RenderUpgradeOptions() {
     int yConfirm = sh - 80;
 
     if (upgradesLocked_) {
-        DrawCentered("Upgrades confirmed!", sh - 150);
+        DrawCentered("Upgrades confirmed! Waiting for next race...", sh - 150);
         return;
     }
 
