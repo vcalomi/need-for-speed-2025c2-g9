@@ -62,7 +62,7 @@ RaceInfo YamlParser::parseRaceInfo(const std::string& filename) {
         float nx = pos[0].as<float>();  // normalized [0–1]
         float ny = pos[1].as<float>();
 
-        cps.push_back({nx *2320 , ny * 2336, index});
+        cps.push_back({nx * 4640, ny * 4672, index});
     };
 
     int index = 0;
@@ -90,8 +90,8 @@ RaceInfo YamlParser::parseRaceInfo(const std::string& filename) {
                 continue;
 
             Spawn s;
-            s.x = pos[0].as<float>() * 2320;
-            s.y = pos[1].as<float>() * 2336;
+            s.x = pos[0].as<float>() * 4640;
+            s.y = pos[1].as<float>() * 4672;
             s.angle = sp["angle"] ? sp["angle"].as<float>() : 0.0f;
 
 
