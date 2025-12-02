@@ -1,7 +1,9 @@
 #include "event_render_controller.h"
 
+#include "../events/game_finished_event.h"
 #include "../events/player_collision_event.h"
 #include "../events/player_events.h"
+#include "../events/player_game_finished_event.h"
 #include "../events/player_race_finished_event.h"
 #include "../events/race_finished_event.h"
 #include "../events/race_info_event.h"
@@ -96,4 +98,21 @@ void EventRenderController::RegisterEvents() {
             p.setExploded(true);
         }
     });
+
+    eventBus_.Subscribe<PlayerGameFinishedEvent>([this](const PlayerGameFinishedEvent& e) {
+        PlayerFinalResult result;
+        result.username = e.username;
+        result.totalRaceTime = e.totalRaceTime;
+        result.totalPenalties = e.totalPenalties;
+        result.finalPosition = e.finalPosition;
+
+        state_.finalResults.push_back(result);
+
+        std::cout << "[EventRenderController] Stored final result: " << e.username
+                  << " pos=" << e.finalPosition << " time=" << e.totalRaceTime
+                  << " penalties=" << e.totalPenalties << "\n";
+    });
+
+    eventBus_.Subscribe<GameFinishedEvent>(
+            [this](const GameFinishedEvent&) { state_.showFinalGameResultsScreen = true; });
 }

@@ -5,6 +5,8 @@
 #include "../world/progress_manager.h"
 #include "../world/world.h"
 
+#include "player_final_results.h"
+
 struct RenderState {
     bool raceFinished = false;
     bool localPlayerFinished = false;
@@ -14,11 +16,13 @@ struct RenderState {
     float explosionTimer = 0.0f;
     bool showExplosion = false;
     bool showFinalResultsScreen = false;
+    bool showFinalGameResultsScreen = false;
     bool showPlayerFinishedScreen = false;
     bool countdownActive = false;
     float countdownTimer = 0.0f;
     int countdownNumber = 3;
     float countdownGoTimer = 0.0f;
+    std::vector<PlayerFinalResult> finalResults;
 };
 
 class EventRenderController {

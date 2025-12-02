@@ -6,6 +6,7 @@
 
 #include <SDL2pp/Renderer.hh>
 
+#include "../systems/player_final_results.h"
 #include "../world/camera.h"
 #include "../world/world.h"
 
@@ -51,7 +52,7 @@ public:
     void LockUpgrades() { upgradesLocked_ = true; }
     bool UpgradesLocked() const { return upgradesLocked_; }
     void RenderCountdown(float countdownTimer, int countdownNumber);
-
+    void RenderGameFinalResults(const std::vector<PlayerFinalResult>& results);
 
 private:
     SDL2pp::Renderer& renderer_;

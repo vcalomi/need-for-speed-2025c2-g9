@@ -53,6 +53,12 @@ RendererSystem::RendererSystem(SDL2pp::Renderer& renderer, SpriteSheet& cars, Sp
 void RendererSystem::Render(const World& world, Map& map, const Camera& camera, Minimap& minimap) {
     renderer_.Clear();
 
+    if (state_.showFinalGameResultsScreen) {
+        screenRenderer_.RenderGameFinalResults(state_.finalResults);
+        renderer_.Present();
+        return;
+    }
+
     if (state_.countdownActive) {
         float dt = 0.016f;
 

@@ -236,3 +236,40 @@ void ScreenRenderer::RenderPlayerFinished(int position, float timeSeconds) {
 
     DrawCentered("Waiting for all players to finish...", h - 120);
 }
+
+void ScreenRenderer::RenderGameFinalResults(const std::vector<PlayerFinalResult>& results) {
+    int sw, sh;
+    SDL_GetRendererOutputSize(renderer_.Get(), &sw, &sh);
+
+    SDL_SetRenderDrawColor(renderer_.Get(), 0, 0, 0, 200);
+    SDL_Rect bg{0, 0, sw, sh};
+    SDL_RenderFillRect(renderer_.Get(), &bg);
+
+    DrawCentered("FINAL GAME RESULTS", 60);
+
+    int startY = 150;
+    int lineHeight = 40;
+
+    text_.Draw("POS", 120, startY);
+    text_.Draw("PLAYER", 220, startY);
+    text_.Draw("PENALTIES", 500, startY);
+    text_.Draw("TIME (s)", 720, startY);
+
+    int y = startY + 50;
+
+    auto sorted = results;
+    std::sort(sorted.begin(), sorted.end(),
+              [](const auto& a, const auto& b) { return a.finalPosition < b.finalPosition; });
+
+    for (const auto& r: sorted) {
+        text_.Draw(std::to_string(r.finalPosition), 120, y);
+        text_.Draw(r.username, 220, y);
+        text_.Draw(std::to_string(r.totalPenalties), 500, y);
+
+        char buf[32];
+        snprintf(buf, sizeof(buf), "%.2f", r.totalRaceTime);
+        text_.Draw(buf, 720, y);
+
+        y += lineHeight;
+    }
+}
