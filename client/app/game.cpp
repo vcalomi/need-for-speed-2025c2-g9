@@ -62,7 +62,9 @@ void Game::Run() {
         inputSystem_.PollEvents(running);
 
         if (inputSystem_.IsKeyPressed(SDL_SCANCODE_Q)) {
-            eventBus_.Publish(InfiniteHealthEvent(this->world_.GetLocalPlayer().GetUsername()));
+            const auto username = this->world_.GetLocalPlayer().GetUsername();
+            eventBus_.Publish(InfiniteHealthEvent(username));
+            this->world_.GetPlayer(username).setInfiniteHealth(true);
         }
 
         if (inputSystem_.WasKeyPressed(SDL_SCANCODE_E)) {

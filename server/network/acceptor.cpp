@@ -36,7 +36,6 @@ void Acceptor::run() {
 
 void Acceptor::reap() {
     auto new_end = std::remove_if(lobbies.begin(), lobbies.end(), [](Lobby* l) {
-        // Reaper: si el hilo terminó, siempre liberar la memoria
         bool finished = !l->is_alive();
         if (finished) {
             try { l->join(); } catch (...) {}
@@ -50,7 +49,6 @@ void Acceptor::reap() {
 
 void Acceptor::clear() {
     for (auto& lobby: lobbies) {
-        // En clear, detener y liberar todas las lobbies seguras
         try { lobby->stop(); } catch (...) {}
         try { lobby->join(); } catch (...) {}
         delete lobby;

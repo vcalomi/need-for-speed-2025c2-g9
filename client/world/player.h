@@ -28,6 +28,8 @@ public:
     void updateHealth(float health) { health_ = health; }
     void setExploded(bool exploded) { exploded_ = exploded; }
     bool isExploded() const { return exploded_; }
+    void setInfiniteHealth(bool v) { infiniteHealth_ = v; }
+    bool hasInfiniteHealth() const { return infiniteHealth_; }
 
 private:
     std::string username_;
@@ -41,4 +43,5 @@ private:
     float speed_;
     bool isAboveBridge_;
     bool exploded_ = false;
+    bool infiniteHealth_ = false;
 };
