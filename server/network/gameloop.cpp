@@ -46,27 +46,14 @@ GameLoop::GameLoop(Queue<std::shared_ptr<Dto>>& gameLoopQueue, std::map<int, Car
         broadcaster_(broadcaster),
         maxPlayers(maxPlayers),
         raceActive_(false),
-        pendingNextRace_(false),
-        selectedMaps_(selectedMaps)
-{
-    RaceParser parser;
-    for (const auto& filename : selectedMaps_) {
-        RaceInfo info = parser.parseRaceFile(filename);
-        races_.push_back(std::move(info));
-    }
+        pendingNextRace_(false)
+{}
 
-    if (races_.empty()) { 
-        std::cout << "Warning there arent races in races_\n";
-    }
-    
-    // POngo esto para evitar el warning
-    (void)selectedMaps;
-}
-
-void GameLoop::addSelectedMapPath(const std::string& path) { selectedMapsPaths_.push_back(path); }
+void GameLoop::addSelectedMapPath(const std::string& path) { selectedMaps_.push_back(path); }
 
 void GameLoop::run() {
     try {
+        buildRacesFromSelectedMaps();
         if (!races_.empty()) {
             startRace(0);  // primera carrera
         }
@@ -100,6 +87,21 @@ void GameLoop::run() {
     }
 }
 
+void GameLoop::buildRacesFromSelectedMaps() {
+    if (!races_.empty())
+        return;
+
+    YamlParser parser;
+
+    for (const auto& filename : selectedMaps_) {
+        RaceInfo info = parser.parseRaceInfo("../server/maps/" + filename);
+        races_.push_back(std::move(info));
+    }
+
+    if (races_.empty()) {
+        std::cout << "[GameLoop] WARNING: races_ está vacío, no hay carreras configuradas\n";
+    }
+}
 
 void GameLoop::startRace(int raceIndex) {
     if (raceIndex < 0 || raceIndex >= (int)races_.size()) {
