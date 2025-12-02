@@ -46,8 +46,7 @@ GameLoop::GameLoop(Queue<std::shared_ptr<Dto>>& gameLoopQueue, std::map<int, Car
         broadcaster_(broadcaster),
         maxPlayers(maxPlayers),
         raceActive_(false),
-        pendingNextRace_(false)
-{}
+        pendingNextRace_(false) {}
 
 void GameLoop::addSelectedMapPath(const std::string& path) { selectedMaps_.push_back(path); }
 
@@ -75,7 +74,7 @@ void GameLoop::run() {
                     } else {
                         // No hay más carreras configuradas
                         pendingNextRace_ = false;
-                        //mandar un dto de "fin del torneo"
+                        // mandar un dto de "fin del torneo"
                     }
                 }
             }
@@ -93,7 +92,7 @@ void GameLoop::buildRacesFromSelectedMaps() {
 
     YamlParser parser;
 
-    for (const auto& filename : selectedMaps_) {
+    for (const auto& filename: selectedMaps_) {
         RaceInfo info = parser.parseRaceInfo("../server/maps/" + filename);
         races_.push_back(std::move(info));
     }
@@ -119,11 +118,7 @@ void GameLoop::startRace(int raceIndex) {
     std::string direccion = levelDirForMap(race.mapName);
 
     // usamos los checkpoints y spawns que vinieron del archivo
-    setup.emplace(direccion,
-                  vehiclesYaml,
-                  chosenCars_,
-                  upgradesByUser_,
-                  race.checkpoints,
+    setup.emplace(direccion, vehiclesYaml, chosenCars_, upgradesByUser_, race.checkpoints,
                   race.spawns);
 
     raceProgress_.clear();
