@@ -67,7 +67,7 @@ Durante la **sexta y séptima semana** implementamos los últimos detalles y req
 
 Desde el lado de los hilos y el protocolo ... 
 
-Desde el lado del Cliente ....
+Desde el lado del Cliente el principio fue complicado porque habia que aprender a utilizar la libreria SDL2pp la cual tiene una documentacion complicada y escueta. Sin embargo una vez aprendidas las bases del funcionamiento de la libreria todo fue mas sencillo y se pudo sacar funcionalidades a la par del servidor.
 
 Desde el lado del lobby y el editor de mapas, no tuve demasiadas dificultades para avanzar. Siguiendo los tutoriales, leyendo la documentación y conociendo la programación orientada a objetos, gran parte del trabajo resultó bastante llevadero. Las complicaciones más notorias aparecieron al momento de familiarizarme con Qt, especialmente con la estructura de los .ui, los layouts y los estilos; ajustar detalles visuales o de usabilidad en Qt, que a veces llevan mucho tiempo para algo pequeño. Pero son desafíos normales cuando se aprende una herramienta completamente nueva.
 
@@ -76,7 +76,7 @@ Desde el lado del Servidor ...
 
 ### ¿Qué contenidos podrían incorporarse en Taller?
 
-
+Estrategias de trabajo colaborativo y organizacion basica de un proyecto.
 
 ### ¿Pudimos llegar con todo?
 
@@ -84,3 +84,5 @@ Desde el lado del Servidor ...
 ### Errores conocidos
 
 ### ¿Qué cambiaríamos si lo hiciéramos de nuevo?
+
+La division de tareas. Consideramos que la carga horaria no fue equitativa y por tanto si lo hiciesemos de nuevo apostariamos mas por un enfoque colaborativo en varias partes del trabajo en vez de ir por separado en cuatro partes distintas.
