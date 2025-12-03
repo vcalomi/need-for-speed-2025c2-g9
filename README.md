@@ -34,7 +34,6 @@ make clean
 ```bash
 make uninstall
 ```
-```
 ---
 
 ## 🚀 Ejecución del Software
