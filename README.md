@@ -14,27 +14,30 @@
 
 ---
 
-## 2. 🔨 Instalación y Compilación
+## 🔨 Instalación y Compilación
 
-Para instalar las dependencias necesarias, en la raíz del proyecto ejecuta:
+Para instalar las dependencias necesarias, en la **raíz del proyecto** ejecuta:
 
 ```bash
 make install
 ```
-El target se encargará de instalar las dependencias necesarias para el juego, compilarlo y finalmente instalar el juego en el sistema.
+El target se encargará de **instalar las dependencias necesarias para el juego, compilarlo** y finalmente **instalar el juego** en el sistema.
 
-Limpiar compilación
+**Limpiar compilación**:
+
 ```bash
 make clean
 ```
 
-Desinstalar
+**Desinstalar**:
+
 ```bash
 make uninstall
 ```
+```
 ---
 
-## 3. 🚀 Ejecución del Software
+## 🚀 Ejecución del Software
 Ejecutar los siguientes comandos en terminales separadas desde la raíz del proyecto:
 
 **Levantar el servidor**

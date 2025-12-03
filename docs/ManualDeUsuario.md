@@ -50,35 +50,34 @@ Ejecutar los siguientes comandos en terminales separadas desde la raíz del proy
 
 **Levantar el servidor**
 ```bash
-./nfs_server <puerto>
+nfs_server <puerto>
 ```
 
 Ejemplo:
 ```bash
-./nfs_server 8080
+nfs_server 8080
 ```
 
 **Abrir el cliente**
 En otra terminal:
 ```bash
-./nfs_client <host> <puerto>
+nfs_client <host> <puerto>
 ```
 
 Ejemplo:
 ```bash
-./nfs_client 127.0.0.1 8080
+nfs_client 127.0.0.1 8080
 ```
 
 **Abrir el editor de mapas**
 Podés abrirlo desde el lobby del cliente o directamente desde la terminal:
 ```bash
-./nfs_editor
+nfs_editor
 ```
 
 **Ejecutar tests**
 ```bash
-./nfs_tests
-```
+nfs_tests
 
 ---
 
